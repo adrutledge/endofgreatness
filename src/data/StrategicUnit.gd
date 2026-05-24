@@ -2,7 +2,7 @@ class_name StrategicUnit
 extends Resource
 
 @export var unit_name: String = "Player"
-@export var organizational_units: Array[OrganizationalUnit]
+@export var organizational_units: Array[OrganizationalUnit] = []
 @export var current_balance: int = 1000000
 @export var current_planet: String = ""
 @export var active_contract: Contract = null

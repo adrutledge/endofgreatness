@@ -122,7 +122,8 @@
 
 ### P2.2 — Component & Unit Data
 
-- `data/components/` — JSON per component: name, tonnage, critical_slots, cost, tech_base, quality_range, repair_difficulty
+- `data/components/` — JSON per component: name, tonnage, critical_slots, cost, tech_base, quality_range, repair_difficulty, heat_generated, ammo_type, allowed_locations[], minimum_tech_rating
+- Component JSON extended with fields needed for TechManual construction: `engine_rating_required`, `gyro_compatible`, `structure_type`, `armor_points_per_ton`, `suspension_factor_override`
 - `data/units/` — MegaMek `.mtf` files for all stock units
 - `data/unit_lists/` — faction-specific unit availability lists (era-appropriate, 3025 start)
 
@@ -199,6 +200,97 @@
 - Weighted by: location, faction relationships, reputation, current contracts
 - Events presented as popup with choices and outcomes
 - Examples: pirate raid on base, supply shipment delayed, faction requests assistance, personnel dispute
+
+### P3.6 — TechManual Construction, Refit & Validation
+
+#### P3.6.1 — Construction Rules Engine (`TechManualRules.gd`)
+
+- TechManual is the authoritative source for all construction validation rules
+- Autoload singleton implementing all core BT construction rules per the TechManual
+- **Tonnage validation**: total component tonnage must not exceed unit tonnage + 0.5t buffer; engine tonnage derived from rating × weight class multiplier per TM engine table
+- **Critical slot limits per location**: per TM rules — Center Torso 12, Side Torso 10/12, Arms 12 (6 per arm), Legs 6, Head 3/6; vehicle locations differ (turret, front, sides, rear, body)
+- **Armor point limits**: max armor per location = internal structure × 2 (mech); total armor points must not exceed `ceil(tonnage × armor_points_per_ton)` where Standard=16, Ferro-Fibrous=32, Light Ferro=28, Heavy Ferro=21, etc.
+- **Engine rating constraints**: engine_rating must be multiple of 5; for mechs, engine_rating = walk_mp × tonnage (mapped through standard engine rating table); engine type (Standard/Light/XL/XXL/Compact) affects critical slots, weight, and cost per TM
+- **Gyro compatibility**: gyro mass = `ceil(engine_rating / 100) × multiplier`; gyro type (Standard/XL/Compact/Heavy/None) determines critical slots and mass
+- **Heat sink adequacy**: base 10 free heat sinks from engine; each additional heat sink weighs 1t; total dissipation must cover alpha-strike heat (weapon heat + jump heat); excess heat sink count above dissipation capacity flagged as warning
+- **Internal structure type**: Standard/Endo Steel/Reinforced/Composite each have distinct weight multipliers and critical slot costs
+- **Armor type**: Standard/Ferro-Fibrous/Light Ferro/Heavy Ferro/Reflective/Reactive/etc. each with distinct weight per point and critical slot costs
+- **Tech base & level consistency**: validates all components share compatible tech_base (Inner Sphere / Clan) and tech_rating (Introductory/Standard/Advanced/Experimental); mixed-tech builds flagged with appropriate penalties per TM optional rules
+- **Unit type-specific constraints**:
+  - Mechs: require gyro, cockpit, engine, internal structure, armor; jump jet weight varies by weight class (0.5t ≤55t, 1t 56-85t, 2t >85t); max jump MP = `floor(engine_rating / tonnage)`
+  - Vehicles: require engine, structure, armor, control systems; power amplifier adds 10% of energy weapon tonnage (min 0.5t); suspension factor in engine rating per TM table (Tracked=0, Wheeled=20, Hover/VTOL/WiGE vary by tonnage)
+  - Infantry: squad/platoon size limits per TM, armor kit types per TacOps
+  - Battle Armor: BA-specific construction rules (manipulator mounts, AP weapons mount, mission pod)
+- **Weapon & ammo constraints**: ammo must match weapon type (LRM20 → Ammo LRM20); each weapon needs at least one ton of compatible ammo; CASE required for explosive ammo in torso on XL/XXL-engine mechs (per optional rule)
+- **Heat & movement correlation**: walk/run MP capped per engine rating table; jump MP limited by weight class (max 8 for assault, 10 for heavy, 12 for medium, 14 for light)
+- **Power budget**: vehicles track power consumption vs. engine output; energy weapons, active probes, ECM all consume power; insufficient power = weapon cannot fire
+
+#### P3.6.2 — Refit System (`RefitManager` autoload)
+
+- Campaign Operations is the authoritative source for all refit rules, including classification (B–E class determination), time, cost, and labor
+- **Refit** = changing a unit from one variant to another on the same chassis (e.g. MAD-3R → MAD-3D)
+- Per-unit `chassis_name` and `model_name` fields on `TacticalUnit`, populated by MTF/BLK parsers
+- `DataManager.get_variants_for_chassis(chassis)` returns all known variants of a given chassis
+- Component diff calculation: compare current unit's components vs target variant's components by name → list of components to remove and add
+- **TechManual refit classification** (B → E):
+  - **Class B (Standard)**: same location, same tech base, tonnage diff < 0.5t — e.g., swapping Medium Laser for Medium Laser of same type
+  - **Class C (Complex)**: same tech base, different location OR tonnage diff ≥ 0.5t — e.g., moving a weapon from arm to torso
+  - **Class D (Major)**: different tech base — e.g., swapping Standard armor for Ferro-Fibrous, or swapping IS for Clan weapon
+  - **Class E (Chassis)**: changing chassis-defining components (engine, internal structure, gyro, cockpit) — complete rebuild preserving only chassis name
+- Refit cost per TM: `component_base_cost × CLASS_COST_PCT[class]` where B=5%, C=10%, D=20%, E=30%; plus 50% markup for remote-sourced parts
+- Refit labor per TM: `tonnage × CLASS_HOURS[class]` per component added + 0.5 × tonnage per component removed; B=1.0h/t, C=2.0h/t, D=5.0h/t, E=50.0h/t; minimum 4 hours
+- Consumes daily from the unit's assigned technician pool (`PersonnelManager.get_unit_repair_budget()`)
+- Refit work flow:
+  1. Player selects a Mech and a target variant in the MechLab UI
+  2. System calculates component diff, classifies the refit per TM rules, and sources needed parts:
+     - Checks local market for each required component
+     - Falls back to remote ordering via `InterstellarOrderManager` for parts not in local stock
+  3. Player reviews the sourcing plan (local cost, remote cost + delivery ETA), TM refit class badge, cost estimate, and labor estimate
+  4. Player confirms → funds deducted immediately, remote orders placed as deliveries
+  5. Parts delivery phase: waiting for remote orders to arrive (tracked in days)
+  6. Labor phase: once all parts are on-hand, assigned technicians consume their daily hour budget against the refit
+  7. When hours reach 0: run `TacticalUnit.validate_tm()` on the result; if valid, replace the unit's components with the target variant's component list (deep-copied from template); if invalid, log error and flag refit as failed
+
+#### P3.6.3 — Custom Design / Construction (MechLab Designer)
+
+- **Custom variant designer**: player creates a custom unit by modifying components on an existing chassis or building from a blank chassis template
+- UI: per-location component grid (head, CT, LT, RT, LA, RA, LL, RL for mechs; turret/front/sides/rear/body for vehicles), drag-and-drop or button to add/remove/replace components
+- **Real-time TM validation**: as player adds/removes components, `TacticalUnit.validate_tm()` runs continuously, displaying live errors and warnings (overweight, slot overflow per location, missing engine, incompatible tech base, heat deficit, armor over limit, ammo without matching weapon)
+- **Construction restrictions per TechManual**:
+  - Available components filtered by tech_base, tech_rating, unit type compatibility, and current planet's tech level (USILR code)
+  - Critical slot usage per location shown with progress bars (e.g., "CT: 8/12 slots used"); slot overflow = red error
+  - Tonnage meter showing used/free tonnage; free tonnage for armor shown separately
+  - Armor allocation: player assigns armor points per location using sliders (front/back for torso, separated per arm/leg); total, used, and maximum shown; layout follows TM armor distribution rules
+  - Heat budget: current heat dissipation vs alpha-strike heat generation; deficit shown in red
+  - Ammo tracking: auto-assigns one ton of matching ammo per weapon; player can add extra ammo tons; orphan ammo (no matching weapon) shown as warning
+- **Component browser**: searchable/filterable list of all known components from `DataManager.component_defs`; filters by type (weapon/ammo/armor/engine/gyro/structure/electronics), tech base, tech rating, weight class, allowed locations
+- **Cost tracking**: real-time C-Bill cost of current design using `TacticalUnit.calculate_tm_cost()` (chassis cost + component costs × 1.05 markup); compared against current balance
+- **Save custom variant**: custom variants saved as `.mtf`-compatible data in `data/units/custom/` directory; available in the refit UI for future refits; includes metadata: designer name, date created, custom tag
+- **Construction prerequisites**: custom construction requires appropriate facility level (repair bay + mech bay at minimum, advanced tech requires advanced facility); higher-tech components (Clan, Experimental) require higher planetary tech level or faction relationship
+
+#### P3.6.4 — Campaign Operations Repair, Maintenance & Salvage
+
+- Campaign Operations is the authoritative source for all repair, maintenance, and salvage rules; overrides TM values wherever they conflict
+- **Repair difficulty**: each component has `repair_difficulty` field (Simple/Standard/Advanced/Elite/Experimental) in component JSON per CO classification, mapping to hourly cost multipliers and base target numbers
+- **Repair times per CO**: base time per component = `component_tonnage × hours_per_difficulty_level`; repairing damaged components at 1x time, replacing destroyed components at 1.5x time; base time modified by facility quality (repair bay level), parts availability (in-stock vs ordered), and component quality (A–F)
+- **Technician skill effects per CO**: repair time and success chance determined by technician skill roll against component difficulty target number; `base_time × (10.0 / (skill + 5))` so higher skill = faster repair; minimum 0.5x with elite techs; failed roll doubles time, critical failure destroys component
+- **Facility quality modifiers per CO**: facility level (field/repair bay/mech bay/advanced facility) applies a flat percentage bonus or penalty to repair time; higher-level facilities reduce time and allow higher-difficulty repairs
+- **Component quality effects per CO**: quality rating A–F affects repair time multiplier (A=0.5x, B=0.75x, C=1.0x, D=1.25x, E=1.5x, F=2.0x) — worse quality takes longer to repair
+- **Maintenance per CO**: each unit requires monthly maintenance = `component_count × 0.25` technician-hours per month; annual overhaul requires 10× monthly hours and replacement of all normal-wear items (actuators, filters, lubricants); neglected maintenance tracked as `maintenance_debt` — when debt exceeds threshold, triggers strategic events per CO failure tables (component failures, jams, ammo explosions, motive system damage for vehicles)
+- **Salvage per CO**: salvage operations recover components from destroyed enemy units after tactical combat; per-component recovery chance = `tech_skill_roll × component_difficulty_modifier × quality_factor`; easier/simpler components more likely to survive; quality of recovered component determined by damage that destroyed the original unit; damaged components require repair before use; salvage time = `component_tonnage × 0.5` hours per component plus facility modifier
+- **Repair queue**: player queues components for repair/replacement on each unit; priority order; total hours summed and consumed from technician budget; ETA shown with per-CO modifier breakdown
+- Integrated with `PersonnelManager`: technicians assigned to units provide daily hour budgets for all work types (repair + maintenance + refit); `PersonnelManager.get_unit_repair_budget()` returns available hours per tick
+
+#### P3.6.5 — MechLab UI (`MechLab.gd`/`.tscn`)
+
+- Three tabs: **Refit** (variant swapping), **Design** (custom construction), **Repair** (component-level repair queue)
+- Left panel: list of player's Mechs/Vehicles with active refit/parts/repair status badges; filterable by unit type, refit status, chassis name
+- Right panel:
+  - **Refit tab**: current variant info card (tonnage, armor, heat sinks, engine, movement), available variants list for selected chassis, component diff display (green = added, red = removed, gray = unchanged), TechManual refit class badge (B/C/D/E with color coding), parts sourcing plan table with per-component cost and source, total cost + labor estimate, Start Refit button (disabled if TM validation of result fails)
+  - **Design tab**: per-location component grid (paper-doll layout), component browser panel with search/filter, drag-and-drop to place components, real-time TM validation panel (error list with rule references, warning list), armor slider per location, heat budget bar, tonnage meter, C-Bill total, Save Custom Variant button
+  - **Repair tab**: component list grouped by unit with status icons (undamaged/damaged/destroyed), repair cost and time estimates, priority queue ordering (drag to reorder), assign/reassign technician dropdown, total ETA for all queued repairs
+- Active refits shown in unit list with sub-status: "Delivering parts (3 days)", "Refitting (12 hours remaining)"
+- Validation results displayed inline: green checkmark badge for valid, red X badge with expandable error list for invalid; tooltip on hover shows specific TM rule violated and the offending value
 
 ---
 
@@ -423,7 +515,7 @@
 Build scaffold, resource classes, autoloads, event bus, theme/i18n, time system, economy, reputation, personnel manager.
 
 **Agent Team B — Phase 2 + 3 (Data + Strategic)**
-Build all data files, star map, strategic UI, contract generation, organization management, strategic events.
+Build all data files, star map, strategic UI, contract generation, organization management, strategic events, MechLab/Refit UI, TechManual construction rules engine, custom design system, repair & maintenance.
 
 **Agent Team C — Phase 4 + 5 (Operational + Rules Engine)**
 Build planetary hex map, operational actions, faction presence on planet, flexible rules engine with Total Warfare rules.
@@ -449,6 +541,8 @@ Wire layers together, event system, lore accuracy, tests, polish.
 | `src/systems/EconomySystem.gd`     | C-Bills, market, costs           |
 | `src/systems/ReputationSystem.gd`  | Global + faction reputation      |
 | `src/systems/PersonnelManager.gd`  | Hire/fire/injure/heal            |
+| `src/systems/TechManualRules.gd`   | TM construction, refit, validation engine |
+| `src/systems/RefitManager.gd`      | Active refit order processing    |
 | `src/systems/RulesEngine.gd`       | Flexible combat rules engine     |
 | `src/systems/MegaMekParser.gd`     | Parse .mtf files                 |
 | `src/systems/ContractGenerator.gd` | Generate contracts               |

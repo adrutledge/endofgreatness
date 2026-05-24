@@ -113,6 +113,15 @@ func load_timeline() -> void:
 	if json.parse(json_str) == OK:
 		GameState.set("timeline_events", json.data)
 
+func get_variants_for_chassis(chassis: String) -> Array[TacticalUnit]:
+	var results: Array[TacticalUnit] = []
+	var lower = chassis.to_lower().strip_edges()
+	for name in unit_templates:
+		var tu = unit_templates[name]
+		if tu.chassis_name.to_lower().strip_edges() == lower:
+			results.append(tu)
+	return results
+
 func parse_mtf(file_path: String) -> TacticalUnit:
 	var file = FileAccess.open(file_path, FileAccess.READ)
 	if not file:
@@ -195,6 +204,24 @@ func parse_mtf(file_path: String) -> TacticalUnit:
 				var parts = value.split(" ")
 				if parts.size() > 0 and parts[0].is_valid_int():
 					engine_rating = int(parts[0])
+				if parts.size() > 1:
+					unit.engine_type = parts[1]
+			"gyro":
+				unit.gyro_type = value
+			"structure":
+				unit.internal_structure_type = value
+			"armor":
+				var armor_parts = value.split(" ")
+				if armor_parts.size() > 0 and armor_parts[0].is_valid_int():
+					unit.total_armor_points = int(armor_parts[0])
+				for ap in armor_parts:
+					var stripped = ap.strip_edges().trim_prefix("(").trim_suffix(")")
+					if stripped and stripped != str(unit.total_armor_points):
+						unit.armor_type = stripped
+			"heat sinks":
+				var hs_parts = value.split(" ")
+				if hs_parts.size() > 0 and hs_parts[0].is_valid_int():
+					unit.heat_sink_count = int(hs_parts[0])
 			_:
 				# Check for armor fields: LA armor, RA armor, LT armor, etc.
 				if key.ends_with(" armor"):
@@ -206,6 +233,9 @@ func parse_mtf(file_path: String) -> TacticalUnit:
 		unit.unit_name = chassis
 	else:
 		unit.unit_name = "Unknown"
+	unit.chassis_name = chassis
+	unit.model_name = model
+	unit.engine_rating = engine_rating
 
 	# Compute movement from MTF raw values
 	unit.movement_mp = raw_walk_mp
@@ -357,6 +387,7 @@ func parse_blk(file_path: String) -> TacticalUnit:
 
 	# ---- Build unit from parsed data ----
 	unit.unit_name = tags.get("Name", tags.get("name", "Unknown"))
+	unit.chassis_name = unit.unit_name
 	var tonnage_str = tags.get("tonnage", tags.get("mass", "0"))
 	unit.tonnage = float(tonnage_str)
 
@@ -420,6 +451,9 @@ func parse_blk(file_path: String) -> TacticalUnit:
 			engine_prefix = "XXL Engine"
 		8:
 			engine_prefix = "Fuel Cell Engine"
+	unit.engine_rating = engine_rating
+	if engine_prefix != "":
+		unit.engine_type = engine_prefix.replace(" Engine", "")
 	if engine_rating > 0 and engine_prefix != "":
 		var engine_name = engine_prefix + " " + str(engine_rating)
 		var comp = Component.new()
@@ -506,6 +540,26 @@ func is_component_available_to_faction(component_name: String, faction_code: Str
 	if not faction:
 		return false
 	return faction.unique_components.has(component_name)
+
+func get_faction_market_units(faction_code: String) -> Array[TacticalUnit]:
+	var faction: Faction = GameState.factions.get(faction_code)
+	var results: Array[TacticalUnit] = []
+	for name in unit_templates:
+		var tu = unit_templates[name]
+		if tu.unit_type != Enums.UnitType.MECH:
+			continue
+		if tu.chassis_name.is_empty():
+			continue
+		var has_high_tech = false
+		for c in tu.components:
+			if c.tech_level >= 2:
+				has_high_tech = true
+				break
+		if not has_high_tech:
+			results.append(tu)
+		elif faction and faction.unique_units.has(tu.chassis_name):
+			results.append(tu)
+	return results
 
 func get_faction_market_components(faction_code: String) -> Array[String]:
 	var faction: Faction = GameState.factions.get(faction_code)

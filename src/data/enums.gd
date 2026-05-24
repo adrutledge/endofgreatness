@@ -10,6 +10,8 @@ enum EducationLevel { EARLY_CHILDHOOD, HIGH_SCHOOL, COLLEGE, POSTGRADUATE, PHD }
 
 enum TraitCategory { POSITIVE, NEGATIVE }
 
+enum RefitClass { B, C, D, E }
+
 static func get_all_skills() -> Array[String]:
 	var skills: Array[String] = []
 	skills.append_array(ATOW_SKILLS)

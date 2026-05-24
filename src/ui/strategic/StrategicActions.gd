@@ -7,6 +7,7 @@ signal market_requested()
 signal contract_board_requested()
 signal organization_tree_requested()
 signal event_log_requested()
+signal mech_lab_requested()
 
 func _ready() -> void:
 	var bg = StyleBoxFlat.new()
@@ -22,6 +23,7 @@ func _connect_signals() -> void:
 	%ContractBoardButton.pressed.connect(_on_contract_board)
 	%OrganizationTreeButton.pressed.connect(_on_organization_tree)
 	%EventLogButton.pressed.connect(_on_event_log)
+	%MechLabButton.pressed.connect(_on_mech_lab)
 
 func _on_personnel() -> void:
 	personnel_management_requested.emit()
@@ -37,6 +39,9 @@ func _on_contract_board() -> void:
 
 func _on_organization_tree() -> void:
 	organization_tree_requested.emit()
+
+func _on_mech_lab() -> void:
+	mech_lab_requested.emit()
 
 func _on_event_log() -> void:
 	event_log_requested.emit()

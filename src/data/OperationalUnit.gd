@@ -3,8 +3,8 @@ extends Resource
 
 @export var unit_name: String
 @export var commander: Personnel
-@export var tactical_units: Array[TacticalUnit]
-@export var sub_units: Array[OperationalUnit]
+@export var tactical_units: Array[TacticalUnit] = []
+@export var sub_units: Array[OperationalUnit] = []
 @export var role: String
 @export var current_planet: String = ""
 @export var contract_id: String = ""

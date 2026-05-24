@@ -19,7 +19,7 @@ extends Resource
 @export var wealth: int = 0
 @export var highest_education: Enums.EducationLevel = Enums.EducationLevel.EARLY_CHILDHOOD
 @export var reputation: int = 0
-@export var skills: Dictionary
+@export var skills: Dictionary = {}
 @export var experience: int = 0
 @export var is_injured: bool = false
 @export var injury_severity: int = 0
@@ -83,9 +83,26 @@ func get_tech_skill() -> int:
 func get_repair_target_modifier() -> int:
 	var skill = get_tech_skill()
 	if skill <= 0:
-		return 10
-	var dex_mod = max(0, dexterity - 5)
-	return max(1, 8 - skill - dex_mod)
+		return 5
+	elif skill <= 2:
+		return 2
+	elif skill <= 5:
+		return 0
+	elif skill <= 7:
+		return -2
+	return -3
+
+func get_tech_skill_label() -> String:
+	var skill = get_tech_skill()
+	if skill <= 0:
+		return "Untrained"
+	elif skill <= 2:
+		return "Green"
+	elif skill <= 5:
+		return "Regular"
+	elif skill <= 7:
+		return "Veteran"
+	return "Elite"
 
 func get_effective_gunnery(subskill: String = "mech") -> int:
 	var base = skills.get("gunnery_" + subskill, 5)

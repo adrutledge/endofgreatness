@@ -3,7 +3,7 @@ extends Resource
 
 @export var unit_name: String
 @export var commander: Personnel
-@export var sub_units: Array[OperationalUnit]
+@export var sub_units: Array[OperationalUnit] = []
 @export var contract_id: String = ""
 
 func get_all_tactical_units() -> Array[TacticalUnit]:

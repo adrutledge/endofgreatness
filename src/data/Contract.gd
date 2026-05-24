@@ -14,7 +14,7 @@ extends Resource
 @export var command_rights: Enums.CommandRights
 @export var battle_loss_reimbursement_rate: float
 @export var minimum_tonnage: float
-@export var minimum_tactical_unit_counts: Dictionary
+@export var minimum_tactical_unit_counts: Dictionary = {}
 
 var payout_per_tick: int
 var total_paid: int = 0

@@ -15,20 +15,26 @@ const SYSTEM_BASE_RADIUS: float = 5.0
 @onready var contract_board = $CanvasLayer/ContractBoard
 @onready var personnel_mgmt = $CanvasLayer/PersonnelManagement
 @onready var sidebar: StrategicActions = $CanvasLayer/StrategicActions
-@onready var event_log_ui: Panel = $CanvasLayer/EventLog
-@onready var market_ui: Panel = $CanvasLayer/MarketUI
+@onready var event_log_ui = $CanvasLayer/EventLog
+@onready var market_ui = $CanvasLayer/MarketUI
+@onready var unit_roster_ui = $CanvasLayer/UnitRoster
+@onready var mech_lab_ui = $CanvasLayer/MechLab
 
 func _ready() -> void:
 	sidebar.organization_tree_requested.connect(_on_organization_tree)
 	sidebar.contract_board_requested.connect(_on_contract_board)
 	sidebar.personnel_management_requested.connect(_on_personnel_management)
 	sidebar.market_requested.connect(_on_market)
+	sidebar.unit_roster_requested.connect(_on_unit_roster)
+	sidebar.mech_lab_requested.connect(_on_mech_lab)
 	sidebar.event_log_requested.connect(_on_event_log)
 	org_mgmt.closed.connect(_on_org_mgmt_closed)
 	contract_board.closed.connect(_on_contract_board_closed)
 	personnel_mgmt.closed.connect(_on_personnel_mgmt_closed)
-	event_log_ui.closed.connect(_on_event_log_closed)
-	market_ui.closed.connect(_on_market_closed)
+	event_log_ui.connect("closed", _on_event_log_closed)
+	market_ui.connect("closed", _on_market_closed)
+	unit_roster_ui.connect("closed", _on_unit_roster_closed)
+	mech_lab_ui.connect("closed", _on_mech_lab_closed)
 	_load_systems()
 	_calculate_jump_routes()
 	queue_redraw()
@@ -55,6 +61,24 @@ func _on_personnel_management() -> void:
 	sidebar.hide()
 	personnel_mgmt.populate_roster()
 	personnel_mgmt.show()
+
+func _on_unit_roster() -> void:
+	sidebar.hide()
+	unit_roster_ui.populate_tree()
+	unit_roster_ui.show()
+
+func _on_mech_lab() -> void:
+	sidebar.hide()
+	mech_lab_ui.populate()
+	mech_lab_ui.show()
+
+func _on_mech_lab_closed() -> void:
+	mech_lab_ui.hide()
+	sidebar.show()
+
+func _on_unit_roster_closed() -> void:
+	unit_roster_ui.hide()
+	sidebar.show()
 
 func _on_event_log() -> void:
 	sidebar.hide()
@@ -126,6 +150,13 @@ func _draw() -> void:
 		var sel_radius = _get_spectral_radius(selected_system.get("data", {}).get("spectral_class", ""))
 		draw_circle(sel_pos, sel_radius + 4, Color(1, 1, 0, 0.6), false, 2.0)
 
+		for sys in systems_positions:
+			if sys == selected_system:
+				continue
+			var dist = sel_pos.distance_to(sys["pos"])
+			if dist <= JUMP_DISTANCE:
+				draw_line(sel_pos, sys["pos"], Color(0.5, 1.0, 0.5, 0.5), 2.0, true)
+
 func _get_faction_color(owner: String) -> Color:
 	if owner.is_empty():
 		return Color(0.55, 0.55, 0.55)
@@ -147,7 +178,13 @@ func _get_spectral_radius(spectral: String) -> float:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
-		if market_ui.visible:
+		if mech_lab_ui.visible:
+			_on_mech_lab_closed()
+			get_viewport().set_input_as_handled()
+		elif unit_roster_ui.visible:
+			_on_unit_roster_closed()
+			get_viewport().set_input_as_handled()
+		elif market_ui.visible:
 			_on_market_closed()
 			get_viewport().set_input_as_handled()
 		elif event_log_ui.visible:

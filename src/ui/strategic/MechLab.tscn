@@ -1,0 +1,123 @@
+[gd_scene load_steps=2 format=3 uid="uid://mech_lab"]
+
+[ext_resource type="Script" path="res://src/ui/strategic/MechLab.gd" id="1"]
+
+[node name="MechLab" type="Panel"]
+script = ExtResource("1")
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="MarginContainer/VBox"]
+unique_name_in_owner = true
+text = "MechLab — Refit & Customization"
+theme_override_font_sizes/font_size = 20
+size_flags_horizontal = 4
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBox"]
+
+[node name="HSplit" type="HSplitContainer" parent="MarginContainer/VBox"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+
+[node name="LeftPanel" type="VBoxContainer" parent="MarginContainer/VBox/HSplit"]
+size_flags_horizontal = 1
+
+[node name="SectionLabel1" type="Label" parent="MarginContainer/VBox/HSplit/LeftPanel"]
+text = "Your Mechs"
+theme_override_font_sizes/font_size = 14
+
+[node name="UnitList" type="ItemList" parent="MarginContainer/VBox/HSplit/LeftPanel"]
+unique_name_in_owner = true
+size_flags_vertical = 3
+select_mode = 0
+
+[node name="RightPanel" type="VBoxContainer" parent="MarginContainer/VBox/HSplit"]
+size_flags_horizontal = 3
+
+[node name="CurrentInfo" type="RichTextLabel" parent="MarginContainer/VBox/HSplit/RightPanel"]
+unique_name_in_owner = true
+text = ""
+bbcode_enabled = true
+size_flags_vertical = 2
+fit_content = true
+
+[node name="SectionLabel2" type="Label" parent="MarginContainer/VBox/HSplit/RightPanel"]
+text = "Available Variants"
+theme_override_font_sizes/font_size = 14
+
+[node name="VariantList" type="ItemList" parent="MarginContainer/VBox/HSplit/RightPanel"]
+unique_name_in_owner = true
+size_flags_vertical = 2
+select_mode = 0
+
+[node name="VariantInfo" type="RichTextLabel" parent="MarginContainer/VBox/HSplit/RightPanel"]
+unique_name_in_owner = true
+text = ""
+bbcode_enabled = true
+size_flags_vertical = 2
+fit_content = true
+
+[node name="DiffInfo" type="RichTextLabel" parent="MarginContainer/VBox/HSplit/RightPanel"]
+unique_name_in_owner = true
+text = ""
+bbcode_enabled = true
+size_flags_vertical = 3
+fit_content = true
+
+[node name="PartsInfo" type="RichTextLabel" parent="MarginContainer/VBox/HSplit/RightPanel"]
+unique_name_in_owner = true
+text = ""
+bbcode_enabled = true
+size_flags_vertical = 2
+fit_content = true
+
+[node name="CostLabel" type="Label" parent="MarginContainer/VBox/HSplit/RightPanel"]
+unique_name_in_owner = true
+text = ""
+
+[node name="HoursLabel" type="Label" parent="MarginContainer/VBox/HSplit/RightPanel"]
+unique_name_in_owner = true
+text = ""
+
+[node name="StartRefitButton" type="Button" parent="MarginContainer/VBox/HSplit/RightPanel"]
+unique_name_in_owner = true
+text = "Start Refit"
+disabled = true
+
+[node name="BottomBar" type="HBoxContainer" parent="MarginContainer/VBox"]
+size_flags_vertical = 0
+
+[node name="StatusLabel" type="Label" parent="MarginContainer/VBox/BottomBar"]
+unique_name_in_owner = true
+text = ""
+size_flags_horizontal = 3
+
+[node name="CloseButton" type="Button" parent="MarginContainer/VBox/BottomBar"]
+unique_name_in_owner = true
+text = "Close"
+size_flags_horizontal = 0

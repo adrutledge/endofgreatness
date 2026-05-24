@@ -146,9 +146,9 @@ func _update_detail_view(p: Personnel) -> void:
 	if p.role == Enums.PersonnelRole.TECHNICIAN:
 		info += "\nSpecialization: " + p.specialization
 		var tech_skill = p.get_tech_skill()
-		info += "  Skill: " + (str(tech_skill) if tech_skill > 0 else "—")
+		info += "\nSkill: " + p.get_tech_skill_label() + " (" + str(tech_skill) + ")"
 		var repair_tn = p.get_repair_target_modifier()
-		info += "  Repair TN: " + str(repair_tn)
+		info += "\nRepair TN mod: " + ("+" if repair_tn > 0 else "") + str(repair_tn)
 	else:
 		if p.skills.get("gunnery_mech", 0) > 0:
 			info += "\nGunnery/Mech: " + str(p.skills["gunnery_mech"])

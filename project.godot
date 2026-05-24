@@ -30,6 +30,7 @@ ThemeManager="*res://src/core/ThemeManager.gd"
 EconomySystem="*res://src/systems/EconomySystem.gd"
 ReputationSystem="*res://src/systems/ReputationSystem.gd"
 PersonnelManager="*res://src/systems/PersonnelManager.gd"
+RefitManager="*res://src/systems/RefitManager.gd"
 
 [rendering]
 

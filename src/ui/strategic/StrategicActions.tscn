@@ -72,6 +72,11 @@ unique_name_in_owner = true
 text = "Event Log"
 clip_text = true
 
+[node name="MechLabButton" type="Button" parent="MarginContainer/VBox"]
+unique_name_in_owner = true
+text = "MechLab"
+clip_text = true
+
 [node name="InfoSeparator" type="HSeparator" parent="MarginContainer/VBox"]
 
 [node name="SystemInfoPanel" parent="MarginContainer/VBox" instance=ExtResource("2")]

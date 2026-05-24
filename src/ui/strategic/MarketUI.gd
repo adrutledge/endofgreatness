@@ -26,9 +26,21 @@ var remote_results: Array[Dictionary] = []
 @onready var balance_label: Label = %BalanceLabel
 @onready var close_button: Button = %CloseButton
 
+@onready var mech_search: LineEdit = %MechSearch
+@onready var mech_list: ItemList = %MechList
+@onready var mech_detail_name: Label = %MechDetailName
+@onready var mech_detail_specs: RichTextLabel = %MechDetailSpecs
+@onready var mech_price_label: Label = %MechPriceLabel
+@onready var mech_status_label: Label = %MechStatusLabel
+@onready var buy_mech_button: Button = %BuyMechButton
+
 var selected_item_name: String = ""
 var selected_remote_idx: int = -1
 var remote_item_name: String = ""
+
+var available_mechs: Array[TacticalUnit] = []
+var selected_mech_index: int = -1
+var selected_mech_cost: int = 0
 
 func _ready() -> void:
 	var bg_style = StyleBoxFlat.new()
@@ -51,6 +63,9 @@ func _ready() -> void:
 	local_list.item_selected.connect(_on_local_item_selected)
 	remote_list.item_selected.connect(_on_remote_item_selected)
 	tabs.tab_changed.connect(_on_tab_changed)
+	mech_search.text_changed.connect(_on_mech_search)
+	mech_list.item_selected.connect(_on_mech_selected)
+	buy_mech_button.pressed.connect(_on_buy_mech)
 
 func populate() -> void:
 	if not GameState.player.current_planet:
@@ -61,6 +76,7 @@ func populate() -> void:
 
 	EconomySystem.initialize_market(GameState.player.current_planet)
 	_refresh_local()
+	_refresh_mech_market()
 	balance_label.text = "Balance: " + _fmt_money(EconomySystem.get_balance())
 
 func _refresh_local() -> void:
@@ -126,12 +142,15 @@ func _on_buy() -> void:
 		detail_name.text = "Purchase failed — insufficient funds"
 
 func _on_tab_changed(_tab: int) -> void:
-	if tabs.current_tab == 0:
-		_refresh_local()
-	else:
-		_clear_remote_detail()
-		remote_list.clear()
-		remote_status.text = "Enter an item name to search nearby systems"
+	match tabs.current_tab:
+		0:
+			_refresh_local()
+		1:
+			_refresh_mech_market()
+		_:
+			_clear_remote_detail()
+			remote_list.clear()
+			remote_status.text = "Enter an item name to search nearby systems"
 
 func _on_remote_search(new_text: String) -> void:
 	remote_list.clear()
@@ -197,6 +216,146 @@ func _on_order() -> void:
 		order_cost_label.text = "Order placed — arrives in " + str(r.travel_days) + " days"
 	else:
 		order_cost_label.text = "Order failed — insufficient funds"
+
+func _refresh_mech_market() -> void:
+	mech_list.clear()
+	selected_mech_index = -1
+	buy_mech_button.disabled = true
+	mech_detail_name.text = ""
+	mech_detail_specs.text = ""
+	mech_price_label.text = ""
+	mech_status_label.text = ""
+
+	available_mechs.clear()
+	var factions = EconomySystem.current_planet_factions
+	if factions.is_empty():
+		factions = ["PIR"]
+	var seen_chassis: Dictionary = {}
+	for code in factions:
+		var units = DataManager.get_faction_market_units(code)
+		for tu in units:
+			var key = tu.chassis_name + "|" + tu.model_name
+			if seen_chassis.has(key):
+				continue
+			seen_chassis[key] = true
+			available_mechs.append(tu)
+
+	var query = mech_search.text.strip_edges().to_lower()
+	for tu in available_mechs:
+		if query and not tu.unit_name.to_lower().contains(query):
+			continue
+		var cost = _calc_mech_cost(tu)
+		mech_list.add_item("%s  %s" % [tu.unit_name, _fmt_money(cost)])
+
+func _calc_mech_cost(tu: TacticalUnit) -> int:
+	return tu.calculate_tm_cost()
+
+func _on_mech_search(_new_text: String) -> void:
+	_refresh_mech_market()
+
+func _on_mech_selected(index: int) -> void:
+	if index < 0 or index >= mech_list.get_item_count():
+		return
+	var query = mech_search.text.strip_edges().to_lower()
+	var visible: Array[TacticalUnit] = []
+	for tu in available_mechs:
+		if query and not tu.unit_name.to_lower().contains(query):
+			continue
+		visible.append(tu)
+	if index >= visible.size():
+		return
+	var tu = visible[index]
+	selected_mech_index = index
+	selected_mech_cost = _calc_mech_cost(tu)
+	mech_detail_name.text = tu.unit_name
+
+	var validation = tu.validate_tm()
+	var mech_lines: Array[String] = []
+	mech_lines.append("Chassis: " + tu.chassis_name)
+	mech_lines.append("Model: " + tu.model_name)
+	mech_lines.append("Engine: " + str(tu.engine_rating) + " " + tu.engine_type)
+	mech_lines.append("Structure: " + tu.internal_structure_type + " | Gyro: " + tu.gyro_type + " | Armor: " + tu.armor_type + " (" + str(tu.total_armor_points) + " pts)")
+	mech_lines.append("Tonnage: " + str(tu.tonnage) + "t (" + str(validation.used_tonnage) + "t used, " + str(validation.free_tonnage) + "t free)")
+	mech_lines.append("Movement: " + str(tu.movement_mp) + "/" + str(tu.run_mp) + "/" + str(tu.jump_mp))
+	if not validation.valid:
+		mech_lines.append("[color=#ff4444]Design issue: " + ", ".join(validation.errors) + "[/color]")
+	mech_lines.append("")
+	mech_lines.append("[b]Components (" + str(tu.components.size()) + "):[/b]")
+	for c in tu.components:
+		mech_lines.append("  " + c.component_name)
+	mech_detail_specs.text = "\n".join(mech_lines)
+
+	mech_price_label.text = "Price: " + _fmt_money(selected_mech_cost)
+	mech_status_label.text = ""
+	buy_mech_button.disabled = false
+
+func _on_buy_mech() -> void:
+	if selected_mech_index < 0:
+		return
+	var query = mech_search.text.strip_edges().to_lower()
+	var visible: Array[TacticalUnit] = []
+	for tu in available_mechs:
+		if query and not tu.unit_name.to_lower().contains(query):
+			continue
+		visible.append(tu)
+	if selected_mech_index >= visible.size():
+		return
+	var template = visible[selected_mech_index]
+
+	if EconomySystem.get_balance() < selected_mech_cost:
+		mech_status_label.text = "Insufficient funds — need " + _fmt_money(selected_mech_cost)
+		return
+
+	if not EconomySystem.deduct_funds(selected_mech_cost, "Purchase mech: " + template.unit_name):
+		mech_status_label.text = "Purchase failed"
+		return
+
+	var new_unit = TacticalUnit.new()
+	new_unit.unit_name = template.unit_name
+	new_unit.chassis_name = template.chassis_name
+	new_unit.model_name = template.model_name
+	new_unit.unit_type = template.unit_type
+	new_unit.tonnage = template.tonnage
+	new_unit.movement_mp = template.movement_mp
+	new_unit.run_mp = template.run_mp
+	new_unit.jump_mp = template.jump_mp
+	new_unit.quality = Enums.Quality.D
+	for c in template.components:
+		var nc = Component.new()
+		nc.component_name = c.component_name
+		nc.component_type = c.component_type
+		nc.tonnage = c.tonnage
+		nc.critical_slots = c.critical_slots
+		nc.cost = c.cost
+		nc.tech_base = c.tech_base
+		nc.tech_level = c.tech_level
+		nc.quality_range = c.quality_range
+		nc.repair_difficulty = c.repair_difficulty
+		nc.status = Enums.ComponentStatus.UNDAMAGED
+		if c.location:
+			nc.location = c.location
+		new_unit.components.append(nc)
+
+	if GameState.player.organizational_units.is_empty():
+		var ou = OrganizationalUnit.new()
+		ou.unit_name = "Purchased Units"
+		GameState.player.organizational_units.append(ou)
+	var target_ou = GameState.player.organizational_units[0]
+	if target_ou.sub_units.is_empty():
+		var opu = OperationalUnit.new()
+		opu.unit_name = "Reserve"
+		opu.role = "Reserve"
+		target_ou.sub_units.append(opu)
+	target_ou.sub_units[0].tactical_units.append(new_unit)
+
+	balance_label.text = "Balance: " + _fmt_money(EconomySystem.get_balance())
+	GameState.log_event("mech_purchased", {
+		"unit": template.unit_name,
+		"cost": selected_mech_cost,
+		"location": GameState.player.current_planet
+	})
+	mech_status_label.text = "Purchased! Added to " + target_ou.unit_name
+	buy_mech_button.disabled = true
 
 func _on_close() -> void:
 	hide()

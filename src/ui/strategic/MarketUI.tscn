@@ -133,6 +133,73 @@ unique_name_in_owner = true
 text = "Buy"
 disabled = true
 
+[node name="Mech Market" type="HSplitContainer" parent="MarginContainer/VBox/Tabs"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+
+[node name="MechLeft" type="VBoxContainer" parent="MarginContainer/VBox/Tabs/Mech Market"]
+size_flags_horizontal = 2
+
+[node name="MechSearch" type="LineEdit" parent="MarginContainer/VBox/Tabs/Mech Market/MechLeft"]
+unique_name_in_owner = true
+placeholder_text = "Search mechs..."
+size_flags_horizontal = 4
+
+[node name="MechList" type="ItemList" parent="MarginContainer/VBox/Tabs/Mech Market/MechLeft"]
+unique_name_in_owner = true
+size_flags_vertical = 3
+select_mode = 0
+
+[node name="MechDetail" type="Panel" parent="MarginContainer/VBox/Tabs/Mech Market"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+
+[node name="MechDetailMargin" type="MarginContainer" parent="MarginContainer/VBox/Tabs/Mech Market/MechDetail"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="MechDetailVBox" type="VBoxContainer" parent="MarginContainer/VBox/Tabs/Mech Market/MechDetail/MechDetailMargin"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MechDetailName" type="Label" parent="MarginContainer/VBox/Tabs/Mech Market/MechDetail/MechDetailMargin/MechDetailVBox"]
+unique_name_in_owner = true
+text = ""
+theme_override_font_sizes/font_size = 16
+autowrap_mode = 1
+
+[node name="MechDetailSpecs" type="RichTextLabel" parent="MarginContainer/VBox/Tabs/Mech Market/MechDetail/MechDetailMargin/MechDetailVBox"]
+unique_name_in_owner = true
+text = ""
+bbcode_enabled = true
+size_flags_vertical = 3
+fit_content = true
+
+[node name="MechPriceLabel" type="Label" parent="MarginContainer/VBox/Tabs/Mech Market/MechDetail/MechDetailMargin/MechDetailVBox"]
+unique_name_in_owner = true
+text = ""
+
+[node name="MechStatusLabel" type="Label" parent="MarginContainer/VBox/Tabs/Mech Market/MechDetail/MechDetailMargin/MechDetailVBox"]
+unique_name_in_owner = true
+text = ""
+
+[node name="BuyMechButton" type="Button" parent="MarginContainer/VBox/Tabs/Mech Market/MechDetail/MechDetailMargin/MechDetailVBox"]
+unique_name_in_owner = true
+text = "Purchase Mech"
+disabled = true
+
 [node name="Remote Order" type="HSplitContainer" parent="MarginContainer/VBox/Tabs"]
 anchors_preset = 15
 anchor_right = 1.0
