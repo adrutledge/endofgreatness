@@ -1,0 +1,12 @@
+{
+  "name": "Fusion Engine 230",
+  "tonnage": 46,
+  "critical_slots": 4,
+  "cost": 1150000,
+  "tech_base": "inner_sphere",
+  "quality_range": {
+    "min": 1,
+    "max": 4
+  },
+  "repair_difficulty": 2
+}

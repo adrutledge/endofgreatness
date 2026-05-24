@@ -1,0 +1,40 @@
+[gd_scene load_steps=2 format=3 uid="uid://system_info_panel"]
+
+[ext_resource type="Script" path="res://src/ui/strategic/SystemInfoPanel.gd" id="1"]
+
+[node name="SystemInfoPanel" type="VBoxContainer"]
+script = ExtResource("1")
+visible = false
+size_flags_vertical = 3
+
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="VBox" type="VBoxContainer" parent="ScrollContainer"]
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="NameLabel" type="Label" parent="ScrollContainer/VBox"]
+unique_name_in_owner = true
+text = "System Name"
+theme_override_font_sizes/font_size = 18
+autowrap_mode = 1
+
+[node name="SpectralLabel" type="Label" parent="ScrollContainer/VBox"]
+unique_name_in_owner = true
+text = "Spectral Class:"
+
+[node name="FactionsLabel" type="Label" parent="ScrollContainer/VBox"]
+unique_name_in_owner = true
+text = "Owner:"
+autowrap_mode = 1
+
+[node name="PlayerLabel" type="Label" parent="ScrollContainer/VBox"]
+unique_name_in_owner = true
+text = ""
+
+[node name="HSeparator" type="HSeparator" parent="ScrollContainer/VBox"]
+
+[node name="DetailsContainer" type="VBoxContainer" parent="ScrollContainer/VBox"]
+unique_name_in_owner = true

@@ -1,0 +1,12 @@
+{
+  "name": "Sensors",
+  "tonnage": 1,
+  "critical_slots": 2,
+  "cost": 50000,
+  "tech_base": "inner_sphere",
+  "quality_range": {
+    "min": 1,
+    "max": 5
+  },
+  "repair_difficulty": 3
+}

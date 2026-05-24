@@ -1,0 +1,12 @@
+{
+  "name": "Fusion Engine 270",
+  "tonnage": 54,
+  "critical_slots": 4,
+  "cost": 1350000,
+  "tech_base": "inner_sphere",
+  "quality_range": {
+    "min": 1,
+    "max": 4
+  },
+  "repair_difficulty": 2
+}

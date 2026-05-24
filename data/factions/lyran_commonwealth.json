@@ -1,0 +1,15 @@
+{
+  "name": "Lyran Commonwealth",
+  "short_code": "LC",
+  "color": "#eab308",
+  "home_worlds": ["Tharkad", "Hesperus II", "Skye"],
+  "unique_units": ["Zeus", "Commando", "Banshee", "Griffin"],
+  "unique_components": ["Commonwealth Gauss Rifle", "Lyran Durallex Armor"],
+  "reputation_levels_gates": ["hostile", "unfriendly", "neutral", "friendly", "allied"],
+  "contracts_offered": ["defensive_garrison", "convoy_escort", "fortification"],
+  "allies": ["federated_suns", "mercenary_review_board"],
+  "enemies": ["draconis_combine", "free_worlds_league", "capellan_confederation"],
+  "is_rebel": false,
+  "is_pirate": false,
+  "is_civilian": false
+}

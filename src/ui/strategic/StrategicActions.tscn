@@ -1,0 +1,77 @@
+[gd_scene load_steps=3 format=3 uid="uid://strategic_actions"]
+
+[ext_resource type="Script" path="res://src/ui/strategic/StrategicActions.gd" id="1"]
+[ext_resource type="PackedScene" path="res://src/ui/strategic/SystemInfoPanel.tscn" id="2"]
+
+[node name="StrategicActions" type="Panel"]
+script = ExtResource("1")
+anchor_left = 1.0
+anchor_right = 1.0
+anchor_top = 0.0
+anchor_bottom = 1.0
+margin_left = -220.0
+margin_right = 0.0
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Title" type="Label" parent="MarginContainer/VBox"]
+unique_name_in_owner = true
+text = "Strategic Actions"
+theme_override_font_sizes/font_size = 16
+size_flags_horizontal = 4
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBox"]
+
+[node name="PersonnelButton" type="Button" parent="MarginContainer/VBox"]
+unique_name_in_owner = true
+text = "Personnel Management"
+size_flags_horizontal = 4
+clip_text = true
+
+[node name="UnitRosterButton" type="Button" parent="MarginContainer/VBox"]
+unique_name_in_owner = true
+text = "Unit Roster / Repair Bay"
+clip_text = true
+
+[node name="MarketButton" type="Button" parent="MarginContainer/VBox"]
+unique_name_in_owner = true
+text = "Market / Shopping"
+clip_text = true
+
+[node name="ContractBoardButton" type="Button" parent="MarginContainer/VBox"]
+unique_name_in_owner = true
+text = "Contract Board"
+clip_text = true
+
+[node name="OrganizationTreeButton" type="Button" parent="MarginContainer/VBox"]
+unique_name_in_owner = true
+text = "Organization Tree"
+clip_text = true
+
+[node name="EventLogButton" type="Button" parent="MarginContainer/VBox"]
+unique_name_in_owner = true
+text = "Event Log"
+clip_text = true
+
+[node name="InfoSeparator" type="HSeparator" parent="MarginContainer/VBox"]
+
+[node name="SystemInfoPanel" parent="MarginContainer/VBox" instance=ExtResource("2")]

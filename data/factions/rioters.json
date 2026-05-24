@@ -1,0 +1,15 @@
+{
+  "name": "Rioters",
+  "short_code": "RIOT",
+  "color": "#eab308",
+  "home_worlds": [],
+  "unique_units": [],
+  "unique_components": [],
+  "reputation_levels_gates": ["hostile", "unfriendly", "neutral"],
+  "contracts_offered": [],
+  "allies": [],
+  "enemies": [],
+  "is_rebel": false,
+  "is_pirate": false,
+  "is_civilian": true
+}

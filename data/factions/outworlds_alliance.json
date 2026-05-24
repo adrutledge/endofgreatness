@@ -1,0 +1,15 @@
+{
+  "name": "Outworlds Alliance",
+  "short_code": "OA",
+  "color": "#06b6d4",
+  "home_worlds": ["Alpheratz", "Lushann", "Ramar"],
+  "unique_units": ["Locust", "Stinger", "Wasp"],
+  "unique_components": ["Alliance Targeting Computer", "Light Ferro-Fibrous"],
+  "reputation_levels_gates": ["hostile", "unfriendly", "neutral", "friendly", "allied"],
+  "contracts_offered": ["garrison", "recon", "anti_piracy"],
+  "allies": [],
+  "enemies": ["draconis_combine"],
+  "is_rebel": false,
+  "is_pirate": false,
+  "is_civilian": false
+}

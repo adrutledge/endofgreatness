@@ -1,0 +1,15 @@
+{
+  "name": "Magistracy of Canopus",
+  "short_code": "MC",
+  "color": "#ec4899",
+  "home_worlds": ["Canopus", "Royal", "Luxen"],
+  "unique_units": ["Hoplite", "Marauder", "Griffin"],
+  "unique_components": ["Canopian MedTech", "Magistracy Armor"],
+  "reputation_levels_gates": ["hostile", "unfriendly", "neutral", "friendly", "allied"],
+  "contracts_offered": ["garrison", "recon", "medical_support"],
+  "allies": ["taurian_concordat"],
+  "enemies": ["capellan_confederation"],
+  "is_rebel": false,
+  "is_pirate": false,
+  "is_civilian": false
+}

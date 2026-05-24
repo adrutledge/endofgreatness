@@ -1,0 +1,15 @@
+{
+  "name": "Draconis Combine",
+  "short_code": "DC",
+  "color": "#dc2626",
+  "home_worlds": ["Luthien", "Gibraltar", "Dieron"],
+  "unique_units": ["Panther", "Dragon", "Jenner", "Grand Dragon"],
+  "unique_components": ["Combine Targeting Array", "Drac Ferro-Fibrous"],
+  "reputation_levels_gates": ["hostile", "unfriendly", "neutral", "friendly", "allied"],
+  "contracts_offered": ["strike", "convoy_ambush", "assassination", "border_patrol"],
+  "allies": [],
+  "enemies": ["federated_suns", "lyran_commonwealth", "outworlds_alliance"],
+  "is_rebel": false,
+  "is_pirate": false,
+  "is_civilian": false
+}

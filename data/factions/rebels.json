@@ -1,0 +1,15 @@
+{
+  "name": "Rebels",
+  "short_code": "REB",
+  "color": "#f97316",
+  "home_worlds": [],
+  "unique_units": ["Locust", "Stinger", "Wasp"],
+  "unique_components": ["Salvaged Weapon", "Patchwork Armor"],
+  "reputation_levels_gates": ["hostile", "unfriendly", "neutral", "friendly"],
+  "contracts_offered": ["rebellion", "sabotage"],
+  "allies": [],
+  "enemies": ["lyran_commonwealth", "federated_suns", "draconis_combine", "free_worlds_league", "capellan_confederation"],
+  "is_rebel": true,
+  "is_pirate": false,
+  "is_civilian": false
+}

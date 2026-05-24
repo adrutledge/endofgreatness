@@ -1,0 +1,15 @@
+{
+  "name": "Capellan Confederation",
+  "short_code": "CC",
+  "color": "#22c55e",
+  "home_worlds": ["Sian", "Capella", "St. Ives"],
+  "unique_units": ["Vindicator", "Catapult", "Raven", "UrbanMech"],
+  "unique_components": ["Confederation Stealth Armor", "Capellan C3 System"],
+  "reputation_levels_gates": ["hostile", "unfriendly", "neutral", "friendly", "allied"],
+  "contracts_offered": ["guerrilla", "defection", "sabotage", "recon"],
+  "allies": ["free_worlds_league"],
+  "enemies": ["federated_suns", "mercenary_review_board", "lyran_commonwealth"],
+  "is_rebel": false,
+  "is_pirate": false,
+  "is_civilian": false
+}

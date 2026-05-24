@@ -1,0 +1,15 @@
+{
+  "name": "Independent Pirates",
+  "short_code": "PIR",
+  "color": "#ef4444",
+  "home_worlds": ["Antallos", "Port Krin", "The Ruins of Gabriel"],
+  "unique_units": ["UrbanMech", "Locust", "Wasp", "Stinger"],
+  "unique_components": ["Salvaged Targeting System", "Patchwork Armor"],
+  "reputation_levels_gates": ["hostile", "unfriendly", "neutral", "friendly"],
+  "contracts_offered": ["raid", "smuggling", "piracy"],
+  "allies": [],
+  "enemies": ["federated_suns", "draconis_combine", "lyran_commonwealth", "free_worlds_league", "capellan_confederation", "taurian_concordat", "outworlds_alliance", "magistracy_of_canopus", "mercenary_review_board"],
+  "is_rebel": true,
+  "is_pirate": true,
+  "is_civilian": false
+}

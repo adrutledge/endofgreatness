@@ -1,0 +1,54 @@
+[
+  {
+    "date": "3025-01-15",
+    "type": "event",
+    "data": {
+      "title": "Lyran Commonwealth Reinforces Skye",
+      "description": "The Lyran Commonwealth dispatches additional regiments to the Skye region following increased border tensions with the Draconis Combine.",
+      "affected_faction": "lyran_commonwealth",
+      "system": "Skye"
+    }
+  },
+  {
+    "date": "3025-04-02",
+    "type": "ownership_change",
+    "data": {
+      "title": "Capellan Forces Capture Northwind",
+      "description": "Capellan Confederation forces launch a surprise offensive and seize control of Northwind from Federated Commonwealth garrisons.",
+      "from_faction": "fedcom",
+      "to_faction": "capellan_confederation",
+      "system": "Northwind"
+    }
+  },
+  {
+    "date": "3025-06-20",
+    "type": "faction_created",
+    "data": {
+      "title": "Mercenary Review Board Establishes Galatea Headquarters",
+      "description": "The Mercenary Review Board formally establishes its central headquarters on Galatea, codifying mercenary contracts across the Inner Sphere.",
+      "faction": "mercenary_review_board",
+      "system": "Galatea"
+    }
+  },
+  {
+    "date": "3025-09-10",
+    "type": "event",
+    "data": {
+      "title": "Free Worlds League Diplomatic Summit",
+      "description": "The Free Worlds League hosts a diplomatic summit on Atreus, attempting to negotiate trade agreements with bordering states.",
+      "affected_faction": "free_worlds_league",
+      "system": "Atreus"
+    }
+  },
+  {
+    "date": "3025-11-28",
+    "type": "ownership_change",
+    "data": {
+      "title": "Pirate Raid on Antallos",
+      "description": "Independent pirate forces overwhelm the decrepit garrison on Antallos, establishing Port Krin as a pirate haven.",
+      "from_faction": "fedcom",
+      "to_faction": "pirates",
+      "system": "Antallos"
+    }
+  }
+]

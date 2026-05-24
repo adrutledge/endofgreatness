@@ -1,0 +1,12 @@
+{
+  "name": "Small Laser",
+  "tonnage": 0.5,
+  "critical_slots": 1,
+  "cost": 11250,
+  "tech_base": "inner_sphere",
+  "quality_range": {
+    "min": 1,
+    "max": 2
+  },
+  "repair_difficulty": 1
+}

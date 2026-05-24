@@ -1,0 +1,12 @@
+{
+  "name": "Fusion Engine 180",
+  "tonnage": 7,
+  "critical_slots": 4,
+  "cost": 108000,
+  "tech_base": "inner_sphere",
+  "quality_range": {
+    "min": 1,
+    "max": 4
+  },
+  "repair_difficulty": 3
+}

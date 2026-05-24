@@ -1,0 +1,15 @@
+{
+  "name": "Mercenary Review Board",
+  "short_code": "MRB",
+  "color": "#6b7280",
+  "home_worlds": ["Galatea", "Northwind", "Herotitus"],
+  "unique_units": [],
+  "unique_components": [],
+  "reputation_levels_gates": ["untrusted", "neutral", "reliable", "trusted", "elite"],
+  "contracts_offered": [],
+  "allies": ["federated_suns", "lyran_commonwealth"],
+  "enemies": ["capellan_confederation"],
+  "is_rebel": false,
+  "is_pirate": false,
+  "is_civilian": true
+}

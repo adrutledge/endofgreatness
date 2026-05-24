@@ -1,0 +1,15 @@
+{
+  "name": "Free Worlds League",
+  "short_code": "FWL",
+  "color": "#a855f7",
+  "home_worlds": ["Atreus", "Gibraltar", "Northwind"],
+  "unique_units": ["Orion", "Awesome", "Hermes II", "Quickdraw"],
+  "unique_components": ["League PPC Capacitor", "Marik Heat Sink"],
+  "reputation_levels_gates": ["hostile", "unfriendly", "neutral", "friendly", "allied"],
+  "contracts_offered": ["garrison", "recon", "security_detail", "siege"],
+  "allies": ["capellan_confederation"],
+  "enemies": ["lyran_commonwealth", "federated_suns"],
+  "is_rebel": false,
+  "is_pirate": false,
+  "is_civilian": false
+}

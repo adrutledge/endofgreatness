@@ -1,0 +1,12 @@
+{
+  "name": "Fusion Engine 160",
+  "tonnage": 32,
+  "critical_slots": 3,
+  "cost": 800000,
+  "tech_base": "inner_sphere",
+  "quality_range": {
+    "min": 1,
+    "max": 4
+  },
+  "repair_difficulty": 1
+}

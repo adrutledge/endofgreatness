@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=3 uid="uid://star_map"]
+
+[ext_resource type="Script" path="res://src/ui/strategic/StarMap.gd" id="1"]
+[ext_resource type="PackedScene" path="res://src/ui/strategic/StrategicActions.tscn" id="2"]
+[ext_resource type="PackedScene" path="res://src/ui/strategic/OrganizationManagement.tscn" id="3"]
+[ext_resource type="PackedScene" path="res://src/ui/strategic/ContractBoard.tscn" id="4"]
+
+[node name="StarMap" type="Node2D"]
+script = ExtResource("1")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(60, 0)
+zoom = Vector2(0.5, 0.5)
+enabled = true
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+layer = 1
+
+[node name="StrategicActions" parent="CanvasLayer" instance=ExtResource("2")]
+
+[node name="OrganizationManagement" parent="CanvasLayer" instance=ExtResource("3")]
+
+[node name="ContractBoard" parent="CanvasLayer" instance=ExtResource("4")]

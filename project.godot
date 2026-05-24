@@ -1,0 +1,42 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[animation]
+
+compatibility/default_parent_skeleton_in_mesh_instance_3d=true
+
+[application]
+
+config/name="End of Greatness"
+config/description="A BattleTech grand strategy simulation"
+run/main_scene="res://src/ui/strategic/StarMap.tscn"
+config/features=PackedStringArray("4.6")
+config/icon="res://assets/icons/game_icon.svg"
+
+[autoload]
+
+GameState="*res://src/core/GameState.gd"
+EventBus="*res://src/core/EventBus.gd"
+TimeManager="*res://src/core/TimeManager.gd"
+DataManager="*res://src/core/DataManager.gd"
+ThemeManager="*res://src/core/ThemeManager.gd"
+EconomySystem="*res://src/systems/EconomySystem.gd"
+ReputationSystem="*res://src/systems/ReputationSystem.gd"
+PersonnelManager="*res://src/systems/PersonnelManager.gd"
+
+[rendering]
+
+renderer/rendering_method="forward_plus"
+environment/default_clear_color=0, 0, 0, 1
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720

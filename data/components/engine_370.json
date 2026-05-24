@@ -1,0 +1,12 @@
+{
+  "name": "Fusion Engine 370",
+  "tonnage": 111,
+  "critical_slots": 5,
+  "cost": 1850000,
+  "tech_base": "inner_sphere",
+  "quality_range": {
+    "min": 1,
+    "max": 4
+  },
+  "repair_difficulty": 3
+}

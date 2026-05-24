@@ -1,0 +1,12 @@
+{
+  "name": "Fusion Engine 320",
+  "tonnage": 96,
+  "critical_slots": 5,
+  "cost": 1600000,
+  "tech_base": "inner_sphere",
+  "quality_range": {
+    "min": 1,
+    "max": 4
+  },
+  "repair_difficulty": 3
+}

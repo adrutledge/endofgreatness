@@ -1,0 +1,12 @@
+{
+  "name": "Autocannon/20",
+  "tonnage": 14,
+  "critical_slots": 10,
+  "cost": 300000,
+  "tech_base": "inner_sphere",
+  "quality_range": {
+    "min": 1,
+    "max": 5
+  },
+  "repair_difficulty": 5
+}

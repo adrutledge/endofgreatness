@@ -1,0 +1,15 @@
+{
+  "name": "Taurian Concordat",
+  "short_code": "TC",
+  "color": "#84cc16",
+  "home_worlds": ["Taurus", "MacLeod's Land", "New Vandenburg"],
+  "unique_units": ["Toro", "Talon", "Marauder", "Warhammer"],
+  "unique_components": ["Concordat Targeting System", "Taurian Ferro-Fibrous"],
+  "reputation_levels_gates": ["hostile", "unfriendly", "neutral", "friendly", "allied"],
+  "contracts_offered": ["defensive_garrison", "border_patrol", "recon"],
+  "allies": ["magistracy_of_canopus"],
+  "enemies": ["federated_suns"],
+  "is_rebel": false,
+  "is_pirate": false,
+  "is_civilian": false
+}

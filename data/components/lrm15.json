@@ -1,0 +1,12 @@
+{
+  "name": "LRM-15",
+  "tonnage": 7,
+  "critical_slots": 3,
+  "cost": 175000,
+  "tech_base": "inner_sphere",
+  "quality_range": {
+    "min": 1,
+    "max": 5
+  },
+  "repair_difficulty": 3
+}

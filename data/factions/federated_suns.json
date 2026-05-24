@@ -1,0 +1,15 @@
+{
+  "name": "Federated Suns",
+  "short_code": "FS",
+  "color": "#3b82f6",
+  "home_worlds": ["New Avalon", "Robinson", "Katherine"],
+  "unique_units": ["Rifleman", "Marauder", "Warhammer", "Enforcer"],
+  "unique_components": ["Suns Targeting Computer", "Valiant Armor"],
+  "reputation_levels_gates": ["hostile", "unfriendly", "neutral", "friendly", "allied"],
+  "contracts_offered": ["garrison", "assassination", "objective_raid", "piracy_defense"],
+  "allies": ["lyran_commonwealth", "mercenary_review_board"],
+  "enemies": ["draconis_combine", "capellan_confederation"],
+  "is_rebel": false,
+  "is_pirate": false,
+  "is_civilian": false
+}
