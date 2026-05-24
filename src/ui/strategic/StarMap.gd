@@ -15,14 +15,20 @@ const SYSTEM_BASE_RADIUS: float = 5.0
 @onready var contract_board = $CanvasLayer/ContractBoard
 @onready var personnel_mgmt = $CanvasLayer/PersonnelManagement
 @onready var sidebar: StrategicActions = $CanvasLayer/StrategicActions
+@onready var event_log_ui: Panel = $CanvasLayer/EventLog
+@onready var market_ui: Panel = $CanvasLayer/MarketUI
 
 func _ready() -> void:
 	sidebar.organization_tree_requested.connect(_on_organization_tree)
 	sidebar.contract_board_requested.connect(_on_contract_board)
 	sidebar.personnel_management_requested.connect(_on_personnel_management)
+	sidebar.market_requested.connect(_on_market)
+	sidebar.event_log_requested.connect(_on_event_log)
 	org_mgmt.closed.connect(_on_org_mgmt_closed)
 	contract_board.closed.connect(_on_contract_board_closed)
 	personnel_mgmt.closed.connect(_on_personnel_mgmt_closed)
+	event_log_ui.closed.connect(_on_event_log_closed)
+	market_ui.closed.connect(_on_market_closed)
 	_load_systems()
 	_calculate_jump_routes()
 	queue_redraw()
@@ -49,6 +55,24 @@ func _on_personnel_management() -> void:
 	sidebar.hide()
 	personnel_mgmt.populate_roster()
 	personnel_mgmt.show()
+
+func _on_event_log() -> void:
+	sidebar.hide()
+	event_log_ui.populate()
+	event_log_ui.show()
+
+func _on_market() -> void:
+	sidebar.hide()
+	market_ui.populate()
+	market_ui.show()
+
+func _on_market_closed() -> void:
+	market_ui.hide()
+	sidebar.show()
+
+func _on_event_log_closed() -> void:
+	event_log_ui.hide()
+	sidebar.show()
 
 func _on_personnel_mgmt_closed() -> void:
 	personnel_mgmt.hide()
@@ -122,6 +146,29 @@ func _get_spectral_radius(spectral: String) -> float:
 	return SYSTEM_BASE_RADIUS
 
 func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
+		if market_ui.visible:
+			_on_market_closed()
+			get_viewport().set_input_as_handled()
+		elif event_log_ui.visible:
+			_on_event_log_closed()
+			get_viewport().set_input_as_handled()
+		elif org_mgmt.visible:
+			_on_org_mgmt_closed()
+			get_viewport().set_input_as_handled()
+		elif contract_board.visible:
+			_on_contract_board_closed()
+			get_viewport().set_input_as_handled()
+		elif personnel_mgmt.visible:
+			_on_personnel_mgmt_closed()
+			get_viewport().set_input_as_handled()
+		elif info_panel.visible:
+			selected_system = {}
+			info_panel.hide_panel()
+			queue_redraw()
+			get_viewport().set_input_as_handled()
+		return
+
 	if event is InputEventMouseButton:
 		var btn = event.button_index
 

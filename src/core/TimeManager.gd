@@ -11,6 +11,7 @@ var tick_interval: float = 1.0
 var elapsed_time: float = 0.0
 var tactical_round: int = 0
 var is_tactical_mode: bool = false
+var total_days: int = 0
 
 signal date_changed(date: Dictionary)
 
@@ -40,6 +41,7 @@ func advance_day() -> void:
 		if current_date.month > 12:
 			current_date.month = 1
 			current_date.year += 1
+	total_days += 1
 	date_changed.emit(current_date.duplicate())
 	EventBus.emit_time_tick(current_date.duplicate())
 

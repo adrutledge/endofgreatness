@@ -7,6 +7,7 @@ extends Resource
 @export var critical_slots: int
 @export var cost: int
 @export var tech_base: String
+@export var tech_level: int = 1
 @export var quality_range: Vector2
 @export var repair_difficulty: int
 @export var status: Enums.ComponentStatus = Enums.ComponentStatus.UNDAMAGED

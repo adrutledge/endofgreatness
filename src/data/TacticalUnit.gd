@@ -11,6 +11,10 @@ extends Resource
 @export var movement_mp: int
 @export var run_mp: int
 @export var jump_mp: int
+@export var assigned_technicians: Array[Personnel] = []
+
+func requires_technician() -> bool:
+	return unit_type != Enums.UnitType.INFANTRY
 
 func get_damaged_components() -> Array[Component]:
 	var result: Array[Component] = []

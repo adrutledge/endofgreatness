@@ -49,7 +49,7 @@ func populate() -> void:
 	_clear_details()
 	accept_button.disabled = true
 
-	if not TimeManager:
+	if not TimeManager or not GameState or not GameState.player:
 		return
 
 	var date = TimeManager.current_date
@@ -57,10 +57,14 @@ func populate() -> void:
 	_available = _generator.generate_contracts(date, location, 0, {})
 
 	for c in _available:
+		if not c:
+			continue
 		var label = "%s — %s on %s\n%d days, %d C-Bills" % [c.issuer, c.activity_type, c.planet, c.duration, c.c_bill_payment]
 		available_list.add_item(label)
 
 	for c in GameState.active_contracts:
+		if not c:
+			continue
 		var label = "%s — %s on %s" % [c.issuer, c.activity_type, c.planet]
 		active_list.add_item(label)
 
@@ -93,7 +97,8 @@ func _show_contract_details(c: Contract) -> void:
 	info += "Payment: %d C-Bills\n" % c.c_bill_payment
 	info += "Payout per tick: %d C-Bills\n" % c.payout_per_tick
 	info += "Salvage rate: %d%% (%s)\n" % [c.salvage_rate * 100, c.salvage_type]
-	info += "Command rights: %s\n" % Enums.CommandRights.keys()[c.command_rights]
+	var rights_keys = Enums.CommandRights.keys()
+	info += "Command rights: %s\n" % (rights_keys[c.command_rights] if c.command_rights >= 0 and c.command_rights < rights_keys.size() else "Unknown")
 	info += "Transport coverage: %d%%\n" % (c.transport_coverage * 100)
 	info += "Battle loss reimbursement: %d%%\n" % (c.battle_loss_reimbursement_rate * 100)
 	info += "Minimum tonnage: %.0f tons\n" % c.minimum_tonnage

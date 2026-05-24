@@ -11,6 +11,8 @@ signal funds_depleted(balance: int)
 signal delivery_arrived(item_name: String, quantity: int)
 signal contract_completed(contract: Contract)
 signal event_triggered(event_data: Dictionary)
+signal bills_paid(amount: int, breakdown: Dictionary)
+signal contract_settled(contract: Contract, settlement: Dictionary)
 
 func emit_contract_accepted(contract: Contract) -> void:
 	contract_accepted.emit(contract)
@@ -44,3 +46,9 @@ func emit_contract_completed(contract: Contract) -> void:
 
 func emit_event_triggered(event_data: Dictionary) -> void:
 	event_triggered.emit(event_data)
+
+func emit_bills_paid(amount: int, breakdown: Dictionary) -> void:
+	bills_paid.emit(amount, breakdown)
+
+func emit_contract_settled(contract: Contract, settlement: Dictionary) -> void:
+	contract_settled.emit(contract, settlement)

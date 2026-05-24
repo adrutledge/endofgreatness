@@ -46,6 +46,8 @@ func load_factions() -> void:
 					faction.is_pirate = data.get("is_pirate", false)
 					faction.is_civilian = data.get("is_civilian", false)
 					factions[faction.short_code] = faction
+					var snake_key = file_name.replace(".json", "")
+					factions[snake_key] = faction
 					GameState.register_faction(faction)
 		file_name = dir.get_next()
 
@@ -253,14 +255,16 @@ func parse_mtf(file_path: String) -> TacticalUnit:
 				var qr = def.get("quality_range", {})
 				comp.quality_range = Vector2(qr.get("min", 1), qr.get("max", 5))
 				comp.repair_difficulty = def.get("repair_difficulty", 1)
+				comp.tech_level = def.get("tech_level", 1)
+				seen[key] = comp
 			else:
 				comp.tonnage = 0.0
 				comp.cost = 1000
 				comp.tech_base = "inner_sphere"
 				comp.quality_range = Vector2(1, 5)
 				comp.repair_difficulty = 1
-
-			seen[key] = comp
+				comp.tech_level = 1
+				seen[key] = comp
 
 	for key in seen:
 		unit.components.append(seen[key])
@@ -431,12 +435,14 @@ func parse_blk(file_path: String) -> TacticalUnit:
 			var qr = def.get("quality_range", {})
 			comp.quality_range = Vector2(qr.get("min", 1), qr.get("max", 5))
 			comp.repair_difficulty = def.get("repair_difficulty", 1)
+			comp.tech_level = def.get("tech_level", 1)
 		else:
 			comp.tonnage = 0.0
 			comp.cost = 1000
 			comp.tech_base = "inner_sphere"
 			comp.quality_range = Vector2(1, 5)
 			comp.repair_difficulty = 1
+			comp.tech_level = 1
 		unit.components.append(comp)
 
 	# ---- Create components from equipment ----
@@ -473,18 +479,44 @@ func parse_blk(file_path: String) -> TacticalUnit:
 					var qr = def.get("quality_range", {})
 					comp.quality_range = Vector2(qr.get("min", 1), qr.get("max", 5))
 					comp.repair_difficulty = def.get("repair_difficulty", 1)
+					comp.tech_level = def.get("tech_level", 1)
 				else:
 					comp.tonnage = 0.0
 					comp.cost = 1000
 					comp.tech_base = "inner_sphere"
 					comp.quality_range = Vector2(1, 5)
 					comp.repair_difficulty = 1
+					comp.tech_level = 1
 				seen[key] = comp
 
 	for key in seen:
 		unit.components.append(seen[key])
 
 	return unit
+
+func get_component_tech_level(component_name: String) -> int:
+	var def = component_defs.get(component_name)
+	return def.get("tech_level", 1) if def else 1
+
+func is_component_available_to_faction(component_name: String, faction_code: String) -> bool:
+	var tech_lvl = get_component_tech_level(component_name)
+	if tech_lvl <= 1:
+		return true
+	var faction: Faction = GameState.factions.get(faction_code)
+	if not faction:
+		return false
+	return faction.unique_components.has(component_name)
+
+func get_faction_market_components(faction_code: String) -> Array[String]:
+	var faction: Faction = GameState.factions.get(faction_code)
+	var results: Array[String] = []
+	for name in component_defs:
+		var def = component_defs[name]
+		if def.get("tech_level", 1) <= 1:
+			results.append(name)
+		elif faction and faction.unique_components.has(name):
+			results.append(name)
+	return results
 
 # ----- MTF helpers -----
 

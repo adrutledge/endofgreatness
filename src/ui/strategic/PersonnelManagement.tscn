@@ -34,6 +34,21 @@ theme_override_font_sizes/font_size = 20
 size_flags_horizontal = 4
 horizontal_alignment = 1
 
+[node name="SearchFilterBar" type="HBoxContainer" parent="MarginContainer/VBox"]
+size_flags_vertical = 0
+
+[node name="SearchBar" type="LineEdit" parent="MarginContainer/VBox/SearchFilterBar"]
+unique_name_in_owner = true
+placeholder_text = "Search by name..."
+size_flags_horizontal = 3
+right_icon = 0
+clear_button_enabled = true
+
+[node name="RoleFilter" type="OptionButton" parent="MarginContainer/VBox/SearchFilterBar"]
+unique_name_in_owner = true
+text = "All Roles"
+size_flags_horizontal = 0
+
 [node name="HSeparator" type="HSeparator" parent="MarginContainer/VBox"]
 
 [node name="HSplit" type="HSplitContainer" parent="MarginContainer/VBox"]
@@ -81,14 +96,30 @@ unique_name_in_owner = true
 text = ""
 autowrap_mode = 1
 
-[node name="DetailInfo" type="Label" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin/DetailVBox"]
+[node name="DetailScroll" type="ScrollContainer" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin/DetailVBox"]
+size_flags_vertical = 3
+
+[node name="DetailInfo" type="Label" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin/DetailVBox/DetailScroll"]
 unique_name_in_owner = true
 text = ""
 autowrap_mode = 1
+size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="ButtonVBox" type="VBoxContainer" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin/DetailVBox"]
 size_flags_vertical = 0
+
+[node name="UnitAssignBar" type="HBoxContainer" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin/DetailVBox/ButtonVBox"]
+
+[node name="AssignUnitButton" type="Button" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin/DetailVBox/ButtonVBox/UnitAssignBar"]
+unique_name_in_owner = true
+text = "Assign to Unit"
+disabled = true
+
+[node name="UnassignButton" type="Button" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin/DetailVBox/ButtonVBox/UnitAssignBar"]
+unique_name_in_owner = true
+text = "Unassign"
+disabled = true
 
 [node name="HireButton" type="Button" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin/DetailVBox/ButtonVBox"]
 unique_name_in_owner = true
@@ -109,14 +140,30 @@ unique_name_in_owner = true
 visible = false
 size_flags_vertical = 3
 
-[node name="HireLabel" type="Label" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin/DetailVBox/ButtonVBox/HirePanel"]
+[node name="HireVBox" type="VBoxContainer" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin/DetailVBox/ButtonVBox/HirePanel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="HireLabel" type="Label" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin/DetailVBox/ButtonVBox/HirePanel/HireVBox"]
 text = "Available Candidates (5,000 C-Bills each):"
 autowrap_mode = 1
 
-[node name="HireCandidates" type="ItemList" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin/DetailVBox/ButtonVBox/HirePanel"]
+[node name="HireCandidates" type="ItemList" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin/DetailVBox/ButtonVBox/HirePanel/HireVBox"]
 unique_name_in_owner = true
 size_flags_vertical = 3
 select_mode = 0
+
+[node name="CandidateDetail" type="Label" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin/DetailVBox/ButtonVBox/HirePanel/HireVBox"]
+unique_name_in_owner = true
+text = ""
+autowrap_mode = 1
+size_flags_vertical = 0
+
+[node name="HireSelectedButton" type="Button" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin/DetailVBox/ButtonVBox/HirePanel/HireVBox"]
+unique_name_in_owner = true
+text = "Hire Selected"
+disabled = true
 
 [node name="BottomBar" type="HBoxContainer" parent="MarginContainer/VBox"]
 size_flags_vertical = 0

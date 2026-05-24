@@ -33,7 +33,12 @@ func generate_single_contract(issuer: Faction, target: Faction, date: Dictionary
 	contract.target = target.faction_name
 	contract.planet = location if not location.is_empty() else _pick_planet(issuer, target)
 
-	var is_border = target.short_code in issuer.enemies
+	var is_border = false
+	for e in issuer.enemies:
+		var ef = _resolve_faction(e)
+		if ef == target:
+			is_border = true
+			break
 	contract.activity_type = _pick_activity_type(is_border)
 	contract.duration = randi() % 91 + 30
 
@@ -63,10 +68,24 @@ func generate_single_contract(issuer: Faction, target: Faction, date: Dictionary
 	return contract
 
 
+func _resolve_faction(lookup: String) -> Faction:
+	if not lookup:
+		return null
+	var f = GameState.get_faction(lookup)
+	if f:
+		return f
+	for code in GameState.factions:
+		var candidate = GameState.factions[code]
+		if candidate.faction_name.to_lower().replace(" ", "_") == lookup.to_lower().replace(" ", "_"):
+			return candidate
+		if candidate.short_code.to_lower() == lookup.to_lower():
+			return candidate
+	return null
+
 func _pick_target(issuer: Faction) -> Faction:
 	if not issuer.enemies.is_empty() and randi() % 10 < 7:
 		var code = issuer.enemies[randi() % issuer.enemies.size()]
-		var t = GameState.get_faction(code)
+		var t = _resolve_faction(code)
 		if t:
 			return t
 
