@@ -1,0 +1,12 @@
+{
+  "name": "ICE Engine 165",
+  "tonnage": 9.25,
+  "critical_slots": 0,
+  "cost": 87500,
+  "tech_base": "inner_sphere",
+  "quality_range": {
+    "min": 1,
+    "max": 4
+  },
+  "repair_difficulty": 2
+}

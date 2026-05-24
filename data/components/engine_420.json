@@ -1,0 +1,12 @@
+{
+  "name": "Fusion Engine 420",
+  "tonnage": 84,
+  "critical_slots": 3,
+  "cost": 2100000,
+  "tech_base": "inner_sphere",
+  "quality_range": {
+    "min": 1,
+    "max": 4
+  },
+  "repair_difficulty": 1
+}

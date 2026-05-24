@@ -1,0 +1,12 @@
+{
+  "name": "ICE Engine 205",
+  "tonnage": 11.25,
+  "critical_slots": 0,
+  "cost": 107500,
+  "tech_base": "inner_sphere",
+  "quality_range": {
+    "min": 1,
+    "max": 4
+  },
+  "repair_difficulty": 2
+}

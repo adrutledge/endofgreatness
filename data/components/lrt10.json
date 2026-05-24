@@ -1,0 +1,12 @@
+{
+  "name": "LRT-10",
+  "tonnage": 5,
+  "critical_slots": 2,
+  "cost": 100000,
+  "tech_base": "inner_sphere",
+  "quality_range": {
+    "min": 1,
+    "max": 5
+  },
+  "repair_difficulty": 3
+}

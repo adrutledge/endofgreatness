@@ -1,0 +1,12 @@
+{
+  "name": "SRT-6 Ammo",
+  "tonnage": 1,
+  "critical_slots": 1,
+  "cost": 27000,
+  "tech_base": "inner_sphere",
+  "quality_range": {
+    "min": 1,
+    "max": 5
+  },
+  "repair_difficulty": 1
+}

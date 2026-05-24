@@ -1,0 +1,12 @@
+{
+  "name": "Fusion Engine 5",
+  "tonnage": 1,
+  "critical_slots": 3,
+  "cost": 25000,
+  "tech_base": "inner_sphere",
+  "quality_range": {
+    "min": 1,
+    "max": 4
+  },
+  "repair_difficulty": 1
+}

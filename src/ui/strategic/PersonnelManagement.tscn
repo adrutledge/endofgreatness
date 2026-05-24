@@ -1,0 +1,131 @@
+[gd_scene load_steps=2 format=3 uid="uid://dlqscxfyobwx3"]
+
+[ext_resource type="Script" path="res://src/ui/strategic/PersonnelManagement.gd" id="1"]
+
+[node name="PersonnelManagement" type="Panel"]
+script = ExtResource("1")
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="MarginContainer/VBox"]
+unique_name_in_owner = true
+text = "Personnel Management"
+theme_override_font_sizes/font_size = 20
+size_flags_horizontal = 4
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBox"]
+
+[node name="HSplit" type="HSplitContainer" parent="MarginContainer/VBox"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+
+[node name="RosterList" type="ItemList" parent="MarginContainer/VBox/HSplit"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+select_mode = 0
+allow_reselect = false
+
+[node name="DetailPanel" type="Panel" parent="MarginContainer/VBox/HSplit"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+
+[node name="DetailMargin" type="MarginContainer" parent="MarginContainer/VBox/HSplit/DetailPanel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="DetailVBox" type="VBoxContainer" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DetailName" type="Label" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin/DetailVBox"]
+unique_name_in_owner = true
+text = ""
+theme_override_font_sizes/font_size = 16
+autowrap_mode = 1
+
+[node name="DetailRole" type="Label" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin/DetailVBox"]
+unique_name_in_owner = true
+text = ""
+autowrap_mode = 1
+
+[node name="DetailInfo" type="Label" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin/DetailVBox"]
+unique_name_in_owner = true
+text = ""
+autowrap_mode = 1
+size_flags_vertical = 3
+
+[node name="ButtonVBox" type="VBoxContainer" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin/DetailVBox"]
+size_flags_vertical = 0
+
+[node name="HireButton" type="Button" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin/DetailVBox/ButtonVBox"]
+unique_name_in_owner = true
+text = "Hire Personnel"
+
+[node name="FireButton" type="Button" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin/DetailVBox/ButtonVBox"]
+unique_name_in_owner = true
+text = "Fire Selected"
+disabled = true
+
+[node name="PromoteButton" type="Button" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin/DetailVBox/ButtonVBox"]
+unique_name_in_owner = true
+text = "Promote"
+disabled = true
+
+[node name="HirePanel" type="Panel" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin/DetailVBox/ButtonVBox"]
+unique_name_in_owner = true
+visible = false
+size_flags_vertical = 3
+
+[node name="HireLabel" type="Label" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin/DetailVBox/ButtonVBox/HirePanel"]
+text = "Available Candidates (5,000 C-Bills each):"
+autowrap_mode = 1
+
+[node name="HireCandidates" type="ItemList" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin/DetailVBox/ButtonVBox/HirePanel"]
+unique_name_in_owner = true
+size_flags_vertical = 3
+select_mode = 0
+
+[node name="BottomBar" type="HBoxContainer" parent="MarginContainer/VBox"]
+size_flags_vertical = 0
+
+[node name="CloseButton" type="Button" parent="MarginContainer/VBox/BottomBar"]
+unique_name_in_owner = true
+text = "Close"
+size_flags_horizontal = 0
+
+[node name="Spacer" type="Control" parent="MarginContainer/VBox/BottomBar"]
+size_flags_horizontal = 3
+mouse_filter = 2

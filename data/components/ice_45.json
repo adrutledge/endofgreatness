@@ -1,0 +1,12 @@
+{
+  "name": "ICE Engine 45",
+  "tonnage": 3.25,
+  "critical_slots": 0,
+  "cost": 27500,
+  "tech_base": "inner_sphere",
+  "quality_range": {
+    "min": 1,
+    "max": 4
+  },
+  "repair_difficulty": 2
+}

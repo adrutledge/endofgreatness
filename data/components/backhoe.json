@@ -1,0 +1,12 @@
+{
+  "name": "Backhoe",
+  "tonnage": 5,
+  "critical_slots": 6,
+  "cost": 75000,
+  "tech_base": "inner_sphere",
+  "quality_range": {
+    "min": 1,
+    "max": 3
+  },
+  "repair_difficulty": 3
+}

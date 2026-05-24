@@ -1,0 +1,12 @@
+{
+  "name": "ICE Engine 460",
+  "tonnage": 24.00,
+  "critical_slots": 0,
+  "cost": 235000,
+  "tech_base": "inner_sphere",
+  "quality_range": {
+    "min": 1,
+    "max": 4
+  },
+  "repair_difficulty": 2
+}
