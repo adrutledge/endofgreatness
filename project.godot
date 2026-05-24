@@ -33,10 +33,6 @@ PersonnelManager="*res://src/systems/PersonnelManager.gd"
 
 [rendering]
 
-renderer/rendering_method="forward_plus"
-environment/default_clear_color=0, 0, 0, 1
-
-[display]
-
-window/size/viewport_width=1280
+environment/default_clear_color=0
+",0,0,1[display]window/size/viewport_width"=1280
 window/size/viewport_height=720

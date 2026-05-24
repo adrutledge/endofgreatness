@@ -9,6 +9,8 @@ extends Resource
 @export var ammo: Dictionary
 @export var tonnage: float
 @export var movement_mp: int
+@export var run_mp: int
+@export var jump_mp: int
 
 func get_damaged_components() -> Array[Component]:
 	var result: Array[Component] = []

@@ -13,13 +13,16 @@ const SYSTEM_BASE_RADIUS: float = 5.0
 @onready var info_panel = $CanvasLayer/StrategicActions/MarginContainer/VBox/SystemInfoPanel
 @onready var org_mgmt = $CanvasLayer/OrganizationManagement
 @onready var contract_board = $CanvasLayer/ContractBoard
+@onready var personnel_mgmt = $CanvasLayer/PersonnelManagement
 @onready var sidebar: StrategicActions = $CanvasLayer/StrategicActions
 
 func _ready() -> void:
 	sidebar.organization_tree_requested.connect(_on_organization_tree)
 	sidebar.contract_board_requested.connect(_on_contract_board)
+	sidebar.personnel_management_requested.connect(_on_personnel_management)
 	org_mgmt.closed.connect(_on_org_mgmt_closed)
 	contract_board.closed.connect(_on_contract_board_closed)
+	personnel_mgmt.closed.connect(_on_personnel_mgmt_closed)
 	_load_systems()
 	_calculate_jump_routes()
 	queue_redraw()
@@ -40,6 +43,15 @@ func _on_organization_tree() -> void:
 
 func _on_org_mgmt_closed() -> void:
 	org_mgmt.hide()
+	sidebar.show()
+
+func _on_personnel_management() -> void:
+	sidebar.hide()
+	personnel_mgmt.populate_roster()
+	personnel_mgmt.show()
+
+func _on_personnel_mgmt_closed() -> void:
+	personnel_mgmt.hide()
 	sidebar.show()
 
 func _load_systems() -> void:

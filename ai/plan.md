@@ -348,7 +348,7 @@
 - `load_game(slot_name)` — deserialize using `ResourceLoader` with threaded loading option for large saves
 - **Efficiency strategies**:
   - Split save data into hot (frequently changed: balance, date, active contract state, unit positions) and cold (rarely changed: faction data, starmap, unit templates, personnel relationships) — hot data saved every time, cold data saved only when dirty or via periodic full save
-  - Use Godot's `ConfigFile` or `Resource` format with `ResourceFormatSaver` for binary size; compress with Deflate
+    t- Use Godot's `ConfigFile` or `Resource` format with `ResourceFormatSaver` for binary size; compress with Deflate
   - Lazy deserialization: load hot data immediately on game start; defer cold data (e.g., full starmap, faction histories, personnel records) to background loading after main menu
   - Prune transient tactical state: tactical map grids and per-hex terrain are regenerated from the operational hex seed, not saved — only save the seed, unit damage state, and position within the tactical map
   - Event log: cap at N entries (e.g., 500), oldest pruned; archived to cold file
