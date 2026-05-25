@@ -230,15 +230,15 @@ func _build_paper_doll_tab() -> void:
 
 func _component_type_color(comp_name: String) -> Color:
 	var lower = comp_name.to_lower()
-	if lower in ["life support"]:
+	if "life support" in lower:
 		return Color(0.6, 0.25, 0.4)
-	if lower in ["sensors"]:
+	if "sensors" in lower:
 		return Color(0.25, 0.35, 0.4)
-	if lower in ["cockpit"]:
+	if "cockpit" in lower:
 		return Color(0.6, 0.25, 0.4)
-	if lower in ["engine", "fusion engine"]:
+	if "engine" in lower or "fusion" in lower:
 		return component_type_color_map.get("engine", Color(0.9, 0.55, 0.1))
-	if lower in ["gyro"]:
+	if "gyro" in lower:
 		return component_type_color_map.get("gyro", Color(0.6, 0.2, 0.8))
 	if "autocannon" in lower:
 		return component_type_color_map.get("weapon", Color(0.8, 0.15, 0.15))
