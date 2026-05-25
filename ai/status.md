@@ -79,17 +79,20 @@ Plan: `ai/plan.md`
 - [x] Candidate generation with hiring hall bonuses
 - [x] Aging (birthdays) and death rolls (past 65)
 - [x] injure/heal personnel
-- [~] personnel_relationships declared but no Relation resource or population
-- [~] Candidate generation not auto-refreshed per tick
-- [~] Healing is instant, not time-progression
+- [x] PersonnelRelation resource with typed relationships, valence, strength
+- [x] Relationship CRUD: add_relationship, get_relationships, get_relationship_with, has_relationship, remove_relationship
+- [x] Starting relationship generation in StrategicUnitGenerator (FRIENDSHIP, WINGMAN, LOVER, DISLIKE, RIVAL)
+- [x] Candidate generation auto-refreshed per tick (cached pool, _refresh_candidates on date_changed)
+- [x] Healing is time-progression based (healing_days_remaining, tick-based, admin-modified)
+- [x] Secondary role support on Personnel (secondary_role, get_effective_skill halves secondary skill)
+- [x] Administration skill time efficiency: doctors reduce healing time (admin * 2 days off), techs get more repair hours (base 8 + admin * 2)
+- [x] Originating faction, home system, home planet on Personnel
+- [x] Hidden relationship flags: interested_in_relationship, interested_in_children, biological_role
 - [ ] Pilot abilities (terrain, mech affinity, weapon spec, conditional bonuses) — planned
-- [ ] Secondary roles for personnel (e.g. doctor also HR) — planned
-- [ ] Administration skill affects time efficiency for doctors/techs — planned
 - [ ] Skill-level gating for ability generation — planned
-- [ ] Detailed relationships (Marriage, Lover, Wingman, Dislike, Rival, family bonds) — planned
 - [ ] External lovers from deployment/travel, children accompany unit — planned
 - [ ] Education system for child characters (version 2) — planned
-- [ ] Originating faction, home system, home planet on Personnel — planned
+- [ ] Passive XP gain from assigned roles — planned
 
 ---
 

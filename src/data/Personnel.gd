@@ -39,6 +39,23 @@ extends Resource
 ## Technician-only: "Mech", "Vehicle", "Aerospace"
 @export var specialization: String = ""
 
+## Originating faction, home system, home planet
+@export var originating_faction: String = ""
+@export var home_system: String = ""
+@export var home_planet: String = ""
+
+## Secondary role (e.g. doctor also doing HR)
+@export var secondary_role: int = -1
+
+## Hidden relationship flags
+@export var interested_in_relationship: bool = true
+@export var interested_in_children: bool = false
+@export var biological_role: String = ""  # "father" or "mother", may differ from visible gender
+
+## Time-based healing
+@export var healing_days_remaining: int = 0
+@export var healing_days_total: int = 0
+
 ## Starting unit flags — set by StrategicUnitGenerator on New Game
 @export var is_founder: bool = false
 @export var is_commander: bool = false

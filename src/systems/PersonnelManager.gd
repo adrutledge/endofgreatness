@@ -1,5 +1,7 @@
 extends Node
 
+const _Relation = preload("res://src/data/Relation.gd")
+
 var personnel_roster: Array[Personnel] = []
 var personnel_relationships: Dictionary = {}
 var hiring_halls: Dictionary = {}
@@ -13,6 +15,8 @@ func _ready() -> void:
 
 func _on_date_changed(date: Dictionary) -> void:
 	process_aging()
+	_process_healing_ticks()
+	_refresh_candidates()
 
 func assign_technician(personnel: Personnel, unit: TacticalUnit) -> bool:
 	if personnel.role != Enums.PersonnelRole.TECHNICIAN:
@@ -34,7 +38,10 @@ func unassign_technician(personnel: Personnel, unit: TacticalUnit) -> void:
 	unit.assigned_technicians.erase(personnel)
 
 func get_repair_hours(personnel: Personnel) -> int:
-	return 8
+	var base := 8
+	var admin = personnel.skills.get("administration", 0)
+	base += admin * 2
+	return base
 
 func get_unit_repair_budget(unit: TacticalUnit) -> int:
 	var total: int = 0
@@ -81,6 +88,70 @@ func heal_personnel(personnel: Personnel, doctor: Personnel) -> bool:
 	personnel.is_injured = false
 	personnel.injury_severity = 0
 	return true
+
+
+func assign_to_healing(personnel: Personnel, doctor: Personnel) -> bool:
+	if not personnel.is_injured:
+		return false
+	if doctor.role != Enums.PersonnelRole.DOCTOR:
+		return false
+	if doctor.patients_assigned.size() >= doctor.patient_capacity:
+		return false
+
+	if not doctor.patients_assigned.has(personnel):
+		doctor.patients_assigned.append(personnel)
+
+	var severity: int = personnel.injury_severity
+	var admin: int = doctor.skills.get("administration", 0)
+	var base_days: int = severity * 7
+	var reduced: int = max(1, base_days - admin * 2)
+	personnel.healing_days_total = reduced
+	personnel.healing_days_remaining = reduced
+	return true
+
+
+func _process_healing_ticks() -> void:
+	var healed: Array[Personnel] = []
+	for p in personnel_roster:
+		if p.is_injured and p.healing_days_remaining > 0:
+			p.healing_days_remaining -= 1
+			if p.healing_days_remaining <= 0:
+				p.is_injured = false
+				p.injury_severity = 0
+				p.healing_days_total = 0
+				healed.append(p)
+				for doc in personnel_roster:
+					if doc.role == Enums.PersonnelRole.DOCTOR and doc.patients_assigned.has(p):
+						doc.patients_assigned.erase(p)
+						break
+	for p in healed:
+		EventBus.emit_event_triggered({
+			"type": "personnel_healed",
+			"name": p.personnel_name,
+		})
+
+var _candidate_pool: Array[Personnel] = []
+var _last_candidate_refresh_day: int = -1
+
+
+func get_candidate_pool() -> Array[Personnel]:
+	if _candidate_pool.is_empty() or _last_candidate_refresh_day != TimeManager.total_days:
+		_refresh_candidates()
+	return _candidate_pool
+
+
+func _refresh_candidates() -> void:
+	var today = TimeManager.total_days
+	if _last_candidate_refresh_day == today:
+		return
+	_last_candidate_refresh_day = today
+	if not GameState.player or not GameState.player.current_planet:
+		return
+	var planet_data = DataManager.systems_data.get(GameState.player.current_planet, {})
+	_candidate_pool = generate_candidates(GameState.player.current_planet, planet_data, false, "")
+	if _candidate_pool.is_empty():
+		_candidate_pool = generate_candidates(GameState.player.current_planet, planet_data, true, "local")
+
 
 func generate_candidates(planet: String, planet_data: Dictionary, has_hiring_hall: bool = false, hall_tier: String = "") -> Array[Personnel]:
 	var candidates: Array[Personnel] = []
@@ -228,6 +299,55 @@ func generate_random_personnel(planet_data: Dictionary) -> Personnel:
 			p.skills["language_english"] = randi() % 3 + 2
 			p.skills["running"] = randi() % 3 + 1
 	return p
+
+func add_relationship(from_name: String, to_name: String, type: int, valence: int = 1, strength: int = 1) -> void:
+	if not personnel_relationships.has(from_name):
+		personnel_relationships[from_name] = []
+	var rel = _Relation.new()
+	rel.type = type
+	rel.target_name = to_name
+	rel.valence = valence
+	rel.strength = strength
+	personnel_relationships[from_name].append(rel)
+
+
+func get_relationships(personnel_name: String) -> Array:
+	return personnel_relationships.get(personnel_name, [])
+
+
+func get_relationship_with(personnel_name: String, target_name: String):
+	for r in get_relationships(personnel_name):
+		if r.target_name == target_name:
+			return r
+	return null
+
+
+func has_relationship(personnel_name: String, target_name: String, type: int) -> bool:
+	for r in get_relationships(personnel_name):
+		if r.target_name == target_name and r.type == type:
+			return true
+	return false
+
+
+func remove_relationship(personnel_name: String, target_name: String, type: int) -> void:
+	if not personnel_relationships.has(personnel_name):
+		return
+	personnel_relationships[personnel_name] = personnel_relationships[personnel_name].filter(
+		func(r): return not (r.target_name == target_name and r.type == type)
+	)
+
+
+func get_effective_skill(personnel: Personnel, skill_name: String) -> int:
+	var base = personnel.skills.get(skill_name, 0)
+	if personnel.secondary_role >= 0:
+		base = int(ceil(base * 0.5))
+	return base
+
+
+func get_healing_time_modifier(doctor: Personnel) -> float:
+	var admin = doctor.skills.get("administration", 0)
+	return max(0.3, 1.0 - admin * 0.05)
+
 
 func get_personnel_by_role(role: Enums.PersonnelRole) -> Array[Personnel]:
 	var result: Array[Personnel] = []

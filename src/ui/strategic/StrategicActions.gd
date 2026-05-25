@@ -8,6 +8,7 @@ signal organization_tree_requested()
 signal event_log_requested()
 signal mech_lab_requested()
 signal logistics_requested()
+signal market_requested()
 
 func _ready() -> void:
 	var bg = StyleBoxFlat.new()

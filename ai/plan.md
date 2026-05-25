@@ -148,6 +148,7 @@
 - Injury tracking: `injure(personnel, severity)`, `heal(personnel, medic, time)` — medics heal over time
 - **Secondary roles**: personnel may hold a primary and secondary role (e.g., a doctor with secondary HR); the secondary role's duties are performed at reduced efficiency (e.g., half the `Administration` skill contribution when acting as secondary HR, or half patient capacity when a doctor is secondary)
 - **Administration skill affects time efficiency**: `Administration` skill for doctors reduces healing time (per-point percentage reduction); for technicians, reduces repair/refit/salvage time (same mechanic); the skill is checked against the complexity of the work — simple tasks get full benefit, complex/experimental tasks get reduced benefit
+- **Passive XP gain**: characters build experience points through practice at their assigned roles passively each tick, in addition to active use (combat, skill checks, events); a pilot assigned to a mech gains passive `gunnery`/`piloting` XP, a technician gains `tech_*` XP, a doctor gains `surgery` XP, etc.; passive gain is slower than active use but provides a steady baseline for character growth over time
 - **Pilot abilities** (per A Time of War traits and special pilot abilities):
   - Abilities grant conditional modifiers to gunnery, piloting, or other rolls in specific contexts
   - **Terrain-specialist** abilities: reduce or ignore movement/accuracy penalties in specific terrain types (woods, water, rough, urban, etc.)

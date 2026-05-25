@@ -12,6 +12,18 @@ enum TraitCategory { POSITIVE, NEGATIVE }
 
 enum RefitClass { B, C, D, E }
 
+enum RelationshipType {
+	FRIENDSHIP,
+	WINGMAN,
+	LOVER,
+	MARRIAGE,
+	PARENT_CHILD,
+	SIBLING,
+	DISLIKE,
+	RIVAL,
+	ACQUAINTANCE,
+}
+
 static func get_all_skills() -> Array[String]:
 	var skills: Array[String] = []
 	skills.append_array(ATOW_SKILLS)
