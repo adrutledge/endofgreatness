@@ -10,5 +10,6 @@
   },
   "repair_difficulty": 2,
   "component_type": "armor",
-  "protected": true
+  "protected": true,
+  "vehicle_only": true
 }
