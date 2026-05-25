@@ -328,6 +328,7 @@ func _make_location_column(location: String, slot_count: int) -> VBoxContainer:
 	var col = VBoxContainer.new()
 	col.name = "Loc_" + location.replace(" ", "_")
 	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	col.add_theme_constant_override("separation", 0)
 
 	var lbl = Label.new()
 	lbl.text = location + " (" + str(slot_count) + ")"
