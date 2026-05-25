@@ -531,54 +531,57 @@ func _apply_customization(customization: Dictionary) -> void:
 	var tech = _get_best_tech(tu)
 	var tech_skill = tech.get_tech_skill() if tech else 4
 
-	var log_entries: Array[Dictionary] = []
-
+	var tn = 0
+	var count := 0
 	for change in changes:
-		var tn = calculate_customization_tn(change, tech_skill, facility_level)
-		if customization.facility_penalty > 0:
-			tn += customization.facility_penalty
+		var t = calculate_customization_tn(change, tech_skill, facility_level)
+		tn += t
+		count += 1
+	if count > 0:
+		tn = int(ceil(float(tn) / count))
+	if customization.facility_penalty > 0:
+		tn += customization.facility_penalty
 
-		var roll = randi() % 6 + randi() % 6 + 2
-		var success = roll >= tn
-		var crit_fail = roll == 2
+	var roll = randi() % 6 + randi() % 6 + 2
+	var success = roll >= tn
 
-		var result = "success"
-		if crit_fail:
-			result = "critical_failure"
-		elif not success:
-			result = "failure"
+	var result = "success" if success else "failure"
 
-		var entry = {
-			"date": TimeManager.get_date_string(),
-			"technician": tech.personnel_name if tech else "Unknown",
-			"tech_skill": tech_skill,
-			"target_number": tn,
-			"roll": roll,
-			"result": result,
-		}
+	var log_entry = {
+		"date": TimeManager.get_date_string(),
+		"technician": tech.personnel_name if tech else "Unknown",
+		"tech_skill": tech_skill,
+		"target_number": tn,
+		"roll": roll,
+		"result": result,
+		"changes": changes.size(),
+	}
 
-		if change.get("action") == "replace" or change.get("action") == "add":
-			entry.new_component = change.get("new_component", "")
-		if change.get("action") == "replace" or change.get("action") == "remove":
-			entry.removed_component = change.get("current_component", "")
-
-		if success:
+	if success:
+		for change in changes:
 			_apply_change(tu, change)
-			entry.applied = true
-		else:
-			entry.applied = false
-
-		log_entries.append(entry)
-
-	tu.customization_history.append_array(log_entries)
-	if tu.customization_history.size() > 100:
-		tu.customization_history = tu.customization_history.slice(-100)
-
-	GameState.log_event("customization_completed", {
-		"unit": tu.unit_name,
-		"changes": log_entries.size(),
-		"successes": log_entries.filter(func(e): return e.applied).size(),
-	})
+		log_entry.applied = true
+		tu.customization_history.append(log_entry)
+		if tu.customization_history.size() > 100:
+			tu.customization_history = tu.customization_history.slice(-100)
+		GameState.log_event("customization_completed", {
+			"unit": tu.unit_name,
+			"changes": changes.size(),
+			"success": true,
+		})
+	else:
+		var extra_hours := int(ceil(customization.total_hours * 0.5))
+		customization.hours_remaining += extra_hours
+		customization.total_hours += extra_hours
+		customization.failure_count = customization.get("failure_count", 0) + 1
+		log_entry.applied = false
+		log_entry.extra_hours = extra_hours
+		tu.customization_history.append(log_entry)
+		GameState.log_event("customization_retry", {
+			"unit": tu.unit_name,
+			"retry_count": customization.failure_count,
+			"extra_hours": extra_hours,
+		})
 
 
 func _get_best_tech(unit: TacticalUnit) -> Personnel:

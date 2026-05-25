@@ -549,17 +549,13 @@ func _update_customization_summary() -> void:
 	var threshold = tech_skill + 3
 
 	var rh = RichTextHelper.new()
-	rh.add("[b]Risk Analysis (TN vs Tech Skill + 3):[/b]")
-	rh.add("  Tech Skill: " + str(tech_skill) + "  |  Threshold: " + str(threshold) + "  |  Facility: Lvl " + str(facility_lvl))
-
-	for d in summary.detail:
-		var change = _find_change_for_component(d.get("component", ""))
-		var tn = RefitManager.calculate_customization_tn(change, 2, facility_lvl, 2, true)
-		var risky = tn > threshold
-		var line = "  " + d.component + ": TN " + str(tn)
-		if risky:
-			line = "  [color=#ff4444]" + d.component + ": TN " + str(tn) + " (> " + str(threshold) + ") RISKY![/color]"
-		rh.add(line)
+	rh.add("[b]Average Target Number:[/b] " + str(_estimate_avg_tn()))
+	rh.add("[b]Tech Skill:[/b] " + str(tech_skill) + "  |  [b]Threshold:[/b] " + str(threshold) + "  |  [b]Facility:[/b] Lvl " + str(facility_lvl))
+	var avg_tn = _estimate_avg_tn()
+	if avg_tn > threshold:
+		rh.add("[color=#ff4444]Average TN exceeds threshold — high risk of failure and extended labor[/color]")
+	else:
+		rh.add("[color=#44ff66]Average TN within threshold — manageable risk[/color]")
 	risk_label.text = rh.get_text()
 
 	var fh = RichTextHelper.new()
@@ -583,6 +579,15 @@ func _get_best_tech_skill(unit: TacticalUnit) -> int:
 		if s > best_skill:
 			best_skill = s
 	return best_skill if best_skill >= 0 else 4
+
+func _estimate_avg_tn() -> int:
+	if pending_changes.is_empty():
+		return 0
+	var total := 0
+	for ch in pending_changes:
+		total += RefitManager.calculate_customization_tn(ch, 2, RefitManager.get_facility_level(), 2, true)
+	return int(ceil(float(total) / pending_changes.size()))
+
 
 func _find_change_for_component(comp_name: String) -> Dictionary:
 	for ch in pending_changes:
@@ -647,13 +652,13 @@ func _show_customization_history() -> void:
 		var date = entry.get("date", "?")
 		var tech = entry.get("technician", "?")
 		var result = entry.get("result", "?")
-		var comp = entry.get("new_component", entry.get("removed_component", "?"))
+		var n_changes = entry.get("changes", 0)
 		var color = "#44ff66"
 		if result == "failure":
 			color = "#ffaa44"
-		elif result == "critical_failure":
-			color = "#ff4444"
-		hh.add("[" + date + "] [color=" + color + "]" + result + "[/color] — " + comp + " (tech: " + tech + ")")
+		var extra = entry.get("extra_hours", 0)
+		var extra_text = (" +" + str(extra) + "h retry") if extra > 0 else ""
+		hh.add("[" + date + "] [color=" + color + "]" + result + "[/color] — " + str(n_changes) + " change(s)" + extra_text + " (tech: " + tech + ")")
 	history_label.text = hh.get_text()
 
 func _update_status() -> void:

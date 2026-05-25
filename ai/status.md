@@ -148,8 +148,8 @@ Plan: `ai/plan.md`
 - [x] P3.6.3: MechLab Designer (component grid, TM validation, component browser)
 - [x] P3.6.4: Repair/maintenance/salvage per Campaign Operations; inventory item repair
 - [x] P3.6.5: MechLab UI with Refit/Design/Repair tabs
-- [x] P3.6.6: Campaign Operations customization rules (per-component B-E class, CO time/cost/TN, skill rolls, facility gating, quality mismatch, customization log)
-- [x] Customization workflow: MechLab Customize tab with change list, risk assessment, facility check, apply with skill resolution
+- [x] P3.6.6: Campaign Operations customization rules (per-component B-E class, CO time/cost/TN, single avg TN skill roll, facility gating, quality mismatch, customization log)
+- [x] Customization workflow: MechLab Customize tab with change list, risk assessment, facility check, apply with single skill roll; failure extends time by 50%, no part destruction
 - [x] Refit-in-progress guard: prevents starting refit or customization while unit already has active work
 
 ### V1 Design — Home Base & Logistics

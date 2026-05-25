@@ -391,11 +391,12 @@
   5. Player reviews the customization plan: per-component class badge, individual time/cost/TN, total time, total cost, and a "risk summary" showing which changes have high failure probabilities (TN > tech skill + 3)
   6. Player confirms → funds deducted immediately; parts not in local stock are sourced via `InterstellarOrderManager` (P1.2) with delivery ETA
 - **Skill resolution per CO**: once all parts are on-hand and the assigned technician has available hours:
-  - Each component change is resolved as a separate skill roll: `tech_skill_roll >= TN` to succeed
-  - On success: the component is installed; time consumed = calculated CO time (modified by `base_time × (10.0 / (skill + 5))` per P3.6.4)
-  - On failure: time is consumed but component is not installed; player may retry (paying time again)
-  - On critical failure (natural 2): the component being installed is destroyed, plus roll on CO mishap table (damage to adjacent slot, personal injury to technician, etc.)
-  - Multiple changes on the same unit in the same session are rolled sequentially; a failure on an early change does not abort later changes
+  - A single skill roll is made for the entire refit/customization job: `tech_skill_roll >= TN`
+  - TN is the average of all per-component TNs across all changes in the job
+  - On success: all changes are applied; time consumed = calculated CO time (modified by `base_time × (10.0 / (skill + 5))` per P3.6.4)
+  - On failure: no changes are applied; the job extends by 50% of the original estimated hours and the player may retry (the roll is re-made when the extended time elapses)
+  - No component destruction on failure — failure represents the tech encountering unexpected complications, not breaking parts
+  - Multiple changes on the same unit in the same session are all applied or all retried as a single job
 - **Facility gating per CO classification**: certain classes require minimum facility levels:
   - Class B: field or better
   - Class C: repair bay or better
