@@ -1239,14 +1239,19 @@ func _refresh_paper_doll() -> void:
 		if c.critical_slots <= 0:
 			continue
 		var placed := 0
+		var first_placed_idx := -1
+		var last_placed_idx := -1
+		var n = c.critical_slots
 		for idx in available:
-			if placed >= c.critical_slots:
+			if placed >= n:
 				break
 			if idx < 0 or idx >= slots.size():
 				continue
 			if slots[idx]["component"] != "":
 				continue
-			var n = c.critical_slots
+			if placed == 0:
+				first_placed_idx = idx
+			last_placed_idx = idx
 			slots[idx]["component"] = c.component_name
 			var btn = slots[idx]["button"]
 			var comp_type = _classify_component(c.component_name)
@@ -1255,11 +1260,25 @@ func _refresh_paper_doll() -> void:
 			style.bg_color = col
 			style.border_width_bottom = 1
 			style.border_color = Color(0.2, 0.2, 0.25)
+			if n > 1:
+				var bw := 2
+				style.border_width_left = bw if idx == first_placed_idx else 0
+				style.border_width_right = bw if idx == last_placed_idx or placed + 1 >= n else 0
+				style.border_width_top = bw
+				style.border_width_bottom = bw
+				var bc = component_type_color_map.get(comp_type, Color(1, 1, 1))
+				style.border_color = bc
 			btn.add_theme_stylebox_override("normal", style)
 			var hover = StyleBoxFlat.new()
 			hover.bg_color = col * 1.3
 			hover.border_width_bottom = 1
 			hover.border_color = Color(0.4, 0.4, 0.45)
+			if n > 1:
+				var bw := 2
+				hover.border_width_left = bw if idx == first_placed_idx else 0
+				hover.border_width_right = bw if idx == last_placed_idx or placed + 1 >= n else 0
+				hover.border_width_top = bw
+				hover.border_width_bottom = bw
 			btn.add_theme_stylebox_override("hover", hover)
 			var disp = c.component_name
 			if n > 1:
