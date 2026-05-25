@@ -293,6 +293,40 @@
 - Active refits shown in unit list with sub-status: "Delivering parts (3 days)", "Refitting (12 hours remaining)"
 - Validation results displayed inline: green checkmark badge for valid, red X badge with expandable error list for invalid; tooltip on hover shows specific TM rule violated and the offending value
 
+#### P3.6.6 — Campaign Operations Mech Customization
+
+- **Customization** = modifying individual components on an existing unit (e.g., swapping a Medium Laser for a Large Laser, upgrading heat sinks, replacing armor type) without changing the variant designation; distinct from refit (variant-to-variant) and custom design (from scratch)
+- Campaign Operations is the authoritative source for all customization rules governing time, cost, labor, skill checks, and facility requirements
+- **Customization classification per CO**: each individual component change is classified independently using the same B–E scheme as refits (P3.6.2), but evaluated at the component level rather than the aggregate variant level:
+  - **Class B (Standard)**: same location, same tech base, same slot count — e.g., swapping a Standard Medium Laser for an ER Medium Laser of the same tech base
+  - **Class C (Complex)**: same tech base, different location OR different slot count — e.g., moving ammo from side torso to leg
+  - **Class D (Major)**: different tech base — e.g., swapping Inner Sphere Ferro-Fibrous for Clan Ferro-Fibrous
+  - **Class E (Chassis)**: changing engine, gyro, internal structure, or cockpit — complete rebuild
+- **Customization workflow**:
+  1. Player enters the MechLab Design tab (P3.6.5) on an existing owned unit
+  2. Player adds/removes/replaces components in the paper-doll grid; real-time TM validation (P3.6.3) runs continuously
+  3. When the player exits the editor or clicks "Apply Customization", the system evaluates each changed component per CO classification
+  4. For each changed component, calculate:
+     - **CO time**: `component_tonnage × CLASS_HOURS[class]` where B=1.0h/t, C=2.0h/t, D=5.0h/t, E=50.0h/t; minimum 4 hours per change
+     - **CO cost**: `component_base_cost × CLASS_COST_PCT[class]` where B=5%, C=10%, D=20%, E=30%
+     - **CO target number**: base TN from component `repair_difficulty` per CO table (Simple=4, Standard=6, Advanced=8, Elite=10, Experimental=12); modified by component quality (A=-2, B=-1, C=0, D=+1, E=+2, F=+4), facility level (field=+2, repair bay=0, mech bay=-1, advanced=-2), and parts availability (in-stock=0, ordered=+1)
+  5. Player reviews the customization plan: per-component class badge, individual time/cost/TN, total time, total cost, and a "risk summary" showing which changes have high failure probabilities (TN > tech skill + 3)
+  6. Player confirms → funds deducted immediately; parts not in local stock are sourced via `InterstellarOrderManager` (P1.2) with delivery ETA
+- **Skill resolution per CO**: once all parts are on-hand and the assigned technician has available hours:
+  - Each component change is resolved as a separate skill roll: `tech_skill_roll >= TN` to succeed
+  - On success: the component is installed; time consumed = calculated CO time (modified by `base_time × (10.0 / (skill + 5))` per P3.6.4)
+  - On failure: time is consumed but component is not installed; player may retry (paying time again)
+  - On critical failure (natural 2): the component being installed is destroyed, plus roll on CO mishap table (damage to adjacent slot, personal injury to technician, etc.)
+  - Multiple changes on the same unit in the same session are rolled sequentially; a failure on an early change does not abort later changes
+- **Facility gating per CO classification**: certain classes require minimum facility levels:
+  - Class B: field or better
+  - Class C: repair bay or better
+  - Class D: mech bay or better
+  - Class E: advanced facility or better
+  - If the current planet's facility is below the requirement, the player is warned and a flat +4 TN penalty is applied (field-expedient modifier per CO)
+- **Parts quality interaction**: if the replacement component's quality rating is lower than the original, the base TN increases by `(original_quality - new_quality) × 1` (CO quality mismatch penalty); the player can mitigate by first repairing the replacement part to a higher quality (time cost per P3.6.4)
+- **Customization log**: all completed customizations are recorded on the unit's metadata (`customization_history: Array[Dictionary]`) with timestamp, components changed, technician who performed the work, and skill roll results; visible in the MechLab info card
+
 ---
 
 ### P3.7 — Initial Strategic Unit Generator
