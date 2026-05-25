@@ -11,6 +11,9 @@ var event_log: Array[Dictionary] = []
 ## Key = component name (String), value = { "quantity": int, "component_name": String }
 var player_inventory: Dictionary = {}
 
+## Custom variants that have been successfully applied at least once (for refit_canon_only = -1 mode)
+var proven_custom_variants: Dictionary = {}
+
 func _ready() -> void:
 	player = StrategicUnit.new()
 

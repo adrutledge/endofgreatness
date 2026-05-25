@@ -319,10 +319,11 @@
 - Refit labor per TM: `tonnage × CLASS_HOURS[class]` per component added + 0.5 × tonnage per component removed; B=1.0h/t, C=2.0h/t, D=5.0h/t, E=50.0h/t; minimum 4 hours
 - Consumes daily from the unit's assigned technician pool (`PersonnelManager.get_unit_repair_budget()`)
 - **Refit kits**: instead of sourcing each component individually, a refit is ordered as a single **refit kit** — a pre-packaged bundle containing all components, wiring harnesses, and instructions needed for the conversion; the kit cost is the sum of all component costs at a discounted rate (configurable, default 90% of individual component total); a single purchase transaction and a single delivery ETA apply; the refit kit provides a TN bonus per its class (B=-2, C=-1, D/E=0) representing the benefit of pre-assembled and tested parts
-- **Refit target game rule** (config toggle `refit_canon_only: bool`, default true):
-  - When **true**: refits can only target canon variants (those from `.mtf`/`.blk` files in `data/units/`); custom variants saved by the player (in `data/units/custom/`) are excluded from the refit target list
-  - When **false**: custom variants are also available as refit targets, allowing the player to refit to any previously designed custom variant
-  - This rule exists because refit kits are only produced for canon variants; custom-to-custom refits must be handled as customizations (P3.6.6) instead
+- **Refit target game rule** (config `refit_canon_only: int`, default 1):
+  - **1** (canon only): refits can only target canon variants (those from `.mtf`/`.blk` files in `data/units/`); custom variants saved by the player (in `data/units/custom/`) are excluded from the refit target list
+  - **0** (allow all): custom variants are also available as refit targets, allowing the player to refit to any previously designed custom variant
+  - **-1** (first-time customization): the first time a given custom variant is applied to a unit, it must be done as a customization (P3.6.6) — individual component changes with the customization workflow; after that first successful implementation, the variant design is recorded (stored with its component list in `data/units/custom/`) and future instances of the same custom variant may be refit to using the standard refit workflow (with a refit kit and the refit skill roll)
+  - The reasoning: refit kits are only canonically produced for canon variants; setting -1 represents the in-universe process of developing a "field refit kit" for a custom design after proving it works on the first unit
 - Refit work flow:
   1. Player selects a Mech and a target variant in the MechLab UI
   2. System calculates component diff, classifies the refit per TM rules, and determines refit kit cost and availability

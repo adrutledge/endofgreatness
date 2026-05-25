@@ -2,6 +2,7 @@ extends Node
 
 var factions: Dictionary = {}
 var unit_templates: Dictionary = {}
+var canon_units: Dictionary = {}
 var component_defs: Dictionary = {}
 var systems_data: Dictionary = {}
 var _Parser = null
@@ -83,6 +84,7 @@ func _scan_unit_dir(path: String) -> void:
 	var dir = DirAccess.open(path)
 	if not dir:
 		return
+	var is_custom = path.contains("/custom")
 	dir.list_dir_begin()
 	var file_name = dir.get_next()
 	while file_name != "":
@@ -91,10 +93,14 @@ func _scan_unit_dir(path: String) -> void:
 			var unit = _get_parser().parse_mtf(file_path, component_defs)
 			if unit:
 				unit_templates[unit.unit_name] = unit
+				if not is_custom:
+					canon_units[unit.unit_name] = true
 		elif file_name.ends_with(".blk"):
 			var unit = _get_parser().parse_blk(file_path, component_defs)
 			if unit:
 				unit_templates[unit.unit_name] = unit
+				if not is_custom:
+					canon_units[unit.unit_name] = true
 		elif dir.current_is_dir() and not file_name.begins_with("."):
 			_scan_unit_dir(file_path)
 		file_name = dir.get_next()
@@ -120,14 +126,20 @@ func load_timeline() -> void:
 	if json.parse(json_str) == OK:
 		GameState.set("timeline_events", json.data)
 
-func get_variants_for_chassis(chassis: String) -> Array[TacticalUnit]:
+func get_variants_for_chassis(chassis: String, canon_only: bool = true) -> Array[TacticalUnit]:
 	var results: Array[TacticalUnit] = []
 	var lower = chassis.to_lower().strip_edges()
 	for name in unit_templates:
+		if canon_only and not canon_units.has(name):
+			continue
 		var tu = unit_templates[name]
 		if tu.chassis_name.to_lower().strip_edges() == lower:
 			results.append(tu)
 	return results
+
+
+func is_canon_unit(unit_name: String) -> bool:
+	return canon_units.has(unit_name)
 
 # ----- Faction data helpers (kept in DataManager) -----
 

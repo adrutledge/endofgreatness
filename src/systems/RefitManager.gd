@@ -95,29 +95,24 @@ func calculate_refit_cost(diff: Dictionary) -> int:
 		total += base_cost * cost_pct
 	return int(ceil(total))
 
-func start_refit(tactical_unit: TacticalUnit, target_variant: TacticalUnit, parts_plan: Array[Dictionary]) -> Dictionary:
+func start_refit(tactical_unit: TacticalUnit, target_variant: TacticalUnit, parts_plan: Array[Dictionary] = []) -> Dictionary:
 	if get_unit_refit(tactical_unit):
 		return {"success": false, "reason": "Unit already has an active refit"}
 	var diff = calculate_refit_diff(tactical_unit, target_variant)
 	if diff.components_to_add.is_empty() and diff.components_to_remove.is_empty():
 		return {"success": false, "reason": "No changes needed"}
 
-	var total_cost = 0
-	var max_delivery_days = 0
-	for entry in parts_plan:
-		total_cost += entry.cost_per_unit
-		if entry.source == "remote":
-			var eta = entry.get("travel_days", 7)
-			max_delivery_days = max(max_delivery_days, eta)
+	var kit_info = calculate_refit_kit(diff)
+	var total_cost = kit_info.cost
+	var max_delivery_days = kit_info.delivery_days
 
 	if EconomySystem.get_balance() < total_cost:
 		return {"success": false, "reason": "Insufficient funds — need " + str(total_cost) + " CB"}
 
-	for entry in parts_plan:
-		if entry.source == "local":
-			EconomySystem.buy_item(entry.component_name, 1)
-		elif entry.source == "remote":
-			EconomySystem.order_item(entry.component_name, 1, entry.cost_per_unit, entry.source_system, entry.travel_days)
+	if max_delivery_days > 0:
+		EconomySystem.deduct_funds(total_cost, "Refit kit: " + target_variant.unit_name)
+	else:
+		EconomySystem.deduct_funds(total_cost, "Refit kit: " + target_variant.unit_name)
 
 	var class_info = classify_refit(diff)
 	var total_hours = calculate_refit_hours(diff)
@@ -144,9 +139,34 @@ func start_refit(tactical_unit: TacticalUnit, target_variant: TacticalUnit, part
 		"class": refit_class_name,
 		"cost": total_cost,
 		"hours": total_hours,
-		"delivery_days": max_delivery_days
+		"delivery_days": max_delivery_days,
+		"kit": true,
 	})
 	return {"success": true, "refit": refit}
+
+
+func calculate_refit_kit(diff: Dictionary) -> Dictionary:
+	var total_cost := 0
+	var max_delivery := 0
+	var discount := 0.9
+	var f = FileAccess.open("res://data/config/spares_config.json", FileAccess.READ)
+	if f:
+		var j = JSON.new()
+		if j.parse(f.get_as_text()) == OK:
+			discount = j.data.get("refit_kit_discount", 0.9)
+
+	for name in diff.get("components_to_add", []):
+		var def = _component_def(name)
+		var base_cost = def.get("cost", 1000)
+		total_cost += int(ceil(base_cost * discount))
+
+		var remote = EconomySystem.search_remote_sources(name)
+		if remote.size() > 0:
+			var eta = remote[0].travel_days
+			if eta > max_delivery:
+				max_delivery = eta
+
+	return {"cost": max(total_cost, 1), "delivery_days": max_delivery}
 
 func source_parts(diff: Dictionary) -> Array[Dictionary]:
 	var plan: Array[Dictionary] = []
@@ -293,6 +313,7 @@ func _apply_refit(refit: Dictionary) -> void:
 			"target": refit.target_unit_name,
 			"kit_bonus": kit_bonus,
 		})
+		_check_proven_variant(tu)
 	else:
 		var extra_hours := int(ceil(refit.total_hours * 0.5))
 		refit.hours_remaining += extra_hours
@@ -627,6 +648,7 @@ func _apply_customization(customization: Dictionary) -> void:
 			"changes": changes.size(),
 			"success": true,
 		})
+		_check_proven_variant(tu)
 	else:
 		var extra_hours := int(ceil(customization.total_hours * 0.5))
 		customization.hours_remaining += extra_hours
@@ -677,6 +699,26 @@ func _apply_change(unit: TacticalUnit, change: Dictionary) -> void:
 			new_c.status = Enums.ComponentStatus.UNDAMAGED
 			new_c.location = change.get("location", "")
 			unit.components.append(new_c)
+
+
+func _check_proven_variant(unit: TacticalUnit) -> void:
+	var unit_names: Array[String] = []
+	for c in unit.components:
+		unit_names.append(c.component_name)
+	for name in DataManager.unit_templates:
+		if DataManager.is_canon_unit(name):
+			continue
+		var tmpl = DataManager.unit_templates[name]
+		if tmpl.chassis_name != unit.chassis_name:
+			continue
+		var tmpl_names: Array[String] = []
+		for c in tmpl.components:
+			tmpl_names.append(c.component_name)
+		unit_names.sort()
+		tmpl_names.sort()
+		if unit_names == tmpl_names:
+			GameState.proven_custom_variants[name] = true
+			return
 
 
 func get_customization_log(unit: TacticalUnit) -> Array[Dictionary]:

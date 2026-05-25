@@ -12,5 +12,7 @@
   "remote_transport_cost_enabled": true,
   "unit_transport_cost_enabled": true,
   "dropship_cost_per_ton": 5000,
-  "jumpship_cost_per_ton_per_jump": 10000
+  "jumpship_cost_per_ton_per_jump": 10000,
+  "refit_canon_only": 1,
+  "refit_kit_discount": 0.9
 }
