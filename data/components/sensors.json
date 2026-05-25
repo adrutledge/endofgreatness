@@ -1,6 +1,6 @@
 {
   "name": "Sensors",
-  "tonnage": 1,
+  "tonnage": 0,
   "critical_slots": 2,
   "cost": 50000,
   "tech_base": "inner_sphere",

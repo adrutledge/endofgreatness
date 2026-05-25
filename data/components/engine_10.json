@@ -8,5 +8,20 @@
     "min": 1,
     "max": 4
   },
-  "repair_difficulty": 1
+  "repair_difficulty": 1,
+  "weight_calc": {
+    "type": "fusion_engine",
+    "type_multipliers": {
+      "Standard": 1.0,
+      "Fusion": 1.0,
+      "XL": 0.5,
+      "Light": 0.75,
+      "Compact": 1.5,
+      "XXL": 0.333,
+      "ICE": 2.0,
+      "Fuel Cell": 1.2
+    }
+  },
+  "slot_free_heat_sinks": 1,
+  "weight_free_heat_sinks": 0
 }

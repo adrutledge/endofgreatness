@@ -26,6 +26,7 @@
 
 - Create `addons/` for plugins (if any)
 - Configure `autoload` singletons: `GameState`, `EventBus`, `TimeManager`, `DataManager`
+- Create `Makefile` with targets: `build`, `run`, `test`, `lint`, `export` for common development and automation tasks
 
 ### P0.2 — Data Formats & Resource System
 

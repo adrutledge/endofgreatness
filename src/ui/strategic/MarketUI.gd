@@ -69,7 +69,7 @@ func _ready() -> void:
 
 func populate() -> void:
 	if not GameState.player.current_planet:
-		balance_label.text = "Balance: " + _fmt_money(EconomySystem.get_balance()) + "  |  No planet selected"
+		balance_label.text = "Balance: " + Helpers.fmt_money(EconomySystem.get_balance()) + "  |  No planet selected"
 		local_list.clear()
 		detail_name.text = "Select a planet on the star map first"
 		return
@@ -77,7 +77,7 @@ func populate() -> void:
 	EconomySystem.initialize_market(GameState.player.current_planet)
 	_refresh_local()
 	_refresh_mech_market()
-	balance_label.text = "Balance: " + _fmt_money(EconomySystem.get_balance())
+	balance_label.text = "Balance: " + Helpers.fmt_money(EconomySystem.get_balance())
 
 func _refresh_local() -> void:
 	local_list.clear()
@@ -87,7 +87,7 @@ func _refresh_local() -> void:
 	for item in current_items:
 		if query and not item.name.to_lower().contains(query):
 			continue
-		local_list.add_item("%s  x%d  %s" % [item.name, item.quantity, _fmt_money(item.cost)])
+		local_list.add_item("%s  x%d  %s" % [item.name, item.quantity, Helpers.fmt_money(item.cost)])
 
 func _on_local_search(_new_text: String) -> void:
 	_refresh_local()
@@ -102,7 +102,7 @@ func _on_local_item_selected(index: int) -> void:
 	var item = visible[index]
 	selected_item_name = item.name
 	detail_name.text = item.name
-	detail_cost.text = "Cost: " + _fmt_money(item.cost) + " per unit"
+	detail_cost.text = "Cost: " + Helpers.fmt_money(item.cost) + " per unit"
 	detail_tech.text = "Tech Level: " + str(item.tech_level)
 	detail_tonnage.text = "Tonnage: " + str(item.tonnage) + "t"
 	detail_qty.text = "Available: " + str(item.quantity)
@@ -134,7 +134,7 @@ func _on_buy() -> void:
 			"location": GameState.player.current_planet
 		})
 		_refresh_local()
-		balance_label.text = "Balance: " + _fmt_money(EconomySystem.get_balance())
+		balance_label.text = "Balance: " + Helpers.fmt_money(EconomySystem.get_balance())
 		detail_name.text = "Purchased " + str(qty) + "x " + selected_item_name
 		detail_qty.text = ""
 		buy_button.disabled = true
@@ -172,7 +172,7 @@ func _on_remote_search(new_text: String) -> void:
 	for r in remote_results:
 		remote_list.add_item("%s — %s  x%d  %s  (%d jumps, %d days)" % [
 			r.source_system, remote_item_name, r.quantity,
-			_fmt_money(r.cost_per_unit), r.jumps, r.travel_days])
+			Helpers.fmt_money(r.cost_per_unit), r.jumps, r.travel_days])
 	remote_status.text = str(remote_results.size()) + " source(s) found"
 
 func _clear_remote_detail() -> void:
@@ -190,7 +190,7 @@ func _on_remote_item_selected(index: int) -> void:
 		return
 	selected_remote_idx = index
 	var r = remote_results[index]
-	order_cost_label.text = "Cost: " + _fmt_money(r.cost_per_unit) + " per unit"
+	order_cost_label.text = "Cost: " + Helpers.fmt_money(r.cost_per_unit) + " per unit"
 	order_travel_label.text = "Travel: " + str(r.travel_days) + " days (" + str(r.jumps) + " jump(s))"
 	order_qty_spin.max_value = max(r.quantity, 1)
 	order_qty_spin.value = 1
@@ -211,7 +211,7 @@ func _on_order() -> void:
 			"source": r.source_system,
 			"eta_days": r.travel_days
 		})
-		balance_label.text = "Balance: " + _fmt_money(EconomySystem.get_balance())
+		balance_label.text = "Balance: " + Helpers.fmt_money(EconomySystem.get_balance())
 		order_button.disabled = true
 		order_cost_label.text = "Order placed — arrives in " + str(r.travel_days) + " days"
 	else:
@@ -245,7 +245,7 @@ func _refresh_mech_market() -> void:
 		if query and not tu.unit_name.to_lower().contains(query):
 			continue
 		var cost = _calc_mech_cost(tu)
-		mech_list.add_item("%s  %s" % [tu.unit_name, _fmt_money(cost)])
+		mech_list.add_item("%s  %s" % [tu.unit_name, Helpers.fmt_money(cost)])
 
 func _calc_mech_cost(tu: TacticalUnit) -> int:
 	return tu.calculate_tm_cost()
@@ -285,7 +285,7 @@ func _on_mech_selected(index: int) -> void:
 		mech_lines.append("  " + c.component_name)
 	mech_detail_specs.text = "\n".join(mech_lines)
 
-	mech_price_label.text = "Price: " + _fmt_money(selected_mech_cost)
+	mech_price_label.text = "Price: " + Helpers.fmt_money(selected_mech_cost)
 	mech_status_label.text = ""
 	buy_mech_button.disabled = false
 
@@ -303,7 +303,7 @@ func _on_buy_mech() -> void:
 	var template = visible[selected_mech_index]
 
 	if EconomySystem.get_balance() < selected_mech_cost:
-		mech_status_label.text = "Insufficient funds — need " + _fmt_money(selected_mech_cost)
+		mech_status_label.text = "Insufficient funds — need " + Helpers.fmt_money(selected_mech_cost)
 		return
 
 	if not EconomySystem.deduct_funds(selected_mech_cost, "Purchase mech: " + template.unit_name):
@@ -348,7 +348,7 @@ func _on_buy_mech() -> void:
 		target_ou.sub_units.append(opu)
 	target_ou.sub_units[0].tactical_units.append(new_unit)
 
-	balance_label.text = "Balance: " + _fmt_money(EconomySystem.get_balance())
+	balance_label.text = "Balance: " + Helpers.fmt_money(EconomySystem.get_balance())
 	GameState.log_event("mech_purchased", {
 		"unit": template.unit_name,
 		"cost": selected_mech_cost,
@@ -361,13 +361,4 @@ func _on_close() -> void:
 	hide()
 	closed.emit()
 
-func _fmt_money(amount: int) -> String:
-	if amount >= 1000000:
-		var m = amount / 1000000
-		var frac = (amount % 1000000) / 100000
-		return str(m) + "." + str(frac) + "M CB"
-	elif amount >= 1000:
-		var k = amount / 1000
-		var frac = (amount % 1000) / 100
-		return str(k) + "." + str(frac) + "K CB"
-	return str(amount) + " CB"
+

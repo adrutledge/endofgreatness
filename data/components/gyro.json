@@ -8,5 +8,15 @@
     "min": 1,
     "max": 4
   },
-  "repair_difficulty": 3
+  "repair_difficulty": 3,
+  "weight_calc": {
+    "type": "gyro",
+    "type_multipliers": {
+      "Standard": 1.0,
+      "XL": 0.5,
+      "Compact": 1.5,
+      "Heavy": 2.0,
+      "None": 0.0
+    }
+  }
 }

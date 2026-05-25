@@ -157,7 +157,7 @@ func _on_variant_selected(index: int) -> void:
 	var max_delivery = 0
 	for entry in current_parts_plan:
 		var src = "Local" if entry.source == "local" else "Remote (" + entry.get("source_system", "?") + ", " + str(entry.get("travel_days", 0)) + "d)"
-		ph.add("  " + entry.component_name + "  —  " + _fmt_money(entry.cost_per_unit) + "  (" + src + ")")
+		ph.add("  " + entry.component_name + "  —  " + Helpers.fmt_money(entry.cost_per_unit) + "  (" + src + ")")
 		total_cost += entry.cost_per_unit
 		if entry.source == "remote":
 			max_delivery = max(max_delivery, entry.get("travel_days", 0))
@@ -167,7 +167,7 @@ func _on_variant_selected(index: int) -> void:
 	var clas_info = RefitManager.classify_refit(diff)
 	var clas_name = RefitManager.get_refit_class_name(clas_info.overall_class)
 	var clas_hours = RefitManager.CLASS_HOURS[clas_info.overall_class]
-	cost_label.text = "Total parts cost: " + _fmt_money(total_cost) + "  |  Refit Class: " + clas_name
+	cost_label.text = "Total parts cost: " + Helpers.fmt_money(total_cost) + "  |  Refit Class: " + clas_name
 	diff_info.text += "\n\n[b]Refit Class: " + clas_name + "[/b] (" + str(clas_hours) + " hrs/ton per component)"
 	hours_label.text = "Labor: " + str(hours) + " technician-hours" + (" | Parts delivery: " + str(max_delivery) + " days" if max_delivery > 0 else " | All parts available locally")
 	start_refit_button.disabled = false
@@ -202,16 +202,7 @@ func _on_close() -> void:
 	hide()
 	closed.emit()
 
-func _fmt_money(amount: int) -> String:
-	if amount >= 1000000:
-		var m = amount / 1000000
-		var frac = (amount % 1000000) / 100000
-		return str(m) + "." + str(frac) + "M CB"
-	elif amount >= 1000:
-		var k = amount / 1000
-		var frac = (amount % 1000) / 100
-		return str(k) + "." + str(frac) + "K CB"
-	return str(amount) + " CB"
+
 
 
 class RichTextHelper:
