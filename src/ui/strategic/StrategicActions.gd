@@ -74,9 +74,9 @@ func _slide_in(animate: bool = true) -> void:
 		_slide_tween.kill()
 	if animate:
 		_slide_tween = create_tween()
-		_slide_tween.tween_property(self, "margin_left", -SIDEBAR_WIDTH, 0.15).set_ease(Tween.EASE_OUT)
+		_slide_tween.tween_property(self, "offset_left", -SIDEBAR_WIDTH, 0.15).set_ease(Tween.EASE_OUT)
 	else:
-		margin_left = -SIDEBAR_WIDTH
+		offset_left = -SIDEBAR_WIDTH
 
 
 func _slide_out(animate: bool = true) -> void:
@@ -87,9 +87,9 @@ func _slide_out(animate: bool = true) -> void:
 		_slide_tween.kill()
 	if animate:
 		_slide_tween = create_tween()
-		_slide_tween.tween_property(self, "margin_left", 0, 0.15).set_ease(Tween.EASE_OUT)
+		_slide_tween.tween_property(self, "offset_left", 0, 0.15).set_ease(Tween.EASE_OUT)
 	else:
-		margin_left = 0
+		offset_left = 0
 
 func _connect_signals() -> void:
 	%PersonnelButton.pressed.connect(_on_personnel)
