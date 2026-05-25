@@ -225,15 +225,14 @@ func generate(faction_code: String, company_name: String = "", mech_count: int =
 				PersonnelManager.add_relationship(all_personnel[j].personnel_name, all_personnel[i].personnel_name, Enums.RelationshipType.RIVAL, -1, randi() % 3 + 1)
 
 	GameState.log_event("game_started", {
-		gs.log_event("game_started", {
-			"company": company,
-			"faction": faction_code,
-			"mech_count": mechs.size(),
-			"personnel_count": all_personnel.size(),
-			"starting_float": starting_float,
-			"remaining": remaining,
-			"planet": home_world,
-		})
+		"company": company,
+		"faction": faction_code,
+		"mech_count": mechs.size(),
+		"personnel_count": all_personnel.size(),
+		"starting_float": starting_float,
+		"remaining": remaining,
+		"planet": home_world,
+	})
 
 	return {
 		"success": true,
