@@ -596,10 +596,10 @@ static func _build_location_data(tonnage: float, armor_values: Dictionary) -> Di
 	var result: Dictionary = {}
 	var t = max(1.0, tonnage)
 
-	var structure_ct = int(ceil(t / 5.0))
-	var structure_st = int(ceil(t / 5.0))
-	var structure_arm = max(1, int(ceil(t / 10.0)))
-	var structure_leg = max(1, int(ceil(t / 10.0)))
+	var structure_ct = int(ceil(t / 5.0)) + 8
+	var structure_st = int(ceil(t / 5.0)) + 8
+	var structure_arm = max(3, int(ceil(t / 10.0)) + 4)
+	var structure_leg = max(3, int(ceil(t / 10.0)) + 8)
 
 	var hit_chances = {
 		"Head": 0.0278,
