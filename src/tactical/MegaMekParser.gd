@@ -162,7 +162,12 @@ static func parse_mtf(file_path: String, component_defs: Dictionary = {}) -> Tac
 			is_splittable = true
 		var key = norm_name + "|" + loc_name
 		if is_splittable:
-			key = norm_name
+			var side = ""
+			if "Left" in loc_name:
+				side = "Left"
+			elif "Right" in loc_name:
+				side = "Right"
+			key = norm_name + "|" + side
 
 		if seen.has(key):
 			seen[key].critical_slots += 1
