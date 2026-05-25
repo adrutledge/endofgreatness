@@ -171,15 +171,16 @@ func _build_paper_doll_tab() -> void:
 	scroll.add_child(wrapper)
 
 	var head_row = HBoxContainer.new()
-	head_row.alignment = BoxContainer.ALIGNMENT_CENTER
 	wrapper.add_child(head_row)
+	head_row.add_child(Control.new())
+	head_row.add_child(Control.new())
 	head_row.add_child(_make_paper_doll_head())
+	head_row.add_child(Control.new())
+	head_row.add_child(Control.new())
 
 	wrapper.add_child(HSeparator.new())
 
 	var mid_row = HBoxContainer.new()
-	mid_row.alignment = BoxContainer.ALIGNMENT_CENTER
-	mid_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	wrapper.add_child(mid_row)
 	mid_row.add_child(_make_location_column("Left Arm", 12))
 	mid_row.add_child(_make_location_column("Left Torso", 12))
@@ -190,18 +191,11 @@ func _build_paper_doll_tab() -> void:
 	wrapper.add_child(HSeparator.new())
 
 	var leg_row = HBoxContainer.new()
-	leg_row.alignment = BoxContainer.ALIGNMENT_CENTER
 	wrapper.add_child(leg_row)
 	leg_row.add_child(_make_location_column("Left Leg", 6))
-	var spacer1 = Control.new()
-	spacer1.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	leg_row.add_child(spacer1)
-	var spacer2 = Control.new()
-	spacer2.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	leg_row.add_child(spacer2)
-	var spacer3 = Control.new()
-	spacer3.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	leg_row.add_child(spacer3)
+	leg_row.add_child(Control.new())
+	leg_row.add_child(Control.new())
+	leg_row.add_child(Control.new())
 	leg_row.add_child(_make_location_column("Right Leg", 6))
 
 	var btn_bar = HBoxContainer.new()
