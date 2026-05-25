@@ -156,7 +156,13 @@ static func parse_mtf(file_path: String, component_defs: Dictionary = {}) -> Tac
 		var loc_name = entry["location"]
 
 		var norm_name = _normalize_component_name(raw_name, engine_rating)
+		var is_splittable := false
+		var splittable_def = component_defs.get(norm_name, {})
+		if splittable_def.get("splittable", false):
+			is_splittable = true
 		var key = norm_name + "|" + loc_name
+		if is_splittable:
+			key = norm_name
 
 		if seen.has(key):
 			seen[key].critical_slots += 1

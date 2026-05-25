@@ -9,5 +9,6 @@
     "max": 5
   },
   "repair_difficulty": 5,
-  "component_type": "weapon"
+  "component_type": "weapon",
+  "splittable": true
 }
