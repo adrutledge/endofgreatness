@@ -269,7 +269,7 @@ const SKILL_ATTRIBUTE_LINKS: Dictionary = {
 static func get_skill_attributes(skill: String) -> Array[String]:
 	while skill.length() > 0:
 		if SKILL_ATTRIBUTE_LINKS.has(skill):
-			return SKILL_ATTRIBUTE_LINKS[skill]
+			return SKILL_ATTRIBUTE_LINKS[skill] as Array[String]
 		var idx = skill.rfind("_")
 		if idx == -1:
 			break
