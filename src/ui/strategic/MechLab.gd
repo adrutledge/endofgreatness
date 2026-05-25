@@ -48,18 +48,10 @@ var components_replace_btn: Button
 var components_browser_selected: String = ""
 var current_location_filter: OptionButton
 
-var _protected_components: Array[String] = [
-	"engine", "gyro", "cockpit", "life support", "sensors",
-	"shoulder actuator", "upper arm actuator",
-	"hip actuator", "upper leg actuator", "lower leg actuator", "foot actuator",
-]
-
-
 func _is_protected_component(name: String) -> bool:
-	var n = name.to_lower()
-	for p in _protected_components:
-		if p in n:
-			return true
+	var def = DataManager.component_defs.get(name)
+	if def:
+		return def.get("protected", false) == true
 	return false
 
 

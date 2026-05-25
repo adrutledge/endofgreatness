@@ -9,5 +9,6 @@
     "max": 4
   },
   "repair_difficulty": 3,
-  "component_type": "cockpit"
+  "component_type": "cockpit",
+  "protected": true
 }

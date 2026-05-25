@@ -25,5 +25,6 @@
   "slot_free_heat_sinks": 16,
   "weight_free_heat_sinks": 10,
   "vehicle_tonnage": 23.5,
-  "component_type": "engine"
+  "component_type": "engine",
+  "protected": true
 }

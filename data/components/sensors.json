@@ -9,5 +9,6 @@
     "max": 5
   },
   "repair_difficulty": 3,
-  "component_type": "electronics"
+  "component_type": "electronics",
+  "protected": true
 }
