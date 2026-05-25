@@ -1257,7 +1257,7 @@ func _refresh_paper_doll() -> void:
 			style.bg_color = col
 			style.border_width_bottom = 1
 			style.border_color = Color(0.2, 0.2, 0.25)
-			if n > 1:
+			if n > 1 and comp_type != "ammo":
 				var bw: int = 3
 				var is_first: bool = placed == 0
 				var is_last: bool = placed + 1 >= n
@@ -1271,7 +1271,7 @@ func _refresh_paper_doll() -> void:
 			hover.bg_color = col * 1.3
 			hover.border_width_bottom = 1
 			hover.border_color = Color(0.4, 0.4, 0.45)
-			if n > 1:
+			if n > 1 and comp_type != "ammo":
 				var bw: int = 3
 				var is_first: bool = placed == 0
 				var is_last: bool = placed + 1 >= n
