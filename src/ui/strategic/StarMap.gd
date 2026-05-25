@@ -257,11 +257,13 @@ func _unhandled_input(event: InputEvent) -> void:
 				dragging = false
 
 		elif btn == MOUSE_BUTTON_WHEEL_UP and event.pressed:
-			camera.zoom = clamp(camera.zoom * 1.15, 0.1, 10.0)
+			var z = camera.zoom * 1.15
+			camera.zoom = Vector2(clampf(z.x, 0.1, 10.0), clampf(z.y, 0.1, 10.0))
 			queue_redraw()
 
 		elif btn == MOUSE_BUTTON_WHEEL_DOWN and event.pressed:
-			camera.zoom = clamp(camera.zoom / 1.15, 0.1, 10.0)
+			var z = camera.zoom / 1.15
+			camera.zoom = Vector2(clampf(z.x, 0.1, 10.0), clampf(z.y, 0.1, 10.0))
 			queue_redraw()
 
 	if event is InputEventMouseMotion and dragging:

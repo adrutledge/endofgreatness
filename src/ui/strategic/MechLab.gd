@@ -194,13 +194,13 @@ func _build_paper_doll_tab() -> void:
 	wrapper.add_child(leg_row)
 	leg_row.add_child(_make_location_column("Left Leg", 6))
 	var spacer1 = Control.new()
-	spacer1.custom_minimum_size = Vector2(130, 0)
+	spacer1.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	leg_row.add_child(spacer1)
 	var spacer2 = Control.new()
-	spacer2.custom_minimum_size = Vector2(130, 0)
+	spacer2.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	leg_row.add_child(spacer2)
 	var spacer3 = Control.new()
-	spacer3.custom_minimum_size = Vector2(130, 0)
+	spacer3.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	leg_row.add_child(spacer3)
 	leg_row.add_child(_make_location_column("Right Leg", 6))
 
@@ -274,7 +274,7 @@ func _make_slot_button(location: String, slot_index: int, default_name: String =
 func _make_paper_doll_head() -> VBoxContainer:
 	var col = VBoxContainer.new()
 	col.name = "Loc_Head"
-	col.custom_minimum_size = Vector2(130, 0)
+	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var title = Label.new()
 	title.text = "Head"
 	title.add_theme_font_size_override("font_size", 11)
@@ -290,7 +290,7 @@ func _make_paper_doll_head() -> VBoxContainer:
 func _make_paper_doll_ct() -> VBoxContainer:
 	var col = VBoxContainer.new()
 	col.name = "Loc_Center_Torso"
-	col.custom_minimum_size = Vector2(130, 0)
+	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var title = Label.new()
 	title.text = "Center Torso"
 	title.add_theme_font_size_override("font_size", 11)
@@ -307,7 +307,7 @@ func _make_paper_doll_ct() -> VBoxContainer:
 func _make_location_column(location: String, slot_count: int) -> VBoxContainer:
 	var col = VBoxContainer.new()
 	col.name = "Loc_" + location.replace(" ", "_")
-	col.custom_minimum_size = Vector2(130, 0)
+	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 	var lbl = Label.new()
 	lbl.text = location + " (" + str(slot_count) + ")"
