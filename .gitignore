@@ -20,3 +20,4 @@ Thumbs.db
 # Build artifacts
 .tested_*
 3028-*.pdf
+debug/

@@ -50,35 +50,34 @@ func _on_contract_board() -> void:
 		Helpers.debug_warn("StarMap", "_on_contract_board — contract_board is null")
 		return
 	Helpers.debug_print("StarMap", "opening contract board")
-	sidebar.hide()
+	sidebar.hide_sidebar()
 	contract_board.populate()
 	contract_board.show()
 
 func _on_contract_board_closed() -> void:
-	Helpers.debug_print("StarMap", "closing contract board")
 	contract_board.hide()
-	sidebar.show()
+	sidebar.show_sidebar()
 
 func _on_organization_tree() -> void:
 	if not org_mgmt:
 		Helpers.debug_warn("StarMap", "_on_organization_tree — org_mgmt is null")
 		return
 	Helpers.debug_print("StarMap", "opening org tree")
-	sidebar.hide()
+	sidebar.hide_sidebar()
 	org_mgmt.populate_tree()
 	org_mgmt.show()
 
 func _on_org_mgmt_closed() -> void:
 	Helpers.debug_print("StarMap", "closing org tree")
 	org_mgmt.hide()
-	sidebar.show()
+	sidebar.show_sidebar()
 
 func _on_personnel_management() -> void:
 	if not personnel_mgmt:
 		Helpers.debug_warn("StarMap", "_on_personnel_management — personnel_mgmt is null")
 		return
 	Helpers.debug_print("StarMap", "opening personnel mgmt")
-	sidebar.hide()
+	sidebar.hide_sidebar()
 	personnel_mgmt.populate_roster()
 	personnel_mgmt.show()
 
@@ -87,7 +86,7 @@ func _on_unit_roster() -> void:
 		Helpers.debug_warn("StarMap", "_on_unit_roster — unit_roster_ui is null")
 		return
 	Helpers.debug_print("StarMap", "opening unit roster")
-	sidebar.hide()
+	sidebar.hide_sidebar()
 	unit_roster_ui.populate_tree()
 	unit_roster_ui.show()
 
@@ -96,26 +95,26 @@ func _on_mech_lab() -> void:
 		Helpers.debug_warn("StarMap", "_on_mech_lab — mech_lab_ui is null")
 		return
 	Helpers.debug_print("StarMap", "opening mech lab")
-	sidebar.hide()
+	sidebar.hide_sidebar()
 	mech_lab_ui.populate()
 	mech_lab_ui.show()
 
 func _on_mech_lab_closed() -> void:
 	Helpers.debug_print("StarMap", "closing mech lab")
 	mech_lab_ui.hide()
-	sidebar.show()
+	sidebar.show_sidebar()
 
 func _on_unit_roster_closed() -> void:
 	Helpers.debug_print("StarMap", "closing unit roster")
 	unit_roster_ui.hide()
-	sidebar.show()
+	sidebar.show_sidebar()
 
 func _on_event_log() -> void:
 	if not event_log_ui:
 		Helpers.debug_warn("StarMap", "_on_event_log — event_log_ui is null")
 		return
 	Helpers.debug_print("StarMap", "opening event log")
-	sidebar.hide()
+	sidebar.hide_sidebar()
 	event_log_ui.populate()
 	event_log_ui.show()
 
@@ -124,24 +123,24 @@ func _on_logistics() -> void:
 		Helpers.debug_warn("StarMap", "_on_logistics — logistics_ui is null")
 		return
 	Helpers.debug_print("StarMap", "opening logistics")
-	sidebar.hide()
+	sidebar.hide_sidebar()
 	logistics_ui.populate()
 	logistics_ui.show()
 
 func _on_logistics_closed() -> void:
 	Helpers.debug_print("StarMap", "closing logistics")
 	logistics_ui.hide()
-	sidebar.show()
+	sidebar.show_sidebar()
 
 func _on_event_log_closed() -> void:
 	Helpers.debug_print("StarMap", "closing event log")
 	event_log_ui.hide()
-	sidebar.show()
+	sidebar.show_sidebar()
 
 func _on_personnel_mgmt_closed() -> void:
 	Helpers.debug_print("StarMap", "closing personnel mgmt")
 	personnel_mgmt.hide()
-	sidebar.show()
+	sidebar.show_sidebar()
 
 func _load_systems() -> void:
 	var data = DataManager.systems_data
