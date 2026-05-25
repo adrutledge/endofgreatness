@@ -1,0 +1,496 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/ui/strategic/LogisticsPanel.gd" id="1"]
+
+[node name="LogisticsPanel" type="Panel"]
+script = ExtResource("1")
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TopBar" type="HBoxContainer" parent="MarginContainer/VBox"]
+size_flags_vertical = 0
+
+[node name="Title" type="Label" parent="MarginContainer/VBox/TopBar"]
+unique_name_in_owner = true
+text = "Logistics & Market"
+theme_override_font_sizes/font_size = 20
+size_flags_horizontal = 3
+horizontal_alignment = 0
+
+[node name="BalanceLabel" type="Label" parent="MarginContainer/VBox/TopBar"]
+unique_name_in_owner = true
+text = "Balance: 0 C-Bills"
+theme_override_font_sizes/font_size = 16
+size_flags_horizontal = 1
+horizontal_alignment = 2
+
+[node name="Tabs" type="TabContainer" parent="MarginContainer/VBox"]
+unique_name_in_owner = true
+size_flags_vertical = 3
+
+# ---- TAB 0: DELIVERIES ----
+[node name="DeliveriesTab" type="Panel" parent="MarginContainer/VBox/Tabs"]
+visible = false
+
+[node name="DeliveriesMargin" type="MarginContainer" parent="MarginContainer/VBox/Tabs/DeliveriesTab"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="HSplit" type="HSplitContainer" parent="MarginContainer/VBox/Tabs/DeliveriesTab/DeliveriesMargin"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DeliveryList" type="ItemList" parent="MarginContainer/VBox/Tabs/DeliveriesTab/DeliveriesMargin/HSplit"]
+unique_name_in_owner = true
+size_flags_horizontal = 2
+select_mode = 0
+
+[node name="DeliveryDetailPanel" type="Panel" parent="MarginContainer/VBox/Tabs/DeliveriesTab/DeliveriesMargin/HSplit"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+
+[node name="DeliveryDetailMargin" type="MarginContainer" parent="MarginContainer/VBox/Tabs/DeliveriesTab/DeliveriesMargin/HSplit/DeliveryDetailPanel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer/VBox/Tabs/DeliveriesTab/DeliveriesMargin/HSplit/DeliveryDetailPanel/DeliveryDetailMargin"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DeliveryDetailTitle" type="Label" parent="MarginContainer/VBox/Tabs/DeliveriesTab/DeliveriesMargin/HSplit/DeliveryDetailPanel/DeliveryDetailMargin/VBox"]
+unique_name_in_owner = true
+text = ""
+theme_override_font_sizes/font_size = 16
+autowrap_mode = 1
+
+[node name="DeliveryDetailInfo" type="Label" parent="MarginContainer/VBox/Tabs/DeliveriesTab/DeliveriesMargin/HSplit/DeliveryDetailPanel/DeliveryDetailMargin/VBox"]
+unique_name_in_owner = true
+text = ""
+autowrap_mode = 1
+size_flags_vertical = 3
+
+# ---- TAB 1: MARKET ----
+[node name="MarketTab" type="Panel" parent="MarginContainer/VBox/Tabs"]
+visible = false
+
+[node name="MarketMargin" type="MarginContainer" parent="MarginContainer/VBox/Tabs/MarketTab"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="MarketTabs" type="TabContainer" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LocalTab" type="Panel" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs"]
+
+[node name="LocalMargin" type="MarginContainer" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/LocalTab"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="HSplit" type="HSplitContainer" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/LocalTab/LocalMargin"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LocalList" type="ItemList" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/LocalTab/LocalMargin/HSplit"]
+unique_name_in_owner = true
+size_flags_horizontal = 2
+select_mode = 0
+
+[node name="LocalDetail" type="Panel" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/LocalTab/LocalMargin/HSplit"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+
+[node name="LD Margin" type="MarginContainer" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/LocalTab/LocalMargin/HSplit/LocalDetail"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/LocalTab/LocalMargin/HSplit/LocalDetail/LD Margin"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LocalName" type="Label" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/LocalTab/LocalMargin/HSplit/LocalDetail/LD Margin/VBox"]
+unique_name_in_owner = true
+text = ""
+theme_override_font_sizes/font_size = 16
+autowrap_mode = 1
+
+[node name="LocalCost" type="Label" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/LocalTab/LocalMargin/HSplit/LocalDetail/LD Margin/VBox"]
+unique_name_in_owner = true
+text = ""
+autowrap_mode = 1
+
+[node name="LocalTech" type="Label" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/LocalTab/LocalMargin/HSplit/LocalDetail/LD Margin/VBox"]
+unique_name_in_owner = true
+text = ""
+autowrap_mode = 1
+
+[node name="LocalTonnage" type="Label" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/LocalTab/LocalMargin/HSplit/LocalDetail/LD Margin/VBox"]
+unique_name_in_owner = true
+text = ""
+autowrap_mode = 1
+
+[node name="LocalQty" type="Label" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/LocalTab/LocalMargin/HSplit/LocalDetail/LD Margin/VBox"]
+unique_name_in_owner = true
+text = ""
+autowrap_mode = 1
+
+[node name="BuyHBox" type="HBoxContainer" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/LocalTab/LocalMargin/HSplit/LocalDetail/LD Margin/VBox"]
+size_flags_vertical = 0
+
+[node name="LocalQtySpin" type="SpinBox" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/LocalTab/LocalMargin/HSplit/LocalDetail/LD Margin/VBox/BuyHBox"]
+unique_name_in_owner = true
+min_value = 1
+max_value = 999
+step = 1
+value = 1
+
+[node name="BuyButton" type="Button" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/LocalTab/LocalMargin/HSplit/LocalDetail/LD Margin/VBox/BuyHBox"]
+unique_name_in_owner = true
+text = "Buy"
+disabled = true
+
+[node name="LocalSearch" type="LineEdit" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/LocalTab/LocalMargin"]
+unique_name_in_owner = true
+size_flags_vertical = 0
+placeholder_text = "Search local market..."
+
+[node name="UnitsTab" type="Panel" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs"]
+visible = false
+
+[node name="UnitsMargin" type="MarginContainer" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/UnitsTab"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/UnitsTab/UnitsMargin"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="FilterBar" type="HBoxContainer" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/UnitsTab/UnitsMargin/VBox"]
+size_flags_vertical = 0
+
+[node name="UnitSearch" type="LineEdit" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/UnitsTab/UnitsMargin/VBox/FilterBar"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+placeholder_text = "Search units..."
+
+[node name="UnitTypeFilter" type="OptionButton" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/UnitsTab/UnitsMargin/VBox/FilterBar"]
+unique_name_in_owner = true
+size_flags_horizontal = 1
+text = "All Types"
+items = "All Types\nMechs\nVehicles"
+selected = 0
+
+[node name="UnitWeightFilter" type="OptionButton" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/UnitsTab/UnitsMargin/VBox/FilterBar"]
+unique_name_in_owner = true
+size_flags_horizontal = 1
+text = "All Weights"
+items = "All Weights\nLight\nMedium\nHeavy\nAssault"
+selected = 0
+
+[node name="HSplit" type="HSplitContainer" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/UnitsTab/UnitsMargin/VBox"]
+size_flags_vertical = 3
+
+[node name="UnitList" type="ItemList" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/UnitsTab/UnitsMargin/VBox/HSplit"]
+unique_name_in_owner = true
+size_flags_horizontal = 2
+select_mode = 0
+
+[node name="UnitDetail" type="Panel" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/UnitsTab/UnitsMargin/VBox/HSplit"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+
+[node name="UnitDetailMargin" type="MarginContainer" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/UnitsTab/UnitsMargin/VBox/HSplit/UnitDetail"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/UnitsTab/UnitsMargin/VBox/HSplit/UnitDetail/UnitDetailMargin"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="UnitDetailName" type="Label" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/UnitsTab/UnitsMargin/VBox/HSplit/UnitDetail/UnitDetailMargin/VBox"]
+unique_name_in_owner = true
+text = ""
+theme_override_font_sizes/font_size = 16
+autowrap_mode = 1
+
+[node name="UnitDetailSpecs" type="RichTextLabel" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/UnitsTab/UnitsMargin/VBox/HSplit/UnitDetail/UnitDetailMargin/VBox"]
+unique_name_in_owner = true
+text = ""
+bbcode_enabled = true
+size_flags_vertical = 3
+
+[node name="UnitPrice" type="Label" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/UnitsTab/UnitsMargin/VBox/HSplit/UnitDetail/UnitDetailMargin/VBox"]
+unique_name_in_owner = true
+text = ""
+autowrap_mode = 1
+
+[node name="UnitStatus" type="Label" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/UnitsTab/UnitsMargin/VBox/HSplit/UnitDetail/UnitDetailMargin/VBox"]
+unique_name_in_owner = true
+text = ""
+autowrap_mode = 1
+
+[node name="BuyHBox" type="HBoxContainer" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/UnitsTab/UnitsMargin/VBox/HSplit/UnitDetail/UnitDetailMargin/VBox"]
+size_flags_vertical = 0
+
+[node name="BuyUnitButton" type="Button" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/UnitsTab/UnitsMargin/VBox/HSplit/UnitDetail/UnitDetailMargin/VBox/BuyHBox"]
+unique_name_in_owner = true
+text = "Buy"
+disabled = true
+
+[node name="RemoteTab" type="Panel" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs"]
+
+[node name="RemoteMargin" type="MarginContainer" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/RemoteTab"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/RemoteTab/RemoteMargin"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="RemoteSearch" type="LineEdit" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/RemoteTab/RemoteMargin/VBox"]
+unique_name_in_owner = true
+size_flags_vertical = 0
+placeholder_text = "Search surrounding systems..."
+
+[node name="RemoteStatus" type="Label" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/RemoteTab/RemoteMargin/VBox"]
+unique_name_in_owner = true
+text = ""
+
+[node name="RemoteList" type="ItemList" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/RemoteTab/RemoteMargin/VBox"]
+unique_name_in_owner = true
+size_flags_vertical = 3
+select_mode = 0
+
+[node name="RemoteOrderPanel" type="Panel" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/RemoteTab/RemoteMargin/VBox"]
+unique_name_in_owner = true
+size_flags_vertical = 0
+
+[node name="RemoteOrderMargin" type="MarginContainer" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/RemoteTab/RemoteMargin/VBox/RemoteOrderPanel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/RemoteTab/RemoteMargin/VBox/RemoteOrderPanel/RemoteOrderMargin"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="OrderCostLabel" type="Label" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/RemoteTab/RemoteMargin/VBox/RemoteOrderPanel/RemoteOrderMargin/VBox"]
+unique_name_in_owner = true
+text = ""
+
+[node name="OrderTravelLabel" type="Label" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/RemoteTab/RemoteMargin/VBox/RemoteOrderPanel/RemoteOrderMargin/VBox"]
+unique_name_in_owner = true
+text = ""
+
+[node name="OrderHBox" type="HBoxContainer" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/RemoteTab/RemoteMargin/VBox/RemoteOrderPanel/RemoteOrderMargin/VBox"]
+size_flags_vertical = 0
+
+[node name="OrderQtySpin" type="SpinBox" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/RemoteTab/RemoteMargin/VBox/RemoteOrderPanel/RemoteOrderMargin/VBox/OrderHBox"]
+unique_name_in_owner = true
+min_value = 1
+max_value = 999
+step = 1
+value = 1
+
+[node name="OrderButton" type="Button" parent="MarginContainer/VBox/Tabs/MarketTab/MarketMargin/MarketTabs/RemoteTab/RemoteMargin/VBox/RemoteOrderPanel/RemoteOrderMargin/VBox/OrderHBox"]
+unique_name_in_owner = true
+text = "Order"
+disabled = true
+
+# ---- TAB 2: INVENTORY ----
+[node name="InventoryTab" type="Panel" parent="MarginContainer/VBox/Tabs"]
+visible = false
+
+[node name="InvMargin" type="MarginContainer" parent="MarginContainer/VBox/Tabs/InventoryTab"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer/VBox/Tabs/InventoryTab/InvMargin"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="FilterBar" type="HBoxContainer" parent="MarginContainer/VBox/Tabs/InventoryTab/InvMargin/VBox"]
+size_flags_vertical = 0
+
+[node name="InvFilterOnlyUnit" type="CheckButton" parent="MarginContainer/VBox/Tabs/InventoryTab/InvMargin/VBox/FilterBar"]
+unique_name_in_owner = true
+text = "Only unit components"
+size_flags_horizontal = 3
+
+[node name="InvFilterBelowMin" type="CheckButton" parent="MarginContainer/VBox/Tabs/InventoryTab/InvMargin/VBox/FilterBar"]
+unique_name_in_owner = true
+text = "Below minimum only"
+size_flags_horizontal = 3
+
+[node name="ReorderMinButton" type="Button" parent="MarginContainer/VBox/Tabs/InventoryTab/InvMargin/VBox/FilterBar"]
+unique_name_in_owner = true
+text = "Reorder to Minimum"
+size_flags_horizontal = 2
+
+[node name="HSplit" type="HSplitContainer" parent="MarginContainer/VBox/Tabs/InventoryTab/InvMargin/VBox"]
+size_flags_vertical = 3
+
+[node name="InvList" type="ItemList" parent="MarginContainer/VBox/Tabs/InventoryTab/InvMargin/VBox/HSplit"]
+unique_name_in_owner = true
+size_flags_horizontal = 2
+select_mode = 0
+
+[node name="InvDetail" type="Panel" parent="MarginContainer/VBox/Tabs/InventoryTab/InvMargin/VBox/HSplit"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+
+[node name="InvDetailMargin" type="MarginContainer" parent="MarginContainer/VBox/Tabs/InventoryTab/InvMargin/VBox/HSplit/InvDetail"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer/VBox/Tabs/InventoryTab/InvMargin/VBox/HSplit/InvDetail/InvDetailMargin"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="InvDetailName" type="Label" parent="MarginContainer/VBox/Tabs/InventoryTab/InvMargin/VBox/HSplit/InvDetail/InvDetailMargin/VBox"]
+unique_name_in_owner = true
+text = ""
+theme_override_font_sizes/font_size = 16
+autowrap_mode = 1
+
+[node name="InvDetailQty" type="Label" parent="MarginContainer/VBox/Tabs/InventoryTab/InvMargin/VBox/HSplit/InvDetail/InvDetailMargin/VBox"]
+unique_name_in_owner = true
+text = ""
+autowrap_mode = 1
+
+[node name="InvDetailCost" type="Label" parent="MarginContainer/VBox/Tabs/InventoryTab/InvMargin/VBox/HSplit/InvDetail/InvDetailMargin/VBox"]
+unique_name_in_owner = true
+text = ""
+autowrap_mode = 1
+
+# ---- BOTTOM BAR ----
+[node name="BottomBar" type="HBoxContainer" parent="MarginContainer/VBox"]
+size_flags_vertical = 0
+
+[node name="CloseButton" type="Button" parent="MarginContainer/VBox/BottomBar"]
+unique_name_in_owner = true
+text = "Close"
+size_flags_horizontal = 0
+
+[node name="Spacer" type="Control" parent="MarginContainer/VBox/BottomBar"]
+size_flags_horizontal = 3
+mouse_filter = 2

@@ -19,14 +19,15 @@ const SYSTEM_BASE_RADIUS: float = 5.0
 @onready var market_ui = $CanvasLayer/MarketUI
 @onready var unit_roster_ui = $CanvasLayer/UnitRoster
 @onready var mech_lab_ui = $CanvasLayer/MechLab
+@onready var logistics_ui = $CanvasLayer/LogisticsPanel
 
 func _ready() -> void:
 	sidebar.organization_tree_requested.connect(_on_organization_tree)
 	sidebar.contract_board_requested.connect(_on_contract_board)
 	sidebar.personnel_management_requested.connect(_on_personnel_management)
-	sidebar.market_requested.connect(_on_market)
 	sidebar.unit_roster_requested.connect(_on_unit_roster)
 	sidebar.mech_lab_requested.connect(_on_mech_lab)
+	sidebar.logistics_requested.connect(_on_logistics)
 	sidebar.event_log_requested.connect(_on_event_log)
 	org_mgmt.closed.connect(_on_org_mgmt_closed)
 	contract_board.closed.connect(_on_contract_board_closed)
@@ -35,6 +36,7 @@ func _ready() -> void:
 	market_ui.connect("closed", _on_market_closed)
 	unit_roster_ui.connect("closed", _on_unit_roster_closed)
 	mech_lab_ui.connect("closed", _on_mech_lab_closed)
+	logistics_ui.connect("closed", _on_logistics_closed)
 	_load_systems()
 	_calculate_jump_routes()
 	queue_redraw()
@@ -92,6 +94,15 @@ func _on_market() -> void:
 
 func _on_market_closed() -> void:
 	market_ui.hide()
+	sidebar.show()
+
+func _on_logistics() -> void:
+	sidebar.hide()
+	logistics_ui.populate()
+	logistics_ui.show()
+
+func _on_logistics_closed() -> void:
+	logistics_ui.hide()
 	sidebar.show()
 
 func _on_event_log_closed() -> void:
@@ -196,9 +207,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif contract_board.visible:
 			_on_contract_board_closed()
 			get_viewport().set_input_as_handled()
+		elif logistics_ui.visible:
+			_on_logistics_closed()
+			get_viewport().set_input_as_handled()
 		elif personnel_mgmt.visible:
 			_on_personnel_mgmt_closed()
-			get_viewport().set_input_as_handled()
 		elif info_panel.visible:
 			selected_system = {}
 			info_panel.hide_panel()
