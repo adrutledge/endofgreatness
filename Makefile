@@ -2,6 +2,7 @@ GODOT ?= godot
 GDLINT ?= gdlint
 EXPORT_DIR ?= export
 EXPORT_PRESET ?= Linux/X11
+GODOT_FLAGS ?= --maximized
 
 SRC_FILES := $(shell find src/ -name "*.gd" | sort)
 MTF_SRC := $(shell find src/data/ src/tactical/ -name "*.gd" | sort)
@@ -24,15 +25,15 @@ build:
 	$(GODOT) --headless --export-release "$(EXPORT_PRESET)" $(EXPORT_DIR)/
 
 run:
-	$(GODOT) --path . --maximized
+	$(GODOT) --path . $(GODOT_FLAGS)
 
 ## Launch with debug logging enabled (--opencode-debug flag)
 rund:
-	$(GODOT) --path . -- --opencode-debug
+	$(GODOT) --path . $(GODOT_FLAGS) -- --opencode-debug
 
 ## Launch with debug logging via environment variable
 rune:
-	OPENCODE_DEBUG=true $(GODOT) --path .
+	OPENCODE_DEBUG=true $(GODOT) --path . $(GODOT_FLAGS)
 
 $(MTF_STAMP): $(MTF_SRC) $(MTF_DEPS) $(MTF_TEST)
 	@$(GODOT) --headless --script $(MTF_TEST) 2>&1 | grep -E "^(PASS|FAIL|Results)"
