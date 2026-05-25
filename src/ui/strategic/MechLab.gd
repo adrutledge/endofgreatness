@@ -182,20 +182,10 @@ func _build_paper_doll_tab() -> void:
 	mid_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	wrapper.add_child(mid_row)
 	mid_row.add_child(_make_location_column("Left Arm", 6))
-	var ct_col = _make_paper_doll_ct()
-	mid_row.add_child(ct_col)
+	mid_row.add_child(_make_location_column("Left Torso", 10))
+	mid_row.add_child(_make_paper_doll_ct())
+	mid_row.add_child(_make_location_column("Right Torso", 10))
 	mid_row.add_child(_make_location_column("Right Arm", 6))
-
-	wrapper.add_child(HSeparator.new())
-
-	var side_torso_row = HBoxContainer.new()
-	side_torso_row.alignment = BoxContainer.ALIGNMENT_CENTER
-	wrapper.add_child(side_torso_row)
-	side_torso_row.add_child(_make_location_column("Left Torso", 10))
-	var ct2_col = VBoxContainer.new()
-	ct2_col.custom_minimum_size = ct_col.size if ct_col else Vector2(120, 0)
-	side_torso_row.add_child(ct2_col)
-	side_torso_row.add_child(_make_location_column("Right Torso", 10))
 
 	wrapper.add_child(HSeparator.new())
 
@@ -231,6 +221,8 @@ func _component_type_color(comp_name: String) -> Color:
 		return component_type_color_map.get("engine", Color(0.9, 0.55, 0.1))
 	if lower in ["gyro"]:
 		return component_type_color_map.get("gyro", Color(0.6, 0.2, 0.8))
+	if "autocannon" in lower:
+		return component_type_color_map.get("weapon", Color(0.8, 0.15, 0.15))
 	for key in component_type_color_map:
 		if key in lower:
 			return component_type_color_map[key]
@@ -293,8 +285,8 @@ func _make_paper_doll_ct() -> VBoxContainer:
 	title.add_theme_font_size_override("font_size", 11)
 	title.alignment = HORIZONTAL_ALIGNMENT_CENTER
 	col.add_child(title)
-	var slot_types := ["Engine", "Engine", "Engine", "Gyro", "Gyro", "Gyro", "Gyro", "Engine", "Engine", "Engine"]
-	for i in range(10):
+	var slot_types := ["Engine", "Engine", "Engine", "Gyro", "Gyro", "Gyro", "Gyro", "Engine", "Engine", "Engine", "", ""]
+	for i in range(12):
 		var slot_name = slot_types[i] if i < slot_types.size() else ""
 		var btn = _make_slot_button("Center Torso", i, slot_name)
 		col.add_child(btn)
