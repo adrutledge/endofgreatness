@@ -1,0 +1,544 @@
+{
+  "faction": "Lyran Commonwealth",
+  "era": "3025",
+  "tables": {
+    "Light": [
+      {
+        "min": 1,
+        "max": 100,
+        "chassis": "Commando COM-2D"
+      },
+      {
+        "min": 101,
+        "max": 190,
+        "chassis": "Locust LCT-1V"
+      },
+      {
+        "min": 191,
+        "max": 270,
+        "chassis": "Stinger STG-3R"
+      },
+      {
+        "min": 271,
+        "max": 340,
+        "chassis": "Wasp WSP-1A"
+      },
+      {
+        "min": 341,
+        "max": 400,
+        "chassis": "UrbanMech UM-R60"
+      },
+      {
+        "min": 401,
+        "max": 460,
+        "chassis": "Javelin JVN-10N"
+      },
+      {
+        "min": 461,
+        "max": 520,
+        "chassis": "Spider SDR-5V"
+      },
+      {
+        "min": 521,
+        "max": 575,
+        "chassis": "Panther PNT-9R"
+      },
+      {
+        "min": 576,
+        "max": 630,
+        "chassis": "Jenner JR7-D"
+      },
+      {
+        "min": 631,
+        "max": 680,
+        "chassis": "Hermes II HER-2S"
+      },
+      {
+        "min": 681,
+        "max": 730,
+        "chassis": "Cicada CDA-2A"
+      },
+      {
+        "min": 731,
+        "max": 780,
+        "chassis": "Firestarter FS9-H"
+      },
+      {
+        "min": 781,
+        "max": 825,
+        "chassis": "Ostscout OTT-7J"
+      },
+      {
+        "min": 826,
+        "max": 870,
+        "chassis": "Flea FLE-4"
+      },
+      {
+        "min": 871,
+        "max": 910,
+        "chassis": "Mercury MCY-97"
+      },
+      {
+        "min": 911,
+        "max": 950,
+        "chassis": "Thorn THE-F"
+      },
+      {
+        "min": 951,
+        "max": 980,
+        "chassis": "Wolfhound WLF-1"
+      },
+      {
+        "min": 981,
+        "max": 1000,
+        "chassis": "Phoenix Hawk LAM PHX-HK1"
+      }
+    ],
+    "Medium": [
+      {
+        "min": 1,
+        "max": 60,
+        "chassis": "Phoenix Hawk PXH-1"
+      },
+      {
+        "min": 61,
+        "max": 115,
+        "chassis": "Griffin GRF-1N"
+      },
+      {
+        "min": 116,
+        "max": 170,
+        "chassis": "Wolverine WVR-6R"
+      },
+      {
+        "min": 171,
+        "max": 220,
+        "chassis": "Shadow Hawk SHD-2H"
+      },
+      {
+        "min": 221,
+        "max": 270,
+        "chassis": "Scorpion SCP-1N"
+      },
+      {
+        "min": 271,
+        "max": 315,
+        "chassis": "Centurion CN9-A"
+      },
+      {
+        "min": 316,
+        "max": 360,
+        "chassis": "Hunchback HBK-4G"
+      },
+      {
+        "min": 361,
+        "max": 400,
+        "chassis": "Trebuchet TBT-5N"
+      },
+      {
+        "min": 401,
+        "max": 440,
+        "chassis": "Dervish DV-6M"
+      },
+      {
+        "min": 441,
+        "max": 480,
+        "chassis": "Crab CRB-20"
+      },
+      {
+        "min": 481,
+        "max": 520,
+        "chassis": "Enforcer ENF-4R"
+      },
+      {
+        "min": 521,
+        "max": 560,
+        "chassis": "Kintaro KTO-18"
+      },
+      {
+        "min": 561,
+        "max": 595,
+        "chassis": "Vindicator VND-1R"
+      },
+      {
+        "min": 596,
+        "max": 630,
+        "chassis": "Clint CLNT-2-3T"
+      },
+      {
+        "min": 631,
+        "max": 665,
+        "chassis": "Assassin ASN-21"
+      },
+      {
+        "min": 666,
+        "max": 700,
+        "chassis": "Whitworth WTH-1"
+      },
+      {
+        "min": 701,
+        "max": 730,
+        "chassis": "Chameleon CLN-4V"
+      },
+      {
+        "min": 731,
+        "max": 760,
+        "chassis": "Wyvern WVE-5N"
+      },
+      {
+        "min": 761,
+        "max": 790,
+        "chassis": "Hermes II HER-2S"
+      },
+      {
+        "min": 791,
+        "max": 815,
+        "chassis": "Hatchetman HCT-3F"
+      },
+      {
+        "min": 816,
+        "max": 840,
+        "chassis": "Cicada CDA-2A"
+      },
+      {
+        "min": 841,
+        "max": 865,
+        "chassis": "Vulcan VL-2T"
+      },
+      {
+        "min": 866,
+        "max": 890,
+        "chassis": "Bushwacker BSW-X1"
+      },
+      {
+        "min": 891,
+        "max": 915,
+        "chassis": "Bombardier BMB-10D"
+      },
+      {
+        "min": 916,
+        "max": 940,
+        "chassis": "Starslayer STY-2C"
+      },
+      {
+        "min": 941,
+        "max": 960,
+        "chassis": "Swordsman SWD-1"
+      },
+      {
+        "min": 961,
+        "max": 980,
+        "chassis": "Mercury MCY-98"
+      },
+      {
+        "min": 981,
+        "max": 1000,
+        "chassis": "Phoenix Hawk LAM PHX-HK2"
+      }
+    ],
+    "Heavy": [
+      {
+        "min": 1,
+        "max": 55,
+        "chassis": "Warhammer WHM-6R"
+      },
+      {
+        "min": 56,
+        "max": 105,
+        "chassis": "Marauder MAD-3R"
+      },
+      {
+        "min": 106,
+        "max": 155,
+        "chassis": "Archer ARC-2R"
+      },
+      {
+        "min": 156,
+        "max": 200,
+        "chassis": "Thunderbolt TDR-5S"
+      },
+      {
+        "min": 201,
+        "max": 245,
+        "chassis": "Rifleman RFL-3N"
+      },
+      {
+        "min": 246,
+        "max": 290,
+        "chassis": "Grasshopper GHR-5H"
+      },
+      {
+        "min": 291,
+        "max": 330,
+        "chassis": "Guillotine GLT-4L"
+      },
+      {
+        "min": 331,
+        "max": 370,
+        "chassis": "Ostsol OTL-4D"
+      },
+      {
+        "min": 371,
+        "max": 405,
+        "chassis": "Orion ON1-K"
+      },
+      {
+        "min": 406,
+        "max": 440,
+        "chassis": "Crusader CRD-3R"
+      },
+      {
+        "min": 441,
+        "max": 475,
+        "chassis": "JagerMech JM6-S"
+      },
+      {
+        "min": 476,
+        "max": 510,
+        "chassis": "Catapult CPLT-C1"
+      },
+      {
+        "min": 511,
+        "max": 545,
+        "chassis": "Quickdraw QKD-4G"
+      },
+      {
+        "min": 546,
+        "max": 575,
+        "chassis": "Lancelot LNC25-01"
+      },
+      {
+        "min": 576,
+        "max": 605,
+        "chassis": "Black Knight BL-7-KNT"
+      },
+      {
+        "min": 606,
+        "max": 635,
+        "chassis": "Flashman FLS-7K"
+      },
+      {
+        "min": 636,
+        "max": 665,
+        "chassis": "Champion CHP-1N"
+      },
+      {
+        "min": 666,
+        "max": 690,
+        "chassis": "Awesome AWS-8Q"
+      },
+      {
+        "min": 691,
+        "max": 715,
+        "chassis": "Victor VTR-9B"
+      },
+      {
+        "min": 716,
+        "max": 740,
+        "chassis": "Zeus ZEU-6S"
+      },
+      {
+        "min": 741,
+        "max": 765,
+        "chassis": "Banshee BNC-3E"
+      },
+      {
+        "min": 766,
+        "max": 790,
+        "chassis": "Stalker STK-3F"
+      },
+      {
+        "min": 791,
+        "max": 815,
+        "chassis": "Goliath GOL-1H"
+      },
+      {
+        "min": 816,
+        "max": 840,
+        "chassis": "Ostwar OWR-2M"
+      },
+      {
+        "min": 841,
+        "max": 860,
+        "chassis": "Bombardier BMB-10D"
+      },
+      {
+        "min": 861,
+        "max": 880,
+        "chassis": "Lancelot LNC25-02"
+      },
+      {
+        "min": 881,
+        "max": 900,
+        "chassis": "Exterminator EXT-4A"
+      },
+      {
+        "min": 901,
+        "max": 920,
+        "chassis": "Marauder II MAD-4A"
+      },
+      {
+        "min": 921,
+        "max": 940,
+        "chassis": "Shogun SHG-2H"
+      },
+      {
+        "min": 941,
+        "max": 960,
+        "chassis": "Imp IMP-2E"
+      },
+      {
+        "min": 961,
+        "max": 980,
+        "chassis": "Crockett CRK-5003-1"
+      },
+      {
+        "min": 981,
+        "max": 1000,
+        "chassis": "Nightstar NSR-9J"
+      }
+    ],
+    "Assault": [
+      {
+        "min": 1,
+        "max": 60,
+        "chassis": "Zeus ZEU-6S"
+      },
+      {
+        "min": 61,
+        "max": 115,
+        "chassis": "Awesome AWS-8Q"
+      },
+      {
+        "min": 116,
+        "max": 170,
+        "chassis": "Stalker STK-3F"
+      },
+      {
+        "min": 171,
+        "max": 220,
+        "chassis": "Atlas AS7-D"
+      },
+      {
+        "min": 221,
+        "max": 270,
+        "chassis": "Victor VTR-9B"
+      },
+      {
+        "min": 271,
+        "max": 315,
+        "chassis": "BattleMaster BLR-1G"
+      },
+      {
+        "min": 316,
+        "max": 360,
+        "chassis": "Banshee BNC-3E"
+      },
+      {
+        "min": 361,
+        "max": 400,
+        "chassis": "Goliath GOL-1H"
+      },
+      {
+        "min": 401,
+        "max": 440,
+        "chassis": "Charger CGR-1A1"
+      },
+      {
+        "min": 441,
+        "max": 480,
+        "chassis": "Marauder II MAD-4A"
+      },
+      {
+        "min": 481,
+        "max": 515,
+        "chassis": "Cyclops CP-10-Z"
+      },
+      {
+        "min": 516,
+        "max": 550,
+        "chassis": "Thug THG-10E"
+      },
+      {
+        "min": 551,
+        "max": 585,
+        "chassis": "Albatross ALB-3U"
+      },
+      {
+        "min": 586,
+        "max": 620,
+        "chassis": "Longbow LGB-7Q"
+      },
+      {
+        "min": 621,
+        "max": 655,
+        "chassis": "Shogun SHG-2H"
+      },
+      {
+        "min": 656,
+        "max": 690,
+        "chassis": "Crockett CRK-5003-1"
+      },
+      {
+        "min": 691,
+        "max": 725,
+        "chassis": "Nightstar NSR-9J"
+      },
+      {
+        "min": 726,
+        "max": 755,
+        "chassis": "Pillager PLG-1N"
+      },
+      {
+        "min": 756,
+        "max": 785,
+        "chassis": "Spartan SPT-N2"
+      },
+      {
+        "min": 786,
+        "max": 815,
+        "chassis": "Grand Titan T-IT-N10M"
+      },
+      {
+        "min": 816,
+        "max": 845,
+        "chassis": "Mackie MSK-7A"
+      },
+      {
+        "min": 846,
+        "max": 875,
+        "chassis": "Highlander HGN-733"
+      },
+      {
+        "min": 876,
+        "max": 905,
+        "chassis": "King Crab KGC-0000"
+      },
+      {
+        "min": 906,
+        "max": 930,
+        "chassis": "Annihilator ANH-1A"
+      },
+      {
+        "min": 931,
+        "max": 955,
+        "chassis": "Fafnir FNR-5"
+      },
+      {
+        "min": 956,
+        "max": 975,
+        "chassis": "Hauptmann HA1-O"
+      },
+      {
+        "min": 976,
+        "max": 990,
+        "chassis": "Templar TLR1-O"
+      },
+      {
+        "min": 991,
+        "max": 1000,
+        "chassis": "Sunder SD1-O"
+      }
+    ]
+  }
+}
