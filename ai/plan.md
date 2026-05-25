@@ -303,6 +303,7 @@
 - **Initial personnel**:
   - **Commander** — the best pilot among the initial crew, flagged via `is_commander: bool`; selected by highest `Leadership`, then highest `Strategy`, then highest `Tactics`, then highest sum of gunnery+piloting skill
   - **Executive Officer (XO)** — the second-best pilot, flagged via `is_xo: bool` on the same resource
+  - **Lance commanders** — for each lance beyond the first (every 4 mechs after mechs 1–4), flag the best remaining pilot via `is_lance_commander: bool`; selected by highest `Tactics`, then highest gunnery+piloting
   - Administrative staff (four roles), generated with sufficient skill to cover unit needs:
     - **HR** (`HR` role) — covers individually-tracked staff (crew + technicians + doctor + admins); each point of `Administration` skill covers 10 employees; astechs and medics (abstract) excluded; generate additional HR if one insufficient
     - **Logistics** (`LOGISTICAL` role) — manages supply chain, parts ordering, inventory
