@@ -231,9 +231,9 @@ func _build_paper_doll_tab() -> void:
 func _component_type_color(comp_name: String) -> Color:
 	var lower = comp_name.to_lower()
 	if lower in ["life support"]:
-		return Color(0.25, 0.45, 0.25)
+		return Color(0.6, 0.25, 0.4)
 	if lower in ["sensors"]:
-		return Color(0.2, 0.5, 0.5)
+		return Color(0.25, 0.35, 0.35)
 	if lower in ["cockpit"]:
 		return Color(0.85, 0.2, 0.65)
 	if lower in ["engine", "fusion engine"]:
