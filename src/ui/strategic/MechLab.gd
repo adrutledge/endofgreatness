@@ -127,19 +127,8 @@ func _setup_tabs() -> void:
 	paper_doll_tab.name = "Paper Doll"
 	paper_doll_tab.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	tab_container.add_child(paper_doll_tab)
+	_init_fixed_slots()
 	_build_paper_doll_tab()
-
-	_set_default_slot_name("Head", 0, "Life Support")
-	_set_default_slot_name("Head", 1, "Sensors")
-	_set_default_slot_name("Head", 2, "Cockpit")
-	_set_default_slot_name("Head", 4, "Sensors")
-	_set_default_slot_name("Head", 5, "Life Support")
-	for i in range(3):
-		_set_default_slot_name("Center Torso", i, "Engine")
-	for i in range(3, 7):
-		_set_default_slot_name("Center Torso", i, "Gyro")
-	for i in range(7, 10):
-		_set_default_slot_name("Center Torso", i, "Engine")
 
 	components_tab = VBoxContainer.new()
 	components_tab.name = "Components"
@@ -322,39 +311,6 @@ func _make_paper_doll_ct() -> VBoxContainer:
 		var btn = _make_slot_button("Center Torso", i, slot_name)
 		col.add_child(btn)
 	return col
-
-
-func _apply_default_slot_styles() -> void:
-	var head_defaults = {"Life Support": [0, 5], "Sensors": [1, 4], "Cockpit": [2]}
-	for name in head_defaults:
-		for idx in head_defaults[name]:
-			_set_default_slot_name("Head", idx, name)
-	var ct_defaults = {"Engine": [0, 1, 2, 7, 8, 9], "Gyro": [3, 4, 5, 6]}
-	for name in ct_defaults:
-		for idx in ct_defaults[name]:
-			_set_default_slot_name("Center Torso", idx, name)
-
-
-func _set_default_slot_name(location: String, slot_index: int, name: String) -> void:
-	if not paper_doll_slot_map.has(location):
-		return
-	var slots = paper_doll_slot_map[location]
-	if slot_index < 0 or slot_index >= slots.size():
-		return
-	slots[slot_index]["component"] = name
-	var btn = slots[slot_index]["button"]
-	btn.text = name
-	var c = _component_type_color(name)
-	var style = StyleBoxFlat.new()
-	style.bg_color = c
-	style.border_width_bottom = 1
-	style.border_color = Color(0.2, 0.2, 0.25)
-	btn.add_theme_stylebox_override("normal", style)
-	var hover = StyleBoxFlat.new()
-	hover.bg_color = c * 1.3
-	hover.border_width_bottom = 1
-	hover.border_color = Color(0.4, 0.4, 0.45)
-	btn.add_theme_stylebox_override("hover", hover)
 
 
 func _make_location_column(location: String, slot_count: int) -> VBoxContainer:
@@ -1083,80 +1039,127 @@ func _update_status() -> void:
 
 # --- Paper Doll Methods ---
 
+var _fixed_slots: Dictionary = {}
+var _available_slot_indices: Dictionary = {}
+
+
+func _init_fixed_slots() -> void:
+	_fixed_slots["Head"] = {0: "Life Support", 1: "Sensors", 2: "Cockpit", 4: "Sensors", 5: "Life Support"}
+	_fixed_slots["Center Torso"] = {}
+	for i in range(3):
+		_fixed_slots["Center Torso"][i] = "Engine"
+	for i in range(3, 7):
+		_fixed_slots["Center Torso"][i] = "Gyro"
+	for i in range(7, 10):
+		_fixed_slots["Center Torso"][i] = "Engine"
+
+	_available_slot_indices["Head"] = [3]
+	_available_slot_indices["Center Torso"] = [10, 11]
+	for loc in ["Left Torso", "Right Torso", "Left Arm", "Right Arm", "Left Leg", "Right Leg"]:
+		_available_slot_indices[loc] = []
+		for i in range(paper_doll_slot_counts.get(loc, 12)):
+			_available_slot_indices[loc].append(i)
+
+
+func _apply_fixed_slots() -> void:
+	for loc_name in _fixed_slots:
+		if not paper_doll_slot_map.has(loc_name):
+			continue
+		var slots = paper_doll_slot_map[loc_name]
+		for idx in _fixed_slots[loc_name]:
+			if idx < 0 or idx >= slots.size():
+				continue
+			var name = _fixed_slots[loc_name][idx]
+			slots[idx]["component"] = name
+			var btn = slots[idx]["button"]
+			btn.text = name
+			var c = _component_type_color(name)
+			var style = StyleBoxFlat.new()
+			style.bg_color = c
+			style.border_width_bottom = 1
+			style.border_color = Color(0.2, 0.2, 0.25)
+			btn.add_theme_stylebox_override("normal", style)
+			var hover = StyleBoxFlat.new()
+			hover.bg_color = c * 1.3
+			hover.border_width_bottom = 1
+			hover.border_color = Color(0.4, 0.4, 0.45)
+			btn.add_theme_stylebox_override("hover", hover)
+
+
 func _refresh_paper_doll() -> void:
 	paper_doll_selected = {}
+	_apply_fixed_slots()
+
 	if not selected_unit:
 		for loc_name in paper_doll_slot_map:
-			for slot in paper_doll_slot_map[loc_name]:
-				var btn = slot["button"]
-				slot["component"] = ""
+			for idx in _available_slot_indices.get(loc_name, []):
+				var slots = paper_doll_slot_map[loc_name]
+				if idx < 0 or idx >= slots.size():
+					continue
+				slots[idx]["component"] = ""
+				var btn = slots[idx]["button"]
 				btn.text = "Empty"
 				var style = StyleBoxFlat.new()
 				style.bg_color = Color(0.06, 0.06, 0.06)
 				style.border_width_bottom = 1
 				style.border_color = Color(0.15, 0.15, 0.18)
 				btn.add_theme_stylebox_override("normal", style)
-		_apply_default_slot_styles()
+		var sel_info = paper_doll_tab.get_node_or_null("PaperDollSelectedInfo")
+		if sel_info:
+			sel_info.text = ""
 		return
 
-	var comps_by_loc: Dictionary = {}
-	for loc_name in location_names:
-		comps_by_loc[loc_name] = []
-
-	for c in selected_unit.components:
-		if c.location and c.location.location_name in comps_by_loc:
-			comps_by_loc[c.location.location_name].append(c)
-
-	for loc_name in location_names:
-		if not paper_doll_slot_map.has(loc_name):
-			continue
+	for loc_name in paper_doll_slot_map:
 		var slots = paper_doll_slot_map[loc_name]
-		var slot_count = paper_doll_slot_counts[loc_name]
-		var comps = comps_by_loc[loc_name]
-
-		var slot_idx = 0
-		for comp in comps:
-			if comp.critical_slots <= 0:
-				continue
-			var cs = comp.critical_slots
-			var name = comp.component_name
-			for s in range(cs):
-				if slot_idx < slot_count:
-					slots[slot_idx]["component"] = name
-					var btn = slots[slot_idx]["button"]
-					var comp_type = _classify_component(name)
-					var c = component_type_color_map.get(comp_type, component_type_color_map["other"])
-					var style = StyleBoxFlat.new()
-					style.bg_color = c
-					style.border_width_bottom = 1
-					style.border_color = Color(0.2, 0.2, 0.25)
-					btn.add_theme_stylebox_override("normal", style)
-					var hover = StyleBoxFlat.new()
-					hover.bg_color = c * 1.3
-					hover.border_width_bottom = 1
-					hover.border_color = Color(0.4, 0.4, 0.45)
-					btn.add_theme_stylebox_override("hover", hover)
-					var disp = name
-					if cs > 1:
-						disp = name + " [" + str(s + 1) + "/" + str(cs) + "]"
-					btn.text = disp
-					slot_idx += 1
-
-		while slot_idx < slot_count:
-			slots[slot_idx]["component"] = ""
-			var btn = slots[slot_idx]["button"]
+		var available = _available_slot_indices.get(loc_name, [])
+		for idx in available:
+			slots[idx]["component"] = ""
+			var btn = slots[idx]["button"]
+			btn.text = "Empty"
 			var style = StyleBoxFlat.new()
 			style.bg_color = Color(0.06, 0.06, 0.06)
 			style.border_width_bottom = 1
 			style.border_color = Color(0.15, 0.15, 0.18)
 			btn.add_theme_stylebox_override("normal", style)
+
+	for c in selected_unit.components:
+		if not c.location:
+			continue
+		var loc_name = c.location.location_name
+		if not paper_doll_slot_map.has(loc_name):
+			continue
+		var slots = paper_doll_slot_map[loc_name]
+		var available = _available_slot_indices.get(loc_name, [])
+		if c.critical_slots <= 0:
+			continue
+		var placed := 0
+		for idx in available:
+			if placed >= c.critical_slots:
+				break
+			if idx < 0 or idx >= slots.size():
+				continue
+			if slots[idx]["component"] != "":
+				continue
+			var n = c.critical_slots
+			slots[idx]["component"] = c.component_name
+			var btn = slots[idx]["button"]
+			var comp_type = _classify_component(c.component_name)
+			var col = component_type_color_map.get(comp_type, component_type_color_map["other"])
+			var style = StyleBoxFlat.new()
+			style.bg_color = col
+			style.border_width_bottom = 1
+			style.border_color = Color(0.2, 0.2, 0.25)
+			btn.add_theme_stylebox_override("normal", style)
 			var hover = StyleBoxFlat.new()
-			hover.bg_color = Color(0.1, 0.1, 0.12)
+			hover.bg_color = col * 1.3
 			hover.border_width_bottom = 1
-			hover.border_color = Color(0.2, 0.2, 0.25)
+			hover.border_color = Color(0.4, 0.4, 0.45)
 			btn.add_theme_stylebox_override("hover", hover)
-			btn.text = "Empty"
-			slot_idx += 1
+			var disp = c.component_name
+			if n > 1:
+				disp = c.component_name + " [" + str(placed + 1) + "/" + str(n) + "]"
+			btn.text = disp
+			placed += 1
 
 	var sel_info = paper_doll_tab.get_node_or_null("PaperDollSelectedInfo")
 	if sel_info:
