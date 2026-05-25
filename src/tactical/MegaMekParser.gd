@@ -155,6 +155,7 @@ static func parse_mtf(file_path: String, component_defs: Dictionary = {}) -> Tac
 		var raw_name = entry["name"]
 		var loc_name = entry["location"]
 
+		var is_rear: bool = "(R)" in raw_name
 		var norm_name = _normalize_component_name(raw_name, engine_rating)
 		var is_splittable := false
 		var splittable_def = component_defs.get(norm_name, {})
@@ -171,12 +172,15 @@ static func parse_mtf(file_path: String, component_defs: Dictionary = {}) -> Tac
 
 		if seen.has(key):
 			seen[key].critical_slots += 1
+			if is_rear:
+				seen[key].rear_facing = true
 		else:
 			var comp = Component.new()
 			comp.component_name = norm_name
 			comp.critical_slots = 1
 			comp.location = location_map.get(loc_name, null)
 			comp.status = Enums.ComponentStatus.UNDAMAGED
+			comp.rear_facing = is_rear
 
 			if component_defs.has(norm_name):
 				var def = component_defs[norm_name]
@@ -432,10 +436,13 @@ static func parse_blk(file_path: String, component_defs: Dictionary = {}) -> Tac
 		elif loc_name == "Fuselage":
 			loc_name = "Nose"
 		for item_name in section.items:
+			var is_rear_b: bool = "(R)" in item_name
 			var norm_name = _normalize_component_name(item_name, 0)
 			var bkey = norm_name + "|" + loc_name
 			if seen.has(bkey):
 				seen[bkey].critical_slots += 1
+				if is_rear_b:
+					seen[bkey].rear_facing = true
 			else:
 				var comp = Component.new()
 				comp.component_name = norm_name

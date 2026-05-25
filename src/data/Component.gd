@@ -12,3 +12,4 @@ extends Resource
 @export var repair_difficulty: int
 @export var status: Enums.ComponentStatus = Enums.ComponentStatus.UNDAMAGED
 @export var location: ComponentLocation
+@export var rear_facing: bool = false

@@ -1220,7 +1220,7 @@ func _refresh_paper_doll() -> void:
 					continue
 				slots[idx]["component"] = c.component_name
 				var btn = slots[idx]["button"]
-				btn.text = c.component_name
+				btn.text = c.component_name + (" (R)" if c.rear_facing else "")
 				var col = _component_type_color(c.component_name)
 				var style = StyleBoxFlat.new()
 				style.bg_color = col
@@ -1284,7 +1284,7 @@ func _refresh_paper_doll() -> void:
 			var disp = c.component_name
 			if n > 1:
 				disp = c.component_name + " [" + str(placed + 1) + "/" + str(n) + "]"
-			btn.text = disp
+			btn.text = disp + (" (R)" if c.rear_facing else "")
 			placed += 1
 
 	var sel_info = paper_doll_tab.get_node_or_null("PaperDollSelectedInfo")
