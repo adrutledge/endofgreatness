@@ -1263,8 +1263,8 @@ func _refresh_paper_doll() -> void:
 				var is_last: bool = placed + 1 >= n
 				style.border_width_left = bw if is_first else 0
 				style.border_width_right = bw if is_last else 0
-				style.border_width_top = bw
-				style.border_width_bottom = bw
+				style.border_width_top = bw if is_first else 0
+				style.border_width_bottom = bw if is_last else 0
 				style.border_color = Color(1, 1, 1)
 			btn.add_theme_stylebox_override("normal", style)
 			var hover = StyleBoxFlat.new()
@@ -1277,8 +1277,8 @@ func _refresh_paper_doll() -> void:
 				var is_last: bool = placed + 1 >= n
 				hover.border_width_left = bw if is_first else 0
 				hover.border_width_right = bw if is_last else 0
-				hover.border_width_top = bw
-				hover.border_width_bottom = bw
+				hover.border_width_top = bw if is_first else 0
+				hover.border_width_bottom = bw if is_last else 0
 				hover.border_color = Color(1, 1, 1)
 			btn.add_theme_stylebox_override("hover", hover)
 			var disp = c.component_name
