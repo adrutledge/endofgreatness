@@ -129,6 +129,7 @@
     - `interested_in_relationship: bool` — whether the character is open to forming new romantic relationships
     - `interested_in_children: bool` — whether the character is open to having children
     - `biological_role: String` — `"father"` or `"mother"` independent of the character's displayed/apparent gender; determines which character carries a pregnancy when a couple has children; this is a hidden stat that may differ from visible presentation
+    - `preferred_gender: String` — `"male"`, `"female"`, `"both"`, or `""` (empty); indicates which visible gender the character is attracted to; empty means neither (asexual/aromantic), `"both"` means attracted to either; this is a hidden flag that influences relationship generation and event outcomes; may change over time through events
   - Children are generated as new `Personnel` with `CHILD` role, age 0, born to the couple after a configurable gestation period; they age and can eventually be recruited as crew or other roles when they come of age
   - **External relationships**: during deployment on a contract planet or during interstellar travel, a character may take a lover from outside the unit (generated as a one-off event); the new partner joins the unit as a non-combatant `CIVILIAN` and travels with the unit thereafter
   - **Children accompany the unit**: any children of unit personnel (whether born into the unit or from prior relationships) travel with the unit as `CHILD`-role personnel; they do not take up crew slots, require no salary, and age normally

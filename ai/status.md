@@ -1,6 +1,6 @@
 # Implementation Status
 
-Generated: 3025-05-25 (updated per commit df1b264)
+Generated: 3025-05-25 (updated per commit b38a963)
 Plan: `ai/plan.md`
 
 ---
@@ -90,6 +90,7 @@ Plan: `ai/plan.md`
 - [x] Hidden relationship flags: interested_in_relationship, interested_in_children, biological_role
 - [ ] Pilot abilities (terrain, mech affinity, weapon spec, conditional bonuses) — planned
 - [ ] Skill-level gating for ability generation — planned
+- [ ] Gender preference flag (preferred_gender) for relationship generation — planned
 - [ ] External lovers from deployment/travel, children accompany unit — planned
 - [ ] Education system for child characters (version 2) — planned
 - [ ] Passive XP gain from assigned roles — planned
