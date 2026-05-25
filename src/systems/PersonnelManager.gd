@@ -60,12 +60,25 @@ func unassign_personnel(personnel: Personnel) -> void:
 	personnel.assigned_unit_id = ""
 
 func injure_personnel(personnel: Personnel, severity: int) -> void:
+	if personnel.is_injured:
+		return
 	personnel.is_injured = true
 	personnel.injury_severity = severity
 
-func heal_personnel(personnel: Personnel, medic: Personnel) -> void:
+
+func heal_personnel(personnel: Personnel, doctor: Personnel) -> bool:
+	if not personnel.is_injured:
+		return false
+	if doctor.role != Enums.PersonnelRole.DOCTOR:
+		return false
+	if doctor.patients_assigned.size() >= doctor.patient_capacity:
+		return false
+
+	if not doctor.patients_assigned.has(personnel):
+		doctor.patients_assigned.append(personnel)
 	personnel.is_injured = false
 	personnel.injury_severity = 0
+	return true
 
 func generate_candidates(planet: String, planet_data: Dictionary, has_hiring_hall: bool = false, hall_tier: String = "") -> Array[Personnel]:
 	var candidates: Array[Personnel] = []
@@ -249,6 +262,11 @@ func assign_personnel_to_unit(personnel: Personnel, unit: TacticalUnit) -> bool:
 		return assign_technician(personnel, unit)
 	if unit.crew.has(personnel):
 		return false
+
+	if unit.unit_type != Enums.UnitType.MECH and unit.crew.size() >= 1:
+		unit.abstract_crew_count += 1
+		return true
+
 	personnel.assigned_unit_id = unit.unit_name
 	unit.crew.append(personnel)
 	return true
@@ -257,8 +275,12 @@ func unassign_personnel_from_unit(personnel: Personnel, unit: TacticalUnit) -> v
 	if personnel.role == Enums.PersonnelRole.TECHNICIAN:
 		unassign_technician(personnel, unit)
 		return
-	personnel.assigned_unit_id = ""
-	unit.crew.erase(personnel)
+	if unit.crew.has(personnel):
+		personnel.assigned_unit_id = ""
+		unit.crew.erase(personnel)
+		return
+	if unit.abstract_crew_count > 0:
+		unit.abstract_crew_count -= 1
 
 func get_salary(personnel: Personnel) -> int:
 	match personnel.role:
@@ -317,3 +339,13 @@ func process_aging() -> void:
 				})
 	for p in to_remove:
 		fire_personnel(p)
+
+
+func get_doctor_patient_count(doctor: Personnel) -> int:
+	return doctor.patients_assigned.size()
+
+
+func get_doctor_available_capacity(doctor: Personnel) -> int:
+	if doctor.role != Enums.PersonnelRole.DOCTOR:
+		return 0
+	return max(0, doctor.patient_capacity - doctor.patients_assigned.size())

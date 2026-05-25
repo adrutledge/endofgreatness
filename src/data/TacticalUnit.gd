@@ -24,6 +24,7 @@ extends Resource
 @export var slot_free_heat_sinks: int = 10
 @export var weight_free_heat_sinks: int = 10
 @export var motion_type: String = ""
+@export var abstract_crew_count: int = 0
 
 func requires_technician() -> bool:
 	return unit_type != Enums.UnitType.INFANTRY

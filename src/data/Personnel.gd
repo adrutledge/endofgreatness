@@ -25,6 +25,8 @@ extends Resource
 @export var injury_severity: int = 0
 @export var date_of_birth: String
 @export var assigned_unit_id: String = ""
+@export var patient_capacity: int = 20
+@export var patients_assigned: Array[Personnel] = []
 
 @export var affiliation: String = ""
 @export var prior_affiliation: String = ""
