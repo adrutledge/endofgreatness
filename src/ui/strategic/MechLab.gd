@@ -1040,7 +1040,11 @@ func _update_status() -> void:
 # --- Paper Doll Methods ---
 
 var _fixed_slots: Dictionary = {}
+var _fixed_slot_owners: Dictionary = {}
 var _available_slot_indices: Dictionary = {}
+
+# Maps component name patterns to the fixed slot type they own
+var _structural_component_map: Dictionary = {}
 
 
 func _init_fixed_slots() -> void:
@@ -1052,6 +1056,14 @@ func _init_fixed_slots() -> void:
 		_fixed_slots["Center Torso"][i] = "Gyro"
 	for i in range(7, 10):
 		_fixed_slots["Center Torso"][i] = "Engine"
+
+	_structural_component_map = {
+		"engine": { "loc": "Center Torso", "indices": [0, 1, 2, 7, 8, 9] },
+		"gyro": { "loc": "Center Torso", "indices": [3, 4, 5, 6] },
+		"cockpit": { "loc": "Head", "indices": [2] },
+		"sensors": { "loc": "Head", "indices": [1, 4] },
+		"life support": { "loc": "Head", "indices": [0, 5] },
+	}
 
 	_available_slot_indices["Head"] = [3]
 	_available_slot_indices["Center Torso"] = [10, 11]
@@ -1129,6 +1141,33 @@ func _refresh_paper_doll() -> void:
 		if not paper_doll_slot_map.has(loc_name):
 			continue
 		var slots = paper_doll_slot_map[loc_name]
+		var cname = c.component_name.to_lower()
+
+		var struct_info = _structural_component_map.get(cname)
+		if struct_info and struct_info.loc == loc_name:
+			var idxs = struct_info.indices
+			var placed := 0
+			for idx in idxs:
+				if idx < 0 or idx >= slots.size():
+					continue
+				slots[idx]["component"] = c.component_name
+				var btn = slots[idx]["button"]
+				btn.text = c.component_name
+				var comp_type = _classify_component(c.component_name)
+				var col = component_type_color_map.get(comp_type, component_type_color_map["other"])
+				var style = StyleBoxFlat.new()
+				style.bg_color = col
+				style.border_width_bottom = 1
+				style.border_color = Color(0.2, 0.2, 0.25)
+				btn.add_theme_stylebox_override("normal", style)
+				var hover = StyleBoxFlat.new()
+				hover.bg_color = col * 1.3
+				hover.border_width_bottom = 1
+				hover.border_color = Color(0.4, 0.4, 0.45)
+				btn.add_theme_stylebox_override("hover", hover)
+				placed += 1
+			continue
+
 		var available = _available_slot_indices.get(loc_name, [])
 		if c.critical_slots <= 0:
 			continue
