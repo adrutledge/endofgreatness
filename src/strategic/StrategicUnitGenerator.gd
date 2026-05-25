@@ -18,23 +18,25 @@ func _get_rat_parser():
 
 func _get_gs():
 	if _GameState == null:
-		var ml = Engine.get_main_loop()
-		if ml and ml.has_node("/root/GameState"):
-			_GameState = ml.get_node("/root/GameState")
+		var ml = Engine.get_main_loop() as SceneTree
+		if ml and ml.root:
+			_GameState = ml.root.get_node_or_null("/root/GameState") as Node
 	return _GameState
+
 
 func _get_dm():
 	if _DataManager == null:
-		var ml = Engine.get_main_loop()
-		if ml and ml.has_node("/root/DataManager"):
-			_DataManager = ml.get_node("/root/DataManager")
+		var ml = Engine.get_main_loop() as SceneTree
+		if ml and ml.root:
+			_DataManager = ml.root.get_node_or_null("/root/DataManager") as Node
 	return _DataManager
+
 
 func _get_pm():
 	if _PersonnelManager == null:
-		var ml = Engine.get_main_loop()
-		if ml and ml.has_node("/root/PersonnelManager"):
-			_PersonnelManager = ml.get_node("/root/PersonnelManager")
+		var ml = Engine.get_main_loop() as SceneTree
+		if ml and ml.root:
+			_PersonnelManager = ml.root.get_node_or_null("/root/PersonnelManager") as Node
 	return _PersonnelManager
 
 const FIRST_NAMES: Array[String] = [

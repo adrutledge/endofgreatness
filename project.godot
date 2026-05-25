@@ -16,7 +16,7 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 config/name="End of Greatness"
 config/description="A BattleTech grand strategy simulation"
-run/main_scene="res://src/ui/strategic/StarMap.tscn"
+run/main_scene="res://src/ui/menus/MainMenu.tscn"
 config/features=PackedStringArray("4.6")
 config/icon="res://assets/icons/game_icon.svg"
 
