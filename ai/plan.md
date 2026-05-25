@@ -301,8 +301,8 @@
 - **Starting C-Bill float**: `Nd6 × 1,000,000` CSB where `N` is configurable (default 20); roll per new game; configurable floor — if the roll would go below the floor, use the floor instead; `dice_count: int` and `floor: int` in settings
 - **Initial mech stable**: configurable count (default 12 — a company), generated via Xotl's d1000 Random Assignment Tables (RATs) for the selected faction and era (3025); `data/rat/` directory holds faction-specific RAT JSON files parsed by `RATParser.gd`; mechs generated as `TacticalUnit` resources with random `Quality` (F–C distribution) and minor random variation in component condition
 - **Initial personnel**:
-  - Commander — one of the crew/pilots (picked from the initial mech pilots, assigned `COMMAND` role)
-  - Executive Officer (XO) — another of the crew/pilots (assigned `COMMAND` role as second-in-command)
+  - **Commander** — the best pilot among the initial crew, flagged via `is_commander: bool` on the `Crew`/`Personnel` resource; selected by highest `Leadership` skill, then highest `Tactics`, then highest total piloting+gunnery
+  - **Executive Officer (XO)** — the second-best pilot, flagged via `is_xo: bool` on the same resource
   - 1 Administrator (`HR` role, acts as the commander's assistant / personnel clerk) — each point of `Administration` skill covers 10 employees (e.g., skill 4 = capacity of 40 employees)
   - 1 Doctor (`DOCTOR` role)
   - Technicians (`TECHNICIAN` role) — 1 per 4 mechs, tracked as individual characters
