@@ -295,6 +295,29 @@
 
 ---
 
+### P3.7 — Initial Strategic Unit Generator
+
+- **`StrategicUnitGenerator.gd`** in `src/strategic/` — generates the player's starting force on New Game
+- **Starting C-Bill float**: `20d6 × 1,000,000` CB (roll per new game); configurable floor — if the roll would go below the floor, use the floor instead; `floor: int` in settings
+- **Initial mech stable**: generate a random lance (4 mechs) drawn from a pool of common 3025-era tech-1 mechs (light/medium focus), weighted toward cheaper/simpler chassis; mechs generated as `TacticalUnit` resources with random `Quality` (F–C distribution) and minor random variation in component condition
+- **Initial personnel**:
+  - Commander (`COMMAND` role, random stats/skills)
+  - 1 Administrator (`HR` role) — each point of `Administration` skill covers 10 employees (e.g., skill 4 = capacity of 40 employees)
+  - 1 Doctor (`DOCTOR` role)
+  - 1 Medic (`MEDIC` role)
+  - 2 Technicians (`TECHNICIAN` role, one per 2 mechs starting ratio)
+  - 2 Astechs (`ASTECH` role per technician)
+  - 4 Crew (`CREW` role, one per mech)
+- **Starting equipment**: 1–2 tons each of common ammo types (AC/5, LRM-5, SRM-2, MG) in inventory
+- **Starting organizational structure**:
+  - Player `StrategicUnit` created
+  - One `OrganizationalUnit` (mercenary company name)
+  - One `OperationalUnit` per mech, nested under the organizational unit
+- **C-Bill expenditure**: purchase the initial mechs and equipment from the float at market rates; remaining float = `roll − purchase_cost` (subject to floor)
+- **Integration**: called by Main Menu `New Game` flow before entering strategic layer; writes generated state into `GameState`
+
+---
+
 ## Phase 4: Operational Layer
 
 ### P4.1 — Planetary Hex Map
