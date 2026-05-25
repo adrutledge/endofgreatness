@@ -53,8 +53,8 @@ var component_type_filters: Array[String] = [
 ]
 
 var paper_doll_slot_counts: Dictionary = {
-	"Head": 6, "Center Torso": 12, "Left Torso": 10, "Right Torso": 10,
-	"Left Arm": 6, "Right Arm": 6, "Left Leg": 6, "Right Leg": 6,
+	"Head": 6, "Center Torso": 12, "Left Torso": 12, "Right Torso": 12,
+	"Left Arm": 12, "Right Arm": 12, "Left Leg": 6, "Right Leg": 6,
 }
 
 var component_type_color_map: Dictionary = {
@@ -181,11 +181,11 @@ func _build_paper_doll_tab() -> void:
 	mid_row.alignment = BoxContainer.ALIGNMENT_CENTER
 	mid_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	wrapper.add_child(mid_row)
-	mid_row.add_child(_make_location_column("Left Arm", 6))
-	mid_row.add_child(_make_location_column("Left Torso", 10))
+	mid_row.add_child(_make_location_column("Left Arm", 12))
+	mid_row.add_child(_make_location_column("Left Torso", 12))
 	mid_row.add_child(_make_paper_doll_ct())
-	mid_row.add_child(_make_location_column("Right Torso", 10))
-	mid_row.add_child(_make_location_column("Right Arm", 6))
+	mid_row.add_child(_make_location_column("Right Torso", 12))
+	mid_row.add_child(_make_location_column("Right Arm", 12))
 
 	wrapper.add_child(HSeparator.new())
 
@@ -280,6 +280,7 @@ func _make_paper_doll_head() -> VBoxContainer:
 func _make_paper_doll_ct() -> VBoxContainer:
 	var col = VBoxContainer.new()
 	col.name = "Loc_Center_Torso"
+	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var title = Label.new()
 	title.text = "Center Torso"
 	title.add_theme_font_size_override("font_size", 11)
@@ -296,6 +297,7 @@ func _make_paper_doll_ct() -> VBoxContainer:
 func _make_location_column(location: String, slot_count: int) -> VBoxContainer:
 	var col = VBoxContainer.new()
 	col.name = "Loc_" + location.replace(" ", "_")
+	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 	var lbl = Label.new()
 	lbl.text = location + " (" + str(slot_count) + ")"

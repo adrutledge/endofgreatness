@@ -24,7 +24,7 @@ build:
 	$(GODOT) --headless --export-release "$(EXPORT_PRESET)" $(EXPORT_DIR)/
 
 run:
-	$(GODOT) --path .
+	$(GODOT) --path . --maximized
 
 ## Launch with debug logging enabled (--opencode-debug flag)
 rund:
