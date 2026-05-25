@@ -1214,6 +1214,7 @@ func _refresh_paper_doll() -> void:
 		var struct_info = _match_structural_component(cname)
 		if struct_info and struct_info.loc == loc_name:
 			var idxs = struct_info.indices
+			var n_struct = idxs.size()
 			var placed := 0
 			for idx in idxs:
 				if idx < 0 or idx >= slots.size():
@@ -1224,13 +1225,27 @@ func _refresh_paper_doll() -> void:
 				var col = _component_type_color(c.component_name)
 				var style = StyleBoxFlat.new()
 				style.bg_color = col
-				style.border_width_bottom = 1
-				style.border_color = Color(0.2, 0.2, 0.25)
+				if n_struct > 1:
+					style.border_width_left = 3 if placed == 0 else 0
+					style.border_width_right = 3 if placed == n_struct - 1 else 0
+					style.border_width_top = 3
+					style.border_width_bottom = 3
+					style.border_color = Color(1, 1, 1)
+				else:
+					style.border_width_bottom = 1
+					style.border_color = Color(0.2, 0.2, 0.25)
 				btn.add_theme_stylebox_override("normal", style)
 				var hover = StyleBoxFlat.new()
 				hover.bg_color = col * 1.3
-				hover.border_width_bottom = 1
-				hover.border_color = Color(0.4, 0.4, 0.45)
+				if n_struct > 1:
+					hover.border_width_left = 3 if placed == 0 else 0
+					hover.border_width_right = 3 if placed == n_struct - 1 else 0
+					hover.border_width_top = 3
+					hover.border_width_bottom = 3
+					hover.border_color = Color(1, 1, 1)
+				else:
+					hover.border_width_bottom = 1
+					hover.border_color = Color(0.4, 0.4, 0.45)
 				btn.add_theme_stylebox_override("hover", hover)
 				placed += 1
 			continue
@@ -1261,24 +1276,24 @@ func _refresh_paper_doll() -> void:
 			style.border_width_bottom = 1
 			style.border_color = Color(0.2, 0.2, 0.25)
 			if n > 1:
-				var bw := 2
+				var bw := 3
 				style.border_width_left = bw if idx == first_placed_idx else 0
 				style.border_width_right = bw if idx == last_placed_idx or placed + 1 >= n else 0
 				style.border_width_top = bw
 				style.border_width_bottom = bw
-				var bc = component_type_color_map.get(comp_type, Color(1, 1, 1))
-				style.border_color = bc
+				style.border_color = Color(1, 1, 1)
 			btn.add_theme_stylebox_override("normal", style)
 			var hover = StyleBoxFlat.new()
 			hover.bg_color = col * 1.3
 			hover.border_width_bottom = 1
 			hover.border_color = Color(0.4, 0.4, 0.45)
 			if n > 1:
-				var bw := 2
+				var bw := 3
 				hover.border_width_left = bw if idx == first_placed_idx else 0
 				hover.border_width_right = bw if idx == last_placed_idx or placed + 1 >= n else 0
 				hover.border_width_top = bw
 				hover.border_width_bottom = bw
+				hover.border_color = Color(1, 1, 1)
 			btn.add_theme_stylebox_override("hover", hover)
 			var disp = c.component_name
 			if n > 1:
@@ -1472,6 +1487,8 @@ func _populate_current_components_list() -> void:
 		filter_loc = current_location_filter.get_item_text(current_location_filter.selected)
 
 	for c in selected_unit.components:
+		if _is_protected_component(c.component_name):
+			continue
 		var loc_name = c.location.location_name if c.location else "Unknown"
 		if filter_loc != "All Locations" and loc_name != filter_loc:
 			continue
