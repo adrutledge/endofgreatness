@@ -1,6 +1,6 @@
 # Implementation Status
 
-Generated: 3025-05-25 (updated per commit fa7cc13)
+Generated: 3025-05-25 (updated per commit 14a8199)
 Plan: `ai/plan.md`
 
 ---
@@ -82,6 +82,10 @@ Plan: `ai/plan.md`
 - [~] personnel_relationships declared but no Relation resource or population
 - [~] Candidate generation not auto-refreshed per tick
 - [~] Healing is instant, not time-progression
+- [ ] Pilot abilities (terrain, mech affinity, weapon spec, conditional bonuses) — planned
+- [ ] Secondary roles for personnel (e.g. doctor also HR) — planned
+- [ ] Administration skill affects time efficiency for doctors/techs — planned
+- [ ] Skill-level gating for ability generation — planned
 
 ---
 

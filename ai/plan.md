@@ -129,6 +129,19 @@
 - Hiring halls (planet facility) multiply candidate pool: if planet has a hiring hall, generate additional candidates per tick; hiring hall tier (local/regional/imperial) increases candidate count and quality (higher skills, rarer roles)
 - Aging: birthdays tracked, death at old age (random roll past ~65)
 - Injury tracking: `injure(personnel, severity)`, `heal(personnel, medic, time)` — medics heal over time
+- **Secondary roles**: personnel may hold a primary and secondary role (e.g., a doctor with secondary HR); the secondary role's duties are performed at reduced efficiency (e.g., half the `Administration` skill contribution when acting as secondary HR, or half patient capacity when a doctor is secondary)
+- **Administration skill affects time efficiency**: `Administration` skill for doctors reduces healing time (per-point percentage reduction); for technicians, reduces repair/refit/salvage time (same mechanic); the skill is checked against the complexity of the work — simple tasks get full benefit, complex/experimental tasks get reduced benefit
+- **Pilot abilities** (per A Time of War traits and special pilot abilities):
+  - Abilities grant conditional modifiers to gunnery, piloting, or other rolls in specific contexts
+  - **Terrain-specialist** abilities: reduce or ignore movement/accuracy penalties in specific terrain types (woods, water, rough, urban, etc.)
+  - **Mech affinity**: pilot gains bonuses when piloting a specific chassis or weight class (e.g., "Jenner Ace" or "Heavy Mech Specialist")
+  - **Weapon specialization**: reduced to-hit penalties or heat benefits with specific weapon classes (PPCs, autocannons, missiles, lasers, pulse, etc.)
+  - **Conditional combat abilities**: bonuses during specific tactical situations — ambush, flanking, called shots, indirect fire, etc.
+  - **Non-combat abilities**: bonuses to repair speed, salvage recovery, negotiation, or logistics when assigned to non-combat roles
+  - Each ability has a `condition` (expression or function evaluated against combat context) and a `modifier` (flat or percentage bonus/penalty)
+  - Stored on the `Personnel` resource as an `Array[PilotAbility]` (new resource class); abilities are assigned at generation (weighted by faction/background) and occasionally through events or promotion
+  - Combined with existing `Traits` system: some traits gate which abilities a pilot can learn, and abilities may grant additional trait-like effects outside combat
+  - **Skill-level gating**: a character's skill levels (gunnery, piloting, tactics, etc.) also gate which abilities may generate — e.g., a pilot with gunnery 4+ cannot generate "Sharpshooter" (requires gunnery 3+); a medic with low `Administration` cannot generate "Efficient Triage" (requires Admin 4+); this prevents low-skill characters from rolling high-tier abilities at generation
 
 ---
 
