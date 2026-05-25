@@ -23,6 +23,7 @@ extends Resource
 @export var assigned_technicians: Array[Personnel] = []
 @export var slot_free_heat_sinks: int = 10
 @export var weight_free_heat_sinks: int = 10
+@export var motion_type: String = ""
 
 func requires_technician() -> bool:
 	return unit_type != Enums.UnitType.INFANTRY
@@ -101,7 +102,7 @@ func validate_tm() -> Dictionary:
 	var diff = total_weight - tonnage
 	if abs(diff) > 0.05:
 		errors.append("Weight mismatch: %.1ft / %dt (%.1f = comp %.1f + armor %.1f + struct %.1f + hs_adj %.1f)" % [total_weight, tonnage, diff, comp_weight, armor_weight, structure_weight, hs_adj])
-	if engine_rating <= 0 and unit_type == Enums.UnitType.MECH:
+	if engine_rating <= 0 and unit_type != Enums.UnitType.INFANTRY:
 		errors.append("Missing engine")
 	if components.is_empty():
 		errors.append("No components")
@@ -167,20 +168,99 @@ func validate_tm() -> Dictionary:
 			if total > max_armor:
 				errors.append("Armor over max in %s: %d / %d" % [loc, total, max_armor])
 
-	# --- Ammo validation ---
-	if unit_type == Enums.UnitType.MECH:
-		var ammo_names: Array[String] = []
-		var weapon_names: Array[String] = []
+	# --- Vehicle validation ---
+	if unit_type == Enums.UnitType.VEHICLE:
+		if engine_rating <= 0:
+			errors.append("Missing engine")
+
+		if not motion_type:
+			errors.append("Missing motion type")
+
+		if movement_mp > 0 and tonnage > 0:
+			var sf = _vehicle_suspension_factor(motion_type, tonnage)
+			var base = int(tonnage * movement_mp) - sf
+			if base % 5 != 0:
+				base = base + (5 - base % 5)
+			var expected = max(0, base)
+			if engine_rating != expected:
+				errors.append("Engine rating mismatch: got %d, expected %d (cruise %d × %dt − SF %d)" % [engine_rating, expected, movement_mp, int(tonnage), sf])
+
+		# No gyro on vehicles
 		for c in components:
-			var n = c.component_name
-			if _is_ammo(n):
-				ammo_names.append(_ammo_base_weapon(n))
-			elif _is_ammo_weapon(n):
-				weapon_names.append(n)
-		for wn in weapon_names:
-			var base = _ammo_base_weapon(wn)
-			if base != "" and base not in ammo_names:
-				errors.append("Missing ammo for %s" % wn)
+			if c.component_name == "Gyroscope" or c.component_name == "Gyro":
+				errors.append("Vehicle should not have gyroscope")
+				break
+
+		# Max armor per location (vehicle IS × 2)
+		var veh_is := {}
+		var veh_armor_order := ["Front", "Left Side", "Right Side", "Rear"]
+		if motion_type.to_lower() == "vtol":
+			veh_armor_order.append("Rotor")
+		else:
+			veh_armor_order.append("Turret")
+
+		for loc_name in veh_armor_order:
+			var is_pts := 1
+			match loc_name:
+				"Front":
+					is_pts = max(2, int(ceil(tonnage / 10.0)) + 2)
+				"Left Side", "Right Side":
+					is_pts = max(1, int(ceil(tonnage / 10.0)) + 1)
+				"Rear":
+					is_pts = max(1, int(ceil(tonnage / 10.0)))
+				"Turret":
+					is_pts = max(1, int(ceil(tonnage / 10.0)) + 1)
+				"Rotor":
+					is_pts = max(1, int(ceil(tonnage / 10.0)) + 2)
+			veh_is[loc_name] = is_pts
+
+		var seen_veh: Dictionary = {}
+		for c in components:
+			if not c.location or seen_veh.has(c.location.location_name):
+				continue
+			var loc = c.location.location_name
+			seen_veh[loc] = true
+			var is_pts = veh_is.get(loc, 0)
+			if is_pts <= 0:
+				continue
+			var max_armor = is_pts * 2
+			var total = c.location.armor + c.location.rear_armor
+			if total > max_armor:
+				errors.append("Armor over max in %s: %d / %d" % [loc, total, max_armor])
+
+		# Vehicle slot limits
+		var veh_slots := {
+			"Front": 10, "Left Side": 6, "Right Side": 6, "Rear": 6,
+		}
+		if motion_type.to_lower() == "vtol":
+			veh_slots["Rotor"] = 4
+		else:
+			veh_slots["Turret"] = 8
+		var used_veh: Dictionary = {}
+		for c in components:
+			var loc_name = "Unknown"
+			if c.location:
+				loc_name = c.location.location_name
+			var was = used_veh.get(loc_name, 0)
+			used_veh[loc_name] = was + c.critical_slots
+		for loc in veh_slots:
+			var used_slots = used_veh.get(loc, 0)
+			if used_slots > veh_slots[loc]:
+				errors.append("Slot overflow in %s: %d used / %d max" % [loc, used_slots, veh_slots[loc]])
+
+	# --- Ammo validation (all unit types) ---
+	var ammo_names: Array[String] = []
+	var weapon_names: Array[String] = []
+	for c in components:
+		var n = c.component_name
+		if _is_ammo(n):
+			ammo_names.append(_ammo_base_weapon(n))
+		elif _is_ammo_weapon(n):
+			weapon_names.append(n)
+	for wn in weapon_names:
+		var base = _ammo_base_weapon(wn)
+		if base != "" and base not in ammo_names:
+			errors.append("Missing ammo for %s" % wn)
 
 	# --- Gyro present for mechs ---
 	if unit_type == Enums.UnitType.MECH:
@@ -212,6 +292,36 @@ func validate_tm() -> Dictionary:
 static func _is_ammo(name: String) -> bool:
 	var n = name.to_lower()
 	return "ammo" in n
+
+
+static func _vehicle_suspension_factor(mtype: String, veh_tonnage: float) -> int:
+	var data = _load_suspension_factors()
+	var entry = data.get(mtype)
+	if entry == null:
+		return 0
+	if entry is int:
+		return entry
+	if entry is Array:
+		for bracket in entry:
+			if veh_tonnage <= float(bracket.get("max_tonnage", 999)):
+				return bracket.get("factor", 0)
+	return 0
+
+
+static var _suspension_cache = null
+static func _load_suspension_factors() -> Dictionary:
+	if _suspension_cache != null:
+		return _suspension_cache
+	var file = FileAccess.open("res://data/rules/suspension_factors.json", FileAccess.READ)
+	if not file:
+		_suspension_cache = {}
+		return _suspension_cache
+	var j = JSON.new()
+	if j.parse(file.get_as_text()) != OK:
+		_suspension_cache = {}
+		return _suspension_cache
+	_suspension_cache = j.data
+	return _suspension_cache
 
 
 static func _is_ammo_weapon(name: String) -> bool:

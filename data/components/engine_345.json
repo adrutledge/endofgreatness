@@ -23,5 +23,6 @@
     }
   },
   "slot_free_heat_sinks": 13,
-  "weight_free_heat_sinks": 10
+  "weight_free_heat_sinks": 10,
+  "vehicle_tonnage": 22.0
 }

@@ -297,7 +297,13 @@ static func parse_blk(file_path: String, component_defs: Dictionary = {}) -> Tac
 	unit.run_mp = max(1, int(ceil(cruise * 1.5)))
 
 	var blk_armor = tags.get("_armor_values", [])
+	if blk_armor.size() > 0:
+		var total := 0
+		for v in blk_armor:
+			total += v
+		unit.total_armor_points = total
 	var motion_type = tags.get("motion_type", "")
+	unit.motion_type = motion_type
 	var loc_names = ["Front", "Left Side", "Right Side", "Rear", "Turret"]
 	var loc_hit = { "Front": 0.2778, "Left Side": 0.1667, "Right Side": 0.1667, "Rear": 0.1111, "Turret": 0.2778 }
 	var loc_struct = { "Front": 10, "Left Side": 6, "Right Side": 6, "Rear": 6, "Turret": 8 }
@@ -354,7 +360,7 @@ static func parse_blk(file_path: String, component_defs: Dictionary = {}) -> Tac
 	if engine_prefix != "":
 		unit.engine_type = engine_prefix.replace(" Engine", "")
 	var blk_ctx := {"engine_rating": unit.engine_rating, "engine_type": unit.engine_type,
-		"gyro_type": unit.gyro_type, "unit_tonnage": unit.tonnage}
+		"gyro_type": unit.gyro_type, "unit_tonnage": unit.tonnage, "unit_type": "VEHICLE"}
 	if engine_rating > 0 and engine_prefix != "":
 		var engine_name = engine_prefix + " " + str(engine_rating)
 		var comp = Component.new()
@@ -445,6 +451,35 @@ static func parse_blk(file_path: String, component_defs: Dictionary = {}) -> Tac
 			if json_crit > comp.critical_slots:
 				comp.critical_slots = json_crit
 		unit.components.append(comp)
+
+	# --- Add mandatory vehicle equipment ---
+	# Power amplifier (10% of energy weapon tonnage, min 0.5t)
+	var energy_weight := 0.0
+	var has_energy := false
+	for c in unit.components:
+		var n = c.component_name.to_lower()
+		if n in ["medium laser", "large laser", "small laser", "ppc", "flamer"]:
+			energy_weight += c.tonnage
+			has_energy = true
+	if has_energy:
+		var pa_weight: float = 0.5 if energy_weight * 0.10 < 0.5 else energy_weight * 0.10
+		var pa = Component.new()
+		pa.component_name = "Power Amplifier"
+		pa.critical_slots = 1
+		pa.tonnage = pa_weight
+		pa.status = Enums.ComponentStatus.UNDAMAGED
+		unit.components.append(pa)
+
+	# Lift equipment for Hover/VTOL/WiGE (10% of tonnage, min 0.5t)
+	var lift_types = ["hover", "vtol", "wige"]
+	if motion_type.to_lower() in lift_types:
+		var lift_weight: float = 0.5 if unit.tonnage * 0.10 < 0.5 else unit.tonnage * 0.10
+		var le = Component.new()
+		le.component_name = "Lift Equipment"
+		le.critical_slots = 1
+		le.tonnage = lift_weight
+		le.status = Enums.ComponentStatus.UNDAMAGED
+		unit.components.append(le)
 
 	return unit
 
@@ -659,42 +694,33 @@ static func _build_location_data(tonnage: float, armor_values: Dictionary) -> Di
 
 
 static func _get_suspension_factor(motion_type: String, tonnage: float) -> int:
-	match motion_type:
-		"Tracked":
-			return 0
-		"Wheeled":
-			return 20
-		"Hover":
-			if tonnage <= 10.0: return 40
-			elif tonnage <= 20.0: return 85
-			elif tonnage <= 30.0: return 130
-			elif tonnage <= 40.0: return 175
-			else: return 235
-		"VTOL":
-			if tonnage <= 10.0: return 95
-			elif tonnage <= 20.0: return 140
-			else: return 175
-		"WiGE":
-			if tonnage <= 15.0: return 80
-			elif tonnage <= 30.0: return 115
-			elif tonnage <= 45.0: return 140
-			else: return 165
-		"Naval":
-			return 30
-		"Hydrofoil":
-			if tonnage <= 10.0: return 60
-			elif tonnage <= 20.0: return 105
-			elif tonnage <= 30.0: return 150
-			elif tonnage <= 40.0: return 195
-			elif tonnage <= 50.0: return 255
-			elif tonnage <= 60.0: return 300
-			elif tonnage <= 70.0: return 345
-			elif tonnage <= 80.0: return 390
-			elif tonnage <= 90.0: return 435
-			else: return 480
-		"Submarine":
-			return 30
+	var data = _load_suspension_factors()
+	var entry = data.get(motion_type)
+	if entry == null:
+		return 0
+	if entry is int:
+		return entry
+	if entry is Array:
+		for bracket in entry:
+			if tonnage <= float(bracket.get("max_tonnage", 999)):
+				return bracket.get("factor", 0)
 	return 0
+
+
+static var _suspension_cache = null
+static func _load_suspension_factors() -> Dictionary:
+	if _suspension_cache != null:
+		return _suspension_cache
+	var file = FileAccess.open("res://data/rules/suspension_factors.json", FileAccess.READ)
+	if not file:
+		_suspension_cache = {}
+		return _suspension_cache
+	var j = JSON.new()
+	if j.parse(file.get_as_text()) != OK:
+		_suspension_cache = {}
+		return _suspension_cache
+	_suspension_cache = j.data
+	return _suspension_cache
 
 
 static func _compute_def_weight(def: Dictionary, context: Dictionary, component_name: String = "") -> float:
@@ -704,9 +730,11 @@ static func _compute_def_weight(def: Dictionary, context: Dictionary, component_
 		"fusion_engine":
 			var rating = context.get("engine_rating", 0)
 			var etype = context.get("engine_type", "Standard")
-			var base = _STANDARD_FUSION_WEIGHTS.get(rating, float(rating) * 0.1)
 			var mults = wc.get("type_multipliers", {})
 			var mult = mults.get(etype, 1.0)
+			if context.get("unit_type", "") == "VEHICLE":
+				return def.get("vehicle_tonnage", float(rating) * 0.1)
+			var base = _STANDARD_FUSION_WEIGHTS.get(rating, float(rating) * 0.1)
 			return base * mult
 		"gyro":
 			var rating = context.get("engine_rating", 0)

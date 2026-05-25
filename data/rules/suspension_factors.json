@@ -1,0 +1,36 @@
+{
+  "Tracked": 0,
+  "Wheeled": 20,
+  "Hover": [
+    { "max_tonnage": 10, "factor": 40 },
+    { "max_tonnage": 20, "factor": 85 },
+    { "max_tonnage": 30, "factor": 130 },
+    { "max_tonnage": 40, "factor": 175 },
+    { "max_tonnage": 999, "factor": 235 }
+  ],
+  "VTOL": [
+    { "max_tonnage": 10, "factor": 95 },
+    { "max_tonnage": 20, "factor": 140 },
+    { "max_tonnage": 999, "factor": 175 }
+  ],
+  "WiGE": [
+    { "max_tonnage": 15, "factor": 80 },
+    { "max_tonnage": 30, "factor": 115 },
+    { "max_tonnage": 45, "factor": 140 },
+    { "max_tonnage": 999, "factor": 165 }
+  ],
+  "Naval": 30,
+  "Hydrofoil": [
+    { "max_tonnage": 10, "factor": 60 },
+    { "max_tonnage": 20, "factor": 105 },
+    { "max_tonnage": 30, "factor": 150 },
+    { "max_tonnage": 40, "factor": 195 },
+    { "max_tonnage": 50, "factor": 255 },
+    { "max_tonnage": 60, "factor": 300 },
+    { "max_tonnage": 70, "factor": 345 },
+    { "max_tonnage": 80, "factor": 390 },
+    { "max_tonnage": 90, "factor": 435 },
+    { "max_tonnage": 999, "factor": 480 }
+  ],
+  "Submarine": 30
+}
