@@ -303,7 +303,11 @@
 - **Initial personnel**:
   - **Commander** — the best pilot among the initial crew, flagged via `is_commander: bool` on the `Crew`/`Personnel` resource; selected by highest `Leadership` skill, then highest `Tactics`, then highest total piloting+gunnery
   - **Executive Officer (XO)** — the second-best pilot, flagged via `is_xo: bool` on the same resource
-  - Administrator(s) (`HR` role, act as the commander's assistant / personnel clerks) — generated with sufficient `Administration` skill to cover the individually-tracked staff: crew (pilots) + technicians + doctor + administrators themselves count toward required capacity; astechs and medics (abstract pools) do not require HR coverage; each point of `Administration` skill covers 10 employees (e.g., skill 4 = capacity of 40); if one administrator is insufficient, generate additional administrators to meet capacity
+  - Administrative staff (four roles), generated with sufficient skill to cover unit needs:
+    - **HR** (`HR` role) — covers individually-tracked staff (crew + technicians + doctor + admins); each point of `Administration` skill covers 10 employees; astechs and medics (abstract) excluded; generate additional HR if one insufficient
+    - **Logistics** (`LOGISTICAL` role) — manages supply chain, parts ordering, inventory
+    - **Command** (`COMMAND` role) — the commander's administrative assistant (scheduling, comms, paperwork)
+    - **Transport** (`TRANSPORT` role) — manages unit transport (DropShip/JumpShip booking, convoy movement)
   - 1 Doctor (`DOCTOR` role)
   - Technicians (`TECHNICIAN` role) — 1 per 4 mechs, tracked as individual characters
   - Astechs (`ASTECH` role) — 2 per technician, tracked as abstract pool (count only, no stats/skills/relationships)
