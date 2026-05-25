@@ -216,6 +216,9 @@ func _build_paper_doll_tab() -> void:
 	lsp1.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	leg_row.add_child(lsp1)
 	leg_row.add_child(_make_location_column("Left Leg", 6))
+	var lsp_mid = Control.new()
+	lsp_mid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	leg_row.add_child(lsp_mid)
 	leg_row.add_child(_make_location_column("Right Leg", 6))
 	var lsp2 = Control.new()
 	lsp2.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -319,32 +322,6 @@ func _make_paper_doll_ct() -> VBoxContainer:
 		var btn = _make_slot_button("Center Torso", i, slot_name)
 		col.add_child(btn)
 	return col
-
-
-func _force_empty_slots() -> void:
-	var always_empty: Dictionary = {
-		"Head": [3],
-	}
-	for loc_name in always_empty:
-		if not paper_doll_slot_map.has(loc_name):
-			continue
-		var slots = paper_doll_slot_map[loc_name]
-		for idx in always_empty[loc_name]:
-			if idx < 0 or idx >= slots.size():
-				continue
-			slots[idx]["component"] = ""
-			var btn = slots[idx]["button"]
-			btn.text = "Empty"
-			var style = StyleBoxFlat.new()
-			style.bg_color = Color(0.06, 0.06, 0.06)
-			style.border_width_bottom = 1
-			style.border_color = Color(0.15, 0.15, 0.18)
-			btn.add_theme_stylebox_override("normal", style)
-			var hover = StyleBoxFlat.new()
-			hover.bg_color = Color(0.1, 0.1, 0.12)
-			hover.border_width_bottom = 1
-			hover.border_color = Color(0.2, 0.2, 0.25)
-			btn.add_theme_stylebox_override("hover", hover)
 
 
 func _apply_default_slot_styles() -> void:
@@ -1182,7 +1159,6 @@ func _refresh_paper_doll() -> void:
 			slot_idx += 1
 
 	_apply_default_slot_styles()
-	_force_empty_slots()
 
 	var sel_info = paper_doll_tab.get_node_or_null("PaperDollSelectedInfo")
 	if sel_info:
