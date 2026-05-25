@@ -103,7 +103,7 @@
 - Relationships graph: `personnel_relationships: Dictionary<String, Array<Relation>>`
 - Assign technicians to tactical units (time budget per day for repairs)
 - Assign doctors (patient capacity, configurable per doctor, default 20)
-- Assign crew to exactly one tactical unit
+- Assign crew to exactly one tactical unit; where a vehicle or infantry unit requires multiple crew, handle all crew beyond the first (pilot/driver) as an abstract count rather than individual tracked personnel
 - Hire/fire/promote/demote methods
 - Personnel market generated per planet the player is on — pool of available candidates refreshed per strategic tick, drawn from planet population and local faction presence
 - Hiring halls (planet facility) multiply candidate pool: if planet has a hiring hall, generate additional candidates per tick; hiring hall tier (local/regional/imperial) increases candidate count and quality (higher skills, rarer roles)
