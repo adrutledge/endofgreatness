@@ -1158,8 +1158,6 @@ func _refresh_paper_doll() -> void:
 			btn.text = "Empty"
 			slot_idx += 1
 
-	_apply_default_slot_styles()
-
 	var sel_info = paper_doll_tab.get_node_or_null("PaperDollSelectedInfo")
 	if sel_info:
 		sel_info.text = ""
