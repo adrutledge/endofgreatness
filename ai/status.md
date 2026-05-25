@@ -1,6 +1,6 @@
 # Implementation Status
 
-Generated: 3025-05-25 (updated per commit dfd45e6)
+Generated: 3025-05-25 (updated per commit 6833829)
 Plan: `ai/plan.md`
 
 ---
