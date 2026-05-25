@@ -185,46 +185,46 @@ func generate(faction_code: String, company_name: String = "", mech_count: int =
 	PersonnelManager.abstract_astech_count += abstract_astechs
 	PersonnelManager.abstract_medic_count += abstract_medics
 
-		var lance_size = 4
-		for lance_start in range(0, mechs.size(), lance_size):
-			var lance_end = min(lance_start + lance_size, mechs.size())
-			var lance_pilots: Array[Personnel] = []
-			for i in range(lance_start, lance_end):
-				if i < pilots.size():
-					lance_pilots.append(pilots[i])
-			for i in range(lance_pilots.size()):
-				for j in range(i + 1, lance_pilots.size()):
-					if randi() % 100 < 40:
-						pm.add_relationship(lance_pilots[i].personnel_name, lance_pilots[j].personnel_name, Enums.RelationshipType.FRIENDSHIP, 1, randi() % 3 + 1)
-						pm.add_relationship(lance_pilots[j].personnel_name, lance_pilots[i].personnel_name, Enums.RelationshipType.FRIENDSHIP, 1, randi() % 3 + 1)
-					if randi() % 100 < 15:
-						pm.add_relationship(lance_pilots[i].personnel_name, lance_pilots[j].personnel_name, Enums.RelationshipType.WINGMAN, 1, randi() % 3 + 1)
-						pm.add_relationship(lance_pilots[j].personnel_name, lance_pilots[i].personnel_name, Enums.RelationshipType.WINGMAN, 1, randi() % 3 + 1)
+	var lance_size = 4
+	for lance_start in range(0, mechs.size(), lance_size):
+		var lance_end = min(lance_start + lance_size, mechs.size())
+		var lance_pilots: Array[Personnel] = []
+		for i in range(lance_start, lance_end):
+			if i < pilots.size():
+				lance_pilots.append(pilots[i])
+		for i in range(lance_pilots.size()):
+			for j in range(i + 1, lance_pilots.size()):
+				if randi() % 100 < 40:
+					PersonnelManager.add_relationship(lance_pilots[i].personnel_name, lance_pilots[j].personnel_name, Enums.RelationshipType.FRIENDSHIP, 1, randi() % 3 + 1)
+					PersonnelManager.add_relationship(lance_pilots[j].personnel_name, lance_pilots[i].personnel_name, Enums.RelationshipType.FRIENDSHIP, 1, randi() % 3 + 1)
+				if randi() % 100 < 15:
+					PersonnelManager.add_relationship(lance_pilots[i].personnel_name, lance_pilots[j].personnel_name, Enums.RelationshipType.WINGMAN, 1, randi() % 3 + 1)
+					PersonnelManager.add_relationship(lance_pilots[j].personnel_name, lance_pilots[i].personnel_name, Enums.RelationshipType.WINGMAN, 1, randi() % 3 + 1)
 
-		for p in pilots:
-			if p.is_commander:
-				for q in pilots:
-					if q.is_xo:
-						pm.add_relationship(p.personnel_name, q.personnel_name, Enums.RelationshipType.FRIENDSHIP, 1, randi() % 3 + 2)
-						pm.add_relationship(q.personnel_name, p.personnel_name, Enums.RelationshipType.FRIENDSHIP, 1, randi() % 3 + 2)
-						break
+	for p in pilots:
+		if p.is_commander:
+			for q in pilots:
+				if q.is_xo:
+					PersonnelManager.add_relationship(p.personnel_name, q.personnel_name, Enums.RelationshipType.FRIENDSHIP, 1, randi() % 3 + 2)
+					PersonnelManager.add_relationship(q.personnel_name, p.personnel_name, Enums.RelationshipType.FRIENDSHIP, 1, randi() % 3 + 2)
+					break
 
-		for i in range(all_personnel.size()):
-			for j in range(i + 1, all_personnel.size()):
-				if randi() % 100 < 5:
-					pm.add_relationship(all_personnel[i].personnel_name, all_personnel[j].personnel_name, Enums.RelationshipType.LOVER, 1, randi() % 3 + 1)
-					pm.add_relationship(all_personnel[j].personnel_name, all_personnel[i].personnel_name, Enums.RelationshipType.LOVER, 1, randi() % 3 + 1)
+	for i in range(all_personnel.size()):
+		for j in range(i + 1, all_personnel.size()):
+			if randi() % 100 < 5:
+				PersonnelManager.add_relationship(all_personnel[i].personnel_name, all_personnel[j].personnel_name, Enums.RelationshipType.LOVER, 1, randi() % 3 + 1)
+				PersonnelManager.add_relationship(all_personnel[j].personnel_name, all_personnel[i].personnel_name, Enums.RelationshipType.LOVER, 1, randi() % 3 + 1)
 
-		for i in range(all_personnel.size()):
-			for j in range(i + 1, all_personnel.size()):
-				if randi() % 100 < 8:
-					pm.add_relationship(all_personnel[i].personnel_name, all_personnel[j].personnel_name, Enums.RelationshipType.DISLIKE, -1, randi() % 3 + 1)
-					pm.add_relationship(all_personnel[j].personnel_name, all_personnel[i].personnel_name, Enums.RelationshipType.DISLIKE, -1, randi() % 3 + 1)
-				if randi() % 100 < 5:
-					pm.add_relationship(all_personnel[i].personnel_name, all_personnel[j].personnel_name, Enums.RelationshipType.RIVAL, -1, randi() % 3 + 1)
-					pm.add_relationship(all_personnel[j].personnel_name, all_personnel[i].personnel_name, Enums.RelationshipType.RIVAL, -1, randi() % 3 + 1)
+	for i in range(all_personnel.size()):
+		for j in range(i + 1, all_personnel.size()):
+			if randi() % 100 < 8:
+				PersonnelManager.add_relationship(all_personnel[i].personnel_name, all_personnel[j].personnel_name, Enums.RelationshipType.DISLIKE, -1, randi() % 3 + 1)
+				PersonnelManager.add_relationship(all_personnel[j].personnel_name, all_personnel[i].personnel_name, Enums.RelationshipType.DISLIKE, -1, randi() % 3 + 1)
+			if randi() % 100 < 5:
+				PersonnelManager.add_relationship(all_personnel[i].personnel_name, all_personnel[j].personnel_name, Enums.RelationshipType.RIVAL, -1, randi() % 3 + 1)
+				PersonnelManager.add_relationship(all_personnel[j].personnel_name, all_personnel[i].personnel_name, Enums.RelationshipType.RIVAL, -1, randi() % 3 + 1)
 
-	if gs:
+	GameState.log_event("game_started", {
 		gs.log_event("game_started", {
 			"company": company,
 			"faction": faction_code,
