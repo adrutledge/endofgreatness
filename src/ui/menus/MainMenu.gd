@@ -8,7 +8,7 @@ func _ready() -> void:
 	$VBoxContainer/Quit.pressed.connect(_on_quit)
 
 func _on_new_game() -> void:
-	get_tree().change_scene_to_file("res://src/ui/strategic/StarMap.tscn")
+	get_tree().change_scene_to_file("res://src/ui/menus/NewGameDialog.tscn")
 
 func _on_load_game() -> void:
 	get_tree().change_scene_to_file("res://src/ui/menus/SaveLoadMenu.tscn")

@@ -3,9 +3,17 @@ GDLINT ?= gdlint
 EXPORT_DIR ?= export
 EXPORT_PRESET ?= Linux/X11
 
-SRC_FILES := $(shell find src/ data/components/ -name "*.gd" -o -name "*.json" | sort)
+SRC_FILES := $(shell find src/ -name "*.gd" | sort)
+MTF_SRC := $(shell find src/data/ src/tactical/ -name "*.gd" | sort)
+MTF_DEPS := $(shell find data/components/ -name "*.json" | sort)
 MTF_TEST := tests/test_mtf_parser.gd
 MTF_STAMP := .tested_mtf
+
+STRAT_GEN_SRC := src/strategic/StrategicUnitGenerator.gd src/strategic/RATParser.gd
+STRAT_GEN_DEPS := $(shell find src/data/ -name "*.gd" | sort) src/core/GameState.gd
+STRAT_GEN_DATA := $(shell find data/rat/ -name "*.json" | sort)
+STRAT_GEN_TEST := tests/test_strategic_unit_generator.gd
+STRAT_GEN_STAMP := .tested_strat_gen
 
 .PHONY: all build run test lint export clean
 
@@ -17,11 +25,15 @@ build:
 run:
 	$(GODOT) --path .
 
-$(MTF_STAMP): $(SRC_FILES) $(MTF_TEST)
+$(MTF_STAMP): $(MTF_SRC) $(MTF_DEPS) $(MTF_TEST)
 	@$(GODOT) --headless --script $(MTF_TEST) 2>&1 | grep -E "^(PASS|FAIL|Results)"
 	@touch $(MTF_STAMP)
 
-test: $(MTF_STAMP) | build
+$(STRAT_GEN_STAMP): $(STRAT_GEN_SRC) $(STRAT_GEN_DEPS) $(STRAT_GEN_DATA) $(STRAT_GEN_TEST)
+	@$(GODOT) --headless --script $(STRAT_GEN_TEST) 2>&1 | grep -E "^(PASS|FAIL|Results)"
+	@touch $(STRAT_GEN_STAMP)
+
+test: $(MTF_STAMP) $(STRAT_GEN_STAMP)
 
 lint:
 	@if command -v $(GDLINT) >/dev/null 2>&1; then \

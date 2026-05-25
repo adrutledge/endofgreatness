@@ -331,6 +331,51 @@
 
 ---
 
+### P3.8 — Operational Unit Inventory Assignment
+
+- When deploying an `OperationalUnit` to a contract, the player must allocate spare parts from `GameState.player_inventory` to that operational unit's deployment cache
+- **Allocation UI**: shows each mech in the operational unit side-by-side with a per-component inventory picker:
+  - For each ammo-using weapon on the mech, a spinner to assign tons of matching ammo (sourced from player inventory)
+  - A spare armor points slider (in points or half-ton increments, matching the mech's armor type)
+  - A spare components browser per component type (actuators, heat sinks, structure, etc.) with quantity picker
+  - Running total of allocated tonnage displayed — exceeding a reasonable threshold (configurable, default 10% of total unit tonnage) warns but does not block
+- **Automated defaults**: a "Auto-Allocate" button that fills allocation to match standard baseline spares for all mechs in the operational unit:
+  - **Ammo**: 2 tons of matching ammo per ammo-using weapon on each mech
+  - **Armor**: spare armor points equal to 10% of each mech's total armor points (for field repairs), rounded up to nearest half-ton equivalent
+  - **Common spares**: for each component type present on any mech in the operational unit, spare count = `max(1, ceil(total_count_across_lance × 0.1))` — e.g. if the lance has 8 hip actuators across 4 mechs, allocate 1 spare hip actuator
+  - Auto-allocation only consumes what is available in `GameState.player_inventory`; if insufficient stock, the shortfall is listed as a warning (player can order from market or deploy anyway)
+- **Baseline spares configuration**: the percentages and flat values used in auto-allocation are defined in `spares_config.json` under `data/config/`:
+  - `ammo_tons_per_weapon: int` (default 2) — tons of matching ammo per ammo-using weapon
+  - `armor_percent_of_total: float` (default 0.10) — spare armor points as fraction of each mech's total armor points
+  - `spares_percent_of_total: float` (default 0.10) — spare components as fraction of each component type's total count across the lance
+  - `ammo_armor_and_spares_tonnage_warning_threshold: float` (default 0.10) — fraction of total unit tonnage above which the running total warning triggers
+  - `auto_reorder_enabled: bool` (default false) — master toggle for automatic reordering
+  - `auto_reorder_min_stock: int` (default 0) — minimum quantity threshold per component name in `GameState.player_inventory` that triggers an automatic order; if any component's stock falls below this value, an order is placed to bring it back up to `auto_reorder_target_stock`
+  - `auto_reorder_target_stock: int` (default 0) — quantity to reorder up to when below the minimum
+  - `auto_reorder_max_cost_per_order: int` (default 500000) — total C-Bill cap per automatic order to prevent bankrupting the player
+  - `auto_reorder_min_balance: int` (default 100000) — minimum C-Bill balance; if `GameState.player.current_balance` is below this value, all automatic reordering is suspended regardless of stock levels
+  - JSON is hot-reloadable; changes take effect on next auto-allocate
+  - Settings UI accessible from the allocation screen and from the Settings menu, under a "Spares & Logistics" section
+- **Auto-reorder fund gate**: before processing any auto-orders on a tick, check `GameState.player.current_balance` against `auto_reorder_min_balance`:
+  - If balance is below the threshold, skip all auto-orders this tick and emit a `auto_reorder_suspended` event with the current balance and threshold
+  - A persistent badge appears in the HUD (e.g., a small warning icon next to the C-Bill display) with tooltip: "Auto-reorder suspended — funds below threshold (X / Y CSB)"
+  - The badge auto-dismisses when balance recovers above the threshold on a subsequent tick and auto-ordering resumes
+  - Manual ordering from the market is never blocked by this gate — the player can always spend their last C-Bill if they choose
+- **Automatic reordering**: when `auto_reorder_enabled` is true and the fund gate is open, on each strategic tick:
+  - Scan `GameState.player_inventory` for all component entries
+  - For each component where `quantity < auto_reorder_min_stock`, calculate the shortfall: `auto_reorder_target_stock - current_quantity`
+  - Query the interstellar order manager for each shortfall component on nearby systems (up to 2 jumps, standard pricing/markup)
+  - If a source is found and the total cost of all pending auto-orders this tick would not exceed `auto_reorder_max_cost_per_order`, place the order immediately (deduct funds, create `PendingDelivery`)
+  - Multiple shortfall components are batched into a single order per source system where possible, to consolidate shipping
+  - If no source is found within range, the system logs a warning and tries again on the next tick
+  - Auto-orders are flagged with `auto_order: true` in the delivery metadata so the player can distinguish them from manual orders in the logistics panel
+  - The player can temporarily suspend auto-reordering from the allocation UI or Settings without clearing the configuration
+- **Deduction on confirm**: when the player confirms deployment, deduct the allocated quantities from `GameState.player_inventory` and store them on the `OperationalUnit` resource as `deployment_cache: Dictionary` (keyed by component name, value = quantity)
+- **Recovery on contract completion**: when the contract ends, any unspent deployment cache items are returned to `GameState.player_inventory`; expended items (ammo shot, armor damaged beyond repair) are deducted — tracked via tactical combat resolution
+- **In-transit tracking**: if the operational unit is in transit (not yet landed), the deployment cache is not accessible for repairs/refits; once the unit lands on the planet hex, the cache becomes the local repair stockpile for that unit
+
+---
+
 ## Phase 4: Operational Layer
 
 ### P4.1 — Planetary Hex Map
@@ -451,6 +496,10 @@
   - Pause/play button
   - Current layer indicator (Strategic/Operational/Tactical)
   - Alert notifications (event popups)
+  - **Status badges** — persistent warning icons in the HUD for ongoing operational problems; each badge shows an icon and a count, expands to a tooltip on hover, and auto-dismisses when the condition clears:
+    - **Auto-reorder suspended badge**: warning icon next to C-Bill display when `auto_reorder_enabled` but balance is below `auto_reorder_min_balance`; tooltip: "Auto-reorder suspended — funds below threshold (X / Y CSB)"
+    - **Unattended injured badge**: red cross icon when one or more personnel are injured (`is_injured = true`) but not assigned to a doctor with available capacity, or when no doctor is employed; count shows number of unattended injured; tooltip: "X personnel injured without medical care"
+    - **HR shortage badge**: people icon with exclamation when HR staff `Administration` skill capacity (`skill × 10`) is less than the total number of individually-tracked personnel (crew + technicians + doctors + admins; excluding astechs and medics); count shows how many additional HR skill points would be needed; tooltip: "HR understaffed — capacity X, need Y (Z personnel)"
 
 ### P7.3 — Modal System
 

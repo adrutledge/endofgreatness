@@ -39,6 +39,12 @@ extends Resource
 ## Technician-only: "Mech", "Vehicle", "Aerospace"
 @export var specialization: String = ""
 
+## Starting unit flags — set by StrategicUnitGenerator on New Game
+@export var is_founder: bool = false
+@export var is_commander: bool = false
+@export var is_xo: bool = false
+@export var is_lance_commander: bool = false
+
 func get_age() -> int:
 	if not date_of_birth or not TimeManager:
 		return 25

@@ -7,6 +7,10 @@ var active_contracts: Array[Contract] = []
 var pending_deliveries: Array[Dictionary] = []
 var event_log: Array[Dictionary] = []
 
+## Player's physical inventory of spare parts, ammo, armor, etc.
+## Key = component name (String), value = { "quantity": int, "component_name": String }
+var player_inventory: Dictionary = {}
+
 func _ready() -> void:
 	player = StrategicUnit.new()
 
