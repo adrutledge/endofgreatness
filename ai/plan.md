@@ -111,11 +111,14 @@
 
 ### P1.3 — Reputation System (`ReputationSystem` autoload)
 
-- `global_reputation: int` (Dirty/Controversial/Reliable/Honored/Elite)
+- `global_reputation: int` (Dirty/Controversial/Reliable/Honored/Elite) — represents standing with the **Mercenary Review Board (MRB)**, the Inner Sphere's central mercenary regulatory body
 - `faction_reputation: Dictionary<String, int>` per faction
 - `modify_reputation(faction, delta, reason)` — emits `reputation_changed`
 - Rebels/pirates/civilians track global only, not faction-specific
 - Reputation thresholds gate: contract offers, market access, faction-unique equipment, event outcomes
+- **MRB fees**: the Mercenary Review Board takes a percentage cut of all above-the-board contract payments (standard rate 5–10%, configurable); this is deducted automatically at contract settlement and represents the cost of MRB oversight, dispute resolution, and bond certification
+- **Off-the-books operations** (future advanced missions development): some employers may offer contracts outside MRB oversight (no MRB fee, no reputation impact, but no dispute resolution if the employer stiffs the player); uncontracted actions (raiding a planet without a contract, piracy) are always off-the-books and risk MRB sanctions if discovered; this ties into the war crimes and politics system
+- In later versions under advanced politics, global reputation may also account for war crimes committed (civilian casualties, use of prohibited weapons, attacks on medical facilities, etc.) as reported to the MRB, triggering sanctions, bounty hunters, or faction-wide hostility
 
 ### P1.4 — Personnel System (`PersonnelManager` autoload)
 
@@ -123,20 +126,21 @@
 - Relationships graph: `personnel_relationships: Dictionary<String, Array<Relation>>`
   - Relationships have a type (Marriage, Lover, Wingman, Dislike, Rival, Sibling, Parent/Child, etc.) and a valence (positive/negative)
   - **Wingman**: preferred partner to accompany in combat; when wingmen fight in the same unit or adjacent hexes, both receive a small gunnery/piloting bonus; if one is killed, the survivor takes a morale penalty for a duration
-  - **Marriage / Lover**: positive bond; if one is killed or injured, the other takes a larger and longer morale penalty; married couples may have children (see reproduction)
+  - **Marriage / Lover**: positive bond; if one is killed or injured, the other takes a larger and longer morale penalty; married couples may have children (see reproduction — version 2)
   - **Dislike / Rival**: negative bond; personnel with negative relationships suffer small penalties when assigned to the same unit, and events may trigger conflict between them
   - **Hidden flags** on each `Personnel` resource, not visible to the player:
     - `interested_in_relationship: bool` — whether the character is open to forming new romantic relationships
     - `interested_in_children: bool` — whether the character is open to having children
     - `biological_role: String` — `"father"` or `"mother"` independent of the character's displayed/apparent gender; determines which character carries a pregnancy when a couple has children; this is a hidden stat that may differ from visible presentation
     - `preferred_gender: String` — `"male"`, `"female"`, `"both"`, or `""` (empty); indicates which visible gender the character is attracted to; empty means neither (asexual/aromantic), `"both"` means attracted to either; this is a hidden flag that influences relationship generation and event outcomes; may change over time through events
-  - Children are generated as new `Personnel` with `CHILD` role, age 0, born to the couple after a configurable gestation period; they age and can eventually be recruited as crew or other roles when they come of age
-  - **External relationships**: during deployment on a contract planet or during interstellar travel, a character may take a lover from outside the unit (generated as a one-off event); the new partner joins the unit as a non-combatant `CIVILIAN` and travels with the unit thereafter
-  - **Children accompany the unit**: any children of unit personnel (whether born into the unit or from prior relationships) travel with the unit as `CHILD`-role personnel; they do not take up crew slots, require no salary, and age normally
-  - **Education** (version 2): when education is implemented, `CHILD`-role characters may be placed in educational tracks (local schooling on Galatea, remote tutoring, apprentice programs) that influence what skills and traits they develop as they age into adult roles
-  - **Family relationships**: children start with positive relationships with parents and siblings (Parent/Child, Sibling); rarely (small random chance) a negative sibling relationship may generate at birth, representing an innate rivalry
-  - **Relationship evolution**: family relationships can grow or change in response to events — shared positive events strengthen bonds, while separation, conflict, or traumatic events may strain them
-  - **Deployment strain** (idea for later versions): a parent repeatedly deployed while the child remains on Galatea (or vice versa) increases the chance of the relationship turning negative over time; extended together-time (parent and child both with the unit) has the opposite effect
+  - **Procreation, children, and family relationships** (version 2 — advanced character tracking):
+    - Children are generated as new `Personnel` with `CHILD` role, age 0, born to the couple after a configurable gestation period; they age and can eventually be recruited as crew or other roles when they come of age
+    - **External relationships**: during deployment on a contract planet or during interstellar travel, a character may take a lover from outside the unit (generated as a one-off event); the new partner joins the unit as a non-combatant `CIVILIAN` and travels with the unit thereafter
+    - **Children accompany the unit**: any children of unit personnel (whether born into the unit or from prior relationships) travel with the unit as `CHILD`-role personnel; they do not take up crew slots, require no salary, and age normally
+    - **Education** (version 2): when education is implemented, `CHILD`-role characters may be placed in educational tracks (local schooling on Galatea, remote tutoring, apprentice programs) that influence what skills and traits they develop as they age into adult roles
+    - **Family relationships**: children start with positive relationships with parents and siblings (Parent/Child, Sibling); rarely (small random chance) a negative sibling relationship may generate at birth, representing an innate rivalry
+    - **Relationship evolution**: family relationships can grow or change in response to events — shared positive events strengthen bonds, while separation, conflict, or traumatic events may strain them
+    - **Deployment strain**: a parent repeatedly deployed while the child remains on Galatea (or vice versa) increases the chance of the relationship turning negative over time; extended together-time (parent and child both with the unit) has the opposite effect
   - Relationships are initially empty at game start; they develop through events, shared combat, and shared assignments over time
   - Each `Personnel` resource additionally tracks: `originating_faction: String` (the faction the character originally came from), `home_system: String`, and `home_planet: String` — these may differ from the player's current faction/planet and are used for event generation, loyalty checks, and background flavor
 - Assign technicians to tactical units (time budget per day for repairs)
@@ -147,6 +151,18 @@
 - Hiring halls (planet facility) multiply candidate pool: if planet has a hiring hall, generate additional candidates per tick; hiring hall tier (local/regional/imperial) increases candidate count and quality (higher skills, rarer roles)
 - Aging: birthdays tracked, death at old age (random roll past ~65)
 - Injury tracking: `injure(personnel, severity)`, `heal(personnel, medic, time)` — medics heal over time
+- **Battlefield injury generation** (version 1 — abstract): when a unit takes damage in combat, crew may be injured with a probability proportional to damage taken; injury severity is a simple integer (1–5) representing mild to critical, with no per-type tracking; healing time = `severity × BASE_DAYS` modified by doctor skill and facility quality
+- **Battlefield injury generation** (version 2 — detailed): injury type is determined by crew role and damage source:
+  - Mech pilot (cockpit hit, ammo explosion, fall from destroyed leg): concussion, spinal injury, burns, fractures
+  - Vehicle crew (vehicle destroyed, motive hit): blunt trauma, burns, shrapnel wounds
+  - Infantry (direct fire, area effect): shrapnel, gunshot wounds, blast injuries
+  - Any crew (unit destroyed while occupied): critical injuries, long-term disability chance
+- **Healing time extrapolation** (version 2 — detailed): base healing time derived from injury severity and type, extrapolated from modern trauma recovery with future-tech adjustments:
+  - BattleTech medical tech (3025 era) is roughly modern-to-advanced: severe injuries take weeks to months, minor injuries take days to weeks
+  - Higher-tech planetary medical facilities (USILR code) reduce healing time: each tier above baseline shaves a percentage off recovery time, representing access to advanced diagnostics, myomer therapy, and enhanced pharmaceuticals
+  - Doctor's `Administration` and `surgery_general` skills further modify recovery time
+  - A dedicated medical bay on a DropShip or planetary base provides a flat reduction vs field medicine
+  - **Advanced prosthetics**: permanently injured limbs or organs may be replaced with advanced prosthetics (myomer-enhanced limbs, synthetic organs, cybernetic eyes); prosthetics restore functionality but may impose small skill penalties or bonuses depending on quality; high-quality prosthetics (Clan, Star League lostech) can match or exceed natural capability; cost and availability scale with planetary tech level (USILR code) and faction relationship
 - **Secondary roles**: personnel may hold a primary and secondary role (e.g., a doctor with secondary HR); the secondary role's duties are performed at reduced efficiency (e.g., half the `Administration` skill contribution when acting as secondary HR, or half patient capacity when a doctor is secondary)
 - **Administration skill affects time efficiency**: `Administration` skill for doctors reduces healing time (per-point percentage reduction); for technicians, reduces repair/refit/salvage time (same mechanic); the skill is checked against the complexity of the work — simple tasks get full benefit, complex/experimental tasks get reduced benefit
 - **Passive XP gain**: characters build experience points through practice at their assigned roles passively each tick, in addition to active use (combat, skill checks, events); a pilot assigned to a mech gains passive `gunnery`/`piloting` XP, a technician gains `tech_*` XP, a doctor gains `surgery` XP, etc.; passive gain is slower than active use but provides a steady baseline for character growth over time
@@ -184,11 +200,13 @@
 
 - `data/starmap.json` — array of systems:
   - name, coordinates (x, y for 2D map), spectral_class (O, B, A, F, G, K, M, or custom for lore systems), planet list (name, gravity, atmosphere, temperature, population, industry_type, usilr_code: five per-attribute ratings (regressed/F/D/C/B/A, worst to best) — tech_sophistication, industrial_development, raw_material_dependence, industrial_output, agricultural_dependence (encoded per canonical USILR system), hpg_class: none/A/B/C/D, relay_station: bool, land_percent: 0–100 representing percentage of planet surface that is land; drives planetary hex map water hex generation)
+  - `owner_faction: String` — the faction that controls this system at game start; drives map coloration, market faction presence, and contract generation context
 - Jump distances: max 30 ly per jump
 - Travel time: based on spectral class recharge time (standard for G-type: ~175 hours; hotter stars like A/B recharge faster, cooler K/M recharge slower)
 - Systems owned by factions at game start, with change events per lore timeline
-- Gameplay: HPG class and relay_station presence affect communication lag — higher HPG class means faster contract negotiation, event reporting, and reputation updates; planets with no HPG have multi-week communication delays; relay stations extend HPG network range to otherwise unreachable systems
+- Faction home worlds are tracked by the `home_worlds` field on each Faction; ownership changes are handled by the lore timeline; advanced faction politics (alliances, border shifts, economic spheres of influence) is a future version feature, not part of this phase
 - USILR code affects market availability (higher codes offer rarer/higher-tech components, units, and equipment), contract payment rates (higher codes pay more C-Bills), and salvage quality (lower codes yield less advanced salvage)
+- HPG class and relay_station gameplay (communication lag, contract negotiation speed, reputation update delays) is slated for a future advanced communications phase; this version treats all systems as having baseline communication for simplicity
 
 ### P2.4 — Lore Timeline
 
@@ -253,6 +271,13 @@
 - Weighted by: location, faction relationships, reputation, current contracts
 - Events presented as popup with choices and outcomes
 - Examples: pirate raid on base, supply shipment delayed, faction requests assistance, personnel dispute
+- **LosTech rumor tracking** (future advanced organic narrative development):
+  - Rumors of Star League lostech caches, forgotten facilities, and functional relics circulate through the Inner Sphere
+  - Players may encounter rumors through events (drunken pilot in a bar, ancient map fragment, captured enemy intelligence, ComStar interdiction rumors)
+  - Each rumor tracks: location (system/planet), expected tech type (weapon, component, facility, intact mech), reliability (vague whisper → verified coordinates), and source
+  - Players may choose to investigate rumors by deploying to the rumored location (non-contract deployment) — this may lead to exploration, combat with rival seekers, or triggering multi-stage event chains
+  - Uncovering lostech yields rare components, unique units, or permanent facility upgrades; this is the primary method of acquiring lostech when it is added to the game
+  - Rumor reliability decays over time if not investigated; competing factions may also follow the same rumors, creating race-against-time scenarios
 
 ### P3.6 — TechManual Construction, Refit & Validation
 
