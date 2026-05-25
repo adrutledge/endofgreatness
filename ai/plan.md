@@ -624,6 +624,7 @@
 
 ### P7.2 — HUD
 
+- **Color blind accessibility** (future version): add a color blind friendly palette option for the paper doll and HUD, using patterns/textures or high-contrast color pairings that are distinguishable for common forms of color blindness (deuteranopia, protanopia, tritanopia); toggleable from settings
 - `ui/hud/HUD.tscn` — persistent overlay
   - Date/time display
   - C-Bill balance
