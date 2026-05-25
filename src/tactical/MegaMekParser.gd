@@ -149,64 +149,45 @@ static func parse_mtf(file_path: String, component_defs: Dictionary = {}) -> Tac
 		"unit_tonnage": unit.tonnage,
 	}
 
-	var seen: Dictionary = {}
 	for entry in component_entries:
 		entry["location"] = _normalize_location(entry["location"])
 		var raw_name = entry["name"]
 		var loc_name = entry["location"]
 
 		var norm_name = _normalize_component_name(raw_name, engine_rating)
-		var key = norm_name + "|" + loc_name
 
-		if seen.has(key):
-			seen[key].critical_slots += 1
-			var jc = _get_json_critical_slots(norm_name, component_defs)
-			if jc <= 1:
-				var def = component_defs.get(norm_name)
-				if def:
-					seen[key].tonnage += _compute_def_weight(def, context, norm_name)
-				else:
-					seen[key].tonnage += 0.0
-		else:
-			var comp = Component.new()
-			comp.component_name = norm_name
-			comp.critical_slots = 1
-			comp.location = location_map.get(loc_name, null)
-			comp.status = Enums.ComponentStatus.UNDAMAGED
+		var comp = Component.new()
+		comp.component_name = norm_name
+		comp.critical_slots = 1
+		comp.location = location_map.get(loc_name, null)
+		comp.status = Enums.ComponentStatus.UNDAMAGED
 
-			if component_defs.has(norm_name):
-				var def = component_defs[norm_name]
-				comp.tonnage = _compute_def_weight(def, context, norm_name)
-				comp.cost = def.get("cost", 0)
-				comp.tech_base = def.get("tech_base", "")
-				var qr = def.get("quality_range", {})
-				comp.quality_range = Vector2(qr.get("min", 1), qr.get("max", 5))
-				comp.repair_difficulty = def.get("repair_difficulty", 1)
-				comp.tech_level = def.get("tech_level", 1)
-				var fhs = def.get("slot_free_heat_sinks", 0)
-				if fhs > 0:
-					unit.slot_free_heat_sinks = fhs
-				var whs = def.get("weight_free_heat_sinks", 0)
-				if whs > 0:
-					unit.weight_free_heat_sinks = whs
-				seen[key] = comp
-			else:
-				comp.tonnage = 0.0
-				comp.cost = 1000
-				comp.tech_base = "inner_sphere"
-				comp.quality_range = Vector2(1, 5)
-				comp.repair_difficulty = 1
-				comp.tech_level = 1
-				seen[key] = comp
-
-	for key in seen:
-		var comp = seen[key]
-		var cname = comp.component_name
-		if component_defs.has(cname):
-			var def = component_defs[cname]
+		if component_defs.has(norm_name):
+			var def = component_defs[norm_name]
 			var json_crit = def.get("critical_slots", 1)
 			if json_crit > comp.critical_slots:
 				comp.critical_slots = json_crit
+			comp.tonnage = _compute_def_weight(def, context, norm_name)
+			comp.cost = def.get("cost", 0)
+			comp.tech_base = def.get("tech_base", "")
+			var qr = def.get("quality_range", {})
+			comp.quality_range = Vector2(qr.get("min", 1), qr.get("max", 5))
+			comp.repair_difficulty = def.get("repair_difficulty", 1)
+			comp.tech_level = def.get("tech_level", 1)
+			var fhs = def.get("slot_free_heat_sinks", 0)
+			if fhs > 0:
+				unit.slot_free_heat_sinks = fhs
+			var whs = def.get("weight_free_heat_sinks", 0)
+			if whs > 0:
+				unit.weight_free_heat_sinks = whs
+		else:
+			comp.tonnage = 0.0
+			comp.cost = 1000
+			comp.tech_base = "inner_sphere"
+			comp.quality_range = Vector2(1, 5)
+			comp.repair_difficulty = 1
+			comp.tech_level = 1
+
 		unit.components.append(comp)
 
 	var jj_weight = _get_jump_jet_weight(unit.tonnage)
@@ -412,49 +393,31 @@ static func parse_blk(file_path: String, component_defs: Dictionary = {}) -> Tac
 			loc_name = "Nose"
 		for item_name in section.items:
 			var norm_name = _normalize_component_name(item_name, 0)
-			var key = norm_name + "|" + loc_name
-			if seen.has(key):
-				seen[key].critical_slots += 1
-				var jc = _get_json_critical_slots(norm_name, component_defs)
-				if jc <= 1:
-					var def = component_defs.get(norm_name)
-					if def:
-						seen[key].tonnage += _compute_def_weight(def, blk_ctx, norm_name)
-					else:
-						seen[key].tonnage += 0.0
+			var comp = Component.new()
+			comp.component_name = norm_name
+			comp.critical_slots = 1
+			comp.location = location_map.get(loc_name, null)
+			comp.status = Enums.ComponentStatus.UNDAMAGED
+			if component_defs.has(norm_name):
+				var def = component_defs[norm_name]
+				var json_crit = def.get("critical_slots", 1)
+				if json_crit > comp.critical_slots:
+					comp.critical_slots = json_crit
+				comp.tonnage = _compute_def_weight(def, blk_ctx, norm_name)
+				comp.cost = def.get("cost", 0)
+				comp.tech_base = def.get("tech_base", "")
+				var qr = def.get("quality_range", {})
+				comp.quality_range = Vector2(qr.get("min", 1), qr.get("max", 5))
+				comp.repair_difficulty = def.get("repair_difficulty", 1)
+				comp.tech_level = def.get("tech_level", 1)
 			else:
-				var comp = Component.new()
-				comp.component_name = norm_name
-				comp.critical_slots = 1
-				comp.location = location_map.get(loc_name, null)
-				comp.status = Enums.ComponentStatus.UNDAMAGED
-				if component_defs.has(norm_name):
-					var def = component_defs[norm_name]
-					comp.tonnage = _compute_def_weight(def, blk_ctx, norm_name)
-					comp.cost = def.get("cost", 0)
-					comp.tech_base = def.get("tech_base", "")
-					var qr = def.get("quality_range", {})
-					comp.quality_range = Vector2(qr.get("min", 1), qr.get("max", 5))
-					comp.repair_difficulty = def.get("repair_difficulty", 1)
-					comp.tech_level = def.get("tech_level", 1)
-				else:
-					comp.tonnage = 0.0
-					comp.cost = 1000
-					comp.tech_base = "inner_sphere"
-					comp.quality_range = Vector2(1, 5)
-					comp.repair_difficulty = 1
-					comp.tech_level = 1
-				seen[key] = comp
-
-	for key in seen:
-		var comp = seen[key]
-		var cname = comp.component_name
-		if component_defs.has(cname):
-			var def = component_defs[cname]
-			var json_crit = def.get("critical_slots", 1)
-			if json_crit > comp.critical_slots:
-				comp.critical_slots = json_crit
-		unit.components.append(comp)
+				comp.tonnage = 0.0
+				comp.cost = 1000
+				comp.tech_base = "inner_sphere"
+				comp.quality_range = Vector2(1, 5)
+				comp.repair_difficulty = 1
+				comp.tech_level = 1
+			unit.components.append(comp)
 
 	# --- Add mandatory vehicle equipment ---
 	# Power amplifier (10% of energy weapon tonnage, min 0.5t)
