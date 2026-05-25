@@ -10,5 +10,6 @@
   },
   "repair_difficulty": 1,
   "component_type": "other",
-  "protected": true
+  "protected": false,
+  "vehicle_only": true
 }

@@ -10,5 +10,6 @@
   },
   "repair_difficulty": 2,
   "component_type": "electronics",
-  "protected": true
+  "protected": false,
+  "vehicle_only": true
 }
