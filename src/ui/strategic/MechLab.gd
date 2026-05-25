@@ -291,39 +291,6 @@ func _make_slot_button(location: String, slot_index: int, default_name: String =
 	return btn
 
 
-func _make_paper_doll_head() -> VBoxContainer:
-	var col = VBoxContainer.new()
-	col.name = "Loc_Head"
-	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var title = Label.new()
-	title.text = "Head"
-	title.add_theme_font_size_override("font_size", 11)
-	title.alignment = HORIZONTAL_ALIGNMENT_CENTER
-	col.add_child(title)
-	var slot_names := ["Life Support", "Sensors", "Cockpit", "", "Sensors", "Life Support"]
-	for i in range(6):
-		var btn = _make_slot_button("Head", i, slot_names[i])
-		col.add_child(btn)
-	return col
-
-
-func _make_paper_doll_ct() -> VBoxContainer:
-	var col = VBoxContainer.new()
-	col.name = "Loc_Center_Torso"
-	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var title = Label.new()
-	title.text = "Center Torso"
-	title.add_theme_font_size_override("font_size", 11)
-	title.alignment = HORIZONTAL_ALIGNMENT_CENTER
-	col.add_child(title)
-	var slot_types := ["Engine", "Engine", "Engine", "Gyro", "Gyro", "Gyro", "Gyro", "Engine", "Engine", "Engine", "", ""]
-	for i in range(12):
-		var slot_name = slot_types[i] if i < slot_types.size() else ""
-		var btn = _make_slot_button("Center Torso", i, slot_name)
-		col.add_child(btn)
-	return col
-
-
 func _make_location_column(location: String, slot_count: int) -> VBoxContainer:
 	var col = VBoxContainer.new()
 	col.name = "Loc_" + location.replace(" ", "_")
@@ -1016,12 +983,6 @@ func _get_highest_tn() -> int:
 			highest = tn
 	return highest
 
-
-func _find_change_for_component(comp_name: String) -> Dictionary:
-	for ch in pending_changes:
-		if ch.get("new_component", ch.get("current_component", "")) == comp_name:
-			return ch
-	return {}
 
 func _class_badge(class_val: int) -> String:
 	match class_val:
