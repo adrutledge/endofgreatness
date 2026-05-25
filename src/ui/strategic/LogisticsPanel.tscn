@@ -482,6 +482,31 @@ unique_name_in_owner = true
 text = ""
 autowrap_mode = 1
 
+[node name="DispatchSeparator" type="HSeparator" parent="MarginContainer/VBox/Tabs/InventoryTab/InvMargin/VBox/HSplit/InvDetail/InvDetailMargin/VBox"]
+
+[node name="DispatchUnitLabel" type="Label" parent="MarginContainer/VBox/Tabs/InventoryTab/InvMargin/VBox/HSplit/InvDetail/InvDetailMargin/VBox"]
+unique_name_in_owner = true
+text = "Dispatch to unit:"
+autowrap_mode = 1
+
+[node name="DispatchUnitDropdown" type="OptionButton" parent="MarginContainer/VBox/Tabs/InventoryTab/InvMargin/VBox/HSplit/InvDetail/InvDetailMargin/VBox"]
+unique_name_in_owner = true
+text = "Select unit..."
+
+[node name="DispatchHBox" type="HBoxContainer" parent="MarginContainer/VBox/Tabs/InventoryTab/InvMargin/VBox/HSplit/InvDetail/InvDetailMargin/VBox"]
+size_flags_vertical = 0
+
+[node name="DispatchQtySpin" type="SpinBox" parent="MarginContainer/VBox/Tabs/InventoryTab/InvMargin/VBox/HSplit/InvDetail/InvDetailMargin/VBox/DispatchHBox"]
+unique_name_in_owner = true
+min_value = 1
+max_value = 9999
+step = 1
+value = 1
+
+[node name="DispatchButton" type="Button" parent="MarginContainer/VBox/Tabs/InventoryTab/InvMargin/VBox/HSplit/InvDetail/InvDetailMargin/VBox/DispatchHBox"]
+unique_name_in_owner = true
+text = "Dispatch"
+
 # ---- BOTTOM BAR ----
 [node name="BottomBar" type="HBoxContainer" parent="MarginContainer/VBox"]
 size_flags_vertical = 0

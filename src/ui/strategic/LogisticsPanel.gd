@@ -70,6 +70,11 @@ var selected_unit_cost: int = 0
 @onready var inv_detail_qty: Label = %InvDetailQty
 @onready var inv_detail_cost: Label = %InvDetailCost
 @onready var reorder_min_button: Button = %ReorderMinButton
+@onready var dispatch_unit_dropdown: OptionButton = %DispatchUnitDropdown
+@onready var dispatch_qty_spin: SpinBox = %DispatchQtySpin
+@onready var dispatch_button: Button = %DispatchButton
+@onready var dispatch_separator: HSeparator = %DispatchSeparator
+@onready var dispatch_unit_label: Label = %DispatchUnitLabel
 
 
 func _ready() -> void:
@@ -105,6 +110,7 @@ func _ready() -> void:
 	inv_filter_below_min.toggled.connect(_refresh_inventory)
 	inv_list.item_selected.connect(_on_inv_item_selected)
 	reorder_min_button.pressed.connect(_on_reorder_to_min)
+	dispatch_button.pressed.connect(_on_dispatch)
 
 	unit_search.text_changed.connect(_on_unit_search)
 	unit_type_filter.item_selected.connect(_on_unit_filter_changed)
@@ -430,6 +436,92 @@ func _on_inv_item_selected(index: int) -> void:
 	else:
 		inv_detail_cost.text = ""
 
+	_update_dispatch_ui(comp_name)
+
+
+func _update_dispatch_ui(comp_name: String) -> void:
+	var per_unit = _spares_config.get("per_unit_inventory_enabled", false)
+	dispatch_separator.visible = per_unit
+	dispatch_unit_label.visible = per_unit
+	dispatch_unit_dropdown.visible = per_unit
+	dispatch_qty_spin.visible = per_unit
+	dispatch_button.visible = per_unit
+
+	if not per_unit:
+		return
+
+	dispatch_unit_dropdown.clear()
+	var idx := 0
+	for ou in GameState.player.organizational_units:
+		for opu in ou.sub_units:
+			if opu.is_deployed or not opu.contract_id.is_empty():
+				dispatch_unit_dropdown.add_item("%s — %s" % [ou.unit_name, opu.unit_name])
+				dispatch_unit_dropdown.set_item_metadata(idx, {
+					"org": ou.unit_name,
+					"opu": opu.unit_name,
+				})
+				idx += 1
+
+	if idx == 0:
+		dispatch_unit_dropdown.add_item("No deployed units")
+		dispatch_button.disabled = true
+	else:
+		dispatch_button.disabled = false
+		dispatch_qty_spin.max_value = GameState.player_inventory.get(comp_name, 0)
+
+
+func _on_dispatch() -> void:
+	var per_unit = _spares_config.get("per_unit_inventory_enabled", false)
+	if not per_unit:
+		return
+
+	var meta = dispatch_unit_dropdown.get_selected_metadata()
+	if meta == null:
+		return
+
+	var comp_name = inv_detail_name.text
+	var qty = int(dispatch_qty_spin.value)
+	if qty <= 0 or comp_name.is_empty():
+		return
+
+	var inv: Dictionary = GameState.player_inventory
+	var current = inv.get(comp_name, 0)
+	if qty > current:
+		return
+
+	# Find the operational unit and add to its deployment cache
+	for ou in GameState.player.organizational_units:
+		for opu in ou.sub_units:
+			var key = "%s — %s" % [ou.unit_name, opu.unit_name]
+			if key == dispatch_unit_dropdown.get_item_text(dispatch_unit_dropdown.selected):
+				if opu.get("deployment_cache") == null:
+					opu.set("deployment_cache", {})
+				opu.deployment_cache[comp_name] = opu.deployment_cache.get(comp_name, 0) + qty
+				inv[comp_name] = current - qty
+				if inv[comp_name] <= 0:
+					inv.erase(comp_name)
+				GameState.log_event("dispatch", {
+					"item": comp_name,
+					"quantity": qty,
+					"to_unit": opu.unit_name,
+				})
+				_refresh_inventory()
+				return
+
+
+func _get_selected_opu():
+	if _spares_config.get("per_unit_inventory_enabled", false):
+		var sel = dispatch_unit_dropdown.selected
+		if sel >= 0:
+			var meta = dispatch_unit_dropdown.get_item_metadata(sel)
+			if meta:
+				for ou in GameState.player.organizational_units:
+					for opu in ou.sub_units:
+						var key = "%s — %s" % [ou.unit_name, opu.unit_name]
+						if key == dispatch_unit_dropdown.get_item_text(sel):
+							return opu
+	return null
+
 
 func _on_reorder_to_min() -> void:
 	if not GameState.player.current_planet:
@@ -442,49 +534,116 @@ func _on_reorder_to_min() -> void:
 		inv_detail_name.text = "Set min/target stock in spares_config.json first"
 		return
 
+	var target_opu = _get_selected_opu()
+	var per_unit = target_opu != null
+
+	EconomySystem.initialize_market(GameState.player.current_planet)
+	var market = EconomySystem.current_market
+
 	var inv: Dictionary = GameState.player_inventory
+	if per_unit:
+		if target_opu.get("deployment_cache") == null:
+			target_opu.set("deployment_cache", {})
+
 	var orders_placed := 0
+	var local_bought := 0
+	var dispatched := 0
 	var total_cost := 0
 	var max_cost = _spares_config.get("auto_reorder_max_cost_per_order", 500000)
 
-	for comp_name in inv:
-		var qty = inv[comp_name]
-		if qty >= min_stock:
-			continue
+	# Collect all component names that need checking — unit cache items + global inventory items
+	var all_component_names: Dictionary = {}
+	if per_unit:
+		for cname in target_opu.deployment_cache:
+			all_component_names[cname] = true
+	for cname in inv:
+		all_component_names[cname] = true
+
+	for comp_name in all_component_names:
 		if total_cost >= max_cost:
 			break
 
-		var shortfall = target_stock - qty
+		# Determine current stock level (unit cache for per-unit, global otherwise)
+		var current_qty := 0
+		if per_unit:
+			current_qty = target_opu.deployment_cache.get(comp_name, 0)
+		else:
+			current_qty = inv.get(comp_name, 0)
+
+		if current_qty >= min_stock:
+			continue
+
+		var shortfall = target_stock - current_qty
 		if shortfall <= 0:
 			continue
 
-		var sources = EconomySystem.search_remote_sources(comp_name)
-		if sources.is_empty():
-			continue
+		var remaining = shortfall
 
-		var source = sources[0]
-		var order_qty = min(shortfall, source.quantity)
-		var order_cost = order_qty * source.cost_per_unit
+		# Step 1: if per-unit, dispatch from global before ordering
+		if per_unit:
+			var global_qty = inv.get(comp_name, 0)
+			var dispatch_qty = min(remaining, global_qty)
+			if dispatch_qty > 0:
+				target_opu.deployment_cache[comp_name] = target_opu.deployment_cache.get(comp_name, 0) + dispatch_qty
+				inv[comp_name] = global_qty - dispatch_qty
+				if inv[comp_name] <= 0:
+					inv.erase(comp_name)
+				remaining -= dispatch_qty
+				dispatched += dispatch_qty
+				if remaining <= 0:
+					continue
 
-		if total_cost + order_cost > max_cost:
-			order_qty = max(1, (max_cost - total_cost) / source.cost_per_unit)
-			order_cost = order_qty * source.cost_per_unit
+		# Step 2: buy locally
+		var item = market.get_item(comp_name)
+		if item and item.quantity > 0:
+			var local_qty = min(remaining, item.quantity)
+			var local_cost = local_qty * item.cost
+			if total_cost + local_cost <= max_cost and EconomySystem.buy_item(comp_name, local_qty):
+				remaining -= local_qty
+				total_cost += local_cost
+				local_bought += local_qty
+				# Put into unit cache or global
+				if per_unit:
+					target_opu.deployment_cache[comp_name] = target_opu.deployment_cache.get(comp_name, 0) + local_qty
+				else:
+					inv[comp_name] = inv.get(comp_name, 0) + local_qty
 
-		if order_qty <= 0:
-			continue
-
-		if EconomySystem.order_item(comp_name, order_qty, source.cost_per_unit, source.source_system, source.travel_days):
-			orders_placed += 1
-			total_cost += order_cost
-			GameState.log_event("auto_reorder", {
-				"item": comp_name,
-				"quantity": order_qty,
-				"cost": order_cost,
-				"source": source.source_system,
-			})
+		# Step 3: order remotely
+		if remaining > 0:
+			var sources = EconomySystem.search_remote_sources(comp_name)
+			if sources.is_empty():
+				continue
+			var source = sources[0]
+			var order_qty = min(remaining, source.quantity)
+			var order_cost = order_qty * source.cost_per_unit
+			if total_cost + order_cost > max_cost:
+				order_qty = max(1, (max_cost - total_cost) / source.cost_per_unit)
+				order_cost = order_qty * source.cost_per_unit
+			if order_qty > 0 and EconomySystem.order_item(comp_name, order_qty, source.cost_per_unit, source.source_system, source.travel_days):
+				orders_placed += 1
+				total_cost += order_cost
+				GameState.log_event("auto_reorder", {
+					"item": comp_name,
+					"quantity": order_qty,
+					"cost": order_cost,
+					"source": source.source_system,
+				})
+				if per_unit:
+					target_opu.deployment_cache[comp_name] = target_opu.deployment_cache.get(comp_name, 0) + order_qty
+				else:
+					inv[comp_name] = inv.get(comp_name, 0) + order_qty
 
 	balance_label.text = "Balance: " + Helpers.fmt_money(EconomySystem.get_balance())
-	inv_detail_name.text = "Placed %d order(s) for %s" % [orders_placed, Helpers.fmt_money(total_cost)]
+	var parts: Array[String] = []
+	if dispatched > 0:
+		parts.append("dispatched %d from stores" % dispatched)
+	if local_bought > 0:
+		parts.append("bought %d locally" % local_bought)
+	if orders_placed > 0:
+		parts.append("%d remote orders" % orders_placed)
+	if parts.is_empty():
+		parts.append("nothing needed")
+	inv_detail_name.text = ", ".join(parts) + " for %s" % Helpers.fmt_money(total_cost)
 	_refresh_inventory()
 
 
