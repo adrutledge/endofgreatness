@@ -374,9 +374,13 @@ func _on_variant_selected(index: int) -> void:
 	var clas_info = RefitManager.classify_refit(diff)
 	var clas_name = RefitManager.get_refit_class_name(clas_info.overall_class)
 	var clas_hours = RefitManager.CLASS_HOURS[clas_info.overall_class]
+	var kit_bonus = RefitManager.get_refit_kit_bonus({"overall_class": clas_info.overall_class})
 	cost_label.text = "Total parts cost: " + Helpers.fmt_money(total_cost) + "  |  Refit Class: " + clas_name
 	diff_info.text += "\n\n[b]Refit Class: " + clas_name + "[/b] (" + str(clas_hours) + " hrs/ton per component)"
-	hours_label.text = "Labor: " + str(hours) + " technician-hours" + (" | Parts delivery: " + str(max_delivery) + " days" if max_delivery > 0 else " | All parts available locally")
+	var kit_text = ""
+	if kit_bonus < 0:
+		kit_text = " | Refit kit TN bonus: " + str(kit_bonus)
+	hours_label.text = "Labor: " + str(hours) + " technician-hours" + (" | Parts delivery: " + str(max_delivery) + " days" if max_delivery > 0 else " | All parts available locally") + kit_text
 	start_refit_button.disabled = false
 	_update_status()
 

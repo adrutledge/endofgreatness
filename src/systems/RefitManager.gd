@@ -121,6 +121,7 @@ func start_refit(tactical_unit: TacticalUnit, target_variant: TacticalUnit, part
 
 	var class_info = classify_refit(diff)
 	var total_hours = calculate_refit_hours(diff)
+	var gate = check_facility_gating(class_info.overall_class)
 	var refit = {
 		"tactical_unit": tactical_unit,
 		"target_variant": target_variant,
@@ -132,7 +133,8 @@ func start_refit(tactical_unit: TacticalUnit, target_variant: TacticalUnit, part
 		"hours_remaining": total_hours,
 		"cost": total_cost,
 		"parts_delivery_eta": max_delivery_days,
-		"parts_delivered": max_delivery_days <= 0
+		"parts_delivered": max_delivery_days <= 0,
+		"facility_penalty": gate.penalty,
 	}
 	active_refits.append(refit)
 	var refit_class_name = Enums.RefitClass.keys()[class_info.overall_class]
@@ -214,38 +216,97 @@ func _process_refits() -> void:
 	for i in range(completed.size() - 1, -1, -1):
 		active_refits.remove_at(completed[i])
 
+func get_refit_kit_bonus(refit: Dictionary) -> int:
+	match refit.get("overall_class", Enums.RefitClass.C):
+		Enums.RefitClass.B: return -2
+		Enums.RefitClass.C: return -1
+		_: return 0
+
+
 func _apply_refit(refit: Dictionary) -> void:
 	var tu = refit.tactical_unit
 	var variant = refit.target_variant
+	var tech = _get_best_tech(tu)
+	var tech_skill = tech.get_tech_skill() if tech else 4
 
-	tu.unit_name = variant.unit_name
-	tu.model_name = variant.model_name
-	tu.tonnage = variant.tonnage
-	tu.movement_mp = variant.movement_mp
-	tu.run_mp = variant.run_mp
-	tu.jump_mp = variant.jump_mp
+	var changes: Array[Dictionary] = []
+	for name in refit.get("components_to_add", []):
+		changes.append({"action": "add", "new_component": name, "tonnage": 0.0})
+	for name in refit.get("components_to_remove", []):
+		changes.append({"action": "remove", "current_component": name, "tonnage": 0.0})
 
-	var new_components: Array[Component] = []
-	for c in variant.components:
-		var new_c = Component.new()
-		new_c.component_name = c.component_name
-		new_c.component_type = c.component_type
-		new_c.tonnage = c.tonnage
-		new_c.critical_slots = c.critical_slots
-		new_c.cost = c.cost
-		new_c.tech_base = c.tech_base
-		new_c.tech_level = c.tech_level
-		new_c.quality_range = c.quality_range
-		new_c.repair_difficulty = c.repair_difficulty
-		new_c.status = Enums.ComponentStatus.UNDAMAGED
-		new_c.location = c.location
-		new_components.append(new_c)
-	tu.components = new_components
+	var tn = 0
+	for ch in changes:
+		var t = calculate_customization_tn(ch, tech_skill, facility_level)
+		if t > tn:
+			tn = t
 
-	GameState.log_event("refit_completed", {
-		"unit": tu.unit_name,
-		"target": refit.target_unit_name
-	})
+	var kit_bonus = get_refit_kit_bonus(refit)
+	tn += kit_bonus
+	if refit.get("facility_penalty", 0) > 0:
+		tn += refit.facility_penalty
+
+	var roll = randi() % 6 + randi() % 6 + 2
+	var success = roll >= tn
+
+	var log_entry = {
+		"date": TimeManager.get_date_string(),
+		"technician": tech.personnel_name if tech else "Unknown",
+		"tech_skill": tech_skill,
+		"target_number": tn,
+		"roll": roll,
+		"result": "success" if success else "failure",
+		"changes": changes.size(),
+		"kit_bonus": kit_bonus,
+		"refit": true,
+	}
+
+	if success:
+		tu.unit_name = variant.unit_name
+		tu.model_name = variant.model_name
+		tu.tonnage = variant.tonnage
+		tu.movement_mp = variant.movement_mp
+		tu.run_mp = variant.run_mp
+		tu.jump_mp = variant.jump_mp
+
+		var new_components: Array[Component] = []
+		for c in variant.components:
+			var new_c = Component.new()
+			new_c.component_name = c.component_name
+			new_c.component_type = c.component_type
+			new_c.tonnage = c.tonnage
+			new_c.critical_slots = c.critical_slots
+			new_c.cost = c.cost
+			new_c.tech_base = c.tech_base
+			new_c.tech_level = c.tech_level
+			new_c.quality_range = c.quality_range
+			new_c.repair_difficulty = c.repair_difficulty
+			new_c.status = Enums.ComponentStatus.UNDAMAGED
+			new_c.location = c.location
+			new_components.append(new_c)
+		tu.components = new_components
+
+		log_entry.applied = true
+		tu.customization_history.append(log_entry)
+		GameState.log_event("refit_completed", {
+			"unit": tu.unit_name,
+			"target": refit.target_unit_name,
+			"kit_bonus": kit_bonus,
+		})
+	else:
+		var extra_hours := int(ceil(refit.total_hours * 0.5))
+		refit.hours_remaining += extra_hours
+		refit.total_hours += extra_hours
+		refit.failure_count = refit.get("failure_count", 0) + 1
+		log_entry.applied = false
+		log_entry.extra_hours = extra_hours
+		tu.customization_history.append(log_entry)
+		GameState.log_event("refit_retry", {
+			"unit": tu.unit_name,
+			"target": refit.target_unit_name,
+			"retry_count": refit.failure_count,
+			"extra_hours": extra_hours,
+		})
 
 func calculate_refit_diff(current: TacticalUnit, target: TacticalUnit) -> Dictionary:
 	var current_names: Array[String] = []
