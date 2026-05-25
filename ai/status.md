@@ -1,6 +1,6 @@
 # Implementation Status
 
-Generated: 3025-05-25
+Generated: 3025-05-25 (updated per commit 13f4b10)
 Plan: `ai/plan.md`
 
 ---
@@ -46,13 +46,16 @@ Plan: `ai/plan.md`
 - [x] PlanetaryMarket with faction inventory, refresh, price variation
 - [x] InterstellarOrderManager: 30ly jumps, 2-jump range, spectral recharge
 - [x] PendingDelivery queue, delivery_arrived event
-- [x] Contract settlement: payout, salvage, battle loss reimbursement
-- [x] track_battle_loss, track_ammo_expended
+- [x] Contract settlement: payout, salvage (exchange + items), battle loss reimbursement
+- [x] track_battle_loss, track_ammo_expended, record_ammo_expended (end-of-engagement)
+- [x] track_enemy_loss with CO quality/condition/recovery_chance
+- [x] process_salvage_after_engagement — per-engagement salvage with recovery rolls
+- [x] salvage_type="items" — physical components to player_inventory
+- [x] Damaged salvage prefix "Damaged " in inventory, repairable through normal queue
 - [x] Daily burn rate breakdown (salaries, maintenance, berthing, overhead)
 - [x] Monthly bills, base_coverage during contracts
 - [~] buy_item missing faction parameter from plan
 - [~] No transport cost line item
-- [~] salvage_type="items" not implemented
 - [~] No logistics panel UI for pending deliveries
 - [~] Berthing fees always 0 (no dropship/jumpship tracking)
 
@@ -126,8 +129,9 @@ Plan: `ai/plan.md`
 - [x] P3.6.1: validate_tm() on TacticalUnit (weight, slots, armor, engine, gyro, heat sinks, ammo)
 - [x] P3.6.2: RefitManager with B-E classification, cost/labor, parts sourcing
 - [x] P3.6.3: MechLab Designer (component grid, TM validation, component browser)
-- [x] P3.6.4: Repair/maintenance/salvage per Campaign Operations
+- [x] P3.6.4: Repair/maintenance/salvage per Campaign Operations; inventory item repair
 - [x] P3.6.5: MechLab UI with Refit/Design/Repair tabs
+- [/] P3.6.6: Campaign Operations customization rules (planned in plan, not implemented)
 
 ### P3.7 — Initial Strategic Unit Generator
 - [x] StrategicUnitGenerator.gd
