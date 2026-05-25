@@ -53,7 +53,7 @@ var component_type_filters: Array[String] = [
 ]
 
 var paper_doll_slot_counts: Dictionary = {
-	"Head": 3, "Center Torso": 12, "Left Torso": 10, "Right Torso": 10,
+	"Head": 6, "Center Torso": 12, "Left Torso": 10, "Right Torso": 10,
 	"Left Arm": 6, "Right Arm": 6, "Left Leg": 6, "Right Leg": 6,
 }
 
@@ -170,29 +170,32 @@ func _build_paper_doll_tab() -> void:
 	wrapper.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	scroll.add_child(wrapper)
 
-	var doll_center = HBoxContainer.new()
-	doll_center.alignment = BoxContainer.ALIGNMENT_CENTER
-	wrapper.add_child(doll_center)
-
-	var head_col = _make_location_column("Head", 3)
-	doll_center.add_child(head_col)
+	var head_row = HBoxContainer.new()
+	head_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	wrapper.add_child(head_row)
+	head_row.add_child(_make_paper_doll_head())
 
 	wrapper.add_child(HSeparator.new())
 
-	var torso_row = HBoxContainer.new()
-	torso_row.alignment = BoxContainer.ALIGNMENT_CENTER
-	wrapper.add_child(torso_row)
-	torso_row.add_child(_make_location_column("Left Torso", 10))
-	torso_row.add_child(_make_location_column("Center Torso", 12))
-	torso_row.add_child(_make_location_column("Right Torso", 10))
+	var mid_row = HBoxContainer.new()
+	mid_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	mid_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	wrapper.add_child(mid_row)
+	mid_row.add_child(_make_location_column("Left Arm", 6))
+	var ct_col = _make_paper_doll_ct()
+	mid_row.add_child(ct_col)
+	mid_row.add_child(_make_location_column("Right Arm", 6))
 
 	wrapper.add_child(HSeparator.new())
 
-	var arm_row = HBoxContainer.new()
-	arm_row.alignment = BoxContainer.ALIGNMENT_CENTER
-	wrapper.add_child(arm_row)
-	arm_row.add_child(_make_location_column("Left Arm", 6))
-	arm_row.add_child(_make_location_column("Right Arm", 6))
+	var side_torso_row = HBoxContainer.new()
+	side_torso_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	wrapper.add_child(side_torso_row)
+	side_torso_row.add_child(_make_location_column("Left Torso", 10))
+	var ct2_col = VBoxContainer.new()
+	ct2_col.custom_minimum_size = ct_col.size if ct_col else Vector2(120, 0)
+	side_torso_row.add_child(ct2_col)
+	side_torso_row.add_child(_make_location_column("Right Torso", 10))
 
 	wrapper.add_child(HSeparator.new())
 
@@ -216,6 +219,88 @@ func _build_paper_doll_tab() -> void:
 	paper_doll_save_btn.pressed.connect(_on_paper_doll_save_changes)
 	btn_bar.add_child(paper_doll_save_btn)
 
+func _component_type_color(comp_name: String) -> Color:
+	var lower = comp_name.to_lower()
+	if lower in ["life support"]:
+		return Color(0.3, 0.7, 0.3)
+	if lower in ["sensors"]:
+		return Color(0.15, 0.75, 0.75)
+	if lower in ["cockpit"]:
+		return Color(0.85, 0.2, 0.65)
+	if lower in ["engine", "fusion engine"]:
+		return component_type_color_map.get("engine", Color(0.9, 0.55, 0.1))
+	if lower in ["gyro"]:
+		return component_type_color_map.get("gyro", Color(0.6, 0.2, 0.8))
+	for key in component_type_color_map:
+		if key in lower:
+			return component_type_color_map[key]
+	return component_type_color_map.get("other", Color(0.3, 0.3, 0.3))
+
+
+func _make_slot_button(location: String, slot_index: int, default_name: String = "") -> Button:
+	var btn = Button.new()
+	btn.text = default_name if default_name else "Empty"
+	btn.custom_minimum_size = Vector2(110, 22)
+	btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	btn.add_theme_font_size_override("font_size", 10)
+
+	var style = StyleBoxFlat.new()
+	if default_name:
+		style.bg_color = _component_type_color(default_name)
+	else:
+		style.bg_color = Color(0.08, 0.08, 0.08)
+	style.border_width_bottom = 1
+	style.border_color = Color(0.2, 0.2, 0.25)
+	btn.add_theme_stylebox_override("normal", style)
+
+	var hover = StyleBoxFlat.new()
+	hover.bg_color = Color(0.12, 0.12, 0.14)
+	hover.border_width_bottom = 1
+	hover.border_color = Color(0.3, 0.3, 0.35)
+	btn.add_theme_stylebox_override("hover", hover)
+
+	var loc_copy = location
+	var idx_copy = slot_index
+	btn.pressed.connect(func(): _on_paper_doll_slot_pressed(loc_copy, idx_copy))
+
+	if not paper_doll_slot_map.has(location):
+		paper_doll_slot_map[location] = []
+	paper_doll_slot_map[location].append({"component": default_name, "button": btn, "location": location, "index": slot_index})
+
+	return btn
+
+
+func _make_paper_doll_head() -> VBoxContainer:
+	var col = VBoxContainer.new()
+	col.name = "Loc_Head"
+	var title = Label.new()
+	title.text = "Head"
+	title.add_theme_font_size_override("font_size", 11)
+	title.alignment = HORIZONTAL_ALIGNMENT_CENTER
+	col.add_child(title)
+	var slot_names := ["Life Support", "Sensors", "Cockpit", "", "Sensors", "Life Support"]
+	for i in range(6):
+		var btn = _make_slot_button("Head", i, slot_names[i])
+		col.add_child(btn)
+	return col
+
+
+func _make_paper_doll_ct() -> VBoxContainer:
+	var col = VBoxContainer.new()
+	col.name = "Loc_Center_Torso"
+	var title = Label.new()
+	title.text = "Center Torso"
+	title.add_theme_font_size_override("font_size", 11)
+	title.alignment = HORIZONTAL_ALIGNMENT_CENTER
+	col.add_child(title)
+	var slot_types := ["Engine", "Engine", "Engine", "Gyro", "Gyro", "Gyro", "Gyro", "Engine", "Engine", "Engine"]
+	for i in range(10):
+		var slot_name = slot_types[i] if i < slot_types.size() else ""
+		var btn = _make_slot_button("Center Torso", i, slot_name)
+		col.add_child(btn)
+	return col
+
+
 func _make_location_column(location: String, slot_count: int) -> VBoxContainer:
 	var col = VBoxContainer.new()
 	col.name = "Loc_" + location.replace(" ", "_")
@@ -227,39 +312,10 @@ func _make_location_column(location: String, slot_count: int) -> VBoxContainer:
 	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	col.add_child(lbl)
 
-	var slot_list = VBoxContainer.new()
-	slot_list.name = "Slots_" + location.replace(" ", "_")
-	col.add_child(slot_list)
-
-	var slot_array: Array[Dictionary] = []
 	for i in range(slot_count):
-		var slot_data = {"component": "", "button": null, "location": location, "index": i}
-		var btn = Button.new()
-		btn.text = "Empty"
-		btn.custom_minimum_size = Vector2(110, 22)
-		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		btn.add_theme_font_size_override("font_size", 10)
+		var btn = _make_slot_button(location, i)
+		col.add_child(btn)
 
-		var style = StyleBoxFlat.new()
-		style.bg_color = Color(0.08, 0.08, 0.08)
-		style.border_width_bottom = 1
-		style.border_color = Color(0.2, 0.2, 0.25)
-		btn.add_theme_stylebox_override("normal", style)
-
-		var hover = StyleBoxFlat.new()
-		hover.bg_color = Color(0.12, 0.12, 0.14)
-		hover.border_width_bottom = 1
-		hover.border_color = Color(0.3, 0.3, 0.35)
-		btn.add_theme_stylebox_override("hover", hover)
-
-		var loc_copy = location
-		var idx_copy = i
-		btn.pressed.connect(func(): _on_paper_doll_slot_pressed(loc_copy, idx_copy))
-		slot_list.add_child(btn)
-		slot_data["button"] = btn
-		slot_array.append(slot_data)
-
-	paper_doll_slot_map[location] = slot_array
 	return col
 
 func _build_components_tab() -> void:
