@@ -1239,7 +1239,6 @@ func _refresh_paper_doll() -> void:
 			continue
 		var placed := 0
 		var first_placed_idx := -1
-		var last_placed_idx := -1
 		var n = c.critical_slots
 		for idx in available:
 			if placed >= n:
@@ -1261,8 +1260,10 @@ func _refresh_paper_doll() -> void:
 			style.border_color = Color(0.2, 0.2, 0.25)
 			if n > 1:
 				var bw := 3
-				style.border_width_left = bw if idx == first_placed_idx else 0
-				style.border_width_right = bw if idx == last_placed_idx or placed + 1 >= n else 0
+				var is_first := placed == 0
+				var is_last := placed + 1 >= n
+				style.border_width_left = bw if is_first else 0
+				style.border_width_right = bw if is_last else 0
 				style.border_width_top = bw
 				style.border_width_bottom = bw
 				style.border_color = Color(1, 1, 1)
@@ -1273,8 +1274,10 @@ func _refresh_paper_doll() -> void:
 			hover.border_color = Color(0.4, 0.4, 0.45)
 			if n > 1:
 				var bw := 3
-				hover.border_width_left = bw if idx == first_placed_idx else 0
-				hover.border_width_right = bw if idx == last_placed_idx or placed + 1 >= n else 0
+				var is_first := placed == 0
+				var is_last := placed + 1 >= n
+				hover.border_width_left = bw if is_first else 0
+				hover.border_width_right = bw if is_last else 0
 				hover.border_width_top = bw
 				hover.border_width_bottom = bw
 				hover.border_color = Color(1, 1, 1)
