@@ -31,6 +31,45 @@ var apply_customize_btn: Button
 var history_label: RichTextLabel
 var tab_container: TabContainer
 
+var paper_doll_tab: VBoxContainer
+var paper_doll_slot_map: Dictionary = {}
+var paper_doll_selected: Dictionary = {}
+var paper_doll_reset_btn: Button
+var paper_doll_save_btn: Button
+
+var components_tab: VBoxContainer
+var component_browser_list: ItemList
+var current_components_list: ItemList
+var browser_type_filter: OptionButton
+var browser_tech_filter: OptionButton
+var browser_search: LineEdit
+var components_remove_btn: Button
+var components_replace_btn: Button
+var components_browser_selected: String = ""
+
+var component_type_filters: Array[String] = [
+	"All", "Weapon", "Ammo", "Engine", "Gyro",
+	"Structure", "Armor", "Electronics", "Jump Jet", "Cockpit", "Other",
+]
+
+var paper_doll_slot_counts: Dictionary = {
+	"Head": 3, "Center Torso": 12, "Left Torso": 10, "Right Torso": 10,
+	"Left Arm": 6, "Right Arm": 6, "Left Leg": 6, "Right Leg": 6,
+}
+
+var component_type_color_map: Dictionary = {
+	"weapon": Color(0.8, 0.15, 0.15),
+	"ammo": Color(0.8, 0.75, 0.1),
+	"engine": Color(0.9, 0.55, 0.1),
+	"gyro": Color(0.6, 0.2, 0.8),
+	"structure": Color(0.45, 0.45, 0.45),
+	"armor": Color(0.2, 0.45, 0.85),
+	"electronics": Color(0.15, 0.75, 0.75),
+	"jump_jet": Color(0.2, 0.8, 0.2),
+	"cockpit": Color(0.85, 0.2, 0.65),
+	"other": Color(0.3, 0.3, 0.3),
+}
+
 @onready var unit_list: ItemList = %UnitList
 @onready var variant_list: ItemList = %VariantList
 @onready var current_info: RichTextLabel = %CurrentInfo
@@ -84,6 +123,18 @@ func _setup_tabs() -> void:
 	tab_container.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	right_panel.add_child(tab_container)
 
+	paper_doll_tab = VBoxContainer.new()
+	paper_doll_tab.name = "Paper Doll"
+	paper_doll_tab.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	tab_container.add_child(paper_doll_tab)
+	_build_paper_doll_tab()
+
+	components_tab = VBoxContainer.new()
+	components_tab.name = "Components"
+	components_tab.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	tab_container.add_child(components_tab)
+	_build_components_tab()
+
 	var refit_page = VBoxContainer.new()
 	refit_page.name = "Refit"
 	refit_page.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -98,6 +149,215 @@ func _setup_tabs() -> void:
 	_build_customize_ui()
 
 	tab_container.tab_selected.connect(_on_tab_changed)
+
+func _build_paper_doll_tab() -> void:
+	var header = Label.new()
+	header.text = "Paper Doll — Click a slot to select"
+	header.add_theme_font_size_override("font_size", 13)
+	paper_doll_tab.add_child(header)
+
+	var selected_info = Label.new()
+	selected_info.name = "PaperDollSelectedInfo"
+	selected_info.text = ""
+	selected_info.add_theme_color_override("font_color", Color(1.0, 0.9, 0.6))
+	paper_doll_tab.add_child(selected_info)
+
+	var scroll = ScrollContainer.new()
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	paper_doll_tab.add_child(scroll)
+
+	var wrapper = VBoxContainer.new()
+	wrapper.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(wrapper)
+
+	var doll_center = HBoxContainer.new()
+	doll_center.alignment = BoxContainer.ALIGNMENT_CENTER
+	wrapper.add_child(doll_center)
+
+	var head_col = _make_location_column("Head", 3)
+	doll_center.add_child(head_col)
+
+	wrapper.add_child(HSeparator.new())
+
+	var torso_row = HBoxContainer.new()
+	torso_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	wrapper.add_child(torso_row)
+	torso_row.add_child(_make_location_column("Left Torso", 10))
+	torso_row.add_child(_make_location_column("Center Torso", 12))
+	torso_row.add_child(_make_location_column("Right Torso", 10))
+
+	wrapper.add_child(HSeparator.new())
+
+	var arm_row = HBoxContainer.new()
+	arm_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	wrapper.add_child(arm_row)
+	arm_row.add_child(_make_location_column("Left Arm", 6))
+	arm_row.add_child(_make_location_column("Right Arm", 6))
+
+	wrapper.add_child(HSeparator.new())
+
+	var leg_row = HBoxContainer.new()
+	leg_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	wrapper.add_child(leg_row)
+	leg_row.add_child(_make_location_column("Left Leg", 6))
+	leg_row.add_child(_make_location_column("Right Leg", 6))
+
+	var btn_bar = HBoxContainer.new()
+	btn_bar.alignment = BoxContainer.ALIGNMENT_CENTER
+	paper_doll_tab.add_child(btn_bar)
+
+	paper_doll_reset_btn = Button.new()
+	paper_doll_reset_btn.text = "Reset Changes"
+	paper_doll_reset_btn.pressed.connect(_on_paper_doll_reset)
+	btn_bar.add_child(paper_doll_reset_btn)
+
+	paper_doll_save_btn = Button.new()
+	paper_doll_save_btn.text = "Save Changes"
+	paper_doll_save_btn.pressed.connect(_on_paper_doll_save_changes)
+	btn_bar.add_child(paper_doll_save_btn)
+
+func _make_location_column(location: String, slot_count: int) -> VBoxContainer:
+	var col = VBoxContainer.new()
+	col.name = "Loc_" + location.replace(" ", "_")
+
+	var lbl = Label.new()
+	lbl.text = location + " (" + str(slot_count) + ")"
+	lbl.add_theme_font_size_override("font_size", 12)
+	lbl.add_theme_color_override("font_color", Color(1.0, 0.9, 0.6))
+	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	col.add_child(lbl)
+
+	var slot_list = VBoxContainer.new()
+	slot_list.name = "Slots_" + location.replace(" ", "_")
+	col.add_child(slot_list)
+
+	var slot_array: Array[Dictionary] = []
+	for i in range(slot_count):
+		var slot_data = {"component": "", "button": null, "location": location, "index": i}
+		var btn = Button.new()
+		btn.text = "Empty"
+		btn.custom_minimum_size = Vector2(110, 22)
+		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		btn.add_theme_font_size_override("font_size", 10)
+
+		var style = StyleBoxFlat.new()
+		style.bg_color = Color(0.08, 0.08, 0.08)
+		style.border_width_bottom = 1
+		style.border_color = Color(0.2, 0.2, 0.25)
+		btn.add_theme_stylebox_override("normal", style)
+
+		var hover = StyleBoxFlat.new()
+		hover.bg_color = Color(0.12, 0.12, 0.14)
+		hover.border_width_bottom = 1
+		hover.border_color = Color(0.3, 0.3, 0.35)
+		btn.add_theme_stylebox_override("hover", hover)
+
+		var loc_copy = location
+		var idx_copy = i
+		btn.pressed.connect(func(): _on_paper_doll_slot_pressed(loc_copy, idx_copy))
+		slot_list.add_child(btn)
+		slot_data["button"] = btn
+		slot_array.append(slot_data)
+
+	paper_doll_slot_map[location] = slot_array
+	return col
+
+func _build_components_tab() -> void:
+	var filter_hb = HBoxContainer.new()
+	filter_hb.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	components_tab.add_child(filter_hb)
+
+	var type_lbl = Label.new()
+	type_lbl.text = "Type:"
+	type_lbl.add_theme_font_size_override("font_size", 11)
+	filter_hb.add_child(type_lbl)
+
+	browser_type_filter = OptionButton.new()
+	browser_type_filter.name = "BrowserTypeFilter"
+	for t in component_type_filters:
+		browser_type_filter.add_item(t)
+	browser_type_filter.selected = 0
+	browser_type_filter.item_selected.connect(_on_browser_filter_changed)
+	filter_hb.add_child(browser_type_filter)
+
+	var tech_lbl = Label.new()
+	tech_lbl.text = "Tech:"
+	tech_lbl.add_theme_font_size_override("font_size", 11)
+	filter_hb.add_child(tech_lbl)
+
+	browser_tech_filter = OptionButton.new()
+	browser_tech_filter.name = "BrowserTechFilter"
+	browser_tech_filter.add_item("All")
+	browser_tech_filter.add_item("1")
+	browser_tech_filter.add_item("2")
+	browser_tech_filter.add_item("3")
+	browser_tech_filter.add_item("4")
+	browser_tech_filter.add_item("5")
+	browser_tech_filter.selected = 0
+	browser_tech_filter.item_selected.connect(_on_browser_filter_changed)
+	filter_hb.add_child(browser_tech_filter)
+
+	var search_lbl = Label.new()
+	search_lbl.text = "Search:"
+	search_lbl.add_theme_font_size_override("font_size", 11)
+	filter_hb.add_child(search_lbl)
+
+	browser_search = LineEdit.new()
+	browser_search.name = "BrowserSearch"
+	browser_search.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	browser_search.placeholder_text = "filter..."
+	browser_search.text_changed.connect(_on_browser_filter_changed)
+	filter_hb.add_child(browser_search)
+
+	var split = HSplitContainer.new()
+	split.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	components_tab.add_child(split)
+
+	var browser_vb = VBoxContainer.new()
+	browser_vb.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	split.add_child(browser_vb)
+
+	var browser_title = Label.new()
+	browser_title.text = "All Components"
+	browser_title.add_theme_font_size_override("font_size", 13)
+	browser_vb.add_child(browser_title)
+
+	component_browser_list = ItemList.new()
+	component_browser_list.name = "ComponentBrowserList"
+	component_browser_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	component_browser_list.item_selected.connect(_on_browser_selected)
+	browser_vb.add_child(component_browser_list)
+
+	var current_vb = VBoxContainer.new()
+	current_vb.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	split.add_child(current_vb)
+
+	var current_title = Label.new()
+	current_title.text = "Current Mech Components"
+	current_title.add_theme_font_size_override("font_size", 13)
+	current_vb.add_child(current_title)
+
+	current_components_list = ItemList.new()
+	current_components_list.name = "CurrentComponentsList"
+	current_components_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	current_components_list.item_selected.connect(_on_current_comp_selected)
+	current_vb.add_child(current_components_list)
+
+	var action_bar = HBoxContainer.new()
+	action_bar.alignment = BoxContainer.ALIGNMENT_CENTER
+	components_tab.add_child(action_bar)
+
+	components_remove_btn = Button.new()
+	components_remove_btn.text = "Remove Selected"
+	components_remove_btn.disabled = true
+	components_remove_btn.pressed.connect(_on_components_remove)
+	action_bar.add_child(components_remove_btn)
+
+	components_replace_btn = Button.new()
+	components_replace_btn.text = "Replace Selected"
+	components_replace_btn.disabled = true
+	components_replace_btn.pressed.connect(_on_components_replace)
+	action_bar.add_child(components_replace_btn)
 
 func _build_customize_ui() -> void:
 	var scroll = ScrollContainer.new()
@@ -230,8 +490,17 @@ func _build_customize_ui() -> void:
 	vb.add_child(history_label)
 
 func _on_tab_changed(tab_index: int) -> void:
-	if tab_index == 1 and selected_unit:
-		_show_customize_view()
+	match tab_index:
+		0:
+			if selected_unit:
+				_refresh_paper_doll()
+		1:
+			if selected_unit:
+				_populate_component_browser()
+				_populate_current_components_list()
+		3:
+			if selected_unit:
+				_show_customize_view()
 
 func populate() -> void:
 	player_mechs.clear()
@@ -268,6 +537,8 @@ func _clear_detail() -> void:
 	start_refit_button.disabled = true
 	current_parts_plan.clear()
 	pending_changes.clear()
+	paper_doll_selected = {}
+	components_browser_selected = ""
 	_update_status()
 
 func _on_unit_selected(index: int) -> void:
@@ -310,10 +581,18 @@ func _on_unit_selected(index: int) -> void:
 	hours_label.text = ""
 	start_refit_button.disabled = true
 	pending_changes.clear()
+	paper_doll_selected = {}
+	components_browser_selected = ""
 	_update_status()
 
-	if tab_container and tab_container.current_tab == 1:
-		_show_customize_view()
+	_refresh_paper_doll()
+	_populate_component_browser()
+	_populate_current_components_list()
+
+	if tab_container:
+		match tab_container.current_tab:
+			1: _populate_current_components_list()
+			3: _show_customize_view()
 
 func _on_variant_selected(index: int) -> void:
 	if index < 0 or index >= variants.size() or not selected_unit:
@@ -688,6 +967,286 @@ func _show_customization_history() -> void:
 func _update_status() -> void:
 	var n = RefitManager.active_refits.size()
 	status_label.text = ("Active refits: " + str(n)) if n > 0 else ""
+
+# --- Paper Doll Methods ---
+
+func _refresh_paper_doll() -> void:
+	if not selected_unit:
+		return
+	paper_doll_selected = {}
+
+	var comps_by_loc: Dictionary = {}
+	for loc_name in location_names:
+		comps_by_loc[loc_name] = []
+
+	for c in selected_unit.components:
+		if c.location and c.location.location_name in comps_by_loc:
+			comps_by_loc[c.location.location_name].append(c)
+
+	for loc_name in location_names:
+		if not paper_doll_slot_map.has(loc_name):
+			continue
+		var slots = paper_doll_slot_map[loc_name]
+		var slot_count = paper_doll_slot_counts[loc_name]
+		var comps = comps_by_loc[loc_name]
+
+		var slot_idx = 0
+		for comp in comps:
+			if comp.critical_slots <= 0:
+				continue
+			var cs = comp.critical_slots
+			var name = comp.component_name
+			for s in range(cs):
+				if slot_idx < slot_count:
+					slots[slot_idx]["component"] = name
+					var btn = slots[slot_idx]["button"]
+					var comp_type = _classify_component(name)
+					var c = component_type_color_map.get(comp_type, component_type_color_map["other"])
+					var style = StyleBoxFlat.new()
+					style.bg_color = c
+					style.border_width_bottom = 1
+					style.border_color = Color(0.2, 0.2, 0.25)
+					btn.add_theme_stylebox_override("normal", style)
+					var hover = StyleBoxFlat.new()
+					hover.bg_color = c * 1.3
+					hover.border_width_bottom = 1
+					hover.border_color = Color(0.4, 0.4, 0.45)
+					btn.add_theme_stylebox_override("hover", hover)
+					var disp = name
+					if cs > 1:
+						disp = name + " [" + str(s + 1) + "/" + str(cs) + "]"
+					btn.text = disp
+					slot_idx += 1
+
+		while slot_idx < slot_count:
+			slots[slot_idx]["component"] = ""
+			var btn = slots[slot_idx]["button"]
+			var style = StyleBoxFlat.new()
+			style.bg_color = Color(0.06, 0.06, 0.06)
+			style.border_width_bottom = 1
+			style.border_color = Color(0.15, 0.15, 0.18)
+			btn.add_theme_stylebox_override("normal", style)
+			var hover = StyleBoxFlat.new()
+			hover.bg_color = Color(0.1, 0.1, 0.12)
+			hover.border_width_bottom = 1
+			hover.border_color = Color(0.2, 0.2, 0.25)
+			btn.add_theme_stylebox_override("hover", hover)
+			btn.text = "Empty"
+			slot_idx += 1
+
+	var sel_info = paper_doll_tab.get_node_or_null("PaperDollSelectedInfo")
+	if sel_info:
+		sel_info.text = ""
+
+func _on_paper_doll_slot_pressed(location: String, slot_index: int) -> void:
+	if not selected_unit:
+		return
+	if not paper_doll_slot_map.has(location):
+		return
+	var slots = paper_doll_slot_map[location]
+	if slot_index < 0 or slot_index >= slots.size():
+		return
+
+	var slot = slots[slot_index]
+	var comp_name = slot["component"]
+
+	paper_doll_selected = {"location": location, "index": slot_index}
+	_highlight_paper_doll_slot(location, slot_index)
+
+	if comp_name.is_empty():
+		if not components_browser_selected.is_empty():
+			_paper_doll_add_pending_change("add", "", components_browser_selected, location)
+			_refresh_paper_doll()
+		else:
+			var sel_info = paper_doll_tab.get_node_or_null("PaperDollSelectedInfo")
+			if sel_info:
+				sel_info.text = "Empty slot selected in " + location + " — ready for placement"
+	else:
+		var sel_info = paper_doll_tab.get_node_or_null("PaperDollSelectedInfo")
+		if sel_info:
+			var comp_type = _classify_component(comp_name)
+			sel_info.text = "Selected: " + comp_name + " [" + comp_type + "] in " + location
+
+func _highlight_paper_doll_slot(location: String, index: int) -> void:
+	for loc_name in location_names:
+		if not paper_doll_slot_map.has(loc_name):
+			continue
+		var slots = paper_doll_slot_map[loc_name]
+		for s in slots:
+			var btn = s["button"]
+			var cname = s["component"]
+			var is_selected = (loc_name == location and s["index"] == index)
+
+			var style = StyleBoxFlat.new()
+			if cname.is_empty():
+				style.bg_color = Color(0.06, 0.06, 0.06) if not is_selected else Color(0.15, 0.12, 0.05)
+			else:
+				var comp_type = _classify_component(cname)
+				var base = component_type_color_map.get(comp_type, component_type_color_map["other"])
+				style.bg_color = base if not is_selected else base * 1.4
+			style.border_width_bottom = 1
+			if is_selected:
+				style.border_width_top = 2
+				style.border_width_left = 2
+				style.border_width_right = 2
+				style.border_color = Color(1.0, 0.9, 0.3)
+			else:
+				style.border_color = Color(0.2, 0.2, 0.25)
+			btn.add_theme_stylebox_override("normal", style)
+
+func _on_paper_doll_reset() -> void:
+	pending_changes.clear()
+	paper_doll_selected = {}
+	components_browser_selected = ""
+	_refresh_paper_doll()
+	_populate_component_browser()
+	_populate_current_components_list()
+
+	var sel_info = paper_doll_tab.get_node_or_null("PaperDollSelectedInfo")
+	if sel_info:
+		sel_info.text = "Changes reset"
+
+func _on_paper_doll_save_changes() -> void:
+	if pending_changes.is_empty():
+		return
+	tab_container.current_tab = 3
+
+# --- Components Tab Methods ---
+
+func _populate_component_browser() -> void:
+	component_browser_list.clear()
+	if not selected_unit:
+		return
+
+	var filter_type = browser_type_filter.get_item_text(browser_type_filter.selected)
+	var filter_tech = browser_tech_filter.get_item_text(browser_tech_filter.selected)
+	var search_text = browser_search.text.strip_edges().to_lower()
+
+	for name in component_names:
+		var def = DataManager.component_defs.get(name, {})
+		if not def:
+			continue
+
+		var comp_type = _classify_component(name)
+
+		if filter_type != "All" and comp_type != filter_type.to_lower():
+			continue
+
+		if filter_tech != "All":
+			var tl = def.get("tech_level", 1)
+			if str(tl) != filter_tech:
+				continue
+
+		if not search_text.is_empty():
+			if not search_text in name.to_lower():
+				continue
+
+		component_browser_list.add_item(name)
+
+func _populate_current_components_list() -> void:
+	current_components_list.clear()
+	if not selected_unit:
+		components_remove_btn.disabled = true
+		return
+
+	for c in selected_unit.components:
+		var loc_name = c.location.location_name if c.location else "Unknown"
+		var label = c.component_name + " [" + loc_name + "]"
+		var idx = current_components_list.add_item(label)
+		current_components_list.set_item_metadata(idx, {
+			"component_name": c.component_name,
+			"location": loc_name,
+		})
+
+	components_remove_btn.disabled = current_components_list.get_item_count() <= 0
+
+func _on_browser_filter_changed(_dummy = null) -> void:
+	_populate_component_browser()
+
+func _on_browser_selected(index: int) -> void:
+	if index < 0 or index >= component_browser_list.get_item_count():
+		components_browser_selected = ""
+		components_replace_btn.disabled = true
+		return
+	components_browser_selected = component_browser_list.get_item_text(index)
+	components_replace_btn.disabled = paper_doll_selected.is_empty()
+
+func _on_current_comp_selected(index: int) -> void:
+	components_remove_btn.disabled = index < 0
+
+func _on_components_remove() -> void:
+	if not selected_unit:
+		return
+	var sel = current_components_list.get_selected_items()
+	if sel.is_empty():
+		return
+	var idx = sel[0]
+	var meta = current_components_list.get_item_metadata(idx)
+	var comp_name = meta.get("component_name", "")
+	var loc = meta.get("location", "")
+	if comp_name.is_empty():
+		return
+	_paper_doll_add_pending_change("remove", comp_name, "", loc)
+	_refresh_paper_doll()
+	_populate_current_components_list()
+
+func _on_components_replace() -> void:
+	if not selected_unit or components_browser_selected.is_empty() or paper_doll_selected.is_empty():
+		return
+	var location = paper_doll_selected.get("location", "")
+	var index = paper_doll_selected.get("index", 0)
+	if not paper_doll_slot_map.has(location):
+		return
+	var slots = paper_doll_slot_map[location]
+	if index < 0 or index >= slots.size():
+		return
+	var current_comp_name = slots[index].get("component", "")
+	if current_comp_name.is_empty():
+		_paper_doll_add_pending_change("add", "", components_browser_selected, location)
+	else:
+		_paper_doll_add_pending_change("replace", current_comp_name, components_browser_selected, location)
+	_refresh_paper_doll()
+	paper_doll_selected = {}
+
+func _paper_doll_add_pending_change(action: String, current: String, new_comp: String, location: String) -> void:
+	var cl_info = RefitManager.classify_customization_change(current, new_comp, location, location)
+	var change = {
+		"action": action,
+		"current_component": current,
+		"new_component": new_comp,
+		"location": location,
+		"class": cl_info.class,
+		"tonnage": cl_info.tonnage,
+	}
+	pending_changes.append(change)
+
+# --- Component Type Classification ---
+
+func _classify_component(name: String) -> String:
+	var n = name.to_lower()
+	if "laser" in n or "ppc" in n or "ac/" in n or "ac " in n or "lrm" in n or "srm" in n or "machine gun" in n or "flamer" in n or "gauss" in n or "rifle" in n or "lrt" in n or "srt" in n:
+		return "weapon"
+	if "ammo" in n:
+		return "ammo"
+	if "engine" in n:
+		return "engine"
+	if "gyro" in n:
+		return "gyro"
+	if "endo" in n or "structure" in n or "composite" in n or "reinforced" in n:
+		return "structure"
+	if "armor" in n:
+		return "armor"
+	if "sensors" in n or "communications" in n or "ecm" in n or "probe" in n or "targeting" in n or "fire control" in n or "advanced" in n:
+		return "electronics"
+	if "jump jet" in n:
+		return "jump_jet"
+	if "cockpit" in n or "life support" in n:
+		return "cockpit"
+	if "heat sink" in n:
+		return "other"
+	if "actuator" in n:
+		return "other"
+	return "other"
 
 func _on_close() -> void:
 	hide()
