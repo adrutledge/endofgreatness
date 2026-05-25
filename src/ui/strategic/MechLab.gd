@@ -48,6 +48,21 @@ var components_replace_btn: Button
 var components_browser_selected: String = ""
 var current_location_filter: OptionButton
 
+var _protected_components: Array[String] = [
+	"engine", "gyro", "cockpit", "life support", "sensors",
+	"shoulder actuator", "upper arm actuator",
+	"hip actuator", "upper leg actuator", "lower leg actuator", "foot actuator",
+]
+
+
+func _is_protected_component(name: String) -> bool:
+	var n = name.to_lower()
+	for p in _protected_components:
+		if p in n:
+			return true
+	return false
+
+
 var component_type_filters: Array[String] = [
 	"All", "Weapon", "Ammo", "Engine", "Gyro",
 	"Structure", "Armor", "Electronics", "Jump Jet", "Cockpit", "Other",
@@ -1337,6 +1352,9 @@ func _populate_component_browser() -> void:
 			if not search_text in name.to_lower():
 				continue
 
+		if _is_protected_component(name):
+			continue
+
 		component_browser_list.add_item(name)
 
 func _on_location_filter_changed(_idx: int) -> void:
@@ -1394,6 +1412,8 @@ func _on_components_remove() -> void:
 	var comp_name = meta.get("component_name", "")
 	var loc = meta.get("location", "")
 	if comp_name.is_empty():
+		return
+	if _is_protected_component(comp_name):
 		return
 	_paper_doll_add_pending_change("remove", comp_name, "", loc)
 	_refresh_paper_doll()
