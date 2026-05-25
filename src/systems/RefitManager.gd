@@ -532,13 +532,10 @@ func _apply_customization(customization: Dictionary) -> void:
 	var tech_skill = tech.get_tech_skill() if tech else 4
 
 	var tn = 0
-	var count := 0
 	for change in changes:
 		var t = calculate_customization_tn(change, tech_skill, facility_level)
-		tn += t
-		count += 1
-	if count > 0:
-		tn = int(ceil(float(tn) / count))
+		if t > tn:
+			tn = t
 	if customization.facility_penalty > 0:
 		tn += customization.facility_penalty
 

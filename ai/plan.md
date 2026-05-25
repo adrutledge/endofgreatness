@@ -392,7 +392,8 @@
   6. Player confirms → funds deducted immediately; parts not in local stock are sourced via `InterstellarOrderManager` (P1.2) with delivery ETA
 - **Skill resolution per CO**: once all parts are on-hand and the assigned technician has available hours:
   - A single skill roll is made for the entire refit/customization job: `tech_skill_roll >= TN`
-  - TN is the average of all per-component TNs across all changes in the job
+  - TN is the highest of all per-component TNs across all changes in the job (the hardest single change determines the difficulty of the whole job)
+  - Refit kit bonus (refits only): a refit kit provides a flat TN reduction (e.g., -1 or -2 depending on kit quality); this bonus does NOT apply to customizations (which lack a pre-assembled kit)
   - On success: all changes are applied; time consumed = calculated CO time (modified by `base_time × (10.0 / (skill + 5))` per P3.6.4)
   - On failure: no changes are applied; the job extends by 50% of the original estimated hours and the player may retry (the roll is re-made when the extended time elapses)
   - No component destruction on failure — failure represents the tech encountering unexpected complications, not breaking parts

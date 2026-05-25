@@ -549,13 +549,13 @@ func _update_customization_summary() -> void:
 	var threshold = tech_skill + 3
 
 	var rh = RichTextHelper.new()
-	rh.add("[b]Average Target Number:[/b] " + str(_estimate_avg_tn()))
+	var highest_tn = _get_highest_tn()
+	rh.add("[b]Highest Component TN:[/b] " + str(highest_tn))
 	rh.add("[b]Tech Skill:[/b] " + str(tech_skill) + "  |  [b]Threshold:[/b] " + str(threshold) + "  |  [b]Facility:[/b] Lvl " + str(facility_lvl))
-	var avg_tn = _estimate_avg_tn()
-	if avg_tn > threshold:
-		rh.add("[color=#ff4444]Average TN exceeds threshold — high risk of failure and extended labor[/color]")
+	if highest_tn > threshold:
+		rh.add("[color=#ff4444]Highest TN exceeds threshold — high risk of failure and extended labor[/color]")
 	else:
-		rh.add("[color=#44ff66]Average TN within threshold — manageable risk[/color]")
+		rh.add("[color=#44ff66]Highest TN within threshold — manageable risk[/color]")
 	risk_label.text = rh.get_text()
 
 	var fh = RichTextHelper.new()
@@ -580,13 +580,15 @@ func _get_best_tech_skill(unit: TacticalUnit) -> int:
 			best_skill = s
 	return best_skill if best_skill >= 0 else 4
 
-func _estimate_avg_tn() -> int:
+func _get_highest_tn() -> int:
 	if pending_changes.is_empty():
 		return 0
-	var total := 0
+	var highest := 0
 	for ch in pending_changes:
-		total += RefitManager.calculate_customization_tn(ch, 2, RefitManager.get_facility_level(), 2, true)
-	return int(ceil(float(total) / pending_changes.size()))
+		var tn = RefitManager.calculate_customization_tn(ch, 2, RefitManager.get_facility_level(), 2, true)
+		if tn > highest:
+			highest = tn
+	return highest
 
 
 func _find_change_for_component(comp_name: String) -> Dictionary:
