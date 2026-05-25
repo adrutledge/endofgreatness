@@ -325,6 +325,7 @@
    - One `OperationalUnit` per lance (4 mechs), nested under the organizational unit
 - **C-Bill expenditure**: purchase the initial mechs and equipment from the float at market rates; remaining float = `roll − purchase_cost` (subject to floor)
 - **Integration**: called by Main Menu `New Game` flow before entering strategic layer; writes generated state into `GameState`
+- **Tests**: `tests/test_strategic_unit_generator.gd` — verify generated force has correct mech count, personnel ratios (HR capacity covers tracked staff, 1 tech per mech, 6 medics per doctor, etc.), commander/XO/lance commander flags, C-Bill float within expected range, and inventory matches mech equipment
 
 ---
 
