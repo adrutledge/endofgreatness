@@ -1408,9 +1408,6 @@ func _classify_component(name: String) -> String:
 	if ct:
 		return ct
 	return "other"
-	if "actuator" in n:
-		return "other"
-	return "other"
 
 func _on_close() -> void:
 	hide()
