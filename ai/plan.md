@@ -309,7 +309,7 @@
     - **Logistics** (`LOGISTICAL` role) — manages supply chain, parts ordering, inventory
     - **Command** (`COMMAND` role) — the commander's administrative assistant (scheduling, comms, paperwork)
     - **Transport** (`TRANSPORT` role) — manages unit transport (DropShip/JumpShip booking, convoy movement)
-  - 1 Doctor (`DOCTOR` role)
+  - 1 Doctor (`DOCTOR` role) per 6 medics
   - Technicians (`TECHNICIAN` role) — 1 per mech, tracked as individual characters
   - Astechs (`ASTECH` role) — 2 per technician, tracked as abstract pool (count only, no stats/skills/relationships)
   - Medics — tracked as abstract pool (count only), 1 medic per 6 mechs
