@@ -1261,8 +1261,8 @@ func _refresh_paper_doll() -> void:
 				var bw: int = 3
 				var is_first: bool = placed == 0
 				var is_last: bool = placed + 1 >= n
-				style.border_width_left = bw if is_first else 0
-				style.border_width_right = bw if is_last else 0
+				style.border_width_left = bw
+				style.border_width_right = bw
 				style.border_width_top = bw if is_first else 0
 				style.border_width_bottom = bw if is_last else 0
 				style.border_color = Color(1, 1, 1)
@@ -1275,8 +1275,8 @@ func _refresh_paper_doll() -> void:
 				var bw: int = 3
 				var is_first: bool = placed == 0
 				var is_last: bool = placed + 1 >= n
-				hover.border_width_left = bw if is_first else 0
-				hover.border_width_right = bw if is_last else 0
+				hover.border_width_left = bw
+				hover.border_width_right = bw
 				hover.border_width_top = bw if is_first else 0
 				hover.border_width_bottom = bw if is_last else 0
 				hover.border_color = Color(1, 1, 1)
