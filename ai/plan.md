@@ -322,7 +322,7 @@
 - **Starting organizational structure**:
   - Player `StrategicUnit` created
   - One `OrganizationalUnit` (mercenary company name)
-  - One `OperationalUnit` per mech, nested under the organizational unit
+   - One `OperationalUnit` per lance (4 mechs), nested under the organizational unit
 - **C-Bill expenditure**: purchase the initial mechs and equipment from the float at market rates; remaining float = `roll − purchase_cost` (subject to floor)
 - **Integration**: called by Main Menu `New Game` flow before entering strategic layer; writes generated state into `GameState`
 
