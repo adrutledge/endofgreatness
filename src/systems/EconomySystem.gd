@@ -83,7 +83,8 @@ func get_daily_burn_rate() -> Dictionary:
 		"salaries": 0,
 		"maintenance": 0,
 		"berthing": 0,
-		"overhead": 0
+		"overhead": 0,
+		"transport": 0
 	}
 	for personnel in GameState.player.get_all_personnel():
 		match personnel.role:
@@ -115,11 +116,38 @@ func get_daily_burn_rate() -> Dictionary:
 			breakdown.salaries += tu.abstract_crew_count * 60
 	breakdown.salaries += PersonnelManager.get_abstract_salary_cost()
 	breakdown.overhead = GameState.player.organizational_units.size() * 50
-	total = breakdown.salaries + breakdown.maintenance + breakdown.berthing + breakdown.overhead
+	breakdown.transport = UnitTransportManager.get_daily_transport_cost()
+	total = breakdown.salaries + breakdown.maintenance + breakdown.berthing + breakdown.overhead + breakdown.transport
 	return {
 		"total": total,
 		"breakdown": breakdown
 	}
+
+## Returns the one-way CO unit transport cost for a single tactical unit
+## from the player's current planet to the destination system.
+func get_unit_transport_cost(unit: TacticalUnit, dest_system: String) -> int:
+	if not GameState.player.current_planet:
+		return 0
+	return UnitTransportManager.calculate_transport_cost_between(unit.tonnage, GameState.player.current_planet, dest_system)
+
+## Returns the total one-way CO transport cost for all player tactical units
+## to the destination system.
+func get_fleet_transport_cost(dest_system: String) -> int:
+	if not GameState.player.current_planet:
+		return 0
+	var tonnages: Array[float] = []
+	for ou in GameState.player.organizational_units:
+		for tu in ou.get_all_tactical_units():
+			tonnages.append(tu.tonnage)
+	if tonnages.is_empty():
+		return 0
+	var jumps = UnitTransportManager.jumps_between(GameState.player.current_planet, dest_system)
+	return UnitTransportManager.calculate_fleet_transport_cost(tonnages, jumps)
+
+## Returns the player's share of transport cost after contract coverage.
+func get_player_transport_share(total_cost: int, contract: Contract) -> int:
+	var coverage = contract.transport_coverage / 100.0
+	return int(total_cost * (1.0 - coverage))
 
 func search_remote_sources(item_name: String) -> Array[Dictionary]:
 	if not GameState.player.current_planet:

@@ -21,6 +21,13 @@ var selection_type: int = SelectionType.NONE
 @onready var detail_panel: Panel = %DetailPanel
 
 func _ready() -> void:
+	Helpers.debug_print("OrgMgmt", "_ready start")
+	Helpers.validate_nodes("OrgMgmt", [
+		["tree", tree], ["detail_name", detail_name], ["detail_info", detail_info],
+		["detail_type", detail_type], ["deploy_button", deploy_button],
+		["create_button", create_button], ["remove_button", remove_button],
+		["close_button", close_button], ["detail_panel", detail_panel],
+	])
 	var bg_style = StyleBoxFlat.new()
 	bg_style.bg_color = Color(0.1, 0.1, 0.15, 0.95)
 	add_theme_stylebox_override("panel", bg_style)
@@ -38,8 +45,10 @@ func _ready() -> void:
 	remove_button.pressed.connect(_on_remove)
 	tree.item_selected.connect(_on_tree_selected)
 	populate_tree()
+	Helpers.debug_print("OrgMgmt", "_ready done")
 
 func populate_tree() -> void:
+	Helpers.debug_print("OrgMgmt", "populate_tree — org_units=%d" % GameState.player.organizational_units.size())
 	tree.clear()
 	var root = tree.create_item()
 	root.set_text(0, GameState.player.unit_name)
@@ -163,9 +172,12 @@ func _clear_details() -> void:
 	detail_type.text = ""
 
 func _on_deploy() -> void:
+	Helpers.debug_print("OrgMgmt", "_on_deploy")
 	if not selected_org_unit:
+		Helpers.debug_warn("OrgMgmt", "_on_deploy — no org unit selected")
 		return
 	if GameState.active_contracts.is_empty():
+		Helpers.debug_warn("OrgMgmt", "_on_deploy — no active contracts")
 		detail_info.text = "No active contracts available for deployment."
 		return
 
@@ -204,6 +216,7 @@ func _set_deployed_recursive(unit: OperationalUnit, contract: Contract) -> void:
 		_set_deployed_recursive(sub, contract)
 
 func _on_create() -> void:
+	Helpers.debug_print("OrgMgmt", "_on_create")
 	var dialog = AcceptDialog.new()
 	dialog.title = "Create Organizational Unit"
 	dialog.dialog_text = "Enter a name for the new Organizational Unit:"
@@ -224,6 +237,7 @@ func _on_create() -> void:
 	dialog.queue_free()
 
 func _on_remove() -> void:
+	Helpers.debug_print("OrgMgmt", "_on_remove selection_type=%d" % selection_type)
 	match selection_type:
 		SelectionType.ORGANIZATIONAL:
 			if selected_org_unit:

@@ -10,6 +10,12 @@ signal closed()
 @onready var close_button: Button = %CloseButton
 
 func _ready() -> void:
+	Helpers.debug_print("EventLog", "_ready start")
+	Helpers.validate_nodes("EventLog", [
+		["event_list", event_list], ["detail_title", detail_title],
+		["detail_date", detail_date], ["detail_body", detail_body],
+		["close_button", close_button],
+	])
 	var bg_style = StyleBoxFlat.new()
 	bg_style.bg_color = Color(0.1, 0.1, 0.15, 0.95)
 	add_theme_stylebox_override("panel", bg_style)
@@ -23,8 +29,10 @@ func _ready() -> void:
 	detail_date.add_theme_color_override("font_color", Color(0.6, 0.8, 1.0))
 	close_button.pressed.connect(_on_close)
 	event_list.item_selected.connect(_on_event_selected)
+	Helpers.debug_print("EventLog", "_ready done")
 
 func populate() -> void:
+	Helpers.debug_print("EventLog", "populate — log_size=%d" % GameState.event_log.size())
 	event_list.clear()
 	detail_title.text = ""
 	detail_date.text = ""

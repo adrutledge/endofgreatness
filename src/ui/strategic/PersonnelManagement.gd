@@ -28,9 +28,19 @@ var _assign_targets: Array[TacticalUnit] = []
 @onready var hire_selected_button: Button = %HireSelectedButton
 
 func _ready() -> void:
+	Helpers.debug_print("PersonnelManagement", "_ready start")
 	var bg = StyleBoxFlat.new()
 	bg.bg_color = Color(0.1, 0.1, 0.15, 0.95)
 	add_theme_stylebox_override("panel", bg)
+
+	Helpers.validate_nodes("PersonnelManagement", {
+		roster_list = roster_list, search_bar = search_bar, role_filter = role_filter,
+		detail_name = detail_name, detail_role = detail_role, detail_info = detail_info,
+		hire_button = hire_button, fire_button = fire_button, promote_button = promote_button,
+		close_button = close_button, assign_button = assign_button, unassign_button = unassign_button,
+		hire_candidates = hire_candidates, hire_panel = hire_panel, candidate_detail = candidate_detail,
+		hire_selected_button = hire_selected_button
+	})
 
 	%Title.add_theme_color_override("font_color", Color(1.0, 0.9, 0.6))
 	detail_name.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0))
@@ -56,6 +66,8 @@ func _ready() -> void:
 		roster_list.select(0)
 		_on_roster_selected(0)
 
+	Helpers.debug_print("PersonnelManagement", "_ready done")
+
 func _populate_role_filter() -> void:
 	role_filter.clear()
 	role_filter.add_item("All Roles", -1)
@@ -65,6 +77,7 @@ func _populate_role_filter() -> void:
 
 func populate_roster() -> void:
 	var source = _filtered_roster if not _filtered_roster.is_empty() else PersonnelManager.personnel_roster
+	Helpers.debug_print("PersonnelManagement", "populate_roster source_size=" + str(source.size()))
 	roster_list.clear()
 	for p in source:
 		var status = ""

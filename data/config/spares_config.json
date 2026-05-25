@@ -9,5 +9,8 @@
   "auto_reorder_max_cost_per_order": 500000,
   "auto_reorder_min_balance": 100000,
   "per_unit_inventory_enabled": false,
-  "remote_transport_cost_enabled": true
+  "remote_transport_cost_enabled": true,
+  "unit_transport_cost_enabled": true,
+  "dropship_cost_per_ton": 5000,
+  "jumpship_cost_per_ton_per_jump": 10000
 }

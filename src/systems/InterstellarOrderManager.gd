@@ -14,6 +14,49 @@ const SPECTRAL_RECHARGE_HOURS: Dictionary = {
 	"G": 175, "K": 210, "M": 270
 }
 
+## Search nearby systems for a complete tactical unit (chassis name).
+## Returns results with unit transport cost (CO abstract) instead of
+## component shipping cost.
+func search_nearby_unit_sources(origin_system: String, chassis_name: String, max_jumps: int = 2) -> Array[Dictionary]:
+	var results: Array[Dictionary] = []
+	var origin_data = DataManager.systems_data.get(origin_system)
+	if not origin_data:
+		return results
+
+	var origin_coords = origin_data.get("coordinates", {})
+	var ox: float = origin_coords.get("x", 0)
+	var oy: float = origin_coords.get("y", 0)
+
+	var candidates: Array[Dictionary] = []
+	for sys_name in DataManager.systems_data:
+		if sys_name == origin_system:
+			continue
+		var sys_data = DataManager.systems_data[sys_name]
+		var coords = sys_data.get("coordinates", {})
+		var dist = sqrt(pow(coords.get("x", 0) - ox, 2) + pow(coords.get("y", 0) - oy, 2))
+		if dist <= MAX_JUMP_RANGE * max_jumps:
+			var factions = _derive_factions_for_system(sys_name, sys_data)
+			for code in factions:
+				var units = DataManager.get_faction_market_units(code)
+				for tu in units:
+					if tu.chassis_name == chassis_name:
+						var jumps = max(1, int(ceil(dist / MAX_JUMP_RANGE)))
+						var travel_days = _calculate_travel_days(origin_data, sys_data, dist)
+						var unit_cost = tu.calculate_tm_cost()
+						var transport = UnitTransportManager.calculate_unit_transport_cost(tu.tonnage, jumps)
+						results.append({
+							"source_system": sys_name,
+							"unit": tu,
+							"cost_per_unit": unit_cost,
+							"transport_cost": transport,
+							"total_cost": unit_cost + transport,
+							"travel_days": travel_days,
+							"jumps": jumps,
+							"distance_ly": dist
+						})
+						break
+	return results
+
 func search_nearby_systems(origin_system: String, item_name: String, max_jumps: int = 2) -> Array[Dictionary]:
 	var results: Array[Dictionary] = []
 	var origin_data = DataManager.systems_data.get(origin_system)

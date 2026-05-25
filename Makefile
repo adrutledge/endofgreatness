@@ -25,6 +25,14 @@ build:
 run:
 	$(GODOT) --path .
 
+## Launch with debug logging enabled (--opencode-debug flag)
+rund:
+	$(GODOT) --path . -- --opencode-debug
+
+## Launch with debug logging via environment variable
+rune:
+	OPENCODE_DEBUG=true $(GODOT) --path .
+
 $(MTF_STAMP): $(MTF_SRC) $(MTF_DEPS) $(MTF_TEST)
 	@$(GODOT) --headless --script $(MTF_TEST) 2>&1 | grep -E "^(PASS|FAIL|Results)"
 	@touch $(MTF_STAMP)

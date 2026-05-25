@@ -5,6 +5,7 @@ extends Resource
 @export var organizational_units: Array[OrganizationalUnit] = []
 @export var current_balance: int = 1000000
 @export var current_planet: String = ""
+@export var home_base: String = "Galatea"
 @export var active_contract: Contract = null
 
 func get_all_personnel() -> Array[Personnel]:

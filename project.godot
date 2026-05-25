@@ -31,6 +31,7 @@ EconomySystem="*res://src/systems/EconomySystem.gd"
 ReputationSystem="*res://src/systems/ReputationSystem.gd"
 PersonnelManager="*res://src/systems/PersonnelManager.gd"
 RefitManager="*res://src/systems/RefitManager.gd"
+UnitTransportManager="*res://src/systems/UnitTransportManager.gd"
 
 [rendering]
 

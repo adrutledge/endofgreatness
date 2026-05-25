@@ -432,10 +432,15 @@
 - **Deduction on confirm**: when the player confirms deployment, deduct the allocated quantities from `GameState.player_inventory` and store them on the `OperationalUnit` resource as `deployment_cache: Dictionary` (keyed by component name, value = quantity)
 - **Recovery on contract completion**: when the contract ends, any unspent deployment cache items are returned to `GameState.player_inventory`; expended items (ammo shot, armor damaged beyond repair) are deducted — tracked via tactical combat resolution
 - **In-transit tracking**: if the operational unit is in transit (not yet landed), the deployment cache is not accessible for repairs/refits; once the unit lands on the planet hex, the cache becomes the local repair stockpile for that unit
+- **Operational logistics difficulty** (gated by config toggle `operational_logistics_enabled: bool`, default false):
+  - When enabled, resupplying deployed units during **Planetary Assault** or **Raid** contracts requires a logistics roll
+  - The sourcing player's `LOGISTICAL` personnel skill is checked against a difficulty target number derived from the contract's activity type (assaults harder than raids), enemy resistance, and planetary infrastructure (USILR code)
+  - Failed logistics roll means the supplies do not arrive that tick — the unit must rely on its deployment cache or salvage
+  - Critical failure may result in supply loss (ammo/parts destroyed in transit)
+  - **Independent command rights**: when `operational_logistics_enabled` is true and the contract has `Independent` command rights, the employer does not host a local market on the planet — all supplies must be shipped from Galatea or sourced via InterstellarOrderManager with extended delivery times (no "buy from planet's employer market" option); this reflects the independent operator's lack of employer logistical support
+  - The difficulty modifier, supply delay days, and critical failure chance are all configurable in `spares_config.json`
 
 ---
-
-## Phase 4: Operational Layer
 
 ### P4.1 — Planetary Hex Map
 
@@ -559,6 +564,8 @@
     - **Auto-reorder suspended badge**: warning icon next to C-Bill display when `auto_reorder_enabled` but balance is below `auto_reorder_min_balance`; tooltip: "Auto-reorder suspended — funds below threshold (X / Y CSB)"
     - **Unattended injured badge**: red cross icon when one or more personnel are injured (`is_injured = true`) but not assigned to a doctor with available capacity, or when no doctor is employed; count shows number of unattended injured; tooltip: "X personnel injured without medical care"
     - **HR shortage badge**: people icon with exclamation when HR staff `Administration` skill capacity (`skill × 10`) is less than the total number of individually-tracked personnel (crew + technicians + doctors + admins; excluding astechs and medics); count shows how many additional HR skill points would be needed; tooltip: "HR understaffed — capacity X, need Y (Z personnel)"
+    - **Pending tactical engagements badge**: crossed-swords or warning icon when one or more tactical engagements are awaiting resolution (player's deployed units have encountered enemy forces but the battle has not yet been fought); count shows number of pending engagements; tooltip: "X pending tactical engagement(s) — deploy to resolve"; badge appears on the strategic map sidebar and in the HUD; clicking the badge opens the deployment/engagement view
+    - **Low supplies badge**: crate/exclamation icon when any deployed operational unit's deployment cache has any component (ammo, armor, or spare parts) at or below the configured minimum threshold (`auto_reorder_min_stock` in `spares_config.json`); counts the number of distinct component types below minimum across all deployed units; tooltip lists which units and which components are running low; badge auto-dismisses when all deployed units have been re-supplied above the minimum threshold
 
 ### P7.3 — Modal System
 

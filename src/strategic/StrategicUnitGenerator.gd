@@ -173,7 +173,7 @@ func generate(faction_code: String, company_name: String = "", mech_count: int =
 	if gs:
 		gs.player = strategic
 		gs.player_inventory = inventory
-		gs.player.current_planet = home_world
+		gs.player.current_planet = "Galatea"
 
 	var all_personnel: Array[Personnel] = []
 	all_personnel.append_array(pilots)
@@ -686,7 +686,8 @@ func _build_organization(company_name: String, mechs: Array[TacticalUnit],
 
 	var strategic = StrategicUnit.new()
 	strategic.unit_name = company_name
-	strategic.current_planet = ""
+	strategic.current_planet = "Galatea"
+	strategic.home_base = "Galatea"
 
 	var org_unit = OrganizationalUnit.new()
 	org_unit.unit_name = company_name

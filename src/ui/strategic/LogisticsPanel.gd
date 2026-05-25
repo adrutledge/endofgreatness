@@ -9,6 +9,8 @@ var remote_results: Array[Dictionary] = []
 var selected_item_name: String = ""
 var selected_remote_idx: int = -1
 var remote_item_name: String = ""
+var _selected_market_planet: String = ""
+var _planet_selector: OptionButton
 
 # Delivery state
 var _delivery_list_shown: Array = []
@@ -21,96 +23,356 @@ var available_units: Array[TacticalUnit] = []
 var selected_unit_index: int = -1
 var selected_unit_cost: int = 0
 
-@onready var tabs: TabContainer = %Tabs
-@onready var market_tabs: TabContainer = %MarketTabs
+@onready var title_label: Label = %Title
 @onready var balance_label: Label = %BalanceLabel
+@onready var content: VBoxContainer = %Content
 @onready var close_button: Button = %CloseButton
 
+# TabContainer — built programmatically in _build_ui()
+var tabs: TabContainer
+var market_tabs: TabContainer
+
 # Delivery tab
-@onready var delivery_list: ItemList = %DeliveryList
-@onready var delivery_detail_title: Label = %DeliveryDetailTitle
-@onready var delivery_detail_info: Label = %DeliveryDetailInfo
+var delivery_list: ItemList
+var delivery_detail_title: Label
+var delivery_detail_info: Label
 
 # Market — local tab
-@onready var local_list: ItemList = %LocalList
-@onready var local_search: LineEdit = %LocalSearch
-@onready var local_name: Label = %LocalName
-@onready var local_cost: Label = %LocalCost
-@onready var local_tech: Label = %LocalTech
-@onready var local_tonnage: Label = %LocalTonnage
-@onready var local_qty: Label = %LocalQty
-@onready var local_qty_spin: SpinBox = %LocalQtySpin
-@onready var buy_button: Button = %BuyButton
+var local_list: ItemList
+var local_search: LineEdit
+var local_name: Label
+var local_cost: Label
+var local_tech: Label
+var local_tonnage: Label
+var local_qty: Label
+var local_qty_spin: SpinBox
+var buy_button: Button
 
 # Market — remote tab
-@onready var remote_list: ItemList = %RemoteList
+var remote_list: ItemList
+var remote_search: LineEdit
+var remote_status: Label
+var order_qty_spin: SpinBox
+var order_cost_label: Label
+var order_travel_label: Label
+var order_button: Button
 
 # Market — units tab
-@onready var unit_search: LineEdit = %UnitSearch
-@onready var unit_type_filter: OptionButton = %UnitTypeFilter
-@onready var unit_weight_filter: OptionButton = %UnitWeightFilter
-@onready var unit_list: ItemList = %UnitList
-@onready var unit_detail_name: Label = %UnitDetailName
-@onready var unit_detail_specs: RichTextLabel = %UnitDetailSpecs
-@onready var unit_price: Label = %UnitPrice
-@onready var unit_status: Label = %UnitStatus
-@onready var buy_unit_button: Button = %BuyUnitButton
-@onready var remote_search: LineEdit = %RemoteSearch
-@onready var remote_status: Label = %RemoteStatus
-@onready var order_qty_spin: SpinBox = %OrderQtySpin
-@onready var order_cost_label: Label = %OrderCostLabel
-@onready var order_travel_label: Label = %OrderTravelLabel
-@onready var order_button: Button = %OrderButton
+var unit_search: LineEdit
+var unit_type_filter: OptionButton
+var unit_weight_filter: OptionButton
+var unit_list: ItemList
+var unit_detail_name: Label
+var unit_detail_specs: RichTextLabel
+var unit_price: Label
+var unit_status: Label
+var buy_unit_button: Button
 
 # Inventory tab
-@onready var inv_list: ItemList = %InvList
-@onready var inv_filter_only_unit: CheckButton = %InvFilterOnlyUnit
-@onready var inv_filter_below_min: CheckButton = %InvFilterBelowMin
-@onready var inv_detail_name: Label = %InvDetailName
-@onready var inv_detail_qty: Label = %InvDetailQty
-@onready var inv_detail_cost: Label = %InvDetailCost
-@onready var reorder_min_button: Button = %ReorderMinButton
-@onready var dispatch_unit_dropdown: OptionButton = %DispatchUnitDropdown
-@onready var dispatch_qty_spin: SpinBox = %DispatchQtySpin
-@onready var dispatch_button: Button = %DispatchButton
-@onready var dispatch_separator: HSeparator = %DispatchSeparator
-@onready var dispatch_unit_label: Label = %DispatchUnitLabel
+var inv_list: ItemList
+var inv_filter_only_unit: CheckButton
+var inv_filter_below_min: CheckButton
+var inv_detail_name: Label
+var inv_detail_qty: Label
+var inv_detail_cost: Label
+var reorder_min_button: Button
+var dispatch_unit_dropdown: OptionButton
+var dispatch_qty_spin: SpinBox
+var dispatch_button: Button
+var dispatch_separator: HSeparator
+var dispatch_unit_label: Label
 
 
 func _ready() -> void:
+	Helpers.debug_print("LogisticsPanel", "_ready start")
 	_load_config()
 
 	var bg_style = StyleBoxFlat.new()
 	bg_style.bg_color = Color(0.1, 0.1, 0.15, 0.95)
 	add_theme_stylebox_override("panel", bg_style)
 
-	%Title.add_theme_color_override("font_color", Color(1.0, 0.9, 0.6))
+	title_label.add_theme_color_override("font_color", Color(1.0, 0.9, 0.6))
 	balance_label.add_theme_color_override("font_color", Color(0.3, 1.0, 0.3))
+
+	_build_ui()
+	close_button.pressed.connect(_on_close)
+
+
+func _build_ui() -> void:
+	tabs = TabContainer.new()
+	tabs.name = "Tabs"
+	tabs.size_flags_vertical = SIZE_EXPAND_FILL
+	content.add_child(tabs)
+
+	_build_deliveries_tab()
+	_build_market_tab()
+	_build_inventory_tab()
 
 	tabs.set_tab_title(0, "Deliveries")
 	tabs.set_tab_title(1, "Market")
 	tabs.set_tab_title(2, "Inventory")
-	market_tabs.set_tab_title(0, "Local")
-	market_tabs.set_tab_title(1, "Remote")
-	market_tabs.set_tab_title(2, "Units")
+	tabs.tab_changed.connect(_on_tab_changed)
+	tabs.current_tab = 0
+	Helpers.debug_print("LogisticsPanel", "_build_ui done")
 
-	close_button.pressed.connect(_on_close)
+
+func _build_deliveries_tab() -> void:
+	var margin = MarginContainer.new()
+	margin.name = "DeliveriesMargin"
+	margin.size_flags_vertical = SIZE_EXPAND_FILL
+	tabs.add_child(margin)
+
+	var hsplit = HSplitContainer.new()
+	hsplit.name = "HSplit"
+	hsplit.size_flags_vertical = SIZE_EXPAND_FILL
+	margin.add_child(hsplit)
+
+	delivery_list = ItemList.new()
+	delivery_list.name = "DeliveryList"
+	delivery_list.size_flags_horizontal = SIZE_EXPAND_FILL * 2
+	delivery_list.select_mode = ItemList.SELECT_SINGLE
+	hsplit.add_child(delivery_list)
+
+	var detail_panel = Panel.new()
+	detail_panel.name = "DeliveryDetailPanel"
+	detail_panel.size_flags_horizontal = SIZE_EXPAND_FILL * 3
+	hsplit.add_child(detail_panel)
+
+	var dm = MarginContainer.new()
+	dm.name = "DeliveryDetailMargin"
+	detail_panel.add_child(dm)
+
+	var dv = VBoxContainer.new()
+	dv.name = "DetailVBox"
+	dv.size_flags_vertical = SIZE_EXPAND_FILL
+	dm.add_child(dv)
+
+	delivery_detail_title = Label.new()
+	delivery_detail_title.name = "DeliveryDetailTitle"
+	delivery_detail_title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	dv.add_child(delivery_detail_title)
+
+	delivery_detail_info = Label.new()
+	delivery_detail_info.name = "DeliveryDetailInfo"
+	delivery_detail_info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	delivery_detail_info.size_flags_vertical = SIZE_EXPAND_FILL
+	dv.add_child(delivery_detail_info)
+
 	delivery_list.item_selected.connect(_on_delivery_selected)
 	EventBus.delivery_arrived.connect(_on_delivery_arrived)
+
+
+func _build_market_tab() -> void:
+	var vb = VBoxContainer.new()
+	vb.name = "MarketVBox"
+	vb.size_flags_vertical = SIZE_EXPAND_FILL
+	tabs.add_child(vb)
+
+	_planet_selector = OptionButton.new()
+	_planet_selector.name = "PlanetSelector"
+	_planet_selector.size_flags_vertical = SIZE_SHRINK_CENTER
+	vb.add_child(_planet_selector)
+	_planet_selector.item_selected.connect(_on_market_planet_selected)
+
+	market_tabs = TabContainer.new()
+	market_tabs.name = "MarketTabs"
+	market_tabs.size_flags_vertical = SIZE_EXPAND_FILL
+	vb.add_child(market_tabs)
+
+	_build_local_tab()
+	_build_units_tab()
+	_build_remote_tab()
+
+	market_tabs.set_tab_title(0, "Local")
+	market_tabs.set_tab_title(1, "Units")
+	market_tabs.set_tab_title(2, "Remote")
+	market_tabs.tab_changed.connect(_on_market_tab_changed)
+	market_tabs.current_tab = 0
+
+
+func _make_hsplits(min_size: int = 3) -> HSplitContainer:
+	var s = HSplitContainer.new()
+	s.size_flags_vertical = SIZE_EXPAND_FILL
+	return s
+
+
+func _build_local_tab() -> void:
+	var margin = MarginContainer.new()
+	margin.name = "LocalMargin"
+	margin.size_flags_vertical = SIZE_EXPAND_FILL
+	market_tabs.add_child(margin)
+
+	local_search = LineEdit.new()
+	local_search.name = "LocalSearch"
+	local_search.placeholder_text = "Search local market..."
+	local_search.size_flags_vertical = SIZE_SHRINK_CENTER
+	margin.add_child(local_search)
+
+	var hsplit = _make_hsplits()
+	margin.add_child(hsplit)
+
+	local_list = ItemList.new()
+	local_list.name = "LocalList"
+	local_list.size_flags_horizontal = SIZE_EXPAND_FILL * 2
+	local_list.select_mode = ItemList.SELECT_SINGLE
+	hsplit.add_child(local_list)
+
+	var detail_panel = Panel.new()
+	detail_panel.name = "LocalDetail"
+	detail_panel.size_flags_horizontal = SIZE_EXPAND_FILL * 3
+	hsplit.add_child(detail_panel)
+
+	var dm = MarginContainer.new()
+	dm.name = "LD Margin"
+	detail_panel.add_child(dm)
+
+	var dv = VBoxContainer.new()
+	dv.name = "DetailVBox"
+	dv.size_flags_vertical = SIZE_EXPAND_FILL
+	dm.add_child(dv)
+
+	local_name = Label.new()
+	local_name.name = "LocalName"
+	local_name.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	dv.add_child(local_name)
+
+	local_cost = Label.new()
+	local_cost.name = "LocalCost"
+	local_cost.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	dv.add_child(local_cost)
+
+	local_tech = Label.new()
+	local_tech.name = "LocalTech"
+	local_tech.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	dv.add_child(local_tech)
+
+	local_tonnage = Label.new()
+	local_tonnage.name = "LocalTonnage"
+	local_tonnage.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	dv.add_child(local_tonnage)
+
+	local_qty = Label.new()
+	local_qty.name = "LocalQty"
+	local_qty.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	dv.add_child(local_qty)
+
+	var bh = HBoxContainer.new()
+	bh.name = "BuyHBox"
+	dv.add_child(bh)
+
+	var ql = Label.new()
+	ql.text = "Qty:"
+	bh.add_child(ql)
+
+	local_qty_spin = SpinBox.new()
+	local_qty_spin.name = "LocalQtySpin"
+	local_qty_spin.min_value = 1
+	local_qty_spin.max_value = 999
+	local_qty_spin.step = 1
+	local_qty_spin.value = 1
+	bh.add_child(local_qty_spin)
+
+	buy_button = Button.new()
+	buy_button.name = "BuyButton"
+	buy_button.text = "Buy"
+	buy_button.disabled = true
+	bh.add_child(buy_button)
 
 	local_search.text_changed.connect(_on_local_search)
 	local_list.item_selected.connect(_on_local_item_selected)
 	buy_button.pressed.connect(_on_buy)
 
-	remote_search.text_changed.connect(_on_remote_search)
-	remote_list.item_selected.connect(_on_remote_item_selected)
-	order_button.pressed.connect(_on_order)
 
-	inv_filter_only_unit.toggled.connect(_refresh_inventory)
-	inv_filter_below_min.toggled.connect(_refresh_inventory)
-	inv_list.item_selected.connect(_on_inv_item_selected)
-	reorder_min_button.pressed.connect(_on_reorder_to_min)
-	dispatch_button.pressed.connect(_on_dispatch)
+func _build_units_tab() -> void:
+	var margin = MarginContainer.new()
+	margin.name = "UnitsMargin"
+	margin.size_flags_vertical = SIZE_EXPAND_FILL
+	market_tabs.add_child(margin)
+
+	var vb = VBoxContainer.new()
+	vb.name = "VBox"
+	vb.size_flags_vertical = SIZE_EXPAND_FILL
+	margin.add_child(vb)
+
+	var fb = HBoxContainer.new()
+	fb.name = "FilterBar"
+	vb.add_child(fb)
+
+	unit_search = LineEdit.new()
+	unit_search.name = "UnitSearch"
+	unit_search.placeholder_text = "Search units..."
+	unit_search.size_flags_horizontal = SIZE_EXPAND_FILL * 3
+	fb.add_child(unit_search)
+
+	unit_type_filter = OptionButton.new()
+	unit_type_filter.name = "UnitTypeFilter"
+	unit_type_filter.size_flags_horizontal = SIZE_EXPAND_FILL
+	unit_type_filter.text = "All Types"
+	for t in ["All Types", "Mechs", "Vehicles"]:
+		unit_type_filter.add_item(t)
+	unit_type_filter.selected = 0
+	fb.add_child(unit_type_filter)
+
+	unit_weight_filter = OptionButton.new()
+	unit_weight_filter.name = "UnitWeightFilter"
+	unit_weight_filter.size_flags_horizontal = SIZE_EXPAND_FILL
+	unit_weight_filter.text = "All Weights"
+	for t in ["All Weights", "Light", "Medium", "Heavy", "Assault"]:
+		unit_weight_filter.add_item(t)
+	unit_weight_filter.selected = 0
+	fb.add_child(unit_weight_filter)
+
+	var hsplit = _make_hsplits()
+	vb.add_child(hsplit)
+
+	unit_list = ItemList.new()
+	unit_list.name = "UnitList"
+	unit_list.size_flags_horizontal = SIZE_EXPAND_FILL * 2
+	unit_list.select_mode = ItemList.SELECT_SINGLE
+	hsplit.add_child(unit_list)
+
+	var detail_panel = Panel.new()
+	detail_panel.name = "UnitDetail"
+	detail_panel.size_flags_horizontal = SIZE_EXPAND_FILL * 3
+	hsplit.add_child(detail_panel)
+
+	var dm = MarginContainer.new()
+	dm.name = "UnitDetailMargin"
+	detail_panel.add_child(dm)
+
+	var dv = VBoxContainer.new()
+	dv.name = "DetailVBox"
+	dv.size_flags_vertical = SIZE_EXPAND_FILL
+	dm.add_child(dv)
+
+	unit_detail_name = Label.new()
+	unit_detail_name.name = "UnitDetailName"
+	unit_detail_name.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	dv.add_child(unit_detail_name)
+
+	unit_detail_specs = RichTextLabel.new()
+	unit_detail_specs.name = "UnitDetailSpecs"
+	unit_detail_specs.bbcode_enabled = true
+	unit_detail_specs.size_flags_vertical = SIZE_EXPAND_FILL
+	dv.add_child(unit_detail_specs)
+
+	unit_price = Label.new()
+	unit_price.name = "UnitPrice"
+	dv.add_child(unit_price)
+
+	unit_status = Label.new()
+	unit_status.name = "UnitStatus"
+	dv.add_child(unit_status)
+
+	var bh = HBoxContainer.new()
+	bh.name = "BuyHBox"
+	dv.add_child(bh)
+
+	buy_unit_button = Button.new()
+	buy_unit_button.name = "BuyUnitButton"
+	buy_unit_button.text = "Buy"
+	buy_unit_button.disabled = true
+	bh.add_child(buy_unit_button)
 
 	unit_search.text_changed.connect(_on_unit_search)
 	unit_type_filter.item_selected.connect(_on_unit_filter_changed)
@@ -118,8 +380,187 @@ func _ready() -> void:
 	unit_list.item_selected.connect(_on_unit_selected)
 	buy_unit_button.pressed.connect(_on_buy_unit)
 
-	tabs.tab_changed.connect(_on_tab_changed)
-	market_tabs.tab_changed.connect(_on_market_tab_changed)
+
+func _build_remote_tab() -> void:
+	var margin = MarginContainer.new()
+	margin.name = "RemoteMargin"
+	margin.size_flags_vertical = SIZE_EXPAND_FILL
+	market_tabs.add_child(margin)
+
+	var vb = VBoxContainer.new()
+	vb.name = "VBox"
+	vb.size_flags_vertical = SIZE_EXPAND_FILL
+	margin.add_child(vb)
+
+	remote_search = LineEdit.new()
+	remote_search.name = "RemoteSearch"
+	remote_search.placeholder_text = "Search surrounding systems..."
+	vb.add_child(remote_search)
+
+	remote_status = Label.new()
+	remote_status.name = "RemoteStatus"
+	remote_status.text = ""
+	vb.add_child(remote_status)
+
+	remote_list = ItemList.new()
+	remote_list.name = "RemoteList"
+	remote_list.size_flags_vertical = SIZE_EXPAND_FILL
+	remote_list.select_mode = ItemList.SELECT_SINGLE
+	vb.add_child(remote_list)
+
+	var order_panel = Panel.new()
+	order_panel.name = "RemoteOrderPanel"
+	order_panel.size_flags_vertical = SIZE_SHRINK_CENTER
+	vb.add_child(order_panel)
+
+	var om = MarginContainer.new()
+	om.name = "RemoteOrderMargin"
+	order_panel.add_child(om)
+
+	var ov = VBoxContainer.new()
+	ov.name = "OrderVBox"
+	om.add_child(ov)
+
+	order_cost_label = Label.new()
+	order_cost_label.name = "OrderCostLabel"
+	ov.add_child(order_cost_label)
+
+	order_travel_label = Label.new()
+	order_travel_label.name = "OrderTravelLabel"
+	ov.add_child(order_travel_label)
+
+	var oh = HBoxContainer.new()
+	oh.name = "OrderHBox"
+	ov.add_child(oh)
+
+	var oql = Label.new()
+	oql.text = "Qty:"
+	oh.add_child(oql)
+
+	order_qty_spin = SpinBox.new()
+	order_qty_spin.name = "OrderQtySpin"
+	order_qty_spin.min_value = 1
+	order_qty_spin.max_value = 999
+	order_qty_spin.step = 1
+	order_qty_spin.value = 1
+	oh.add_child(order_qty_spin)
+
+	order_button = Button.new()
+	order_button.name = "OrderButton"
+	order_button.text = "Order"
+	order_button.disabled = true
+	oh.add_child(order_button)
+
+	remote_search.text_changed.connect(_on_remote_search)
+	remote_list.item_selected.connect(_on_remote_item_selected)
+	order_button.pressed.connect(_on_order)
+
+
+func _build_inventory_tab() -> void:
+	var margin = MarginContainer.new()
+	margin.name = "InvMargin"
+	margin.size_flags_vertical = SIZE_EXPAND_FILL
+	tabs.add_child(margin)
+
+	var vb = VBoxContainer.new()
+	vb.name = "VBox"
+	vb.size_flags_vertical = SIZE_EXPAND_FILL
+	margin.add_child(vb)
+
+	var fb = HBoxContainer.new()
+	fb.name = "FilterBar"
+	vb.add_child(fb)
+
+	inv_filter_only_unit = CheckButton.new()
+	inv_filter_only_unit.name = "InvFilterOnlyUnit"
+	inv_filter_only_unit.text = "Only unit components"
+	inv_filter_only_unit.size_flags_horizontal = SIZE_EXPAND_FILL * 3
+	fb.add_child(inv_filter_only_unit)
+
+	inv_filter_below_min = CheckButton.new()
+	inv_filter_below_min.name = "InvFilterBelowMin"
+	inv_filter_below_min.text = "Below minimum only"
+	inv_filter_below_min.size_flags_horizontal = SIZE_EXPAND_FILL * 3
+	fb.add_child(inv_filter_below_min)
+
+	reorder_min_button = Button.new()
+	reorder_min_button.name = "ReorderMinButton"
+	reorder_min_button.text = "Reorder to Minimum"
+	reorder_min_button.size_flags_horizontal = SIZE_EXPAND_FILL * 2
+	fb.add_child(reorder_min_button)
+
+	var hsplit = _make_hsplits()
+	vb.add_child(hsplit)
+
+	inv_list = ItemList.new()
+	inv_list.name = "InvList"
+	inv_list.size_flags_horizontal = SIZE_EXPAND_FILL * 2
+	inv_list.select_mode = ItemList.SELECT_SINGLE
+	hsplit.add_child(inv_list)
+
+	var detail_panel = Panel.new()
+	detail_panel.name = "InvDetail"
+	detail_panel.size_flags_horizontal = SIZE_EXPAND_FILL * 3
+	hsplit.add_child(detail_panel)
+
+	var dm = MarginContainer.new()
+	dm.name = "InvDetailMargin"
+	detail_panel.add_child(dm)
+
+	var dv = VBoxContainer.new()
+	dv.name = "DetailVBox"
+	dv.size_flags_vertical = SIZE_EXPAND_FILL
+	dm.add_child(dv)
+
+	inv_detail_name = Label.new()
+	inv_detail_name.name = "InvDetailName"
+	inv_detail_name.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	dv.add_child(inv_detail_name)
+
+	inv_detail_qty = Label.new()
+	inv_detail_qty.name = "InvDetailQty"
+	dv.add_child(inv_detail_qty)
+
+	inv_detail_cost = Label.new()
+	inv_detail_cost.name = "InvDetailCost"
+	dv.add_child(inv_detail_cost)
+
+	dispatch_separator = HSeparator.new()
+	dispatch_separator.name = "DispatchSeparator"
+	dv.add_child(dispatch_separator)
+
+	dispatch_unit_label = Label.new()
+	dispatch_unit_label.name = "DispatchUnitLabel"
+	dispatch_unit_label.text = "Dispatch to unit:"
+	dv.add_child(dispatch_unit_label)
+
+	dispatch_unit_dropdown = OptionButton.new()
+	dispatch_unit_dropdown.name = "DispatchUnitDropdown"
+	dispatch_unit_dropdown.text = "Select unit..."
+	dv.add_child(dispatch_unit_dropdown)
+
+	var dh = HBoxContainer.new()
+	dh.name = "DispatchHBox"
+	dv.add_child(dh)
+
+	dispatch_qty_spin = SpinBox.new()
+	dispatch_qty_spin.name = "DispatchQtySpin"
+	dispatch_qty_spin.min_value = 1
+	dispatch_qty_spin.max_value = 9999
+	dispatch_qty_spin.step = 1
+	dispatch_qty_spin.value = 1
+	dh.add_child(dispatch_qty_spin)
+
+	dispatch_button = Button.new()
+	dispatch_button.name = "DispatchButton"
+	dispatch_button.text = "Dispatch"
+	dh.add_child(dispatch_button)
+
+	inv_filter_only_unit.toggled.connect(_refresh_inventory)
+	inv_filter_below_min.toggled.connect(_refresh_inventory)
+	inv_list.item_selected.connect(_on_inv_item_selected)
+	reorder_min_button.pressed.connect(_on_reorder_to_min)
+	dispatch_button.pressed.connect(_on_dispatch)
 
 
 func _load_config() -> void:
@@ -131,6 +572,7 @@ func _load_config() -> void:
 
 
 func populate() -> void:
+	Helpers.debug_print("LogisticsPanel", "populate — current_tab=%d" % tabs.current_tab if tabs else -1)
 	balance_label.text = "Balance: " + Helpers.fmt_money(EconomySystem.get_balance())
 	refresh_current_tab()
 
@@ -160,17 +602,51 @@ func _on_market_tab_changed(_idx: int) -> void:
 		_refresh_market_tab()
 
 
+func _populate_planet_selector() -> void:
+	var saved = _planet_selector.selected
+	_planet_selector.clear()
+	_planet_selector.add_item("Galatea (Home Base)", 0)
+	_planet_selector.set_item_metadata(0, "Galatea")
+	var idx := 1
+	var seen: Dictionary = {"Galatea": true}
+	for ou in GameState.player.organizational_units:
+		for opu in ou.sub_units:
+			if opu.is_deployed and opu.current_planet and not seen.has(opu.current_planet):
+				seen[opu.current_planet] = true
+				_planet_selector.add_item(opu.current_planet + " (Deployed)", idx)
+				_planet_selector.set_item_metadata(idx, opu.current_planet)
+				idx += 1
+	if saved >= 0 and saved < _planet_selector.item_count:
+		_planet_selector.select(saved)
+	elif _selected_market_planet.is_empty():
+		_planet_selector.select(0)
+		_selected_market_planet = "Galatea"
+	_planet_selector.selected = _planet_selector.selected if _planet_selector.selected >= 0 else 0
+
+
+func _on_market_planet_selected(idx: int) -> void:
+	if idx < 0 or idx >= _planet_selector.item_count:
+		return
+	_selected_market_planet = _planet_selector.get_item_metadata(idx)
+	Helpers.debug_print("LogisticsPanel", "market planet changed to: " + _selected_market_planet)
+	EconomySystem.initialize_market(_selected_market_planet)
+	match market_tabs.current_tab:
+		0: _refresh_local()
+		2: _refresh_units()
+
+
 func _refresh_market_tab() -> void:
 	if not GameState.player.current_planet:
 		return
+	_populate_planet_selector()
 	match market_tabs.current_tab:
 		0:
-			EconomySystem.initialize_market(GameState.player.current_planet)
+			EconomySystem.initialize_market(_selected_market_planet)
 			_refresh_local()
 		1:
 			pass
 		2:
-			EconomySystem.initialize_market(GameState.player.current_planet)
+			EconomySystem.initialize_market(_selected_market_planet)
 			_refresh_units()
 
 
@@ -756,6 +1232,8 @@ func _on_unit_selected(index: int) -> void:
 
 	unit_price.text = "Price: " + Helpers.fmt_money(selected_unit_cost)
 	unit_status.text = ""
+	var transport_cost = UnitTransportManager.get_daily_transport_cost()
+	unit_status.text = "Transport: 0 CSB (local purchase — on planet)"
 	buy_unit_button.disabled = false
 
 

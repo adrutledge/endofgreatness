@@ -19,6 +19,13 @@ var _selected_is_active: bool = false
 
 
 func _ready() -> void:
+	Helpers.debug_print("ContractBoard", "_ready start")
+	Helpers.validate_nodes("ContractBoard", [
+		["available_list", available_list], ["active_list", active_list],
+		["detail_name", detail_name], ["detail_type", detail_type],
+		["detail_info", detail_info], ["detail_panel", detail_panel],
+		["accept_button", accept_button], ["close_button", close_button],
+	])
 	var bg = StyleBoxFlat.new()
 	bg.bg_color = Color(0.1, 0.1, 0.15, 0.95)
 	add_theme_stylebox_override("panel", bg)
@@ -40,9 +47,11 @@ func _ready() -> void:
 
 	_generator = ContractGenerator.new()
 	add_child(_generator)
+	Helpers.debug_print("ContractBoard", "_ready done")
 
 
 func populate() -> void:
+	Helpers.debug_print("ContractBoard", "populate")
 	_available.clear()
 	available_list.clear()
 	active_list.clear()
@@ -50,6 +59,7 @@ func populate() -> void:
 	accept_button.disabled = true
 
 	if not TimeManager or not GameState or not GameState.player:
+		Helpers.debug_warn("ContractBoard", "populate — TimeManager/GameState/player not ready")
 		return
 
 	var date = TimeManager.current_date

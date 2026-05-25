@@ -22,9 +22,17 @@ var current_parts_plan: Array[Dictionary] = []
 @onready var close_button: Button = %CloseButton
 
 func _ready() -> void:
+	Helpers.debug_print("MechLab", "_ready start")
 	var bg_style = StyleBoxFlat.new()
 	bg_style.bg_color = Color(0.1, 0.1, 0.15, 0.95)
 	add_theme_stylebox_override("panel", bg_style)
+
+	Helpers.validate_nodes("MechLab", {
+		unit_list = unit_list, variant_list = variant_list, current_info = current_info,
+		variant_info = variant_info, diff_info = diff_info, parts_info = parts_info,
+		cost_label = cost_label, hours_label = hours_label, start_refit_button = start_refit_button,
+		status_label = status_label, close_button = close_button
+	})
 
 	%Title.add_theme_color_override("font_color", Color(1.0, 0.9, 0.6))
 	close_button.pressed.connect(_on_close)
@@ -32,8 +40,11 @@ func _ready() -> void:
 	variant_list.item_selected.connect(_on_variant_selected)
 	start_refit_button.pressed.connect(_on_start_refit)
 
+	Helpers.debug_print("MechLab", "_ready done")
+
 func populate() -> void:
 	player_mechs.clear()
+	Helpers.debug_print("MechLab", "populate start org_units=" + str(GameState.player.organizational_units.size()))
 	for ou in GameState.player.organizational_units:
 		for tu in ou.get_all_tactical_units():
 			if tu.unit_type == Enums.UnitType.MECH:

@@ -21,6 +21,7 @@ var selected_tactical_unit: TacticalUnit
 @onready var close_button: Button = %CloseButton
 
 func _ready() -> void:
+	Helpers.debug_print("UnitRoster", "_ready start")
 	var bg_style = StyleBoxFlat.new()
 	bg_style.bg_color = Color(0.1, 0.1, 0.15, 0.95)
 	add_theme_stylebox_override("panel", bg_style)
@@ -32,12 +33,22 @@ func _ready() -> void:
 	%Title.add_theme_color_override("font_color", Color(1.0, 0.9, 0.6))
 	detail_title.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0))
 
+	Helpers.validate_nodes("UnitRoster", {
+		tree = tree, detail_title = detail_title, detail_info = detail_info,
+		detail_list = detail_list, repair_section = repair_section, repair_label = repair_label,
+		assign_tech_button = assign_tech_button, unassign_tech_button = unassign_tech_button,
+		close_button = close_button
+	})
+
 	close_button.pressed.connect(_on_close)
 	tree.item_selected.connect(_on_tree_selected)
 	assign_tech_button.pressed.connect(_on_assign_tech)
 	unassign_tech_button.pressed.connect(_on_unassign_tech)
 
+	Helpers.debug_print("UnitRoster", "_ready done")
+
 func populate_tree() -> void:
+	Helpers.debug_print("UnitRoster", "populate_tree org_units=" + str(GameState.player.organizational_units.size()))
 	tree.clear()
 	var root = tree.create_item()
 	root.set_text(0, GameState.player.unit_name)

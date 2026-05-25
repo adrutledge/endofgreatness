@@ -55,12 +55,14 @@ Plan: `ai/plan.md`
 - [x] Daily burn rate breakdown (salaries, maintenance, berthing, overhead)
 - [x] Monthly bills, base_coverage during contracts
 - [~] buy_item missing faction parameter from plan
-- [~] No transport cost line item
+- [x] Transport cost line item in daily burn rate (zero default — no Dropship/Jumpship ownership)
+- [x] UnitTransportManager with CO abstract unit transport costs (5,000 CSB/ton DropShip, 10,000 CSB/ton/jump JumpShip)
+- [x] Unit transport cost methods: single unit, fleet, one-way, round-trip, between named systems
 - [x] Logistics panel UI with deliveries, local/remote market, unit purchasing
 - [x] Flat per-jump transport cost (5,000 CSB/jump) for remote orders, config toggle
 - [x] spares_config.json with auto-reorder, per-unit inventory, transport cost toggles
 - [x] Reorder-to-minimum: dispatches from global stores first, then local market, then remote
-- [~] Berthing fees always 0 (no dropship/jumpship tracking)
+- [x] Berthing fees waived by design (no player dropship/jumpship ownership in this version)
 
 ### P1.3 — Reputation System
 - [x] global_reputation + faction_reputation
@@ -136,6 +138,17 @@ Plan: `ai/plan.md`
 - [x] P3.6.5: MechLab UI with Refit/Design/Repair tabs
 - [/] P3.6.6: Campaign Operations customization rules (planned in plan, not implemented)
 
+### V1 Design — Home Base & Logistics
+- [x] Player home base is **Galatea** (mercenary hub, full tech facilities)
+- [x] Global inventory (`GameState.player_inventory`) is physically on Galatea
+- [x] Units not deployed to a contract are stationed at Galatea
+- [x] `home_base` field on `StrategicUnit` (default "Galatea")
+- [x] Starting `current_planet` set to Galatea regardless of faction origin
+- [ ] Market represents Galatea mercenary exchange (faction-neutral, broad selection)
+- [ ] Remote sourcing (InterstellarOrderManager) searches from Galatea
+- [ ] Tech facility level on Galatea = "advanced" (no facility gating for repairs/refits)
+- [ ] Deployed units' `current_planet` tracks their contract planet
+
 ### P3.7 — Initial Strategic Unit Generator
 - [x] StrategicUnitGenerator.gd
 - [x] RATParser.gd
@@ -153,6 +166,8 @@ Plan: `ai/plan.md`
 - [~] Reorder-to-minimum dispatches from global first, then buys/orders
 - [ ] Allocation UI with per-component pickers at deploy time
 - [ ] Auto-allocate defaults button
+- [ ] Operational logistics difficulty: assault/raid contracts require logistics roll, gated by config toggle
+- [ ] Independent command + logistics difficulty: no employer market on-planet
 - [ ] Auto-reorder timer (per-tick check)
 - [ ] Fund gate badge on HUD
 - [ ] Deduction/Recovery/In-transit tracking
@@ -194,5 +209,5 @@ Key next work items by phase:
 - P4: Planetary hex map and operational actions
 - P5: Rules engine architecture
 - P6.1-3,6.5: Tactical map, combat flow, AI
-- P7.2: HUD status badges (auto-reorder suspended, unattended injured, HR shortage)
+- P7.2: HUD status badges (auto-reorder suspended, unattended injured, HR shortage, pending tactical engagements)
 - P8: Save/load system
