@@ -233,7 +233,7 @@ func _component_type_color(comp_name: String) -> Color:
 	if lower in ["life support"]:
 		return Color(0.6, 0.25, 0.4)
 	if lower in ["sensors"]:
-		return Color(0.25, 0.35, 0.35)
+		return Color(0.2, 0.25, 0.3)
 	if lower in ["cockpit"]:
 		return Color(0.85, 0.2, 0.65)
 	if lower in ["engine", "fusion engine"]:
