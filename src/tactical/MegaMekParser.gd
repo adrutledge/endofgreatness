@@ -132,6 +132,7 @@ static func parse_mtf(file_path: String, component_defs: Dictionary = {}) -> Tac
 		cl.location_name = ld.name
 		cl.hit_chance = ld.hit_chance
 		cl.armor = ld.armor
+		cl.rear_armor = ld.get("rear_armor", 0)
 		cl.structure = ld.structure
 		cl.max_armor = ld.armor
 		cl.max_structure = ld.structure
@@ -596,8 +597,8 @@ static func _build_location_data(tonnage: float, armor_values: Dictionary) -> Di
 	var result: Dictionary = {}
 	var t = max(1.0, tonnage)
 
-	var structure_ct = int(ceil(t / 5.0)) + 8
-	var structure_st = int(ceil(t / 5.0)) + 8
+	var structure_ct = int(round(t / 3.2))
+	var structure_st = int(round(t / 3.2))
 	var structure_arm = max(3, int(ceil(t / 10.0)) + 4)
 	var structure_leg = max(3, int(ceil(t / 10.0)) + 8)
 
@@ -634,14 +635,22 @@ static func _build_location_data(tonnage: float, armor_values: Dictionary) -> Di
 		"Right Leg": structure_leg,
 	}
 
+	var rear_keys = {
+		"Center Torso": "rtc armor",
+		"Left Torso": "rtl armor",
+		"Right Torso": "rtr armor",
+	}
+
 	for display_name in armor_keys:
 		var ak = armor_keys[display_name]
 		var armor = armor_values.get(ak, 0)
+		var rear = armor_values.get(rear_keys.get(display_name, ""), 0)
 		var structure = struct_map[display_name]
 		var hc = hit_chances[display_name]
 		result[display_name] = {
 			"name": display_name,
 			"armor": armor,
+			"rear_armor": rear,
 			"structure": structure,
 			"hit_chance": hc,
 		}

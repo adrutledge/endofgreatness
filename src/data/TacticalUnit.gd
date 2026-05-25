@@ -139,6 +139,34 @@ func validate_tm() -> Dictionary:
 		if engine_rating != expected_rating:
 			errors.append("Engine rating mismatch: %d expected from walk %d × %dt, got %d" % [expected_rating, movement_mp, int(tonnage), engine_rating])
 
+	# --- Max armor per location ---
+	if unit_type == Enums.UnitType.MECH:
+		var is_map := {
+			"Head": 3,
+			"Center Torso": int(round(tonnage / 3.2)),
+			"Left Torso": int(round(tonnage / 3.2)),
+			"Right Torso": int(round(tonnage / 3.2)),
+			"Left Arm": max(3, int(ceil(tonnage / 10.0)) + 4),
+			"Right Arm": max(3, int(ceil(tonnage / 10.0)) + 4),
+			"Left Leg": max(3, int(ceil(tonnage / 10.0)) + 8),
+			"Right Leg": max(3, int(ceil(tonnage / 10.0)) + 8),
+		}
+		var seen: Dictionary = {}
+		for c in components:
+			if not c.location or seen.has(c.location.location_name):
+				continue
+			var loc = c.location.location_name
+			seen[loc] = true
+			var is_pts = is_map.get(loc, 0)
+			if is_pts <= 0:
+				continue
+			var max_armor = is_pts * 2
+			if loc == "Head":
+				max_armor = 9
+			var total = c.location.armor + c.location.rear_armor
+			if total > max_armor:
+				errors.append("Armor over max in %s: %d / %d" % [loc, total, max_armor])
+
 	# --- Ammo validation ---
 	if unit_type == Enums.UnitType.MECH:
 		var ammo_names: Array[String] = []
