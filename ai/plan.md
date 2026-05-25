@@ -316,8 +316,8 @@
   - Crew (`CREW` role) — 1 per mech (pilots), plus 1 spare pilot per 4 mechs, tracked as individual characters
 - **Starting inventory**: auto-calculated from generated mechs:
   - **Ammo**: 2 tons of matching ammo per ammo-using weapon (scan all generated mechs' components for ammo-fed weapons; add corresponding ammo to inventory)
-  - **Armor**: 5 armor points per ton of Standard armor (as repair stockpile), per mech
-  - **Common spares**: 1 ton each of actuators, heat sinks, and internal structure (generic, not per-mech)
+  - **Armor**: spare armor points equal to 10% of total armor points across all generated mechs (for repair stockpile)
+  - **Common spares**: spare components equal to 10% of total component count across all generated mechs, by type (actuators, heat sinks, structure, etc.), minimum 1 of each type that appears in any mech
   - All purchased from starting float at market rates
 - **Starting organizational structure**:
   - Player `StrategicUnit` created
