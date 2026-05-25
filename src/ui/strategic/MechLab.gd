@@ -1214,8 +1214,6 @@ func _refresh_paper_doll() -> void:
 		var struct_info = _match_structural_component(cname)
 		if struct_info and struct_info.loc == loc_name:
 			var idxs = struct_info.indices
-			var n_struct = idxs.size()
-			var placed := 0
 			for idx in idxs:
 				if idx < 0 or idx >= slots.size():
 					continue
@@ -1225,29 +1223,14 @@ func _refresh_paper_doll() -> void:
 				var col = _component_type_color(c.component_name)
 				var style = StyleBoxFlat.new()
 				style.bg_color = col
-				if n_struct > 1:
-					style.border_width_left = 3 if placed == 0 else 0
-					style.border_width_right = 3 if placed == n_struct - 1 else 0
-					style.border_width_top = 3
-					style.border_width_bottom = 3
-					style.border_color = Color(1, 1, 1)
-				else:
-					style.border_width_bottom = 1
-					style.border_color = Color(0.2, 0.2, 0.25)
+				style.border_width_bottom = 1
+				style.border_color = Color(0.2, 0.2, 0.25)
 				btn.add_theme_stylebox_override("normal", style)
 				var hover = StyleBoxFlat.new()
 				hover.bg_color = col * 1.3
-				if n_struct > 1:
-					hover.border_width_left = 3 if placed == 0 else 0
-					hover.border_width_right = 3 if placed == n_struct - 1 else 0
-					hover.border_width_top = 3
-					hover.border_width_bottom = 3
-					hover.border_color = Color(1, 1, 1)
-				else:
-					hover.border_width_bottom = 1
-					hover.border_color = Color(0.4, 0.4, 0.45)
+				hover.border_width_bottom = 1
+				hover.border_color = Color(0.4, 0.4, 0.45)
 				btn.add_theme_stylebox_override("hover", hover)
-				placed += 1
 			continue
 
 		var available = _available_slot_indices.get(loc_name, [])
