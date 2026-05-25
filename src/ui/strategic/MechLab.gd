@@ -393,21 +393,6 @@ func _build_components_tab() -> void:
 	split.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	components_tab.add_child(split)
 
-	var browser_vb = VBoxContainer.new()
-	browser_vb.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	split.add_child(browser_vb)
-
-	var browser_title = Label.new()
-	browser_title.text = "All Components"
-	browser_title.add_theme_font_size_override("font_size", 13)
-	browser_vb.add_child(browser_title)
-
-	component_browser_list = ItemList.new()
-	component_browser_list.name = "ComponentBrowserList"
-	component_browser_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	component_browser_list.item_selected.connect(_on_browser_selected)
-	browser_vb.add_child(component_browser_list)
-
 	var current_vb = VBoxContainer.new()
 	current_vb.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	split.add_child(current_vb)
@@ -463,6 +448,21 @@ func _build_components_tab() -> void:
 	current_components_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	current_components_list.item_selected.connect(_on_current_comp_selected)
 	current_vb.add_child(current_components_list)
+
+	var browser_vb = VBoxContainer.new()
+	browser_vb.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	split.add_child(browser_vb)
+
+	var browser_title = Label.new()
+	browser_title.text = "All Components"
+	browser_title.add_theme_font_size_override("font_size", 13)
+	browser_vb.add_child(browser_title)
+
+	component_browser_list = ItemList.new()
+	component_browser_list.name = "ComponentBrowserList"
+	component_browser_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	component_browser_list.item_selected.connect(_on_browser_selected)
+	browser_vb.add_child(component_browser_list)
 
 	var action_bar = HBoxContainer.new()
 	action_bar.alignment = BoxContainer.ALIGNMENT_CENTER
