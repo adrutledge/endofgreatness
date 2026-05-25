@@ -1404,33 +1404,9 @@ func _paper_doll_add_pending_change(action: String, current: String, new_comp: S
 
 func _classify_component(name: String) -> String:
 	var def = DataManager.component_defs.get(name)
-	if def:
-		var ct = def.get("component_type", "")
-		if ct:
-			return ct
-	var n = name.to_lower()
-	if "ammo" in n:
-		return "ammo"
-	if "autocannon" in n or "ac/" in n:
-		return "weapon"
-	if "laser" in n or "ppc" in n or "lrm" in n or "srm" in n or "flamer" in n or "gauss" in n or "rifle" in n:
-		return "weapon"
-	if "engine" in n:
-		return "engine"
-	if "gyro" in n:
-		return "gyro"
-	if "structure" in n or "endo" in n:
-		return "structure"
-	if "armor" in n or "ferro" in n:
-		return "armor"
-	if "sensors" in n or "ecm" in n or "probe" in n or "communications" in n:
-		return "electronics"
-	if "jump" in n:
-		return "jump_jet"
-	if "heat" in n:
-		return "heat_sink"
-	if "cockpit" in n or "life support" in n:
-		return "cockpit"
+	var ct = def.get("component_type", "") if def else ""
+	if ct:
+		return ct
 	return "other"
 	if "actuator" in n:
 		return "other"
