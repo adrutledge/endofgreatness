@@ -324,7 +324,7 @@
 - **Starting organizational structure**:
   - Player `StrategicUnit` created
   - One `OrganizationalUnit` (mercenary company name)
-   - One `OperationalUnit` per lance (4 mechs), nested under the organizational unit
+  - One `OperationalUnit` per lance (4 mechs), nested under the organizational unit
 - **C-Bill expenditure**: purchase the initial mechs and equipment from the float at base cost (component/unit `cost` field); remaining float = `roll − purchase_cost` (subject to floor)
 - **Integration**: called by Main Menu `New Game` flow before entering strategic layer; writes generated state into `GameState`
 - **Tests**: `tests/test_strategic_unit_generator.gd` — verify generated force has correct mech count, personnel ratios (HR capacity covers tracked staff, 1 tech per mech, 6 medics per doctor, etc.), commander/XO/lance commander flags, C-Bill float within expected range, and inventory matches mech equipment
@@ -570,28 +570,28 @@ Wire layers together, event system, lore accuracy, tests, polish.
 
 ## Key Files Summary
 
-| File                               | Purpose                          |
-| ---------------------------------- | -------------------------------- |
-| `src/core/GameState.gd`            | Central game state resource      |
-| `src/core/EventBus.gd`             | Signal-based event communication |
-| `src/core/TimeManager.gd`          | Calendar, ticks, pause           |
-| `src/systems/EconomySystem.gd`     | C-Bills, market, costs           |
-| `src/systems/ReputationSystem.gd`  | Global + faction reputation      |
-| `src/systems/PersonnelManager.gd`  | Hire/fire/injure/heal            |
+| File                               | Purpose                                   |
+| ---------------------------------- | ----------------------------------------- |
+| `src/core/GameState.gd`            | Central game state resource               |
+| `src/core/EventBus.gd`             | Signal-based event communication          |
+| `src/core/TimeManager.gd`          | Calendar, ticks, pause                    |
+| `src/systems/EconomySystem.gd`     | C-Bills, market, costs                    |
+| `src/systems/ReputationSystem.gd`  | Global + faction reputation               |
+| `src/systems/PersonnelManager.gd`  | Hire/fire/injure/heal                     |
 | `src/systems/TechManualRules.gd`   | TM construction, refit, validation engine |
-| `src/systems/RefitManager.gd`      | Active refit order processing    |
-| `src/systems/RulesEngine.gd`       | Flexible combat rules engine     |
-| `src/systems/MegaMekParser.gd`     | Parse .mtf files                 |
-| `src/systems/ContractGenerator.gd` | Generate contracts               |
-| `src/systems/TacticalAI.gd`        | Enemy tactical AI                |
-| `src/systems/SaveManager.gd`       | Save/load serialization          |
-| `src/data/*.gd`                    | Resource class definitions       |
-| `src/strategic/StarMap.gd`         | Strategic layer controller       |
-| `src/operational/PlanetaryMap.gd`  | Operational layer controller     |
-| `src/tactical/TacticalMap.gd`      | Tactical layer controller        |
-| `src/ui/`                          | All UI scenes and scripts        |
-| `data/factions/*.json`             | Faction definitions              |
-| `data/units/*.mtf`                 | MegaMek unit files               |
-| `data/starmap.json`                | Star system coordinates          |
-| `data/timeline_events.json`        | Lore timeline                    |
-| `house_rules.json`                 | Configurable rule toggles        |
+| `src/systems/RefitManager.gd`      | Active refit order processing             |
+| `src/systems/RulesEngine.gd`       | Flexible combat rules engine              |
+| `src/systems/MegaMekParser.gd`     | Parse .mtf files                          |
+| `src/systems/ContractGenerator.gd` | Generate contracts                        |
+| `src/systems/TacticalAI.gd`        | Enemy tactical AI                         |
+| `src/systems/SaveManager.gd`       | Save/load serialization                   |
+| `src/data/*.gd`                    | Resource class definitions                |
+| `src/strategic/StarMap.gd`         | Strategic layer controller                |
+| `src/operational/PlanetaryMap.gd`  | Operational layer controller              |
+| `src/tactical/TacticalMap.gd`      | Tactical layer controller                 |
+| `src/ui/`                          | All UI scenes and scripts                 |
+| `data/factions/*.json`             | Faction definitions                       |
+| `data/units/*.mtf`                 | MegaMek unit files                        |
+| `data/starmap.json`                | Star system coordinates                   |
+| `data/timeline_events.json`        | Lore timeline                             |
+| `house_rules.json`                 | Configurable rule toggles                 |
