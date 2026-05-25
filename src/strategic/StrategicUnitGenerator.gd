@@ -270,8 +270,10 @@ func _roll_starting_float() -> int:
 func _generate_mechs(rat_data: Dictionary, count: int) -> Array[TacticalUnit]:
 	var result: Array[TacticalUnit] = []
 	var weight_classes = ["Light", "Medium", "Heavy", "Assault"]
+	var attempts = 0
 
-	for i in range(count):
+	while result.size() < count and attempts < count * 20:
+		attempts += 1
 		var wc = weight_classes[randi() % weight_classes.size()]
 		var chassis_name = _get_rat_parser().roll_on_table(rat_data, wc)
 		if chassis_name.is_empty():
@@ -280,6 +282,9 @@ func _generate_mechs(rat_data: Dictionary, count: int) -> Array[TacticalUnit]:
 		var dm = _get_dm()
 		var template = dm.unit_templates.get(chassis_name) if dm else null
 		if template == null:
+			continue
+
+		if template.rules_level > 2:
 			continue
 
 		var unit = _deep_copy_unit(template)
@@ -312,6 +317,7 @@ func _deep_copy_unit(source: TacticalUnit) -> TacticalUnit:
 	unit.jump_mp = source.jump_mp
 	unit.motion_type = source.motion_type
 	unit.abstract_crew_count = source.abstract_crew_count
+	unit.rules_level = source.rules_level
 
 	for c in source.components:
 		var copy = Component.new()
@@ -736,14 +742,57 @@ func _build_organization(company_name: String, mechs: Array[TacticalUnit],
 	var org_unit = OrganizationalUnit.new()
 	org_unit.unit_name = company_name
 
-	var lance_size = 4
 	var current_lance = 0
 	var ops: Array[OperationalUnit] = []
 
-	for i in range(0, mechs.size(), lance_size):
-		var lance_mechs = mechs.slice(i, min(i + lance_size, mechs.size()))
-		if lance_mechs.is_empty():
-			continue
+	var speed_groups = { "Light": [], "Medium": [], "Heavy": [], "Assault": [] }
+	for mech in mechs:
+		var mp = mech.movement_mp
+		if mp >= 6:
+			speed_groups["Light"].append(mech)
+		elif mp >= 4:
+			speed_groups["Medium"].append(mech)
+		elif mp >= 3:
+			speed_groups["Heavy"].append(mech)
+		else:
+			speed_groups["Assault"].append(mech)
+
+	var categories = ["Light", "Medium", "Heavy", "Assault"]
+
+	while true:
+		var best_idx = -1
+		var best_count = 0
+		for i in range(categories.size()):
+			var c = speed_groups[categories[i]].size()
+			if c > best_count:
+				best_count = c
+				best_idx = i
+
+		if best_idx == -1 or best_count == 0:
+			break
+
+		var lance_mechs: Array[TacticalUnit] = []
+		var cat_name = categories[best_idx]
+		var take = mini(4, speed_groups[cat_name].size())
+		for _t in range(take):
+			lance_mechs.append(speed_groups[cat_name].pop_front())
+
+		var remaining = 4 - lance_mechs.size()
+		if remaining > 0:
+			var order: Array[int] = []
+			for d in range(1, categories.size()):
+				if best_idx - d >= 0:
+					order.append(best_idx - d)
+				if best_idx + d < categories.size():
+					order.append(best_idx + d)
+			for ni in order:
+				if remaining <= 0:
+					break
+				var n_name = categories[ni]
+				var fill = mini(remaining, speed_groups[n_name].size())
+				for _f in range(fill):
+					lance_mechs.append(speed_groups[n_name].pop_front())
+				remaining -= fill
 
 		var ou = OperationalUnit.new()
 		ou.unit_name = "%s Lance %d" % [company_name, current_lance + 1]
