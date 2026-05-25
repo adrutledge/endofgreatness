@@ -126,7 +126,7 @@
 - `data/components/` — JSON per component: name, tonnage, critical_slots, cost, tech_base, quality_range, repair_difficulty, heat_generated, ammo_type, allowed_locations[], minimum_tech_rating
 - Component JSON extended with fields needed for TechManual construction: `engine_rating_required`, `gyro_compatible`, `structure_type`, `armor_points_per_ton`, `suspension_factor_override`
 - `data/units/` — MegaMek `.mtf` files for all stock units
-- `data/rat/` — Xotl d1000 Random Assignment Tables (RATs) for mech selection by faction/era (3025); faction-specific unit lists omitted — no faction-unique units in 3025
+- `data/rat/` — Xotl d1000 Random Assignment Tables (RATs) for mech selection by faction/era (3025); Inner Sphere houses (FedSuns, Lyran, FWL, DC, Capellan), Periphery states (Magistracy, Taurian, Outworlds, Marian), Inner Sphere General, and Mercenary; faction-specific unit lists omitted — no faction-unique units in 3025
 
 ### P2.3 — Star Map Data
 
