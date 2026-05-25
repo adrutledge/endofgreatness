@@ -1,6 +1,6 @@
 # Implementation Status
 
-Generated: 3025-05-25 (updated per commit 69b587d)
+Generated: 3025-05-25 (updated per commit ca372d1)
 Plan: `ai/plan.md`
 
 ---
@@ -134,6 +134,7 @@ Plan: `ai/plan.md`
 
 ### P3.2 — Strategic Actions UI
 - [x] Sidebar with screens: PersonnelManagement, UnitRoster, LogisticsPanel, ContractBoard, OrganizationManagement, EventLog, MechLab
+- [x] Sidebar auto-pop-out on cursor proximity (30px edge margin), 300px wide, 0.15s slide animation
 
 ### P3.3 — Contract Generation
 - [x] ContractGenerator.gd with 6 activity types, duration, payment scaling, command rights, min unit counts
