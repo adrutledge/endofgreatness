@@ -9,5 +9,6 @@
     "max": 3
   },
   "repair_difficulty": 3,
-  "component_type": "other"
+  "component_type": "other",
+  "protected": true
 }

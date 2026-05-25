@@ -9,5 +9,6 @@
     "max": 3
   },
   "repair_difficulty": 2,
-  "component_type": "armor"
+  "component_type": "armor",
+  "protected": true
 }
