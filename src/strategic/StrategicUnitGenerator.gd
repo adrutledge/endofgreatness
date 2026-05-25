@@ -17,19 +17,11 @@ func _get_rat_parser():
 	return _RATParser
 
 func _get_gs():
-	if _GameState == null:
-		var ml = Engine.get_main_loop() as SceneTree
-		if ml and ml.root:
-			_GameState = ml.root.get_node_or_null("/root/GameState") as Node
-	return _GameState
+	return GameState
 
 
 func _get_dm():
-	if _DataManager == null:
-		var ml = Engine.get_main_loop() as SceneTree
-		if ml and ml.root:
-			_DataManager = ml.root.get_node_or_null("/root/DataManager") as Node
-	return _DataManager
+	return DataManager
 
 
 func _get_pm():
@@ -183,18 +175,15 @@ func generate(faction_code: String, company_name: String = "", mech_count: int =
 	all_personnel.append_array(admin_staff)
 	all_personnel.append(doctor)
 
-	var pm = _get_pm()
 	for p in all_personnel:
 		p.is_founder = true
 		p.originating_faction = faction_code
 		p.home_system = home_world
 		p.home_planet = home_world
-		if pm:
-			pm.personnel_roster.append(p)
+		PersonnelManager.personnel_roster.append(p)
 
-	if pm:
-		pm.abstract_astech_count += abstract_astechs
-		pm.abstract_medic_count += abstract_medics
+	PersonnelManager.abstract_astech_count += abstract_astechs
+	PersonnelManager.abstract_medic_count += abstract_medics
 
 		var lance_size = 4
 		for lance_start in range(0, mechs.size(), lance_size):
@@ -291,10 +280,6 @@ func _generate_mechs(rat_data: Dictionary, count: int) -> Array[TacticalUnit]:
 
 		var unit = _deep_copy_unit(template)
 		unit.quality = _random_quality()
-
-		if randi() % 3 == 0:
-			_randomize_component_condition(unit)
-
 		result.append(unit)
 
 	return result
@@ -514,9 +499,7 @@ func _generate_technicians(mechs: Array[TacticalUnit]) -> Array[Personnel]:
 		p.skills["perception"] = randi() % 4 + 1
 
 		if i < mechs.size():
-			var pm = _get_pm()
-			if pm:
-				pm.assign_technician(p, mechs[i])
+			PersonnelManager.assign_technician(p, mechs[i])
 
 		techs.append(p)
 
@@ -799,6 +782,7 @@ func _build_organization(company_name: String, mechs: Array[TacticalUnit],
 
 		var ou = OperationalUnit.new()
 		ou.unit_name = "%s Lance %d" % [company_name, current_lance + 1]
+		lance_mechs.sort_custom(func(a, b): return a.tonnage > b.tonnage)
 		ou.tactical_units = lance_mechs
 		ou.role = "Lance"
 

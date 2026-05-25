@@ -195,6 +195,7 @@
 - Component JSON extended with fields needed for TechManual construction: `engine_rating_required`, `gyro_compatible`, `structure_type`, `armor_points_per_ton`, `suspension_factor_override`
 - `data/units/` — MegaMek `.mtf` files for all stock units
 - `data/rat/` — Xotl d1000 Random Assignment Tables (RATs) for mech selection by faction/era (3025); Inner Sphere houses (FedSuns, Lyran, FWL, DC, Capellan), Periphery states (Magistracy, Taurian, Outworlds, Marian), Inner Sphere General, and Mercenary; faction-specific unit lists omitted — no faction-unique units in 3025
+  - **TODO**: Manually enter the correct Xotl RAT data from the official 3028-3057 PDF (sourced from bg.battletech.com forums); the auto-generated data on disk has been stripped of post-3025 mechs but the d1000 distributions and 'Salvage:' entries need manual verification against the PDF tables to ensure accuracy; cross-reference with Faction Lists in the PDF for correct Availability ratings per faction
 
 ### P2.3 — Star Map Data
 
