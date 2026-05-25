@@ -800,18 +800,6 @@ static func _compute_def_weight(def: Dictionary, context: Dictionary, component_
 			return wc.get("value", def.get("tonnage", 0.0))
 
 
-static func _get_json_critical_slots(name: String, defs: Dictionary) -> int:
-	if defs.has(name):
-		return defs[name].get("critical_slots", 1)
-	return 1
-
-
-static func _get_json_tonnage(name: String, defs: Dictionary) -> float:
-	if defs.has(name):
-		return defs[name].get("tonnage", 0.0)
-	return 0.0
-
-
 static func _is_engine_component_name(name: String) -> bool:
 	var lower = name.to_lower()
 	var prefixes = ["fusion engine", "xl engine", "light engine", "compact engine", "xxl engine", "heavy engine", "ice engine", "fuel cell engine"]
