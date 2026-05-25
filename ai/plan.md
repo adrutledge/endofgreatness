@@ -314,7 +314,7 @@
   - 1 Doctor (`DOCTOR` role)
   - Technicians (`TECHNICIAN` role) — 1 per mech, tracked as individual characters
   - Astechs (`ASTECH` role) — 2 per technician, tracked as abstract pool (count only, no stats/skills/relationships)
-  - Medics — tracked as abstract pool (count only), 6 per doctor
+  - Medics (`MEDIC` role) — tracked as abstract pool (count only), 6 per doctor
   - Crew (`CREW` role) — 1 per mech (pilots), plus 1 spare pilot per 4 mechs, tracked as individual characters
 - **Starting inventory**: auto-calculated from generated mechs:
   - **Ammo**: 2 tons of matching ammo per ammo-using weapon (scan all generated mechs' components for ammo-fed weapons; add corresponding ammo to inventory)
