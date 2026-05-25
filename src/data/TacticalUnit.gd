@@ -105,6 +105,71 @@ func validate_tm() -> Dictionary:
 		errors.append("Missing engine")
 	if components.is_empty():
 		errors.append("No components")
+
+	# --- Critical slot limits per location (Mech) ---
+	if unit_type == Enums.UnitType.MECH:
+		var slot_limits := {
+			"Head": 6, "Center Torso": 12, "Left Torso": 12, "Right Torso": 12,
+			"Left Arm": 12, "Right Arm": 12, "Left Leg": 6, "Right Leg": 6,
+		}
+		var used: Dictionary = {}
+		for c in components:
+			var loc_name = "Unknown"
+			if c.location:
+				loc_name = c.location.location_name
+			var key = loc_name
+			var n = c.component_name.to_lower()
+			var slots = c.critical_slots
+			# Life Support and Sensors in the head have front/rear entries
+			# but functionally occupy 1 slot each
+			if loc_name == "Head" and (n == "life support" or n == "sensors"):
+				slots = 1
+			var was: int = used.get(key, 0)
+			used[key] = was + slots
+
+		for loc in slot_limits:
+			var max_slots = slot_limits[loc]
+			var used_slots = used.get(loc, 0)
+			if used_slots > max_slots:
+				errors.append("Slot overflow in %s: %d used / %d max" % [loc, used_slots, max_slots])
+
+	# --- Engine rating sanity ---
+	if unit_type == Enums.UnitType.MECH and movement_mp > 0 and tonnage > 0:
+		var expected_rating = int(movement_mp * tonnage)
+		if engine_rating != expected_rating:
+			errors.append("Engine rating mismatch: %d expected from walk %d × %dt, got %d" % [expected_rating, movement_mp, int(tonnage), engine_rating])
+
+	# --- Ammo validation ---
+	if unit_type == Enums.UnitType.MECH:
+		var ammo_names: Array[String] = []
+		var weapon_names: Array[String] = []
+		for c in components:
+			var n = c.component_name
+			if _is_ammo(n):
+				ammo_names.append(_ammo_base_weapon(n))
+			elif _is_ammo_weapon(n):
+				weapon_names.append(n)
+		for wn in weapon_names:
+			var base = _ammo_base_weapon(wn)
+			if base != "" and base not in ammo_names:
+				errors.append("Missing ammo for %s" % wn)
+
+	# --- Gyro present for mechs ---
+	if unit_type == Enums.UnitType.MECH:
+		var has_gyro := false
+		for c in components:
+			if c.component_name == "Gyroscope":
+				has_gyro = true
+				break
+		if not has_gyro:
+			errors.append("Missing gyroscope")
+
+	# --- Heat sink adequacy ---
+	if unit_type == Enums.UnitType.MECH:
+		var free_hs = get_weight_free_heat_sink_count()
+		if heat_sink_count < free_hs:
+			errors.append("Too few heat sinks: %d, minimum %d from engine" % [heat_sink_count, free_hs])
+
 	return {
 		"valid": errors.is_empty(),
 		"errors": errors,
@@ -115,6 +180,67 @@ func validate_tm() -> Dictionary:
 		"structure_tonnage": structure_weight,
 		"hs_adjustment": hs_adj,
 	}
+
+
+static func _is_ammo(name: String) -> bool:
+	var n = name.to_lower()
+	return "ammo" in n
+
+
+static func _is_ammo_weapon(name: String) -> bool:
+	var n = name.to_lower()
+	# Ammo-using weapon types: autocannon, LRM, SRM, LRT, SRT, MG, Flamer (vehicle),
+	# plus specific weapon patterns
+	var patterns = ["autocannon/", "lrm-", "srm-", "lrt-", "srt-", "machine gun"]
+	for p in patterns:
+		if n.begins_with(p):
+			return true
+	# Also check if the component def has ammo_type field (from JSON)
+	return false
+
+
+static func _ammo_base_weapon(name: String) -> String:
+	var n = name.to_lower().strip_edges()
+	# Strip (R) suffix
+	if n.ends_with(" (r)"):
+		n = n.substr(0, n.length() - 4).strip_edges()
+
+	# Direct ammo name → base weapon mapping
+	var ammo_map := {
+		"is ammo ac/2": "Autocannon/2",
+		"is ammo ac/5": "Autocannon/5",
+		"is ammo ac/10": "Autocannon/10",
+		"is ammo ac/20": "Autocannon/20",
+		"is ammo lrm-5": "LRM-5",
+		"is ammo lrm-10": "LRM-10",
+		"is ammo lrm-15": "LRM-15",
+		"is ammo lrm-20": "LRM-20",
+		"is ammo srm-2": "SRM-2",
+		"is ammo srm-4": "SRM-4",
+		"is ammo srm-6": "SRM-6",
+		"machine gun ammo": "Machine Gun",
+		"machine gun ammo - half": "Machine Gun",
+		"srt-6 ammo": "SRT-6",
+		"lrt-5 ammo": "LRT-5",
+		"lrt-10 ammo": "LRT-10",
+		"lrt-15 ammo": "LRT-15",
+		"lrt-20 ammo": "LRT-20",
+		"vehicle flamer ammo": "Vehicle Flamer",
+	}
+
+	if n in ammo_map:
+		return ammo_map[n]
+
+	# For weapon names (not ammo), extract the base weapon name
+	# e.g., "Autocannon/5" → "Autocannon/5"
+	if _is_ammo_weapon(name):
+		# Already a weapon name, extract base
+		for prefix in ["autocannon/", "lrm-", "srm-", "lrt-", "srt-"]:
+			if n.begins_with(prefix):
+				return name  # Return original case
+		if n == "machine gun" or n == "machine gun (vehicle)":
+			return "Machine Gun"
+	return ""
 
 func calculate_tm_cost() -> int:
 	var component_total = 0
