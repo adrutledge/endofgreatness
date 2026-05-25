@@ -1047,6 +1047,19 @@ var _available_slot_indices: Dictionary = {}
 var _structural_component_map: Dictionary = {}
 
 
+func _match_structural_component(cname_lower: String) -> Dictionary:
+	for key in _structural_component_map:
+		var info = _structural_component_map[key]
+		var match_type = info.get("match", "exact")
+		if match_type == "contains":
+			if key in cname_lower or cname_lower in key:
+				return info
+		else:
+			if cname_lower == key:
+				return info
+	return {}
+
+
 func _init_fixed_slots() -> void:
 	_fixed_slots["Head"] = {0: "Life Support", 1: "Sensors", 2: "Cockpit", 4: "Sensors", 5: "Life Support"}
 	_fixed_slots["Center Torso"] = {}
@@ -1058,11 +1071,11 @@ func _init_fixed_slots() -> void:
 		_fixed_slots["Center Torso"][i] = "Engine"
 
 	_structural_component_map = {
-		"engine": { "loc": "Center Torso", "indices": [0, 1, 2, 7, 8, 9] },
-		"gyro": { "loc": "Center Torso", "indices": [3, 4, 5, 6] },
-		"cockpit": { "loc": "Head", "indices": [2] },
-		"sensors": { "loc": "Head", "indices": [1, 4] },
-		"life support": { "loc": "Head", "indices": [0, 5] },
+		"engine": { "loc": "Center Torso", "indices": [0, 1, 2, 7, 8, 9], "match": "contains" },
+		"gyro": { "loc": "Center Torso", "indices": [3, 4, 5, 6], "match": "contains" },
+		"cockpit": { "loc": "Head", "indices": [2], "match": "contains" },
+		"sensors": { "loc": "Head", "indices": [1, 4], "match": "exact" },
+		"life support": { "loc": "Head", "indices": [0, 5], "match": "contains" },
 	}
 
 	_available_slot_indices["Head"] = [3]
@@ -1143,7 +1156,7 @@ func _refresh_paper_doll() -> void:
 		var slots = paper_doll_slot_map[loc_name]
 		var cname = c.component_name.to_lower()
 
-		var struct_info = _structural_component_map.get(cname)
+		var struct_info = _match_structural_component(cname)
 		if struct_info and struct_info.loc == loc_name:
 			var idxs = struct_info.indices
 			var placed := 0
