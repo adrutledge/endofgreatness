@@ -3,6 +3,8 @@ extends Node
 var personnel_roster: Array[Personnel] = []
 var personnel_relationships: Dictionary = {}
 var hiring_halls: Dictionary = {}
+var abstract_astech_count: int = 0
+var abstract_medic_count: int = 0
 
 const SPECIALIZATIONS: Array[String] = ["Mech", "Vehicle", "Aerospace"]
 
@@ -349,3 +351,26 @@ func get_doctor_available_capacity(doctor: Personnel) -> int:
 	if doctor.role != Enums.PersonnelRole.DOCTOR:
 		return 0
 	return max(0, doctor.patient_capacity - doctor.patients_assigned.size())
+
+
+func get_abstract_salary_cost() -> int:
+	# Astechs paid at ASTECH rate, medics at MEDIC rate
+	var cost := 0
+	cost += abstract_astech_count * get_role_daily_salary(Enums.PersonnelRole.ASTECH)
+	cost += abstract_medic_count * get_role_daily_salary(Enums.PersonnelRole.MEDIC)
+	return cost
+
+
+func get_role_daily_salary(role: Enums.PersonnelRole) -> int:
+	match role:
+		Enums.PersonnelRole.ASTECH:
+			return 50
+		Enums.PersonnelRole.MEDIC:
+			return 80
+		Enums.PersonnelRole.CREW:
+			return 60
+		Enums.PersonnelRole.TECHNICIAN:
+			return 90
+		_:
+			return 0
+

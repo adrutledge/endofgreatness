@@ -108,6 +108,8 @@ func get_daily_burn_rate() -> Dictionary:
 	for ou in GameState.player.organizational_units:
 		for tu in ou.get_all_tactical_units():
 			breakdown.maintenance += tu.components.size() * 5
+			breakdown.salaries += tu.abstract_crew_count * 60
+	breakdown.salaries += PersonnelManager.get_abstract_salary_cost()
 	breakdown.overhead = GameState.player.organizational_units.size() * 50
 	total = breakdown.salaries + breakdown.maintenance + breakdown.berthing + breakdown.overhead
 	return {
