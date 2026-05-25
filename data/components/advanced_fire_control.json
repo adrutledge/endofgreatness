@@ -9,5 +9,6 @@
     "max": 4
   },
   "repair_difficulty": 3,
-  "component_type": "electronics"
+  "component_type": "electronics",
+  "vehicle_only": true
 }

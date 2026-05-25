@@ -9,5 +9,6 @@
     "max": 5
   },
   "repair_difficulty": 1,
-  "component_type": "ammo"
+  "component_type": "ammo",
+  "vehicle_only": true
 }
