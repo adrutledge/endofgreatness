@@ -1,0 +1,13 @@
+{
+  "ammo_tons_per_weapon": 2,
+  "armor_percent_of_total": 0.10,
+  "spares_percent_of_total": 0.10,
+  "ammo_armor_and_spares_tonnage_warning_threshold": 0.10,
+  "auto_reorder_enabled": false,
+  "auto_reorder_min_stock": 0,
+  "auto_reorder_target_stock": 0,
+  "auto_reorder_max_cost_per_order": 500000,
+  "auto_reorder_min_balance": 100000,
+  "per_unit_inventory_enabled": false,
+  "remote_transport_cost_enabled": true
+}

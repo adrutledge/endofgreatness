@@ -4,6 +4,11 @@ extends Node
 const MAX_JUMP_RANGE: float = 30.0
 const TRANSIT_DAYS: int = 7
 
+## Flat per-jump cargo shipping cost. Small items ride commercial shipping
+## (DropShip cargo manifest on scheduled runs), not a dedicated vessel.
+## Orders of magnitude cheaper than unit transport (no dedicated JumpShip).
+const TRANSPORT_COST_PER_JUMP: int = 5000
+
 const SPECTRAL_RECHARGE_HOURS: Dictionary = {
 	"O": 75, "B": 85, "A": 110, "F": 130,
 	"G": 175, "K": 210, "M": 270
@@ -14,6 +19,13 @@ func search_nearby_systems(origin_system: String, item_name: String, max_jumps: 
 	var origin_data = DataManager.systems_data.get(origin_system)
 	if not origin_data:
 		return results
+
+	var transport_enabled := true
+	var cfg_file = FileAccess.open("res://data/config/spares_config.json", FileAccess.READ)
+	if cfg_file:
+		var j = JSON.new()
+		if j.parse(cfg_file.get_as_text()) == OK:
+			transport_enabled = j.data.get("remote_transport_cost_enabled", true)
 
 	var origin_coords = origin_data.get("coordinates", {})
 	var ox: float = origin_coords.get("x", 0)
@@ -40,10 +52,10 @@ func search_nearby_systems(origin_system: String, item_name: String, max_jumps: 
 		var available = _is_item_available_at(item_name, entry.name, entry.data)
 		if available:
 			var travel_days = _calculate_travel_days(origin_data, entry.data, entry.distance)
-			var markup = 1.0 + 0.1
 			var def = DataManager.component_defs.get(item_name)
 			var base_cost = def.get("cost", 1000) if def else 1000
-			var cost = int(base_cost * markup)
+			var transport_cost = TRANSPORT_COST_PER_JUMP if transport_enabled else 0
+			var cost = base_cost + transport_cost
 			results.append({
 				"source_system": entry.name,
 				"quantity": available.quantity,
@@ -57,10 +69,10 @@ func search_nearby_systems(origin_system: String, item_name: String, max_jumps: 
 		var available = _is_item_available_at(item_name, entry.name, entry.data)
 		if available:
 			var travel_days = _calculate_travel_days(origin_data, entry.data, entry.distance)
-			var markup = 1.0 + 0.2
 			var def = DataManager.component_defs.get(item_name)
 			var base_cost = def.get("cost", 1000) if def else 1000
-			var cost = int(base_cost * markup)
+			var transport_cost = TRANSPORT_COST_PER_JUMP * 2 if transport_enabled else 0
+			var cost = base_cost + transport_cost
 			results.append({
 				"source_system": entry.name,
 				"quantity": available.quantity,

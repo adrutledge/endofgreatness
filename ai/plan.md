@@ -96,6 +96,8 @@
 - Planetary market: sources inventory from factions present on the planet excluding target faction
 - Market refresh logic per strategic tick, limited supply, price variation
 - **Interstellar orders**: when buying equipment not available locally, the system searches friendly/neutral systems within jump range (max 30 ly per jump, up to 2 jumps), calculates travel time (jump recharge + transit), creates a `PendingDelivery` entry; player pays upfront, item arrives after delivery delay
+  - **Flat per-jump transport cost**: shipping small items uses commercial cargo shipping (shared DropShip manifest on scheduled runs), not a dedicated vessel; cost is a flat `TRANSPORT_COST_PER_JUMP` (default 5,000 C-Bills) per jump, added to the component's base cost — significantly cheaper than unit transport because no dedicated JumpShip or DropShip is required; `cost_per_unit = base_component_cost + TRANSPORT_COST_PER_JUMP × jumps_needed`
+  - `remote_transport_cost_enabled: bool` (default true) — when false, remote orders are priced at base component cost with no transport surcharge; configuration in `spares_config.json` under `data/config/`
 - `PendingDelivery` queue: each entry has item, quantity, source_system, destination, eta_tick, completed flag; on each strategic tick, check if eta reached and transfer to player inventory; emit `delivery_arrived` event
 - UI: market screen shows local stock and a "Surrounding Systems" tab with orderable items, delivery ETA, and price markup (surcharge for transport); active deliveries shown in a logistics panel with countdown timers
 - **Peacetime expenses**: every strategic tick when no active contract is running (or when planet-side but outside contract coverage), automatically deduct:
@@ -386,7 +388,11 @@
 
 ### P3.8 — Operational Unit Inventory Assignment
 
-- When deploying an `OperationalUnit` to a contract, the player must allocate spare parts from `GameState.player_inventory` to that operational unit's deployment cache
+- `per_unit_inventory_enabled: bool` (default false) in `spares_config.json` under `data/config/` — master toggle for the entire per-operational-unit inventory assignment system
+  - When **false** (default): deployment does not require parts allocation; all `GameState.player_inventory` is treated as a single pool accessible from any deployed unit for repairs and ammo resupply
+  - When **true**: the full allocation UI, auto-allocate, deployment cache tracking, and recovery workflows are enabled; the player must assign parts per operational unit at deployment time
+  - Settings UI toggle under "Spares & Logistics" section
+- When deploying an `OperationalUnit` to a contract, the player must allocate spare parts from `GameState.player_inventory` to that operational unit's deployment cache (if `per_unit_inventory_enabled` is true)
 - **Allocation UI**: shows each mech in the operational unit side-by-side with a per-component inventory picker:
   - For each ammo-using weapon on the mech, a spinner to assign tons of matching ammo (sourced from player inventory)
   - A spare armor points slider (in points or half-ton increments, matching the mech's armor type)
