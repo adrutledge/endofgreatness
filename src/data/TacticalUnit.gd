@@ -166,9 +166,8 @@ func validate_tm() -> Dictionary:
 
 	# --- Heat sink adequacy ---
 	if unit_type == Enums.UnitType.MECH:
-		var free_hs = get_weight_free_heat_sink_count()
-		if heat_sink_count < free_hs:
-			errors.append("Too few heat sinks: %d, minimum %d from engine" % [heat_sink_count, free_hs])
+		if heat_sink_count < 10:
+			errors.append("Too few heat sinks: %d, minimum 10" % [heat_sink_count])
 
 	return {
 		"valid": errors.is_empty(),
