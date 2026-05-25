@@ -129,6 +129,18 @@ func _setup_tabs() -> void:
 	tab_container.add_child(paper_doll_tab)
 	_build_paper_doll_tab()
 
+	_set_default_slot_name("Head", 0, "Life Support")
+	_set_default_slot_name("Head", 1, "Sensors")
+	_set_default_slot_name("Head", 2, "Cockpit")
+	_set_default_slot_name("Head", 4, "Sensors")
+	_set_default_slot_name("Head", 5, "Life Support")
+	for i in range(3):
+		_set_default_slot_name("Center Torso", i, "Engine")
+	for i in range(3, 7):
+		_set_default_slot_name("Center Torso", i, "Gyro")
+	for i in range(7, 10):
+		_set_default_slot_name("Center Torso", i, "Engine")
+
 	components_tab = VBoxContainer.new()
 	components_tab.name = "Components"
 	components_tab.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -172,11 +184,19 @@ func _build_paper_doll_tab() -> void:
 
 	var head_row = HBoxContainer.new()
 	wrapper.add_child(head_row)
-	head_row.add_child(Control.new())
-	head_row.add_child(Control.new())
-	head_row.add_child(_make_paper_doll_head())
-	head_row.add_child(Control.new())
-	head_row.add_child(Control.new())
+	var hs1 = Control.new()
+	hs1.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	head_row.add_child(hs1)
+	var hs2 = Control.new()
+	hs2.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	head_row.add_child(hs2)
+	head_row.add_child(_make_location_column("Head", 6))
+	var hs3 = Control.new()
+	hs3.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	head_row.add_child(hs3)
+	var hs4 = Control.new()
+	hs4.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	head_row.add_child(hs4)
 
 	wrapper.add_child(HSeparator.new())
 
@@ -184,7 +204,7 @@ func _build_paper_doll_tab() -> void:
 	wrapper.add_child(mid_row)
 	mid_row.add_child(_make_location_column("Left Arm", 12))
 	mid_row.add_child(_make_location_column("Left Torso", 12))
-	mid_row.add_child(_make_paper_doll_ct())
+	mid_row.add_child(_make_location_column("Center Torso", 12))
 	mid_row.add_child(_make_location_column("Right Torso", 12))
 	mid_row.add_child(_make_location_column("Right Arm", 12))
 
@@ -193,9 +213,15 @@ func _build_paper_doll_tab() -> void:
 	var leg_row = HBoxContainer.new()
 	wrapper.add_child(leg_row)
 	leg_row.add_child(_make_location_column("Left Leg", 6))
-	leg_row.add_child(Control.new())
-	leg_row.add_child(Control.new())
-	leg_row.add_child(Control.new())
+	var lsp1 = Control.new()
+	lsp1.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	leg_row.add_child(lsp1)
+	var lsp2 = Control.new()
+	lsp2.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	leg_row.add_child(lsp2)
+	var lsp3 = Control.new()
+	lsp3.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	leg_row.add_child(lsp3)
 	leg_row.add_child(_make_location_column("Right Leg", 6))
 
 	var btn_bar = HBoxContainer.new()
@@ -296,6 +322,28 @@ func _make_paper_doll_ct() -> VBoxContainer:
 		var btn = _make_slot_button("Center Torso", i, slot_name)
 		col.add_child(btn)
 	return col
+
+
+func _set_default_slot_name(location: String, slot_index: int, name: String) -> void:
+	if not paper_doll_slot_map.has(location):
+		return
+	var slots = paper_doll_slot_map[location]
+	if slot_index < 0 or slot_index >= slots.size():
+		return
+	slots[slot_index]["component"] = name
+	var btn = slots[slot_index]["button"]
+	btn.text = name
+	var c = _component_type_color(name)
+	var style = StyleBoxFlat.new()
+	style.bg_color = c
+	style.border_width_bottom = 1
+	style.border_color = Color(0.2, 0.2, 0.25)
+	btn.add_theme_stylebox_override("normal", style)
+	var hover = StyleBoxFlat.new()
+	hover.bg_color = c * 1.3
+	hover.border_width_bottom = 1
+	hover.border_color = Color(0.4, 0.4, 0.45)
+	btn.add_theme_stylebox_override("hover", hover)
 
 
 func _make_location_column(location: String, slot_count: int) -> VBoxContainer:
