@@ -112,7 +112,9 @@ Plan: `ai/plan.md`
 
 ### P2.3 — Star Map Data
 - [x] starmap.json with systems, coordinates, spectral class, planets, USILR, HPG, land_percent
-- [~] No owner_faction field on systems (derived from Faction home_worlds)
+- [x] owner_faction field on all 47 starmap systems
+- [x] ComStar faction with Terra ownership
+- [x] DataManager.load_starmap reads owner_faction; all faction derivation uses owner_faction first, falls back to home_worlds
 - [~] HPG class and USILR gameplay effects not implemented
 
 ### P2.4 — Lore Timeline

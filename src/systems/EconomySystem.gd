@@ -50,11 +50,15 @@ func initialize_market(planet_name: String, factions_present: Array[String] = []
 
 func _derive_factions_for_planet(planet_name: String) -> Array[String]:
 	var results: Array[String] = []
+	var sys_data = DataManager.systems_data.get(planet_name)
+	var owner = sys_data.get("owner_faction", "") if sys_data else ""
+	if owner and GameState.factions.has(owner):
+		results.append(owner)
 	for code in GameState.factions:
 		var f = GameState.factions[code]
-		if f.home_worlds.has(planet_name):
+		if f.home_worlds.has(planet_name) and code not in results:
 			results.append(code)
-	if results.is_empty() and DataManager.systems_data.has(planet_name):
+	if results.is_empty() and sys_data:
 		results.append("PIR")
 	return results
 

@@ -154,10 +154,14 @@ func _is_item_available_at(item_name: String, system_name: String, system_data: 
 
 func _derive_factions_for_system(system_name: String, system_data: Dictionary) -> Array[String]:
 	var results: Array[String] = []
-	for code in GameState.factions:
-		var f = GameState.factions[code]
-		if f.home_worlds.has(system_name):
-			results.append(code)
+	var owner = system_data.get("owner_faction", "")
+	if owner and GameState.factions.has(owner):
+		results.append(owner)
+	else:
+		for code in GameState.factions:
+			var f = GameState.factions[code]
+			if f.home_worlds.has(system_name):
+				results.append(code)
 	if results.is_empty():
 		results.append("PIR")
 	return results
