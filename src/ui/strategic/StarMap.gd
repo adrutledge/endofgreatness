@@ -16,7 +16,6 @@ const SYSTEM_BASE_RADIUS: float = 5.0
 @onready var personnel_mgmt = $CanvasLayer/PersonnelManagement
 @onready var sidebar: StrategicActions = $CanvasLayer/StrategicActions
 @onready var event_log_ui = $CanvasLayer/EventLog
-@onready var market_ui = $CanvasLayer/MarketUI
 @onready var unit_roster_ui = $CanvasLayer/UnitRoster
 @onready var mech_lab_ui = $CanvasLayer/MechLab
 @onready var logistics_ui = $CanvasLayer/LogisticsPanel
@@ -25,7 +24,7 @@ func _ready() -> void:
 	Helpers.debug_print("StarMap", "_ready start")
 	Helpers.debug_print("StarMap", "sidebar=%s org=%s contract=%s personnel=%s event=%s market=%s roster=%s mech=%s log=%s" % [
 		sidebar, org_mgmt, contract_board, personnel_mgmt,
-		event_log_ui, market_ui, unit_roster_ui, mech_lab_ui, logistics_ui])
+		event_log_ui, unit_roster_ui, mech_lab_ui, logistics_ui])
 	sidebar.organization_tree_requested.connect(_on_organization_tree)
 	sidebar.contract_board_requested.connect(_on_contract_board)
 	sidebar.personnel_management_requested.connect(_on_personnel_management)
@@ -37,7 +36,6 @@ func _ready() -> void:
 	contract_board.closed.connect(_on_contract_board_closed)
 	personnel_mgmt.closed.connect(_on_personnel_mgmt_closed)
 	event_log_ui.connect("closed", _on_event_log_closed)
-	market_ui.connect("closed", _on_market_closed)
 	unit_roster_ui.connect("closed", _on_unit_roster_closed)
 	mech_lab_ui.connect("closed", _on_mech_lab_closed)
 	logistics_ui.connect("closed", _on_logistics_closed)
@@ -120,20 +118,6 @@ func _on_event_log() -> void:
 	sidebar.hide()
 	event_log_ui.populate()
 	event_log_ui.show()
-
-func _on_market() -> void:
-	if not market_ui:
-		Helpers.debug_warn("StarMap", "_on_market — market_ui is null")
-		return
-	Helpers.debug_print("StarMap", "opening market")
-	sidebar.hide()
-	market_ui.populate()
-	market_ui.show()
-
-func _on_market_closed() -> void:
-	Helpers.debug_print("StarMap", "closing market")
-	market_ui.hide()
-	sidebar.show()
 
 func _on_logistics() -> void:
 	if not logistics_ui:
@@ -240,9 +224,6 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 		elif unit_roster_ui.visible:
 			_on_unit_roster_closed()
-			get_viewport().set_input_as_handled()
-		elif market_ui.visible:
-			_on_market_closed()
 			get_viewport().set_input_as_handled()
 		elif event_log_ui.visible:
 			_on_event_log_closed()

@@ -32,8 +32,6 @@ layer = 1
 
 [node name="EventLog" parent="CanvasLayer" instance=ExtResource("6")]
 
-[node name="MarketUI" parent="CanvasLayer" instance=ExtResource("7")]
-
 [node name="UnitRoster" parent="CanvasLayer" instance=ExtResource("8")]
 
 [node name="MechLab" parent="CanvasLayer" instance=ExtResource("9")]
