@@ -318,16 +318,19 @@
 - Refit cost per TM: `component_base_cost × CLASS_COST_PCT[class]` where B=5%, C=10%, D=20%, E=30%; plus 50% markup for remote-sourced parts
 - Refit labor per TM: `tonnage × CLASS_HOURS[class]` per component added + 0.5 × tonnage per component removed; B=1.0h/t, C=2.0h/t, D=5.0h/t, E=50.0h/t; minimum 4 hours
 - Consumes daily from the unit's assigned technician pool (`PersonnelManager.get_unit_repair_budget()`)
+- **Refit kits**: instead of sourcing each component individually, a refit is ordered as a single **refit kit** — a pre-packaged bundle containing all components, wiring harnesses, and instructions needed for the conversion; the kit cost is the sum of all component costs at a discounted rate (configurable, default 90% of individual component total); a single purchase transaction and a single delivery ETA apply; the refit kit provides a TN bonus per its class (B=-2, C=-1, D/E=0) representing the benefit of pre-assembled and tested parts
+- **Refit target game rule** (config toggle `refit_canon_only: bool`, default true):
+  - When **true**: refits can only target canon variants (those from `.mtf`/`.blk` files in `data/units/`); custom variants saved by the player (in `data/units/custom/`) are excluded from the refit target list
+  - When **false**: custom variants are also available as refit targets, allowing the player to refit to any previously designed custom variant
+  - This rule exists because refit kits are only produced for canon variants; custom-to-custom refits must be handled as customizations (P3.6.6) instead
 - Refit work flow:
   1. Player selects a Mech and a target variant in the MechLab UI
-  2. System calculates component diff, classifies the refit per TM rules, and sources needed parts:
-     - Checks local market for each required component
-     - Falls back to remote ordering via `InterstellarOrderManager` for parts not in local stock
-  3. Player reviews the sourcing plan (local cost, remote cost + delivery ETA), TM refit class badge, cost estimate, and labor estimate
-  4. Player confirms → funds deducted immediately, remote orders placed as deliveries
-  5. Parts delivery phase: waiting for remote orders to arrive (tracked in days)
-  6. Labor phase: once all parts are on-hand, assigned technicians consume their daily hour budget against the refit
-  7. When hours reach 0: run `TacticalUnit.validate_tm()` on the result; if valid, replace the unit's components with the target variant's component list (deep-copied from template); if invalid, log error and flag refit as failed
+  2. System calculates component diff, classifies the refit per TM rules, and determines refit kit cost and availability
+  3. Player reviews the kit pricing, TM refit class badge, cost estimate, labor estimate, and refit kit TN bonus
+  4. Player confirms → single payment deducted for the refit kit; delivery ETA for the kit
+  5. Kit delivery phase: waiting for the kit to arrive (single delivery ETA)
+  6. Labor phase: once the kit is on-hand, assigned technicians consume their daily hour budget against the refit
+  7. When hours reach 0: single skill roll (highest TN + kit bonus + facility modifiers); on success the variant swap is applied; on failure hours extend by 50% and the roll is retried
 
 #### P3.6.3 — Custom Design / Construction (MechLab Designer)
 
