@@ -302,13 +302,18 @@
 - **Initial mech stable**: configurable count (default 12 — a company), drawn from a pool of common 3025-era tech-1 mechs with weight distribution (1 light, 2 light/medium, 3 medium, 2 medium/heavy, 2 heavy, 2 heavy/assault per company); mechs generated as `TacticalUnit` resources with random `Quality` (F–C distribution) and minor random variation in component condition
 - **Initial personnel**:
   - Commander — one of the crew/pilots (picked from the initial mech pilots, assigned `COMMAND` role)
-  - 1 Administrator (`HR` role, acts as executive officer / personnel manager) — each point of `Administration` skill covers 10 employees (e.g., skill 4 = capacity of 40 employees)
+  - Executive Officer (XO) — another of the crew/pilots (assigned `COMMAND` role as second-in-command)
+  - 1 Administrator (`HR` role, acts as the commander's assistant / personnel clerk) — each point of `Administration` skill covers 10 employees (e.g., skill 4 = capacity of 40 employees)
   - 1 Doctor (`DOCTOR` role)
-  - 1 Medic (`MEDIC` role) per 6 mechs
-  - Technicians (`TECHNICIAN` role) — 1 per 4 mechs
-  - Astechs (`ASTECH` role) — 2 per technician
-  - Crew (`CREW` role) — 1 per mech (pilots)
-- **Starting equipment**: 1–2 tons each of common ammo types (AC/5, LRM-5, SRM-2, MG) in inventory
+  - Technicians (`TECHNICIAN` role) — 1 per 4 mechs, tracked as individual characters
+  - Astechs (`ASTECH` role) — 2 per technician, tracked as abstract pool (count only, no stats/skills/relationships)
+  - Medics — tracked as abstract pool (count only), 1 medic per 6 mechs
+  - Crew (`CREW` role) — 1 per mech (pilots), tracked as individual characters
+- **Starting inventory**: auto-calculated from generated mechs:
+  - **Ammo**: 2 tons of matching ammo per ammo-using weapon (scan all generated mechs' components for ammo-fed weapons; add corresponding ammo to inventory)
+  - **Armor**: 5 armor points per ton of Standard armor (as repair stockpile), per mech
+  - **Common spares**: 1 ton each of actuators, heat sinks, and internal structure (generic, not per-mech)
+  - All purchased from starting float at market rates
 - **Starting organizational structure**:
   - Player `StrategicUnit` created
   - One `OrganizationalUnit` (mercenary company name)
