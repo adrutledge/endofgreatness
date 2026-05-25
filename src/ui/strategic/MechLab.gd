@@ -235,7 +235,7 @@ func _component_type_color(comp_name: String) -> Color:
 	if lower in ["sensors"]:
 		return Color(0.25, 0.35, 0.4)
 	if lower in ["cockpit"]:
-		return Color(0.85, 0.2, 0.65)
+		return Color(0.6, 0.25, 0.4)
 	if lower in ["engine", "fusion engine"]:
 		return component_type_color_map.get("engine", Color(0.9, 0.55, 0.1))
 	if lower in ["gyro"]:
