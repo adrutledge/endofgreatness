@@ -46,6 +46,7 @@ var browser_search: LineEdit
 var components_remove_btn: Button
 var components_replace_btn: Button
 var components_browser_selected: String = ""
+var current_location_filter: OptionButton
 
 var component_type_filters: Array[String] = [
 	"All", "Weapon", "Ammo", "Engine", "Gyro",
@@ -406,6 +407,22 @@ func _build_components_tab() -> void:
 	current_title.text = "Current Mech Components"
 	current_title.add_theme_font_size_override("font_size", 13)
 	current_vb.add_child(current_title)
+
+	var loc_filter_hb = HBoxContainer.new()
+	loc_filter_hb.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	current_vb.add_child(loc_filter_hb)
+	var loc_lbl = Label.new()
+	loc_lbl.text = "Location:"
+	loc_lbl.add_theme_font_size_override("font_size", 11)
+	loc_filter_hb.add_child(loc_lbl)
+	current_location_filter = OptionButton.new()
+	current_location_filter.name = "CurrentLocationFilter"
+	current_location_filter.add_item("All Locations")
+	for loc in location_names:
+		current_location_filter.add_item(loc)
+	current_location_filter.selected = 0
+	current_location_filter.item_selected.connect(_on_location_filter_changed)
+	loc_filter_hb.add_child(current_location_filter)
 
 	current_components_list = ItemList.new()
 	current_components_list.name = "CurrentComponentsList"
@@ -1322,20 +1339,33 @@ func _populate_component_browser() -> void:
 
 		component_browser_list.add_item(name)
 
+func _on_location_filter_changed(_idx: int) -> void:
+	_populate_current_components_list()
+
+
 func _populate_current_components_list() -> void:
 	current_components_list.clear()
 	if not selected_unit:
 		components_remove_btn.disabled = true
 		return
 
+	var filter_loc = "All Locations"
+	if current_location_filter:
+		filter_loc = current_location_filter.get_item_text(current_location_filter.selected)
+
 	for c in selected_unit.components:
 		var loc_name = c.location.location_name if c.location else "Unknown"
+		if filter_loc != "All Locations" and loc_name != filter_loc:
+			continue
 		var label = c.component_name + " [" + loc_name + "]"
 		var idx = current_components_list.add_item(label)
 		current_components_list.set_item_metadata(idx, {
 			"component_name": c.component_name,
 			"location": loc_name,
 		})
+		var col = _component_type_color(c.component_name)
+		current_components_list.set_item_custom_fg_color(idx, Color.WHITE)
+		current_components_list.set_item_custom_bg_color(idx, col)
 
 	components_remove_btn.disabled = current_components_list.get_item_count() <= 0
 
