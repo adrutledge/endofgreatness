@@ -199,7 +199,7 @@ static func parse_mtf(file_path: String, component_defs: Dictionary = {}) -> Tac
 		if component_defs.has(cname):
 			var def = component_defs[cname]
 			json_crit = def.get("critical_slots", 1)
-		if comp.critical_slots > json_crit and json_crit > 1:
+		if comp.critical_slots > json_crit:
 			var n_extra = comp.critical_slots / json_crit
 			comp.critical_slots = json_crit
 			for e in range(1, n_extra):
@@ -454,7 +454,7 @@ static func parse_blk(file_path: String, component_defs: Dictionary = {}) -> Tac
 		if component_defs.has(cname):
 			var def = component_defs[cname]
 			json_crit_b = def.get("critical_slots", 1)
-		if comp.critical_slots > json_crit_b and json_crit_b > 1:
+		if comp.critical_slots > json_crit_b:
 			var n_extra = comp.critical_slots / json_crit_b
 			comp.critical_slots = json_crit_b
 			for e in range(1, n_extra):
