@@ -66,6 +66,7 @@ var component_type_color_map: Dictionary = {
 	"armor": Color(0.2, 0.45, 0.85),
 	"electronics": Color(0.15, 0.75, 0.75),
 	"jump_jet": Color(0.2, 0.8, 0.2),
+	"heat_sink": Color(0.2, 0.4, 0.9),
 	"cockpit": Color(0.85, 0.2, 0.65),
 	"other": Color(0.3, 0.3, 0.3),
 }
