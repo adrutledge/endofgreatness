@@ -11,5 +11,6 @@
   "repair_difficulty": 1,
   "weight_calc": {
     "type": "hatchet"
-  }
+  },
+  "component_type": "other"
 }

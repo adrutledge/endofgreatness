@@ -24,5 +24,6 @@
   },
   "slot_free_heat_sinks": 10,
   "weight_free_heat_sinks": 10,
-  "vehicle_tonnage": 18.0
+  "vehicle_tonnage": 18.0,
+  "component_type": "engine"
 }

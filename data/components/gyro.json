@@ -18,5 +18,6 @@
       "Heavy": 2.0,
       "None": 0.0
     }
-  }
+  },
+  "component_type": "gyro"
 }

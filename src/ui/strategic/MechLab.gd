@@ -1402,8 +1402,15 @@ func _paper_doll_add_pending_change(action: String, current: String, new_comp: S
 # --- Component Type Classification ---
 
 func _classify_component(name: String) -> String:
+	var def = DataManager.component_defs.get(name)
+	if def:
+		var ct = def.get("component_type", "")
+		if ct:
+			return ct
 	var n = name.to_lower()
-	if "laser" in n or "ppc" in n or "ac/" in n or "ac " in n or "lrm" in n or "srm" in n or "machine gun" in n or "flamer" in n or "gauss" in n or "rifle" in n or "lrt" in n or "srt" in n:
+	if "autocannon" in n or "ac/" in n:
+		return "weapon"
+	if "laser" in n or "ppc" in n or "lrm" in n or "srm" in n or "flamer" in n or "gauss" in n or "rifle" in n:
 		return "weapon"
 	if "ammo" in n:
 		return "ammo"
@@ -1411,18 +1418,19 @@ func _classify_component(name: String) -> String:
 		return "engine"
 	if "gyro" in n:
 		return "gyro"
-	if "endo" in n or "structure" in n or "composite" in n or "reinforced" in n:
+	if "structure" in n or "endo" in n:
 		return "structure"
-	if "armor" in n:
+	if "armor" in n or "ferro" in n:
 		return "armor"
-	if "sensors" in n or "communications" in n or "ecm" in n or "probe" in n or "targeting" in n or "fire control" in n or "advanced" in n:
+	if "sensors" in n or "ecm" in n or "probe" in n or "communications" in n:
 		return "electronics"
-	if "jump jet" in n:
+	if "jump" in n:
 		return "jump_jet"
+	if "heat" in n:
+		return "heat_sink"
 	if "cockpit" in n or "life support" in n:
 		return "cockpit"
-	if "heat sink" in n:
-		return "other"
+	return "other"
 	if "actuator" in n:
 		return "other"
 	return "other"

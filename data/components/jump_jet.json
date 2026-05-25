@@ -11,5 +11,6 @@
   "repair_difficulty": 2,
   "weight_calc": {
     "type": "jump_jet"
-  }
+  },
+  "component_type": "jump_jet"
 }
