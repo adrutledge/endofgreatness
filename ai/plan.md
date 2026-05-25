@@ -319,12 +319,12 @@
   - **Ammo**: 2 tons of matching ammo per ammo-using weapon (scan all generated mechs' components for ammo-fed weapons; add corresponding ammo to inventory)
   - **Armor**: spare armor points equal to 10% of total armor points across all generated mechs (for repair stockpile)
   - **Common spares**: spare components equal to 10% of total component count across all generated mechs, by type (actuators, heat sinks, structure, etc.), minimum 1 of each type that appears in any mech
-  - All purchased from starting float at market rates
+  - All purchased from starting float at base cost (component/unit `cost` field, not market rate)
 - **Starting organizational structure**:
   - Player `StrategicUnit` created
   - One `OrganizationalUnit` (mercenary company name)
    - One `OperationalUnit` per lance (4 mechs), nested under the organizational unit
-- **C-Bill expenditure**: purchase the initial mechs and equipment from the float at market rates; remaining float = `roll − purchase_cost` (subject to floor)
+- **C-Bill expenditure**: purchase the initial mechs and equipment from the float at base cost (component/unit `cost` field); remaining float = `roll − purchase_cost` (subject to floor)
 - **Integration**: called by Main Menu `New Game` flow before entering strategic layer; writes generated state into `GameState`
 - **Tests**: `tests/test_strategic_unit_generator.gd` — verify generated force has correct mech count, personnel ratios (HR capacity covers tracked staff, 1 tech per mech, 6 medics per doctor, etc.), commander/XO/lance commander flags, C-Bill float within expected range, and inventory matches mech equipment
 
