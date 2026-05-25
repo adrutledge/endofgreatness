@@ -102,7 +102,7 @@
 - `Personnel` resource: name, rank, stats (Body/Mind/Reflexes/etc), traits, skills, experience, role (Administrator/Medic/Technician/Crew)
 - Relationships graph: `personnel_relationships: Dictionary<String, Array<Relation>>`
 - Assign technicians to tactical units (time budget per day for repairs)
-- Assign medics (patient capacity, configurable per doctor, default 20)
+- Assign doctors (patient capacity, configurable per doctor, default 20)
 - Assign crew to exactly one tactical unit
 - Hire/fire/promote/demote methods
 - Personnel market generated per planet the player is on — pool of available candidates refreshed per strategic tick, drawn from planet population and local faction presence
