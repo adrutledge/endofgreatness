@@ -44,6 +44,23 @@ func advance_day() -> void:
 	total_days += 1
 	date_changed.emit(current_date.duplicate())
 	EventBus.emit_time_tick(current_date.duplicate())
+	_check_timeline_events()
+
+
+func _check_timeline_events() -> void:
+	var events = GameState.get("timeline_events")
+	if not events or events.is_empty():
+		return
+	var date_str = get_date_string()
+	for event in events:
+		if event.get("date", "") == date_str:
+			EventBus.emit_event_triggered(event)
+			if event.get("type") == "ownership_change":
+				var d = event.get("data", {})
+				var system = d.get("system", "")
+				var to_faction = d.get("to_faction", "")
+				if system and to_faction and GameState.known_systems.has(system):
+					GameState.known_systems[system]["owner_faction"] = to_faction
 
 func enter_tactical_mode() -> void:
 	is_tactical_mode = true
