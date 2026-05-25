@@ -6,7 +6,6 @@
 [ext_resource type="PackedScene" path="res://src/ui/strategic/ContractBoard.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://src/ui/strategic/PersonnelManagement.tscn" id="5"]
 [ext_resource type="PackedScene" path="res://src/ui/strategic/EventLog.tscn" id="6"]
-[ext_resource type="PackedScene" path="res://src/ui/strategic/MarketUI.tscn" id="7"]
 [ext_resource type="PackedScene" path="res://src/ui/strategic/UnitRoster.tscn" id="8"]
 [ext_resource type="PackedScene" path="res://src/ui/strategic/MechLab.tscn" id="9"]
 [ext_resource type="PackedScene" path="res://src/ui/strategic/LogisticsPanel.tscn" id="10"]
