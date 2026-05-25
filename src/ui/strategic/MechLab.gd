@@ -324,6 +324,17 @@ func _make_paper_doll_ct() -> VBoxContainer:
 	return col
 
 
+func _apply_default_slot_styles() -> void:
+	var head_defaults = {"Life Support": [0, 5], "Sensors": [1, 4], "Cockpit": [2]}
+	for name in head_defaults:
+		for idx in head_defaults[name]:
+			_set_default_slot_name("Head", idx, name)
+	var ct_defaults = {"Engine": [0, 1, 2, 7, 8, 9], "Gyro": [3, 4, 5, 6]}
+	for name in ct_defaults:
+		for idx in ct_defaults[name]:
+			_set_default_slot_name("Center Torso", idx, name)
+
+
 func _set_default_slot_name(location: String, slot_index: int, name: String) -> void:
 	if not paper_doll_slot_map.has(location):
 		return
@@ -1073,9 +1084,20 @@ func _update_status() -> void:
 # --- Paper Doll Methods ---
 
 func _refresh_paper_doll() -> void:
-	if not selected_unit:
-		return
 	paper_doll_selected = {}
+	if not selected_unit:
+		for loc_name in paper_doll_slot_map:
+			for slot in paper_doll_slot_map[loc_name]:
+				var btn = slot["button"]
+				slot["component"] = ""
+				btn.text = "Empty"
+				var style = StyleBoxFlat.new()
+				style.bg_color = Color(0.06, 0.06, 0.06)
+				style.border_width_bottom = 1
+				style.border_color = Color(0.15, 0.15, 0.18)
+				btn.add_theme_stylebox_override("normal", style)
+		_apply_default_slot_styles()
+		return
 
 	var comps_by_loc: Dictionary = {}
 	for loc_name in location_names:
@@ -1135,6 +1157,8 @@ func _refresh_paper_doll() -> void:
 			btn.add_theme_stylebox_override("hover", hover)
 			btn.text = "Empty"
 			slot_idx += 1
+
+	_apply_default_slot_styles()
 
 	var sel_info = paper_doll_tab.get_node_or_null("PaperDollSelectedInfo")
 	if sel_info:
