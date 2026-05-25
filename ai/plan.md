@@ -298,7 +298,7 @@
 ### P3.7 — Initial Strategic Unit Generator
 
 - **`StrategicUnitGenerator.gd`** in `src/strategic/` — generates the player's starting force on New Game
-- **Starting C-Bill float**: `20d6 × 1,000,000` CSB (roll per new game); configurable floor — if the roll would go below the floor, use the floor instead; `floor: int` in settings
+- **Starting C-Bill float**: `Nd6 × 1,000,000` CSB where `N` is configurable (default 20); roll per new game; configurable floor — if the roll would go below the floor, use the floor instead; `dice_count: int` and `floor: int` in settings
 - **Initial mech stable**: configurable count (default 12 — a company), drawn from a pool of common 3025-era tech-1 mechs with weight distribution (1 light, 2 light/medium, 3 medium, 2 medium/heavy, 2 heavy, 2 heavy/assault per company); mechs generated as `TacticalUnit` resources with random `Quality` (F–C distribution) and minor random variation in component condition
 - **Initial personnel**:
   - Commander — one of the crew/pilots (picked from the initial mech pilots, assigned `COMMAND` role)
