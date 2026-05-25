@@ -47,6 +47,8 @@ var components_remove_btn: Button
 var components_replace_btn: Button
 var components_browser_selected: String = ""
 var current_location_filter: OptionButton
+var walk_mp_spin: SpinBox
+var apply_engine_btn: Button
 
 func _is_protected_component(name: String) -> bool:
 	var def = DataManager.component_defs.get(name)
@@ -431,6 +433,31 @@ func _build_components_tab() -> void:
 	current_location_filter.item_selected.connect(_on_location_filter_changed)
 	loc_filter_hb.add_child(current_location_filter)
 
+	var engine_hb = HBoxContainer.new()
+	engine_hb.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	current_vb.add_child(engine_hb)
+	var walk_lbl = Label.new()
+	walk_lbl.text = "Walk MP:"
+	walk_lbl.add_theme_font_size_override("font_size", 11)
+	engine_hb.add_child(walk_lbl)
+	walk_mp_spin = SpinBox.new()
+	walk_mp_spin.name = "WalkMPSpin"
+	walk_mp_spin.min_value = 1
+	walk_mp_spin.max_value = 20
+	walk_mp_spin.step = 1
+	walk_mp_spin.value_changed.connect(_on_walk_mp_changed)
+	engine_hb.add_child(walk_mp_spin)
+	var engine_rating_label = Label.new()
+	engine_rating_label.name = "EngineRatingLabel"
+	engine_rating_label.text = " → Engine: —"
+	engine_rating_label.add_theme_font_size_override("font_size", 11)
+	engine_hb.add_child(engine_rating_label)
+	apply_engine_btn = Button.new()
+	apply_engine_btn.text = "Apply"
+	apply_engine_btn.disabled = true
+	apply_engine_btn.pressed.connect(_on_apply_engine)
+	engine_hb.add_child(apply_engine_btn)
+
 	current_components_list = ItemList.new()
 	current_components_list.name = "CurrentComponentsList"
 	current_components_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -649,6 +676,9 @@ func _on_unit_selected(index: int) -> void:
 	ch.add("Chassis: " + chassis)
 	ch.add("Tonnage: " + str(selected_unit.tonnage) + "t")
 	ch.add("Movement: " + str(selected_unit.movement_mp) + "/" + str(selected_unit.run_mp) + "/" + str(selected_unit.jump_mp))
+	if walk_mp_spin:
+		walk_mp_spin.value = selected_unit.movement_mp
+		_update_engine_display()
 	ch.add("")
 	ch.add("[b]Current Components:[/b]")
 	for c in selected_unit.components:
@@ -1348,6 +1378,62 @@ func _populate_component_browser() -> void:
 			continue
 
 		component_browser_list.add_item(name)
+
+func _get_current_engine_rating() -> int:
+	if not selected_unit:
+		return 0
+	for c in selected_unit.components:
+		if "engine" in c.component_name.to_lower():
+			var parts = c.component_name.split(" ")
+			for p in parts:
+				if p.is_valid_int():
+					return int(p)
+	return 0
+
+
+func _update_engine_display() -> void:
+	if not selected_unit or not walk_mp_spin:
+		return
+	var tonnage = selected_unit.tonnage
+	var walk_mp = int(walk_mp_spin.value)
+	var needed_rating = int(ceil(walk_mp * tonnage))
+	var current_rating = _get_current_engine_rating()
+	var en_label = walk_mp_spin.get_parent().get_node_or_null("EngineRatingLabel")
+	if en_label:
+		if needed_rating != current_rating:
+			en_label.text = " → Need Engine: " + str(needed_rating) + " (current: " + str(current_rating) + ")"
+			if apply_engine_btn:
+				apply_engine_btn.disabled = false
+		else:
+			en_label.text = " → Engine: " + str(needed_rating) + " (current)"
+			if apply_engine_btn:
+				apply_engine_btn.disabled = true
+
+
+func _on_walk_mp_changed(_value: float) -> void:
+	_update_engine_display()
+
+
+func _on_apply_engine() -> void:
+	if not selected_unit or not walk_mp_spin:
+		return
+	var tonnage = selected_unit.tonnage
+	var walk_mp = int(walk_mp_spin.value)
+	var needed_rating = int(ceil(walk_mp * tonnage))
+	var current_rating = _get_current_engine_rating()
+	if needed_rating == current_rating:
+		return
+	var needed_name = "Fusion Engine " + str(needed_rating)
+	var current_name = "Fusion Engine " + str(current_rating)
+	if not DataManager.component_defs.has(needed_name):
+		if apply_engine_btn:
+			apply_engine_btn.disabled = true
+		return
+	_paper_doll_add_pending_change("replace", current_name, needed_name, "Center Torso")
+	_refresh_paper_doll()
+	_populate_current_components_list()
+	_update_engine_display()
+
 
 func _on_location_filter_changed(_idx: int) -> void:
 	_populate_current_components_list()
