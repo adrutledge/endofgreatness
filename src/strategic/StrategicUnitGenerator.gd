@@ -775,7 +775,8 @@ func _build_organization(company_name: String, mechs: Array[TacticalUnit],
 			xo = p
 
 	org_unit.commander = commander
-	strategic.organizational_units = [org_unit]
+	var orgs: Array[OrganizationalUnit] = [org_unit]
+	strategic.organizational_units = orgs
 
 	return strategic
 
