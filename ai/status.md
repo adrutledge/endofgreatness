@@ -1,6 +1,6 @@
 # Implementation Status
 
-Generated: 3025-05-25 (updated per commit 13f4b10)
+Generated: 3025-05-25 (updated per commit ea5bd16)
 Plan: `ai/plan.md`
 
 ---
@@ -56,7 +56,10 @@ Plan: `ai/plan.md`
 - [x] Monthly bills, base_coverage during contracts
 - [~] buy_item missing faction parameter from plan
 - [~] No transport cost line item
-- [~] No logistics panel UI for pending deliveries
+- [x] Logistics panel UI with deliveries, local/remote market, unit purchasing
+- [x] Flat per-jump transport cost (5,000 CSB/jump) for remote orders, config toggle
+- [x] spares_config.json with auto-reorder, per-unit inventory, transport cost toggles
+- [x] Reorder-to-minimum: dispatches from global stores first, then local market, then remote
 - [~] Berthing fees always 0 (no dropship/jumpship tracking)
 
 ### P1.3 — Reputation System
@@ -114,7 +117,7 @@ Plan: `ai/plan.md`
 - [x] Jump route lines (30ly)
 
 ### P3.2 — Strategic Actions UI
-- [x] Sidebar with screens: PersonnelManagement, UnitRoster, MarketUI, ContractBoard, OrganizationManagement, EventLog
+- [x] Sidebar with screens: PersonnelManagement, UnitRoster, LogisticsPanel, ContractBoard, OrganizationManagement, EventLog, MechLab
 
 ### P3.3 — Contract Generation
 - [x] ContractGenerator.gd with 6 activity types, duration, payment scaling, command rights, min unit counts
@@ -144,11 +147,14 @@ Plan: `ai/plan.md`
 - [x] NewGameDialog.tscn with faction picker
 - [x] Tests: test_strategic_unit_generator.gd
 
-### P3.8 — Operational Unit Inventory Assignment (planned, not implemented)
-- [ ] Allocation UI with per-component pickers
-- [ ] Auto-allocate defaults
-- [ ] spares_config.json
-- [ ] Auto-reorder with fund gate
+### P3.8 — Operational Unit Inventory Assignment (partial)
+- [~] spares_config.json with all settings (data/config/spares_config.json)
+- [~] Dispatch UI in logistics panel (sends from global stores to unit cache)
+- [~] Reorder-to-minimum dispatches from global first, then buys/orders
+- [ ] Allocation UI with per-component pickers at deploy time
+- [ ] Auto-allocate defaults button
+- [ ] Auto-reorder timer (per-tick check)
+- [ ] Fund gate badge on HUD
 - [ ] Deduction/Recovery/In-transit tracking
 
 ---
@@ -158,7 +164,7 @@ Plan: `ai/plan.md`
 ### Phase 4 — Operational Layer (not started)
 ### Phase 5 — Rules Engine (not started)
 ### Phase 6 — Tactical Layer (P6.4 MegaMekParser only)
-### Phase 7 — UI & UX (P7.1 MainMenu only)
+### Phase 7 — UI & UX (P7.1 MainMenu + P7.2 HUD/status badges planned)
 ### Phase 8 — Save/Load (not started)
 ### Phase 9 — Integration & Polish (partial)
 ### Phase 10 — Testing & QA (MTF parser tests + generator tests)
@@ -184,8 +190,9 @@ Key autoloads (defined in project.godot):
 - EconomySystem, ReputationSystem, PersonnelManager
 
 Key next work items by phase:
-- P3.8: Implement inventory allocation UI and auto-reorder
+- P3.8: Auto-reorder per-tick timer, fund gate HUD badge, deploy-time allocation UI
 - P4: Planetary hex map and operational actions
 - P5: Rules engine architecture
 - P6.1-3,6.5: Tactical map, combat flow, AI
+- P7.2: HUD status badges (auto-reorder suspended, unattended injured, HR shortage)
 - P8: Save/load system
