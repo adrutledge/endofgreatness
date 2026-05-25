@@ -58,10 +58,10 @@ var paper_doll_slot_counts: Dictionary = {
 }
 
 var component_type_color_map: Dictionary = {
-	"weapon": Color(0.25, 0.55, 0.25),
+	"weapon": Color(0.3, 0.45, 0.3),
 	"ammo": Color(0.8, 0.15, 0.15),
-	"engine": Color(0.9, 0.55, 0.1),
-	"gyro": Color(0.6, 0.2, 0.8),
+	"engine": Color(0.65, 0.5, 0.2),
+	"gyro": Color(0.5, 0.3, 0.55),
 	"structure": Color(0.45, 0.45, 0.45),
 	"armor": Color(0.2, 0.45, 0.85),
 	"electronics": Color(0.15, 0.75, 0.75),
