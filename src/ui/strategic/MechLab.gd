@@ -1237,9 +1237,9 @@ func _refresh_paper_doll() -> void:
 		var available = _available_slot_indices.get(loc_name, [])
 		if c.critical_slots <= 0:
 			continue
-		var placed := 0
-		var first_placed_idx := -1
-		var n = c.critical_slots
+		var placed: int = 0
+		var first_placed_idx: int = -1
+		var n: int = c.critical_slots
 		for idx in available:
 			if placed >= n:
 				break
@@ -1249,7 +1249,6 @@ func _refresh_paper_doll() -> void:
 				continue
 			if placed == 0:
 				first_placed_idx = idx
-			last_placed_idx = idx
 			slots[idx]["component"] = c.component_name
 			var btn = slots[idx]["button"]
 			var comp_type = _classify_component(c.component_name)
@@ -1259,9 +1258,9 @@ func _refresh_paper_doll() -> void:
 			style.border_width_bottom = 1
 			style.border_color = Color(0.2, 0.2, 0.25)
 			if n > 1:
-				var bw := 3
-				var is_first := placed == 0
-				var is_last := placed + 1 >= n
+				var bw: int = 3
+				var is_first: bool = placed == 0
+				var is_last: bool = placed + 1 >= n
 				style.border_width_left = bw if is_first else 0
 				style.border_width_right = bw if is_last else 0
 				style.border_width_top = bw
@@ -1273,9 +1272,9 @@ func _refresh_paper_doll() -> void:
 			hover.border_width_bottom = 1
 			hover.border_color = Color(0.4, 0.4, 0.45)
 			if n > 1:
-				var bw := 3
-				var is_first := placed == 0
-				var is_last := placed + 1 >= n
+				var bw: int = 3
+				var is_first: bool = placed == 0
+				var is_last: bool = placed + 1 >= n
 				hover.border_width_left = bw if is_first else 0
 				hover.border_width_right = bw if is_last else 0
 				hover.border_width_top = bw
