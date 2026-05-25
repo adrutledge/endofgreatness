@@ -13,6 +13,8 @@ var current_market: PlanetaryMarket
 var current_planet_factions: Array[String] = []
 var interstellar_order_manager: InterstellarOrderManager
 
+var _funds_warning_emitted: bool = false
+
 func _ready() -> void:
 	TimeManager.date_changed.connect(_on_date_changed)
 	EventBus.contract_accepted.connect(_on_contract_accepted)
@@ -159,6 +161,26 @@ func _on_date_changed(date: Dictionary) -> void:
 		_process_monthly_bills()
 		last_bill_month = month
 		last_bill_year = year
+
+	# Warn on negative balance (once per negative period)
+	if get_balance() < 0:
+		if not _funds_warning_emitted:
+			_funds_warning_emitted = true
+			GameState.log_event("funds_warning", {
+				"balance": get_balance(),
+				"date": date.duplicate(),
+				"daily_burn": get_daily_burn_rate().total
+			})
+			EventBus.emit_event_triggered({
+				"date": "%d-%02d-%02d" % [date.year, date.month, date.day],
+				"type": "event",
+				"data": {
+					"title": "Funds Depleted",
+					"description": "Your account is overdrawn! Current balance: " + str(get_balance()) + " CSB. Expenses exceed income."
+				}
+			})
+	else:
+		_funds_warning_emitted = false
 
 func _apply_base_coverage(contract: Contract, burn_total: int) -> int:
 	var coverage = contract.base_coverage / 100.0
