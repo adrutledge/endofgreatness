@@ -1409,12 +1409,12 @@ func _classify_component(name: String) -> String:
 		if ct:
 			return ct
 	var n = name.to_lower()
+	if "ammo" in n:
+		return "ammo"
 	if "autocannon" in n or "ac/" in n:
 		return "weapon"
 	if "laser" in n or "ppc" in n or "lrm" in n or "srm" in n or "flamer" in n or "gauss" in n or "rifle" in n:
 		return "weapon"
-	if "ammo" in n:
-		return "ammo"
 	if "engine" in n:
 		return "engine"
 	if "gyro" in n:
