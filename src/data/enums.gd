@@ -266,10 +266,10 @@ const SKILL_ATTRIBUTE_LINKS: Dictionary = {
 	"zero_g_operations": ["reflexes", "dexterity"],
 }
 
-static func get_skill_attributes(skill: String) -> Array[String]:
+static func get_skill_attributes(skill: String):
 	while skill.length() > 0:
 		if SKILL_ATTRIBUTE_LINKS.has(skill):
-			return SKILL_ATTRIBUTE_LINKS[skill] as Array[String]
+			return SKILL_ATTRIBUTE_LINKS[skill]
 		var idx = skill.rfind("_")
 		if idx == -1:
 			break
