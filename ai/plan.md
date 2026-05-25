@@ -300,7 +300,7 @@
 - **`StrategicUnitGenerator.gd`** in `src/strategic/` — generates the player's starting force on New Game
 - **Starting C-Bill float**: `Nd6 × 1,000,000` CSB where `N` is configurable (default 20); roll per new game; configurable floor — if the roll would go below the floor, use the floor instead; `dice_count: int` and `floor: int` in settings
 - **Initial mech stable**: configurable count (default 12 — a company), generated via Xotl's d1000 Random Assignment Tables (RATs) for the selected originating faction and era (3025); `data/rat/` directory holds faction-specific RAT JSON files parsed by `RATParser.gd`; mechs generated as `TacticalUnit` resources with random `Quality` (F–C distribution) and minor random variation in component condition
-- **Pilot skill correlation**: crew with higher `Leadership`, `Tactics`, or `Strategy` skills should also have better `piloting`+`gunnery` on average (command ability and combat ability are positively correlated)
+- **Pilot skill correlation**: crew with higher `Leadership`, `Tactics`, or `Strategy` skills should also have better `piloting`+`gunnery` on average (command ability and combat ability are positively correlated); command ability also correlates positively with `Training` skill, but more weakly than with combat skills
 - **Faction handling**: player picks an originating faction at New Game (affects RAT mech selection); after generation the unit's faction type is set to `MERC` regardless of origin
 - **Initial personnel**:
   - **Commander** — the best pilot among the initial crew, flagged via `is_commander: bool`; selected by highest `Leadership`, then highest `Strategy`, then highest `Tactics`, then highest sum of gunnery+piloting skill
