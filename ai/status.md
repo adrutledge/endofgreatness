@@ -1,6 +1,6 @@
 # Implementation Status
 
-Generated: 3025-05-25 (updated per commit ea5bd16)
+Generated: 3025-05-25 (updated per commit fa7cc13)
 Plan: `ai/plan.md`
 
 ---
@@ -144,6 +144,7 @@ Plan: `ai/plan.md`
 - [x] Units not deployed to a contract are stationed at Galatea
 - [x] `home_base` field on `StrategicUnit` (default "Galatea")
 - [x] Starting `current_planet` set to Galatea regardless of faction origin
+- [x] Deployed units can buy from local market of their contract planet (planet selector in LogisticsPanel market tab)
 - [ ] Market represents Galatea mercenary exchange (faction-neutral, broad selection)
 - [ ] Remote sourcing (InterstellarOrderManager) searches from Galatea
 - [ ] Tech facility level on Galatea = "advanced" (no facility gating for repairs/refits)
@@ -202,12 +203,12 @@ git status
 
 Key autoloads (defined in project.godot):
 - GameState, EventBus, TimeManager, DataManager, ThemeManager
-- EconomySystem, ReputationSystem, PersonnelManager
+- EconomySystem, ReputationSystem, PersonnelManager, RefitManager, UnitTransportManager
 
 Key next work items by phase:
 - P3.8: Auto-reorder per-tick timer, fund gate HUD badge, deploy-time allocation UI
 - P4: Planetary hex map and operational actions
 - P5: Rules engine architecture
 - P6.1-3,6.5: Tactical map, combat flow, AI
-- P7.2: HUD status badges (auto-reorder suspended, unattended injured, HR shortage, pending tactical engagements)
+- P7.2: HUD status badges (auto-reorder suspended, unattended injured, HR shortage, pending tactical engagements, low supplies)
 - P8: Save/load system
