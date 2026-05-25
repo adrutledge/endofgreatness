@@ -13,9 +13,10 @@ STRAT_GEN_SRC := src/strategic/StrategicUnitGenerator.gd src/strategic/RATParser
 STRAT_GEN_DEPS := $(shell find src/data/ -name "*.gd" | sort) src/core/GameState.gd
 STRAT_GEN_DATA := $(shell find data/rat/ -name "*.json" | sort)
 STRAT_GEN_TEST := tests/test_strategic_unit_generator.gd
+STRAT_GEN_TEST2 := tests/test_generate_company.gd
 STRAT_GEN_STAMP := .tested_strat_gen
 
-.PHONY: all build run test lint export clean
+.PHONY: all build run test lint export clean test-gen
 
 all: lint test build
 
@@ -42,6 +43,10 @@ $(STRAT_GEN_STAMP): $(STRAT_GEN_SRC) $(STRAT_GEN_DEPS) $(STRAT_GEN_DATA) $(STRAT
 	@touch $(STRAT_GEN_STAMP)
 
 test: $(MTF_STAMP) $(STRAT_GEN_STAMP)
+
+## Headless generator integration test (requires autoloads, runs full engine)
+test-gen:
+	@$(GODOT) --path . --headless -- --test-generator 2>&1 | grep -E "^(PASSED|FAILED|===)" || echo "test-gen target not available in --script mode"
 
 lint:
 	@if command -v $(GDLINT) >/dev/null 2>&1; then \

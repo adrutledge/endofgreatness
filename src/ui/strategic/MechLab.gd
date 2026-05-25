@@ -49,12 +49,12 @@ func _ready() -> void:
 	bg_style.bg_color = Color(0.1, 0.1, 0.15, 0.95)
 	add_theme_stylebox_override("panel", bg_style)
 
-	Helpers.validate_nodes("MechLab", {
-		unit_list = unit_list, variant_list = variant_list, current_info = current_info,
-		variant_info = variant_info, diff_info = diff_info, parts_info = parts_info,
-		cost_label = cost_label, hours_label = hours_label, start_refit_button = start_refit_button,
-		status_label = status_label, close_button = close_button
-	})
+	Helpers.validate_nodes("MechLab", [
+		["unit_list", unit_list], ["variant_list", variant_list], ["current_info", current_info],
+		["variant_info", variant_info], ["diff_info", diff_info], ["parts_info", parts_info],
+		["cost_label", cost_label], ["hours_label", hours_label], ["start_refit_button", start_refit_button],
+		["status_label", status_label], ["close_button", close_button],
+	])
 
 	%Title.add_theme_color_override("font_color", Color(1.0, 0.9, 0.6))
 	close_button.pressed.connect(_on_close)

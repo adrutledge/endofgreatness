@@ -33,12 +33,12 @@ func _ready() -> void:
 	%Title.add_theme_color_override("font_color", Color(1.0, 0.9, 0.6))
 	detail_title.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0))
 
-	Helpers.validate_nodes("UnitRoster", {
-		tree = tree, detail_title = detail_title, detail_info = detail_info,
-		detail_list = detail_list, repair_section = repair_section, repair_label = repair_label,
-		assign_tech_button = assign_tech_button, unassign_tech_button = unassign_tech_button,
-		close_button = close_button
-	})
+	Helpers.validate_nodes("UnitRoster", [
+		["tree", tree], ["detail_title", detail_title], ["detail_info", detail_info],
+		["detail_list", detail_list], ["repair_section", repair_section], ["repair_label", repair_label],
+		["assign_tech_button", assign_tech_button], ["unassign_tech_button", unassign_tech_button],
+		["close_button", close_button],
+	])
 
 	close_button.pressed.connect(_on_close)
 	tree.item_selected.connect(_on_tree_selected)

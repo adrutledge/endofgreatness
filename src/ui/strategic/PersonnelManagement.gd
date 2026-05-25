@@ -33,14 +33,14 @@ func _ready() -> void:
 	bg.bg_color = Color(0.1, 0.1, 0.15, 0.95)
 	add_theme_stylebox_override("panel", bg)
 
-	Helpers.validate_nodes("PersonnelManagement", {
-		roster_list = roster_list, search_bar = search_bar, role_filter = role_filter,
-		detail_name = detail_name, detail_role = detail_role, detail_info = detail_info,
-		hire_button = hire_button, fire_button = fire_button, promote_button = promote_button,
-		close_button = close_button, assign_button = assign_button, unassign_button = unassign_button,
-		hire_candidates = hire_candidates, hire_panel = hire_panel, candidate_detail = candidate_detail,
-		hire_selected_button = hire_selected_button
-	})
+	Helpers.validate_nodes("PersonnelManagement", [
+		["roster_list", roster_list], ["search_bar", search_bar], ["role_filter", role_filter],
+		["detail_name", detail_name], ["detail_role", detail_role], ["detail_info", detail_info],
+		["hire_button", hire_button], ["fire_button", fire_button], ["promote_button", promote_button],
+		["close_button", close_button], ["assign_button", assign_button], ["unassign_button", unassign_button],
+		["hire_candidates", hire_candidates], ["hire_panel", hire_panel], ["candidate_detail", candidate_detail],
+		["hire_selected_button", hire_selected_button],
+	])
 
 	%Title.add_theme_color_override("font_color", Color(1.0, 0.9, 0.6))
 	detail_name.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0))
