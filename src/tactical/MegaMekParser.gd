@@ -100,6 +100,8 @@ static func parse_mtf(file_path: String, component_defs: Dictionary = {}) -> Tac
 					unit.heat_sink_count = int(hs_parts[0])
 			"rules level":
 				unit.rules_level = int(value)
+			"era":
+				unit.era = int(value)
 			_:
 				if key.ends_with(" armor"):
 					armor_values[key] = int(value)

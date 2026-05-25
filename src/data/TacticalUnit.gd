@@ -26,6 +26,7 @@ extends Resource
 @export var motion_type: String = ""
 @export var abstract_crew_count: int = 0
 @export var rules_level: int = 1
+@export var era: int = 3025
 @export var customization_history: Array[Dictionary] = []
 
 func requires_technician() -> bool:

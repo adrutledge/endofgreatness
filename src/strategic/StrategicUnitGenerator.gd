@@ -286,6 +286,8 @@ func _generate_mechs(rat_data: Dictionary, count: int) -> Array[TacticalUnit]:
 
 		if template.rules_level > 2:
 			continue
+		if template.era > 3025:
+			continue
 
 		var unit = _deep_copy_unit(template)
 		unit.quality = _random_quality()
@@ -318,6 +320,7 @@ func _deep_copy_unit(source: TacticalUnit) -> TacticalUnit:
 	unit.motion_type = source.motion_type
 	unit.abstract_crew_count = source.abstract_crew_count
 	unit.rules_level = source.rules_level
+	unit.era = source.era
 
 	for c in source.components:
 		var copy = Component.new()
