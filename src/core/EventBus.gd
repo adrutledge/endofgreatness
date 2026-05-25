@@ -13,6 +13,7 @@ signal contract_completed(contract: Contract)
 signal event_triggered(event_data: Dictionary)
 signal bills_paid(amount: int, breakdown: Dictionary)
 signal contract_settled(contract: Contract, settlement: Dictionary)
+signal salvage_processed(contract: Contract, salvage_result: Dictionary)
 
 func emit_contract_accepted(contract: Contract) -> void:
 	contract_accepted.emit(contract)

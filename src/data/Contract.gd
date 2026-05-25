@@ -1,6 +1,10 @@
 class_name Contract
 extends Resource
 
+## Salvage pool: items recoverable from destroyed enemy units during this contract.
+## Array of Dictionary: { component_name, c_bill_value, recovery_hours, quantity, source_unit }
+var salvage_pool: Array[Dictionary] = []
+
 @export var issuer: String
 @export var target: String
 @export var planet: String

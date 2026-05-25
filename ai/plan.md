@@ -73,8 +73,26 @@
 - `buy_item(resource, quantity, faction)` — if item is in local planetary inventory, purchase is instant; otherwise can be ordered from surrounding systems (within 1-2 jumps) with delivery time based on distance
 - `sell_item(resource, quantity)` — instant sale to local market
 - Tracks costs: personnel salaries (per day), maintenance (per component per day), transport costs
-- Contract payments: `Contract.payout` per tick/day, salvage percentage; `salvage_type` determines form — `"exchange"` converts salvage share to C-Bills at contract-end; `"items"` grants the actual salvaged units/components as physical inventory; on contract completion, tally battle loss reimbursement — sum of C-Bill value of all tactical units and components destroyed during contract, plus ammunition expended, multiplied by `battle_loss_reimbursement_rate`, paid as lump sum alongside final payout
-- `track_battle_loss(unit_or_component, c_bill_value)` called during tactical resolution to log destroyed units/components against the active contract; `track_ammo_expended(ammo_component, shots_fired, c_bill_per_shot)` called each time a weapon fires to accumulate expended-ammo cost for reimbursement
+- Contract payments: `Contract.payout` per tick/day, salvage percentage; `salvage_type` determines form — `"exchange"` converts salvage share to C-Bills per engagement; `"items"` grants the actual salvaged units/components as physical inventory per engagement; on contract completion, tally battle loss reimbursement — sum of C-Bill value of all tactical units and components destroyed during contract, plus ammunition expended, multiplied by `battle_loss_reimbursement_rate`, paid as lump sum alongside final payout
+- **Salvage per engagement**: after each tactical engagement, `process_salvage_after_engagement(contract)` is called to salvage from the contract's `salvage_pool` (populated by `track_enemy_loss()` during combat); two branches:
+  - **"exchange"**: total C-Bill value of eligible salvage × `salvage_rate`, paid as cash
+  - **"items"**: player receives physical components into `GameState.player_inventory`; each component entry has `quality` (F–A) and `condition` (undamaged/damaged) per CO; damaged components are prefixed with `"Damaged "` in inventory and require repair (P3.6.4) before use
+- **Per CO salvage mechanics** (see also P3.6.4):
+  - `track_enemy_loss(component_name, c_bill_value, tonnage, difficulty, quality, is_destroyed, source_unit, location_blown_off)` called during tactical resolution for each destroyed enemy component
+  - Components from a destroyed location (`is_destroyed = true`) are irrecoverable, with one exception: `location_blown_off = true` applies when a **limb** (arm or leg) is blown off by a critical hit, OR when an arm is blown off because its attached side torso lost all internal structure; components in that limb are scattered on the field and ARE recoverable even if the mech leaves
+  - Surviving components get a random condition: ~66% damaged, ~33% undamaged
+  - `recovery_chance = tech_skill_factor × difficulty_modifier × quality_factor × condition_modifier` — using Regular (skill 4) as baseline for auto-calculation; per CO, each component rolls independently; failed rolls leave no salvage
+  - `recovery_hours = max(0.5, component_tonnage × 0.5)` × difficulty multiplier × 1.5 if damaged; consumed from available tech hours (all unassigned techs + astech pool × 4 hours)
+  - `salvage_rate` limits total C-Bill value recoverable per engagement; highest-value items are prioritized
+  - Unrecovered (skipped or failed-roll) items remain in the salvage pool for future engagements; successfully recovered items are removed
+  - Emits `salvage_processed` event with per-engagement result for UI display
+- `track_battle_loss(unit_or_component, c_bill_value)` called during tactical resolution to log destroyed player units/components against the active contract for reimbursement
+- **Ammunition expended tracking**: ammunition usage is calculated at **end of engagement** rather than per-shot during combat to avoid double-counting:
+  - The tactical layer records each unit's starting ammo per ammo type at engagement start
+  - **Surviving units**: `shots_fired = starting_shots - remaining_shots` → reimbursed for shots actually fired
+  - **Destroyed units**: all ammo on a destroyed unit is reimbursed as a total loss (the full `starting_shots` count, treating all of it as expended); the employer compensates for the lost ammunition
+  - **Blown-off limbs are not reimbursed**: ammo or components in a limb blown off by a critical hit are NOT reimbursed — they enter the contract's salvage pool as recoverable physical items instead; no component is ever double-counted (reimbursed AND salvaged)
+  - The tactical layer calls `record_ammo_expended(contract_id, ammo_type, shots_fired, c_bill_per_shot)` once per ammo type per engagement with the net figure: surviving units' expended + destroyed units' total, minus any ammo in blown-off limbs (which is not reimbursed)
 - Planetary market: sources inventory from factions present on the planet excluding target faction
 - Market refresh logic per strategic tick, limited supply, price variation
 - **Interstellar orders**: when buying equipment not available locally, the system searches friendly/neutral systems within jump range (max 30 ly per jump, up to 2 jumps), calculates travel time (jump recharge + transit), creates a `PendingDelivery` entry; player pays upfront, item arrives after delivery delay

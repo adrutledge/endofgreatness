@@ -9,6 +9,10 @@ var last_bill_year: int = -1
 var contract_battle_losses: Dictionary = {}
 var contract_ammo_costs: Dictionary = {}
 
+## Salvage pool per contract: maps contract instance_id → Array[Dictionary]
+## Each entry: { component_name, c_bill_value, recovery_hours, quantity, source_unit }
+var contract_salvage_pool: Dictionary = {}
+
 var current_market: PlanetaryMarket
 var current_planet_factions: Array[String] = []
 var interstellar_order_manager: InterstellarOrderManager
@@ -202,6 +206,111 @@ func _process_monthly_bills() -> void:
 	accumulated_expenses = 0
 	accumulated_breakdown = {}
 
+## Called after each tactical engagement to salvage destroyed enemy units.
+## Returns a Dictionary describing what was recovered.
+func process_salvage_after_engagement(contract: Contract) -> Dictionary:
+	var key = contract.get_instance_id()
+	var pool: Array = contract_salvage_pool.get(key, [])
+	if pool.is_empty():
+		pool = contract.salvage_pool
+
+	var result = {
+		"salvage_bonus": 0,
+		"salvage_items": [],
+		"salvage_skipped": [],
+		"hours_used": 0,
+	}
+
+	if pool.is_empty() or contract.salvage_rate <= 0.0:
+		return result
+
+	# Sort by value descending so we take the most valuable items first
+	pool.sort_custom(func(a, b): return a.c_bill_value > b.c_bill_value)
+
+	var total_salvage_value := 0
+	for entry in pool:
+		total_salvage_value += entry.c_bill_value
+
+	var max_salvage_value := int(total_salvage_value * contract.salvage_rate)
+	var remaining_value := max_salvage_value
+	var available_hours := get_available_recovery_hours()
+	var remaining_hours := available_hours
+
+	var recovered: Array[Dictionary] = []
+	var skipped: Array[Dictionary] = []
+	var kept: Array[Dictionary] = []
+
+	for entry in pool:
+		if remaining_value <= 0:
+			skipped.append(entry.duplicate())
+			continue
+
+		if entry.c_bill_value > remaining_value:
+			kept.append(entry.duplicate())
+			continue
+
+		# Per CO: roll recovery chance — components that fail the roll are lost
+		var recovery_roll := randf()
+		var chance = entry.get("recovery_chance", 0.5)
+		if recovery_roll > chance:
+			skipped.append(entry.duplicate())
+			continue
+
+		var hours_needed := int(ceil(entry.recovery_hours))
+		if hours_needed > remaining_hours:
+			kept.append(entry.duplicate())
+			continue
+
+		if contract.salvage_type == "items":
+			var inv_name = entry.component_name
+			var qty = entry.get("quantity", 1)
+			var condition: int = entry.get("condition", Enums.ComponentStatus.UNDAMAGED)
+			if condition == Enums.ComponentStatus.DAMAGED:
+				inv_name = "Damaged " + inv_name
+			GameState.player_inventory[inv_name] = GameState.player_inventory.get(inv_name, 0) + qty
+
+		remaining_value -= entry.c_bill_value
+		remaining_hours -= hours_needed
+		recovered.append(entry.duplicate())
+
+	if contract.salvage_type == "exchange" and not recovered.is_empty():
+		var bonus_value := max_salvage_value - remaining_value
+		add_funds(bonus_value, "Salvage conversion: " + contract.issuer)
+		result.salvage_bonus = bonus_value
+
+	result.salvage_items = recovered
+	result.salvage_skipped = skipped
+	result.hours_used = available_hours - remaining_hours
+
+	# Remove recovered items from the pool; keep skipped+kept for future engagements
+	var claimed_names: Array[String] = []
+	for r in recovered:
+		claimed_names.append(r.component_name)
+
+	var new_pool: Array[Dictionary] = []
+	for entry in pool:
+		if entry.component_name in claimed_names:
+			continue
+		new_pool.append(entry)
+	for k in kept:
+		if k.component_name not in claimed_names:
+			new_pool.append(k)
+
+	contract_salvage_pool[key] = new_pool
+	contract.salvage_pool = new_pool.duplicate()
+
+	if not recovered.is_empty():
+		GameState.log_event("salvage_recovered", {
+			"contract": contract.issuer + "/" + contract.activity_type,
+			"type": contract.salvage_type,
+			"items": recovered,
+			"total_value": max_salvage_value - remaining_value,
+			"hours_used": result.hours_used,
+		})
+
+	return result
+
+
 func settle_contract(contract: Contract) -> Dictionary:
 	var key = contract.get_instance_id()
 	var total_loss: int = 0
@@ -214,17 +323,24 @@ func settle_contract(contract: Contract) -> Dictionary:
 	if reimbursement > 0:
 		add_funds(reimbursement, "Battle loss reimbursement: " + contract.issuer)
 
-	var salvage_bonus: int = 0
-	if contract.salvage_type == "exchange" and contract.salvage_rate > 0.0:
-		salvage_bonus = int(total_loss * contract.salvage_rate)
-		if salvage_bonus > 0:
-			add_funds(salvage_bonus, "Salvage conversion: " + contract.issuer)
+	# Any remaining salvage pool at contract end — convert exchange salvage,
+	# for items salvage these were processed per engagement already
+	var leftover_conversion := 0
+	var key2 = contract.get_instance_id()
+	var leftover: Array = contract_salvage_pool.get(key2, [])
+	if not leftover.is_empty() and contract.salvage_type == "exchange":
+		var leftover_value := 0
+		for entry in leftover:
+			leftover_value += entry.c_bill_value
+		leftover_conversion = int(leftover_value * contract.salvage_rate)
+		if leftover_conversion > 0:
+			add_funds(leftover_conversion, "Final salvage conversion: " + contract.issuer)
 
 	var result = {
 		"battle_loss_value": total_loss,
 		"reimbursement": reimbursement,
-		"salvage_bonus": salvage_bonus,
-		"total": reimbursement + salvage_bonus
+		"leftover_salvage_conversion": leftover_conversion,
+		"total": reimbursement + leftover_conversion,
 	}
 	EventBus.emit_contract_settled(contract, result)
 	return result
@@ -240,6 +356,8 @@ func _on_contract_accepted(contract: Contract) -> void:
 	var key = contract.get_instance_id()
 	contract_battle_losses[key] = []
 	contract_ammo_costs[key] = 0
+	contract_salvage_pool[key] = []
+	contract.salvage_pool = []
 
 func track_battle_loss(unit: TacticalUnit, component: Component, c_bill_value: int) -> void:
 	for c in GameState.active_contracts:
@@ -260,9 +378,126 @@ func _on_contract_completed(contract: Contract) -> void:
 	contract_ammo_costs.erase(contract.get_instance_id())
 
 func track_ammo_expended(ammo_component: Component, shots_fired: int, c_bill_per_shot: int) -> void:
+	## Legacy per-shot tracking. Prefer record_ammo_expended() which is
+	## called at end of engagement with net ammo usage to avoid double-charging.
 	var cost = shots_fired * c_bill_per_shot
 	for c in GameState.active_contracts:
 		if not c.is_active:
 			continue
 		var key = c.get_instance_id()
 		contract_ammo_costs[key] = contract_ammo_costs.get(key, 0) + cost
+
+
+## Called at end of engagement with net ammo expended per ammo type.
+## shots_fired = starting_shots - remaining_shots; destroyed mechs' unspent
+## ammo does not count since it was never fired.
+func record_ammo_expended(contract_id: String, ammo_type: String, shots_fired: int, c_bill_per_shot: int) -> void:
+	var cost = shots_fired * c_bill_per_shot
+	var key = contract_id
+	contract_ammo_costs[key] = contract_ammo_costs.get(key, 0) + cost
+
+
+func track_enemy_loss(component_name: String, c_bill_value: int, tonnage: float,
+		difficulty: int, quality: Enums.Quality = Enums.Quality.D,
+		is_destroyed: bool = false, source_unit: String = "",
+		location_blown_off: bool = false) -> void:
+	## Per CO: components from a destroyed location are usually lost.
+	## Exception: if a location was blown off by a crit roll (ammo explosion, etc.),
+	## its components are scattered on the field and recoverable even if the mech leaves.
+	if is_destroyed and not location_blown_off:
+		return
+
+	for c in GameState.active_contracts:
+		if not c.is_active:
+			continue
+		var key = c.get_instance_id()
+		if not contract_salvage_pool.has(key):
+			contract_salvage_pool[key] = []
+
+		var condition = Enums.ComponentStatus.DAMAGED if randi() % 3 < 2 else Enums.ComponentStatus.UNDAMAGED
+		var recovery_hours = _calculate_recovery_hours(tonnage, difficulty, condition)
+		var recovery_chance = _calculate_recovery_chance(difficulty, quality, condition)
+
+		var merged := false
+		for entry in contract_salvage_pool[key]:
+			if entry.component_name == component_name and entry.source_unit == source_unit \
+					and entry.condition == condition:
+				entry.quantity += 1
+				entry.c_bill_value += c_bill_value
+				entry.recovery_hours += recovery_hours
+				entry.recovery_chance = min(1.0, entry.recovery_chance + 0.05)
+				merged = true
+				break
+
+		if not merged:
+			contract_salvage_pool[key].append({
+				"component_name": component_name,
+				"c_bill_value": c_bill_value,
+				"recovery_hours": recovery_hours,
+				"quantity": 1,
+				"source_unit": source_unit,
+				"quality": quality,
+				"condition": condition,
+				"recovery_chance": recovery_chance,
+				"tonnage": tonnage,
+				"difficulty": difficulty,
+			})
+
+		c.salvage_pool = contract_salvage_pool[key].duplicate()
+
+
+static func _calculate_recovery_hours(tonnage: float, difficulty: int,
+		condition: Enums.ComponentStatus = Enums.ComponentStatus.UNDAMAGED) -> float:
+	## Per CO: base = component_tonnage × 0.5 hours; damaged takes 1.5×
+	var base = max(0.5, tonnage * 0.5)
+	if condition == Enums.ComponentStatus.DAMAGED:
+		base *= 1.5
+	match difficulty:
+		0: return base * 0.8
+		1: return base * 1.0
+		2: return base * 1.5
+		3: return base * 2.0
+		4: return base * 3.0
+		_: return base
+
+
+static func _calculate_recovery_chance(difficulty: int, quality: Enums.Quality,
+		condition: Enums.ComponentStatus) -> float:
+	## Per CO: recovery_chance = tech_skill_factor × difficulty_modifier × quality_factor
+	## Using a baseline tech skill of 4 (Regular) for the auto-calculation.
+	var base_skill := 4.0
+	var tech_factor := base_skill / 10.0
+
+	var diff_mod := 1.0
+	match difficulty:
+		0: diff_mod = 1.2
+		1: diff_mod = 1.0
+		2: diff_mod = 0.8
+		3: diff_mod = 0.5
+		4: diff_mod = 0.3
+
+	var qual_mod := 1.0
+	match quality:
+		Enums.Quality.A: qual_mod = 1.3
+		Enums.Quality.B: qual_mod = 1.15
+		Enums.Quality.C: qual_mod = 1.0
+		Enums.Quality.D: qual_mod = 0.85
+		Enums.Quality.E: qual_mod = 0.7
+		Enums.Quality.F: qual_mod = 0.5
+
+	var cond_mod := 1.0
+	if condition == Enums.ComponentStatus.DAMAGED:
+		cond_mod = 0.6
+	elif condition == Enums.ComponentStatus.DESTROYED:
+		cond_mod = 0.0
+
+	return clampf(tech_factor * diff_mod * qual_mod * cond_mod, 0.0, 0.95)
+
+
+func get_available_recovery_hours() -> int:
+	var total := 0
+	for p in PersonnelManager.get_personnel_by_role(Enums.PersonnelRole.TECHNICIAN):
+		if p.is_available():
+			total += PersonnelManager.get_repair_hours(p)
+	total += PersonnelManager.abstract_astech_count * 4
+	return total
