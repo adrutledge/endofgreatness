@@ -302,7 +302,7 @@
 - **Initial mech stable**: configurable count (default 12 — a company), generated via Xotl's d1000 Random Assignment Tables (RATs) for the selected originating faction and era (3025); `data/rat/` directory holds faction-specific RAT JSON files parsed by `RATParser.gd`; mechs generated as `TacticalUnit` resources with random `Quality` (F–C distribution) and minor random variation in component condition
 - **Pilot skill correlation**: crew with higher `Leadership`, `Tactics`, or `Strategy` skills should also have better `piloting`+`gunnery` on average (command ability and combat ability are positively correlated); command ability also correlates positively with `Training` skill, but more weakly than with combat skills
 - **Faction handling**: player picks an originating faction at New Game (affects RAT mech selection); after generation the unit's faction type is set to `MERC` regardless of origin
-- **Initial personnel**:
+- **Initial personnel** (all starting personnel flagged with `is_founder: bool = true`, making them less likely to quit when a morale and retention system is added later):
   - **Commander** — the best pilot among the initial crew, flagged via `is_commander: bool`; selected by highest `Leadership`, then highest `Strategy`, then highest `Tactics`, then highest sum of gunnery+piloting skill
   - **Executive Officer (XO)** — the second-best pilot, flagged via `is_xo: bool` on the same resource
   - **Lance commanders** — for each lance beyond the first (every 4 mechs after mechs 1–4), flag the best remaining pilot via `is_lance_commander: bool`; selected by highest `Tactics`, then highest gunnery+piloting
