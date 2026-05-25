@@ -1167,8 +1167,7 @@ func _refresh_paper_doll() -> void:
 				slots[idx]["component"] = c.component_name
 				var btn = slots[idx]["button"]
 				btn.text = c.component_name
-				var comp_type = _classify_component(c.component_name)
-				var col = component_type_color_map.get(comp_type, component_type_color_map["other"])
+				var col = _component_type_color(c.component_name)
 				var style = StyleBoxFlat.new()
 				style.bg_color = col
 				style.border_width_bottom = 1
