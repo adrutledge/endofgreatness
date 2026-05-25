@@ -1374,13 +1374,13 @@ func _populate_component_browser() -> void:
 			if not search_text in name.to_lower():
 				continue
 
-	if _is_protected_component(name):
-		continue
-	var vdef = DataManager.component_defs.get(name, {})
-	if vdef.get("vehicle_only", false):
-		continue
+		if _is_protected_component(name):
+			continue
+		var vdef = DataManager.component_defs.get(name, {})
+		if vdef.get("vehicle_only", false):
+			continue
 
-	component_browser_list.add_item(name)
+		component_browser_list.add_item(name)
 
 func _get_current_engine_rating() -> int:
 	if not selected_unit:
