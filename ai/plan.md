@@ -121,6 +121,23 @@
 
 - `Personnel` resource: name, rank, stats (Body/Mind/Reflexes/etc), traits, skills, experience, role (Administrator/Medic/Technician/Crew)
 - Relationships graph: `personnel_relationships: Dictionary<String, Array<Relation>>`
+  - Relationships have a type (Marriage, Lover, Wingman, Dislike, Rival, Sibling, Parent/Child, etc.) and a valence (positive/negative)
+  - **Wingman**: preferred partner to accompany in combat; when wingmen fight in the same unit or adjacent hexes, both receive a small gunnery/piloting bonus; if one is killed, the survivor takes a morale penalty for a duration
+  - **Marriage / Lover**: positive bond; if one is killed or injured, the other takes a larger and longer morale penalty; married couples may have children (see reproduction)
+  - **Dislike / Rival**: negative bond; personnel with negative relationships suffer small penalties when assigned to the same unit, and events may trigger conflict between them
+  - **Hidden flags** on each `Personnel` resource, not visible to the player:
+    - `interested_in_relationship: bool` — whether the character is open to forming new romantic relationships
+    - `interested_in_children: bool` — whether the character is open to having children
+    - `biological_role: String` — `"father"` or `"mother"` independent of the character's displayed/apparent gender; determines which character carries a pregnancy when a couple has children; this is a hidden stat that may differ from visible presentation
+  - Children are generated as new `Personnel` with `CHILD` role, age 0, born to the couple after a configurable gestation period; they age and can eventually be recruited as crew or other roles when they come of age
+  - **External relationships**: during deployment on a contract planet or during interstellar travel, a character may take a lover from outside the unit (generated as a one-off event); the new partner joins the unit as a non-combatant `CIVILIAN` and travels with the unit thereafter
+  - **Children accompany the unit**: any children of unit personnel (whether born into the unit or from prior relationships) travel with the unit as `CHILD`-role personnel; they do not take up crew slots, require no salary, and age normally
+  - **Education** (version 2): when education is implemented, `CHILD`-role characters may be placed in educational tracks (local schooling on Galatea, remote tutoring, apprentice programs) that influence what skills and traits they develop as they age into adult roles
+  - **Family relationships**: children start with positive relationships with parents and siblings (Parent/Child, Sibling); rarely (small random chance) a negative sibling relationship may generate at birth, representing an innate rivalry
+  - **Relationship evolution**: family relationships can grow or change in response to events — shared positive events strengthen bonds, while separation, conflict, or traumatic events may strain them
+  - **Deployment strain** (idea for later versions): a parent repeatedly deployed while the child remains on Galatea (or vice versa) increases the chance of the relationship turning negative over time; extended together-time (parent and child both with the unit) has the opposite effect
+  - Relationships are initially empty at game start; they develop through events, shared combat, and shared assignments over time
+  - Each `Personnel` resource additionally tracks: `originating_faction: String` (the faction the character originally came from), `home_system: String`, and `home_planet: String` — these may differ from the player's current faction/planet and are used for event generation, loyalty checks, and background flavor
 - Assign technicians to tactical units (time budget per day for repairs)
 - Assign doctors (patient capacity, configurable per doctor, default 20)
 - Assign crew to exactly one tactical unit; where a vehicle or infantry unit requires multiple crew, handle all crew beyond the first (pilot/driver) as an abstract count rather than individual tracked personnel
@@ -395,6 +412,12 @@
   - One `OperationalUnit` per lance (4 mechs), nested under the organizational unit
 - **C-Bill expenditure**: purchase the initial mechs and equipment from the float at base cost (component/unit `cost` field); remaining float = `roll − purchase_cost` (subject to floor)
 - **Integration**: called by Main Menu `New Game` flow before entering strategic layer; writes generated state into `GameState`
+- **Starting relationships**: the generator creates a web of pre-existing relationships among the founding personnel, simulating shared history before unit formation:
+  - Pilots who trained together or served in the same unit before going mercenary may have positive bonds (Wingman, Friendship)
+  - Rivalries from past disagreements or competition may generate negative bonds (Dislike, Rival)
+  - A small chance of romantic relationships (Lover) and a very small chance of Marriage among the founding crew
+  - Relationships are weighted by originating faction (same-faction personnel more likely to have history) and role (pilots more likely to know other pilots than admin staff)
+  - Each generated character has `originating_faction` set to the player's chosen faction and `home_system`/`home_planet` derived from that faction's home worlds
 - **Tests**: `tests/test_strategic_unit_generator.gd` — verify generated force has correct mech count, personnel ratios (HR capacity covers tracked staff, 1 tech per mech, 6 medics per doctor, etc.), commander/XO/lance commander flags, C-Bill float within expected range, and inventory matches mech equipment
 
 ---

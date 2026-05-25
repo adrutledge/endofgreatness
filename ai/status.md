@@ -86,6 +86,10 @@ Plan: `ai/plan.md`
 - [ ] Secondary roles for personnel (e.g. doctor also HR) — planned
 - [ ] Administration skill affects time efficiency for doctors/techs — planned
 - [ ] Skill-level gating for ability generation — planned
+- [ ] Detailed relationships (Marriage, Lover, Wingman, Dislike, Rival, family bonds) — planned
+- [ ] External lovers from deployment/travel, children accompany unit — planned
+- [ ] Education system for child characters (version 2) — planned
+- [ ] Originating faction, home system, home planet on Personnel — planned
 
 ---
 
