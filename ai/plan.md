@@ -298,16 +298,16 @@
 ### P3.7 — Initial Strategic Unit Generator
 
 - **`StrategicUnitGenerator.gd`** in `src/strategic/` — generates the player's starting force on New Game
-- **Starting C-Bill float**: `20d6 × 1,000,000` CB (roll per new game); configurable floor — if the roll would go below the floor, use the floor instead; `floor: int` in settings
-- **Initial mech stable**: generate a random lance (4 mechs) drawn from a pool of common 3025-era tech-1 mechs (light/medium focus), weighted toward cheaper/simpler chassis; mechs generated as `TacticalUnit` resources with random `Quality` (F–C distribution) and minor random variation in component condition
+- **Starting C-Bill float**: `20d6 × 1,000,000` CSB (roll per new game); configurable floor — if the roll would go below the floor, use the floor instead; `floor: int` in settings
+- **Initial mech stable**: configurable count (default 12 — a company), drawn from a pool of common 3025-era tech-1 mechs with weight distribution (1 light, 2 light/medium, 3 medium, 2 medium/heavy, 2 heavy, 2 heavy/assault per company); mechs generated as `TacticalUnit` resources with random `Quality` (F–C distribution) and minor random variation in component condition
 - **Initial personnel**:
-  - Commander (`COMMAND` role, random stats/skills)
-  - 1 Administrator (`HR` role) — each point of `Administration` skill covers 10 employees (e.g., skill 4 = capacity of 40 employees)
+  - Commander — one of the crew/pilots (picked from the initial mech pilots, assigned `COMMAND` role)
+  - 1 Administrator (`HR` role, acts as executive officer / personnel manager) — each point of `Administration` skill covers 10 employees (e.g., skill 4 = capacity of 40 employees)
   - 1 Doctor (`DOCTOR` role)
-  - 1 Medic (`MEDIC` role)
-  - 2 Technicians (`TECHNICIAN` role, one per 2 mechs starting ratio)
-  - 2 Astechs (`ASTECH` role per technician)
-  - 4 Crew (`CREW` role, one per mech)
+  - 1 Medic (`MEDIC` role) per 6 mechs
+  - Technicians (`TECHNICIAN` role) — 1 per 4 mechs
+  - Astechs (`ASTECH` role) — 2 per technician
+  - Crew (`CREW` role) — 1 per mech (pilots)
 - **Starting equipment**: 1–2 tons each of common ammo types (AC/5, LRM-5, SRM-2, MG) in inventory
 - **Starting organizational structure**:
   - Player `StrategicUnit` created
