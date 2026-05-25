@@ -96,6 +96,8 @@ func calculate_refit_cost(diff: Dictionary) -> int:
 	return int(ceil(total))
 
 func start_refit(tactical_unit: TacticalUnit, target_variant: TacticalUnit, parts_plan: Array[Dictionary]) -> Dictionary:
+	if get_unit_refit(tactical_unit):
+		return {"success": false, "reason": "Unit already has an active refit"}
 	var diff = calculate_refit_diff(tactical_unit, target_variant)
 	if diff.components_to_add.is_empty() and diff.components_to_remove.is_empty():
 		return {"success": false, "reason": "No changes needed"}
@@ -187,9 +189,9 @@ func _process_refits() -> void:
 			refit.parts_delivery_eta -= 1
 			if refit.parts_delivery_eta <= 0:
 				refit.parts_delivered = true
-				GameState.log_event("refit_parts_arrived", {
+				var log_name = "customization_parts_arrived" if refit.has("changes") else "refit_parts_arrived"
+				GameState.log_event(log_name, {
 					"unit": refit.tactical_unit.unit_name,
-					"target": refit.target_unit_name
 				})
 			continue
 
@@ -203,7 +205,10 @@ func _process_refits() -> void:
 	var completed: Array[int] = []
 	for i in range(active_refits.size()):
 		if active_refits[i].hours_remaining <= 0 and active_refits[i].parts_delivered:
-			_apply_refit(active_refits[i])
+			if active_refits[i].has("changes"):
+				_apply_customization(active_refits[i])
+			else:
+				_apply_refit(active_refits[i])
 			completed.append(i)
 
 	for i in range(completed.size() - 1, -1, -1):
@@ -271,6 +276,351 @@ func get_unit_refit(unit: TacticalUnit) -> Dictionary:
 		if refit.tactical_unit == unit:
 			return refit
 	return {}
+
+# ----- P3.6.6 Campaign Operations Customization -----
+
+const CUSTOMIZATION_CLASS_HOURS: Dictionary = {
+	Enums.RefitClass.B: 1.0,
+	Enums.RefitClass.C: 2.0,
+	Enums.RefitClass.D: 5.0,
+	Enums.RefitClass.E: 50.0
+}
+
+const CUSTOMIZATION_CLASS_COST_PCT: Dictionary = {
+	Enums.RefitClass.B: 0.05,
+	Enums.RefitClass.C: 0.10,
+	Enums.RefitClass.D: 0.20,
+	Enums.RefitClass.E: 0.30
+}
+
+const TN_BY_DIFFICULTY: Dictionary = {
+	0: 2,
+	1: 4,
+	2: 6,
+	3: 8,
+	4: 10,
+	5: 12
+}
+
+
+func classify_customization_change(current_name: String, new_name: String,
+		current_location: String, new_location: String) -> Dictionary:
+	var c_def = _component_def(current_name) if not current_name.is_empty() else {}
+	var n_def = _component_def(new_name) if not new_name.is_empty() else {}
+	var c_ton = c_def.get("tonnage", 0.0) if not c_def.is_empty() else 0.0
+	var n_ton = n_def.get("tonnage", 0.0) if not n_def.is_empty() else 0.0
+	var c_tech = c_def.get("tech_base", "") if not c_def.is_empty() else ""
+	var n_tech = n_def.get("tech_base", "") if not n_def.is_empty() else ""
+
+	var action: String = "replace"
+	if current_name.is_empty():
+		action = "add"
+	elif new_name.is_empty():
+		action = "remove"
+
+	if action == "remove":
+		return {"class": Enums.RefitClass.B, "action": action, "tonnage": c_ton}
+
+	var refit_class: Enums.RefitClass = Enums.RefitClass.C
+	if current_location == new_location and c_tech == n_tech:
+		if abs(c_ton - n_ton) < 0.5:
+			refit_class = Enums.RefitClass.B
+	if c_tech != n_tech:
+		refit_class = Enums.RefitClass.D
+	if n_def.get("engine_rating", 0) > 0 or n_def.get("gyro_compatible", false):
+		refit_class = Enums.RefitClass.E
+
+	return {"class": refit_class, "action": action, "tonnage": max(c_ton, n_ton)}
+
+
+func calculate_customization_time(change: Dictionary) -> int:
+	var cl = change.get("class", Enums.RefitClass.B)
+	var tonnage = change.get("tonnage", 1.0)
+	var hours_per_ton = CUSTOMIZATION_CLASS_HOURS.get(cl, 1.0)
+	var total = tonnage * hours_per_ton
+	if change.get("action") == "remove":
+		total = tonnage * 0.5
+	return max(int(ceil(total)), 4)
+
+
+func calculate_customization_cost(change: Dictionary) -> int:
+	var cl = change.get("class", Enums.RefitClass.B)
+	var tonnage = change.get("tonnage", 1.0)
+	var pct = CUSTOMIZATION_CLASS_COST_PCT.get(cl, 0.10)
+	var comp_def = _component_def(change.get("new_component", ""))
+	var base_cost = comp_def.get("cost", 1000) if not comp_def.is_empty() else 0
+	return int(ceil(base_cost * pct))
+
+
+func calculate_customization_tn(change: Dictionary, part_quality: int = 2,
+		part_facility: int = 2, original_quality: int = 2, parts_in_stock: bool = true) -> int:
+	var comp_def = _component_def(change.get("new_component", change.get("current_component", "")))
+	var difficulty = comp_def.get("repair_difficulty", 2) if not comp_def.is_empty() else 2
+	var base_tn = TN_BY_DIFFICULTY.get(difficulty, 6)
+
+	var quality_mod := 0
+	match part_quality:
+		Enums.Quality.A: quality_mod = -2
+		Enums.Quality.B: quality_mod = -1
+		Enums.Quality.C: quality_mod = 0
+		Enums.Quality.D: quality_mod = 1
+		Enums.Quality.E: quality_mod = 2
+		Enums.Quality.F: quality_mod = 4
+
+	var fac_mod := 0
+	match part_facility:
+		0: fac_mod = 2
+		1: fac_mod = 0
+		2: fac_mod = -1
+		_: fac_mod = -2
+
+	var stock_mod := 0 if parts_in_stock else 1
+
+	var quality_mismatch := 0
+	if original_quality > part_quality:
+		quality_mismatch = original_quality - part_quality
+
+	return base_tn + quality_mod + fac_mod + stock_mod + quality_mismatch
+
+
+func calculate_customization_summary(changes: Array[Dictionary]) -> Dictionary:
+	var total_time: int = 0
+	var total_cost: int = 0
+	var highest_class: Enums.RefitClass = Enums.RefitClass.B
+	var detail: Array[Dictionary] = []
+
+	for ch in changes:
+		var t = calculate_customization_time(ch)
+		var c = calculate_customization_cost(ch)
+		var cl = ch.get("class", Enums.RefitClass.B)
+		total_time += t
+		total_cost += c
+		if cl > highest_class:
+			highest_class = cl
+		detail.append({
+			"component": ch.get("new_component", ch.get("current_component", "")),
+			"class": cl,
+			"time": t,
+			"cost": c,
+			"action": ch.get("action", "replace"),
+		})
+
+	return {
+		"total_time": total_time,
+		"total_cost": total_cost,
+		"highest_class": highest_class,
+		"detail": detail
+	}
+
+
+func get_facility_level() -> int:
+	return facility_level
+
+
+func set_facility_level(level: int) -> void:
+	facility_level = clampi(level, 0, 4)
+
+
+func get_facility_requirement(refit_class: Enums.RefitClass) -> int:
+	match refit_class:
+		Enums.RefitClass.B: return 0
+		Enums.RefitClass.C: return 1
+		Enums.RefitClass.D: return 2
+		Enums.RefitClass.E: return 3
+	return 0
+
+
+func check_facility_gating(refit_class: Enums.RefitClass) -> Dictionary:
+	var required = get_facility_requirement(refit_class)
+	var has = get_facility_level()
+	var passes = has >= required
+	var penalty = 0 if passes else 4
+	return {"passes": passes, "required": required, "has": has, "penalty": penalty}
+
+
+func start_customization(unit: TacticalUnit, changes: Array[Dictionary],
+		parts_plan: Array[Dictionary], facility_lvl: int = -1) -> Dictionary:
+	if changes.is_empty():
+		return {"success": false, "reason": "No changes specified"}
+	if get_unit_refit(unit):
+		return {"success": false, "reason": "Unit already has an active refit or customization"}
+
+	if facility_lvl >= 0:
+		set_facility_level(facility_lvl)
+
+	var summary = calculate_customization_summary(changes)
+	var gate = check_facility_gating(summary.highest_class)
+
+	var total_cost = summary.total_cost
+	for entry in parts_plan:
+		total_cost += entry.get("cost_per_unit", 0)
+
+	if EconomySystem.get_balance() < total_cost:
+		return {"success": false, "reason": "Insufficient funds — need " + str(total_cost) + " CB"}
+
+	for entry in parts_plan:
+		if entry.source == "local":
+			EconomySystem.buy_item(entry.component_name, 1)
+		elif entry.source == "remote":
+			EconomySystem.order_item(entry.component_name, 1,
+				entry.cost_per_unit, entry.source_system, entry.travel_days)
+
+	var customization = {
+		"tactical_unit": unit,
+		"changes": changes,
+		"total_hours": summary.total_time,
+		"hours_remaining": summary.total_time,
+		"cost": total_cost,
+		"highest_class": summary.highest_class,
+		"parts_delivery_eta": 0,
+		"parts_delivered": true,
+		"facility_penalty": gate.penalty,
+		"facility_passes": gate.passes,
+	}
+	for entry in parts_plan:
+		if entry.source == "remote":
+			var eta = entry.get("travel_days", 7)
+			customization.parts_delivery_eta = max(customization.parts_delivery_eta, eta)
+			customization.parts_delivered = false
+
+	active_refits.append(customization)
+
+	GameState.log_event("customization_started", {
+		"unit": unit.unit_name,
+		"changes": changes.size(),
+		"class": Enums.RefitClass.keys()[summary.highest_class],
+		"cost": total_cost,
+		"hours": summary.total_time,
+	})
+	return {"success": true, "customization": customization}
+
+
+func _process_customizations() -> void:
+	for refit in active_refits:
+		if not refit.has("changes"):
+			continue
+		if not refit.parts_delivered:
+			refit.parts_delivery_eta -= 1
+			if refit.parts_delivery_eta <= 0:
+				refit.parts_delivered = true
+			continue
+
+		var tu = refit.tactical_unit
+		var budget = PersonnelManager.get_unit_repair_budget(tu)
+		if budget <= 0:
+			continue
+		var hours_this_tick = min(budget, refit.hours_remaining)
+		refit.hours_remaining -= hours_this_tick
+
+	var completed: Array[int] = []
+	for i in range(active_refits.size()):
+		var r = active_refits[i]
+		if not r.has("changes"):
+			continue
+		if r.hours_remaining <= 0 and r.parts_delivered:
+			_apply_customization(r)
+			completed.append(i)
+
+	for i in range(completed.size() - 1, -1, -1):
+		active_refits.remove_at(completed[i])
+
+
+func _apply_customization(customization: Dictionary) -> void:
+	var tu = customization.tactical_unit
+	var changes = customization.changes
+	var tech = _get_best_tech(tu)
+	var tech_skill = tech.get_tech_skill() if tech else 4
+
+	var log_entries: Array[Dictionary] = []
+
+	for change in changes:
+		var tn = calculate_customization_tn(change, tech_skill, facility_level)
+		if customization.facility_penalty > 0:
+			tn += customization.facility_penalty
+
+		var roll = randi() % 6 + randi() % 6 + 2
+		var success = roll >= tn
+		var crit_fail = roll == 2
+
+		var result = "success"
+		if crit_fail:
+			result = "critical_failure"
+		elif not success:
+			result = "failure"
+
+		var entry = {
+			"date": TimeManager.get_date_string(),
+			"technician": tech.personnel_name if tech else "Unknown",
+			"tech_skill": tech_skill,
+			"target_number": tn,
+			"roll": roll,
+			"result": result,
+		}
+
+		if change.get("action") == "replace" or change.get("action") == "add":
+			entry.new_component = change.get("new_component", "")
+		if change.get("action") == "replace" or change.get("action") == "remove":
+			entry.removed_component = change.get("current_component", "")
+
+		if success:
+			_apply_change(tu, change)
+			entry.applied = true
+		else:
+			entry.applied = false
+
+		log_entries.append(entry)
+
+	tu.customization_history.append_array(log_entries)
+	if tu.customization_history.size() > 100:
+		tu.customization_history = tu.customization_history.slice(-100)
+
+	GameState.log_event("customization_completed", {
+		"unit": tu.unit_name,
+		"changes": log_entries.size(),
+		"successes": log_entries.filter(func(e): return e.applied).size(),
+	})
+
+
+func _get_best_tech(unit: TacticalUnit) -> Personnel:
+	var best = null
+	var best_skill = -1
+	for t in unit.assigned_technicians:
+		var s = t.get_tech_skill()
+		if s > best_skill:
+			best_skill = s
+			best = t
+	return best
+
+
+func _apply_change(unit: TacticalUnit, change: Dictionary) -> void:
+	var action = change.get("action", "replace")
+	if action == "remove" or action == "replace":
+		var remove_name = change.get("current_component", "")
+		for i in range(unit.components.size() - 1, -1, -1):
+			if unit.components[i].component_name == remove_name:
+				unit.components.remove_at(i)
+				break
+	if action == "add" or action == "replace":
+		var comp_def = _component_def(change.get("new_component", ""))
+		if not comp_def.is_empty():
+			var new_c = Component.new()
+			new_c.component_name = comp_def.get("name", "")
+			new_c.component_type = comp_def.get("component_type", "")
+			new_c.tonnage = comp_def.get("tonnage", 0.0)
+			new_c.critical_slots = comp_def.get("critical_slots", 0)
+			new_c.cost = comp_def.get("cost", 0)
+			new_c.tech_base = comp_def.get("tech_base", "Inner Sphere")
+			new_c.tech_level = comp_def.get("tech_level", 1)
+			new_c.quality_range = comp_def.get("quality_range", [1, 5])
+			new_c.repair_difficulty = comp_def.get("repair_difficulty", 2)
+			new_c.status = Enums.ComponentStatus.UNDAMAGED
+			new_c.location = change.get("location", "")
+			unit.components.append(new_c)
+
+
+func get_customization_log(unit: TacticalUnit) -> Array[Dictionary]:
+	return unit.customization_history.duplicate()
+
 
 func get_refit_class_name(cl: Enums.RefitClass) -> String:
 	match cl:
