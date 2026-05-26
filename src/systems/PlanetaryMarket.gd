@@ -46,20 +46,43 @@ func _add_to_inventory(component_name: String) -> void:
 		"tonnage": def.get("tonnage", 0.0)
 	}
 
+func _scarcity_tier(component_name: String, def: Dictionary) -> int:
+	var ctype = def.get("component_type", "")
+	match ctype:
+		"ammo", "armor":
+			return 0
+		"heat_sink":
+			return 1
+		"weapon":
+			var n = component_name.to_lower()
+			if n.contains("autocannon"):
+				return 2
+			elif n.contains("laser") or n.contains("ppc") or n.contains("flamer"):
+				return 3
+			elif n.contains("lrm") or n.contains("srm") or n.contains("machine gun"):
+				return 2
+			return 2
+		"actuator", "cockpit", "electronics", "engine", "gyro", "jump_jet":
+			return 4
+		_:
+			return 2
+
+
 func _base_stock(component_name: String, def: Dictionary) -> int:
-	var cost = def.get("cost", 1000)
-	var qty: int
-	if cost <= 5000:
-		qty = randi() % 20 + 10
-	elif cost <= 50000:
-		qty = randi() % 10 + 5
-	elif cost <= 200000:
-		qty = randi() % 5 + 2
-	else:
-		qty = randi() % 3 + 1
-	if component_name.containsn("Ammo") or component_name == "Armor":
-		qty *= 3
-	return qty
+	var tier = _scarcity_tier(component_name, def)
+	match tier:
+		0:
+			return randi() % 30 + 20
+		1:
+			return randi() % 15 + 10
+		2:
+			return randi() % 8 + 4
+		3:
+			return randi() % 5 + 2
+		4:
+			return randi() % 3 + 1
+		_:
+			return randi() % 5 + 3
 
 func refresh() -> void:
 	refresh_counter += 1
