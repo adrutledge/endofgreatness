@@ -48,14 +48,12 @@ func _ready() -> void:
 
 	_generator = ContractGenerator.new()
 	add_child(_generator)
-	TimeManager.date_changed.connect(_on_date_changed)
+	EventBus.month_started.connect(_on_month_started)
 	Helpers.debug_print("ContractBoard", "_ready done")
 
 
-func _on_date_changed(date: Dictionary) -> void:
-	var day = date.get("day", 1)
-	if day == 1:
-		_dirty = true
+func _on_month_started(date: Dictionary) -> void:
+	_dirty = true
 
 
 func populate() -> void:

@@ -21,6 +21,7 @@ var _funds_warning_emitted: bool = false
 
 func _ready() -> void:
 	TimeManager.date_changed.connect(_on_date_changed)
+	EventBus.month_started.connect(_on_month_started)
 	EventBus.contract_accepted.connect(_on_contract_accepted)
 	EventBus.contract_completed.connect(_on_contract_completed)
 	last_bill_month = TimeManager.current_date.get("month", 1)
@@ -184,10 +185,6 @@ func order_item(item_name: String, quantity: int, cost_per_unit: int, source_sys
 	return true
 
 func _on_date_changed(date: Dictionary) -> void:
-	var day = date.get("day", 1)
-	var month = date.get("month", 1)
-	var year = date.get("year", 3025)
-
 	var burn = get_daily_burn_rate()
 	var daily_total = burn.total
 
@@ -201,15 +198,17 @@ func _on_date_changed(date: Dictionary) -> void:
 		accumulated_breakdown[key] = accumulated_breakdown.get(key, 0) + burn.breakdown[key]
 
 	current_market.refresh()
-
 	GameState.process_deliveries(TimeManager.total_days)
 
-	if day == 1 and not (month == last_bill_month and year == last_bill_year):
-		_process_monthly_bills()
-		last_bill_month = month
-		last_bill_year = year
-		if GameState.player.current_planet == "Galatea":
-			current_market.mark_for_rebuild()
+
+func _on_month_started(date: Dictionary) -> void:
+	var month = date.get("month", 1)
+	var year = date.get("year", 3025)
+	_process_monthly_bills()
+	last_bill_month = month
+	last_bill_year = year
+	if GameState.player.current_planet == "Galatea":
+		current_market.mark_for_rebuild()
 
 	# Warn on negative balance (once per negative period)
 	if get_balance() < 0:

@@ -14,6 +14,7 @@ signal event_triggered(event_data: Dictionary)
 signal bills_paid(amount: int, breakdown: Dictionary)
 signal contract_settled(contract: Contract, settlement: Dictionary)
 signal salvage_processed(contract: Contract, salvage_result: Dictionary)
+signal month_started(date: Dictionary)
 signal inventory_changed(item_name: String, quantity: int, source: String)
 signal dispatch_completed(item_name: String, quantity: int, unit_name: String)
 signal auto_reorder_triggered(orders_placed: int, total_cost: int)
@@ -57,6 +58,9 @@ func emit_bills_paid(amount: int, breakdown: Dictionary) -> void:
 
 func emit_contract_settled(contract: Contract, settlement: Dictionary) -> void:
 	contract_settled.emit(contract, settlement)
+
+func emit_month_started(date: Dictionary) -> void:
+	month_started.emit(date)
 
 func emit_inventory_changed(item_name: String, quantity: int, source: String) -> void:
 	inventory_changed.emit(item_name, quantity, source)
