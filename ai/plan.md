@@ -301,7 +301,9 @@
   - **Gyro critical slots by type**: Standard = 4 CT; XL = 6 CT; Compact = 2 CT; Heavy = 3 CT; None = 0
   - **Gyro weight multipliers** (applied to base mass `ceil(engine_rating / 100)`): Standard = 1.0; XL = 0.5; Compact = 1.5; Heavy = 2.0; None = 0.0
   - **Gyro slot placement**: unlike engines, all gyro types occupy Center Torso exclusively; post-3025, per-location slot tracking must account for gyro slots in CT alongside engine, not in side torsos
-- **Heat sink adequacy**: base 10 free heat sinks from engine; each additional heat sink weighs 1t; total dissipation must cover alpha-strike heat (weapon heat + jump heat); excess heat sink count above dissipation capacity flagged as warning
+- **Heat sink adequacy**: base 10 free heat sinks from engine; each additional heat sink weighs 1t
+  - **Vehicles**: total dissipation must cover alpha-strike heat (weapon heat + jump heat) — enforced as validation error; vehicle heat tracking is critical for motive system operation
+  - **Mechs**: minimum 10 heat sinks (the 10 free engine sinks) enforced as validation error; mechs may run hot by design (alpha-strike exceeds dissipation) — flagged as a design warning only, not an error
 - **Internal structure type**: Standard/Endo Steel/Reinforced/Composite each have distinct weight multipliers and critical slot costs
 - **Armor type**: Standard/Ferro-Fibrous/Light Ferro/Heavy Ferro/Reflective/Reactive/etc. each with distinct weight per point and critical slot costs
 - **Tech base & level consistency**: validates all components share compatible tech_base (Inner Sphere / Clan) and tech_rating (Introductory/Standard/Advanced/Experimental); mixed-tech builds flagged with appropriate penalties per TM optional rules

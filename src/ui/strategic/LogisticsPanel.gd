@@ -642,18 +642,13 @@ func _refresh_market_tab() -> void:
 	if _selected_market_planet.is_empty():
 		_selected_market_planet = "Galatea"
 	_populate_planet_selector()
-	call_deferred("_do_refresh_market_tab")
-
-
-func _do_refresh_market_tab() -> void:
+	EconomySystem.initialize_market(_selected_market_planet)
 	match market_tabs.current_tab:
 		0:
-			EconomySystem.initialize_market(_selected_market_planet)
 			_refresh_local()
 		1:
 			pass
 		2:
-			EconomySystem.initialize_market(_selected_market_planet)
 			_refresh_units()
 
 
