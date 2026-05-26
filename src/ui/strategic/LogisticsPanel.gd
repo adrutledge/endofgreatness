@@ -732,7 +732,9 @@ func _on_delivery_arrived(_item_name: String, _quantity: int) -> void:
 
 func _refresh_local() -> void:
 	local_list.clear()
+	local_list.add_item("DEBUG: _refresh_local called")
 	current_items = EconomySystem.current_market.get_available_items()
+	local_list.add_item("DEBUG: %d items from market" % current_items.size())
 	var query = local_search.text.strip_edges().to_lower()
 	for item in current_items:
 		if query and not item.name.to_lower().contains(query):
