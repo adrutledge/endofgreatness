@@ -303,6 +303,7 @@
   - **Gyro slot placement**: unlike engines, all gyro types occupy Center Torso exclusively; post-3025, per-location slot tracking must account for gyro slots in CT alongside engine, not in side torsos
 - **Heat sink adequacy**: base 10 free heat sinks from engine; each additional heat sink weighs 1t
   - **Vehicles**: total dissipation must cover alpha-strike heat (weapon heat + jump heat) — enforced as validation error; vehicle heat tracking is critical for motive system operation
+  - **Vehicle heat sources**: ballistic weapons (autocannons, machine guns, Gauss rifles) generate NO heat when mounted on vehicles; only energy weapons (lasers, PPCs, flamers) and jump jets contribute to vehicle heat; missile weapons (LRMs, SRMs) generate heat in vehicles per standard rules
   - **Mechs**: minimum 10 heat sinks (the 10 free engine sinks) enforced as validation error; mechs may run hot by design (alpha-strike exceeds dissipation) — flagged as a design warning only, not an error
 - **Internal structure type**: Standard/Endo Steel/Reinforced/Composite each have distinct weight multipliers and critical slot costs
 - **Armor type**: Standard/Ferro-Fibrous/Light Ferro/Heavy Ferro/Reflective/Reactive/etc. each with distinct weight per point and critical slot costs
