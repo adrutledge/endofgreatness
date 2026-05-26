@@ -149,7 +149,7 @@ func _load_systems() -> void:
 	for name in data:
 		var sys = data[name]
 		var coords = sys.get("coordinates", {})
-		var pos = Vector2(coords.get("x", 0.0), coords.get("y", 0.0))
+		var pos = Vector2(coords.get("x", 0.0), -coords.get("y", 0.0))
 		systems_positions.append({
 			"name": name,
 			"pos": pos,
