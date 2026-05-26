@@ -102,11 +102,11 @@
 - UI: market screen shows local stock and a "Surrounding Systems" tab with orderable items, delivery ETA, and price markup (surcharge for transport); active deliveries shown in a logistics panel with countdown timers
 - **Black markets** (future — advanced market): each planet may have a hidden black market for units and components, discovered through events, reputation with local criminal elements, or high `LOGISTICAL` skill; black market items are priced significantly below market rate (40–60% of standard cost) but carry risk: a delivery may never arrive (outright loss), or arrive damaged/destroyed (requiring repair before use); the player's `LOGISTICAL` personnel skill (highest available) mitigates both the discovery chance and the risk of non-arrival/damage; black markets are not affected by standard supply constraints (no faction presence needed, bypasses tonnage limits) but access is lost if the player's reputation with the planet's owner faction drops below a threshold; each planet's black market refreshes independently and may have unique or rare items not found on the open market
 - **Factory-direct purchases** (future — advanced market): high faction reputation may unlock the ability to order units and components directly from the manufacturer's factory world; requires sufficient reputation (varies by manufacturer — major houses gate behind faction rep, periphery manufacturers may require less), and the item is shipped from the factory's planet via `InterstellarOrderManager` (same remote ordering system, standard delivery times and transport costs based on jumps from factory to player's current planet); factory-direct orders have guaranteed quality (no random quality variation) and access to the manufacturer's full production catalogue (including variants and options not available on the open market); not all manufacturers participate — only those with an active factory world in the star map; global reputation (MRB) may unlock additional manufacturer relationships beyond faction-specific ones
-- **Logistics personnel check limits** (design note): each `LOGISTICAL`-role personnel may only make a limited number of logistics checks per day (configurable, default 1–3 depending on skill); activities that consume a check include: sourcing remote orders, coordinating dispatch, processing salvage, negotiating black market access, and managing factory-direct purchase logistics; a sufficiently large unit with high supply throughput will require multiple logistics personnel to cover all daily needs without falling behind; this creates a meaningful trade-off between hiring more logistics staff (salary cost) versus accepting slower supply throughput; the `Administration` skill may increase the number of daily checks a logistics character can perform
+- **Logistics personnel check limits** (see Design Notes)
 - **Aerospace interdiction** (future): when aerospace assets (owned DropShips, escort fighters, or hired naval protection) are implemented, off-world orders during appropriate contract types (assault, raid, pirate hunting) may come under attack en route; player must decide whether to escorts convoys or risk losing shipments; interception chance, convoy strength, and attacker composition determined by contract difficulty, employer commitment, and local faction naval presence; lost shipments emit a `shipment_destroyed` event with partial insurance recovery (configurable percentage); adds a strategic layer to logistics — shipping through hostile space requires calculation of risk vs. just-in-time supply
 - **Opposed planetary insertion** (future): when aerospace assets are implemented, the initial landing on a contract planet may be contested; for assault, raid, and similar high-intensity contract types, the player's DropShips may face defensive fire or fighter interception during approach; outcome depends on orbital superiority, DropShip armor/point-defense, escort fighter screen, and the contract's threat level; a failed or costly insertion could damage or destroy carried units and personnel before they reach the surface, delay deployment, or force a landing at a less advantageous LZ; the employer may provide covering fire or a diversion (reducing opposition) depending on commitment level and command rights; adds pre-battle stakes to the operational layer and rewards investment in aerospace protection even in a ground-centric command
-- **Campaign toggles for complexity** (design note): provide campaign-level toggles to disable each domain independently (`aerospace_enabled: bool`, `vehicles_enabled: bool`, `infantry_enabled: bool` in `spares_config.json`); when disabled: no contract will require that unit type, no aerospace interdiction/insertion events fire, and the game treats the player's force as mech-only or mech+the enabled types; this allows players who dislike managing aerospace assets, vehicle crews, or infantry platoons to opt out without missing content; **current version defaults**: all three to `false` to keep scope manageable (mech-only campaign)
-- **Lazy refresh pattern** (architectural note): for any system that needs periodic full refreshes (market inventory, personnel candidate pool, contract board), use a `mark_for_rebuild()` + `_ensure_fresh()` dirty-flag pattern rather than rebuilding synchronously on a timer; the system marks itself dirty on the trigger event (e.g., first-of-month tick), and the actual rebuild happens lazily when the data is next accessed; this avoids frame-time spikes during tick processing and means refreshes are free if the player never opens the relevant UI; implement `_ensure_fresh()` as a guard at the top of every public data-access method
+- **Campaign toggles** (see Design Notes — current version defaults: all non-mech units disabled)
+- **Lazy refresh pattern** (see Design Notes)
 - **Peacetime expenses**: every strategic tick when no active contract is running (or when planet-side but outside contract coverage), automatically deduct:
   - Full personnel salaries (all roles: administrators, medics, technicians, crew)
   - Full component maintenance costs (all tactical units)
@@ -640,7 +640,7 @@
 
 ### P7.2 — HUD
 
-- **Color blind accessibility** (future version): add a color blind friendly palette option for the paper doll and HUD, using patterns/textures or high-contrast color pairings that are distinguishable for common forms of color blindness (deuteranopia, protanopia, tritanopia); toggleable from settings
+- **Color blind accessibility** (see Design Notes)
 - `ui/hud/HUD.tscn` — persistent overlay
   - Date/time display
   - C-Bill balance
@@ -685,7 +685,7 @@
   - Event log: cap at N entries (e.g., 500), oldest pruned; archived to cold file
   - Personnel records: batch-save as array of resource references rather than inline objects to share template data
   - Save file size target: < 5 MB for a 50-hour campaign; benchmark and profile if exceeded
-  - **Multiple autosaves on configurable schedule**: autosave creates a new slot on a rotating basis — user configures slot count (default 5) and interval (real-time minutes or in-game days); oldest slot is overwritten when all slots are filled; slot names follow a pattern (`autosave_1`, `autosave_2`, ...) with timestamp and current contract/location in metadata; autosaves are listed in the load menu alongside manual saves and are distinguishable by an "Autosave" badge
+  - **Multiple autosaves on configurable schedule** (see Design Notes)
 - Save data includes: date, all units (with damage state), all personnel, contracts active, reputation, balance, operational map seeds, RNG state, command_rights state for active contracts
 
 ### P8.2 — Save UI
@@ -767,6 +767,28 @@ Build main menu, HUD, modals, info panels, save/load system, settings.
 
 **Agent Team F — Phase 9 + 10 (Integration + QA)**
 Wire layers together, event system, lore accuracy, tests, polish.
+
+---
+
+## Design Notes & Architectural Patterns
+
+### Signal Down, Call Up
+Systems emit signals downward (to listeners); UI/reactors call methods upward on systems. EventBus follows this pattern — `month_started` fires, panels catch it and call system methods as needed. Avoids coupling systems to UI and keeps the data layer independent.
+
+### Lazy Refresh Pattern
+For any system needing periodic full refreshes (market inventory, personnel candidate pool, contract board), use `mark_for_rebuild()` + `_ensure_fresh()` dirty-flag pattern rather than rebuilding synchronously on a timer. The system marks itself dirty on the trigger event (e.g., first-of-month tick), and the actual rebuild happens lazily when data is next accessed. This avoids frame-time spikes during tick processing and means refreshes are free if the player never opens the relevant UI. Implement `_ensure_fresh()` as a guard at the top of every public data-access method.
+
+### Campaign Toggles for Complexity
+Provide campaign-level toggles to disable each domain independently (`aerospace_enabled`, `vehicles_enabled`, `infantry_enabled` in `spares_config.json`). When disabled: no contract requires that unit type, no aerospace events fire, and the game treats the player's force as mech-only or mech+enabled types. This lets players opt out of managing unwanted complexity without missing content. Current version defaults: all three `false` (mech-only).
+
+### Logistics Personnel Check Limits
+Each `LOGISTICAL`-role personnel gets a limited number of logistics checks per day (configurable, default 1–3 depending on skill). Activities consuming a check: sourcing remote orders, coordinating dispatch, processing salvage, negotiating black market access, factory-direct logistics. Large units with high throughput require multiple logistics staff, creating a trade-off between salary cost and supply speed. `Administration` skill increases daily check count.
+
+### Color Blind Accessibility
+When adding new UI elements with color-coded information (paper doll, faction map, HUD), include a color blind friendly palette option using patterns/textures or high-contrast pairings distinguishable for deuteranopia, protanopia, and tritanopia. Toggleable from settings.
+
+### Save System Pattern
+Multiple autosaves on a rotating schedule: user configures slot count (default 5) and interval (real-time minutes or in-game days). Oldest overwritten when all slots filled. Slot names follow pattern (`autosave_1`, `autosave_2`, ...) with timestamp and current contract/location in metadata. Autosaves listed in load menu alongside manual saves with an "Autosave" badge.
 
 ---
 
