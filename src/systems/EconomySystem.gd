@@ -28,6 +28,8 @@ func _ready() -> void:
 	current_market = PlanetaryMarket.new()
 	interstellar_order_manager = InterstellarOrderManager.new()
 	add_child(interstellar_order_manager)
+	if GameState.player and not GameState.player.current_planet.is_empty():
+		initialize_market(GameState.player.current_planet)
 
 func get_balance() -> int:
 	return GameState.player.current_balance
@@ -207,6 +209,8 @@ func _on_date_changed(date: Dictionary) -> void:
 		_process_monthly_bills()
 		last_bill_month = month
 		last_bill_year = year
+		if GameState.player.current_planet == "Galatea":
+			current_market.rebuild_inventory()
 
 	# Warn on negative balance (once per negative period)
 	if get_balance() < 0:
