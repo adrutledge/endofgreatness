@@ -28,8 +28,7 @@ func _ready() -> void:
 	current_market = PlanetaryMarket.new()
 	interstellar_order_manager = InterstellarOrderManager.new()
 	add_child(interstellar_order_manager)
-	if GameState.player and not GameState.player.current_planet.is_empty():
-		initialize_market(GameState.player.current_planet)
+	initialize_market("Galatea")
 
 func get_balance() -> int:
 	return GameState.player.current_balance
