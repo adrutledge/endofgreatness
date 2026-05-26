@@ -6,7 +6,7 @@ var current_date: Dictionary = {
 	"day": 1
 }
 
-var is_paused: bool = false
+var is_paused: bool = true
 var tick_interval: float = 1.0
 var elapsed_time: float = 0.0
 var tactical_round: int = 0
