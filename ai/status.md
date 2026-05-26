@@ -1,6 +1,6 @@
 # Implementation Status
 
-Generated: 3025-05-25 (updated per commit 03e5b64)
+Generated: 3025-05-26 (updated per commit 9b74e4c)
 Plan: `ai/plan.md`
 
 ---
@@ -27,7 +27,7 @@ Plan: `ai/plan.md`
 - [~] Only English locale exists
 
 ### P0.4 — Event Bus
-- [x] EventBus autoload with 15 signals
+- [x] EventBus autoload with 20 signals (added month_started, inventory_changed, dispatch_completed, auto_reorder_triggered, funds_low_for_reorder)
 - [x] All systems communicate through events
 
 ---
@@ -108,6 +108,7 @@ Plan: `ai/plan.md`
 - [x] Hundreds of .mtf/.blk unit files in data/units/
 - [x] 12 RAT JSON files in data/rat/
 - [x] RATParser.gd for parsing and rolling
+- [x] Fixed critical_slots in gyro.json (2→4) and 78 engine_*.json (3→6) to match BT conventions
 - [~] Missing TechManual construction fields on component JSONs (engine_rating_required, gyro_compatible, etc.)
 
 ### P2.3 — Star Map Data
@@ -152,6 +153,7 @@ Plan: `ai/plan.md`
 - [x] P3.6.4: Repair/maintenance/salvage per Campaign Operations; inventory item repair
 - [x] P3.6.5: MechLab UI with Paper Doll (color-coded crit slots, multi-slot borders, rear-facing (R) display), Components (filtered by type/location/tech, engine calculator), Refit, and Customize tabs
 - [x] MTF parser: dedup with smart splitting, splittable weapons (AC/20), rear-facing detection, validation warnings
+- [x] MTF parser refactored: extracted _populate_component_from_def, _set_component_defaults, _finalize_slot_splitting helpers; removed dead code (_load_suspension_factors, _get_jump_jet_weight, _is_engine_component_name)
 - [x] P3.6.6: Campaign Operations customization rules (per-component B-E class, CO time/cost/TN, single avg TN skill roll, facility gating, quality mismatch, customization log)
 - [x] Customization workflow: MechLab Customize tab with change list, risk assessment, facility check, apply with single skill roll; failure extends time by 50%, no part destruction
 - [x] Refit-in-progress guard: prevents starting refit or customization while unit already has active work
@@ -163,7 +165,9 @@ Plan: `ai/plan.md`
 - [x] `home_base` field on `StrategicUnit` (default "Galatea")
 - [x] Starting `current_planet` set to Galatea regardless of faction origin
 - [x] Deployed units can buy from local market of their contract planet (planet selector in LogisticsPanel market tab)
-- [ ] Market represents Galatea mercenary exchange (faction-neutral, broad selection)
+- [x] Galatea market populated at startup with all non-MRB/CS factions; repopulates monthly via month_started signal
+- [x] Market scarcity tiers: armor/ammo=abundant, heat sinks/actuators/jump jets=easy, ACs/missiles/MGs/flamers=medium, lasers/PPCs=slightly hard, engines/gyros/cockpit/electronics=rare
+- [x] Lazy rebuild pattern (mark_for_rebuild / _ensure_fresh) for market and contract board
 - [ ] Remote sourcing (InterstellarOrderManager) searches from Galatea
 - [ ] Tech facility level on Galatea = "advanced" (no facility gating for repairs/refits)
 - [ ] Deployed units' `current_planet` tracks their contract planet
@@ -179,17 +183,23 @@ Plan: `ai/plan.md`
 - [x] NewGameDialog.tscn with faction picker
 - [x] Tests: test_strategic_unit_generator.gd
 
-### P3.8 — Operational Unit Inventory Assignment (partial)
-- [~] spares_config.json with all settings (data/config/spares_config.json)
-- [~] Dispatch UI in logistics panel (sends from global stores to unit cache)
-- [~] Reorder-to-minimum dispatches from global first, then buys/orders
-- [ ] Allocation UI with per-component pickers at deploy time
-- [ ] Auto-allocate defaults button
-- [ ] Operational logistics difficulty: assault/raid contracts require logistics roll, gated by config toggle
-- [ ] Independent command + logistics difficulty: no employer market on-planet
-- [ ] Auto-reorder timer (per-tick check)
-- [ ] Fund gate badge on HUD
-- [ ] Deduction/Recovery/In-transit tracking
+### P3.8 — Operational Unit Inventory Assignment (mostly complete)
+- [x] spares_config.json with all settings (data/config/spares_config.json)
+- [x] Dispatch UI in logistics panel (sends from global stores to unit cache)
+- [x] Reorder-to-minimum dispatches from global first, then buys/orders
+- [x] InventoryManager autoload: dispatch_to_unit, recover_from_unit, recover_all_from_unit, track_in_transit
+- [x] deployment_cache as @export var on OperationalUnit (replaced dynamic set/get)
+- [x] Auto-reorder timer (per-tick check in InventoryManager, gated by auto_reorder_enabled config)
+- [x] In-transit tracking (pending dispatch arrivals)
+- [x] Operational logistics difficulty: config-gated (logistics_difficulty_enabled), check via has_logistics_difficulty()
+- [x] Independent command market check: can_access_employer_market(), disabled by default
+- [x] month_started signal decouples monthly refresh triggers from tick handlers
+- [x] Lazy refresh pattern documented in plan for all periodic rebuilds
+- [x] Campaign toggles: aerospace/vehicles/infantry disabled by default
+- [x] Tests: test_market_population.gd (22 tests: scarcity tiers, Galatea population, lazy rebuild)
+- [ ] Allocation UI with per-component pickers at deploy time (UI deferred)
+- [ ] Auto-allocate defaults button (UI deferred)
+- [ ] Fund gate badge on HUD (signal emitted, badge UI deferred)
 
 ---
 
@@ -201,7 +211,7 @@ Plan: `ai/plan.md`
 ### Phase 7 — UI & UX (P7.1 MainMenu + P7.2 HUD/status badges planned)
 ### Phase 8 — Save/Load (not started)
 ### Phase 9 — Integration & Polish (partial)
-### Phase 10 — Testing & QA (MTF parser tests + generator tests)
+### Phase 10 — Testing & QA (MTF parser tests + generator tests + market tests)
 
 ---
 
@@ -221,12 +231,12 @@ git status
 
 Key autoloads (defined in project.godot):
 - GameState, EventBus, TimeManager, DataManager, ThemeManager
-- EconomySystem, ReputationSystem, PersonnelManager, RefitManager, UnitTransportManager
+- EconomySystem, ReputationSystem, PersonnelManager, RefitManager, UnitTransportManager, InventoryManager
 
 Key next work items by phase:
-- P3.8: Auto-reorder per-tick timer, fund gate HUD badge, deploy-time allocation UI
+- P3.8: Deploy-time allocation UI, auto-allocate defaults (UI deferred)
 - P4: Planetary hex map and operational actions
 - P5: Rules engine architecture
 - P6.1-3,6.5: Tactical map, combat flow, AI
-- P7.2: HUD status badges (auto-reorder suspended, unattended injured, HR shortage, pending tactical engagements, low supplies)
+- P7.2: HUD status badges (funds_low_for_reorder signal ready, badge UI deferred)
 - P8: Save/load system
