@@ -189,7 +189,7 @@ static func parse_mtf(file_path: String, component_defs: Dictionary = {}) -> Tac
 
 			seen[key] = comp
 
-	_finalize_slot_splitting(unit, seen, component_defs)
+	_finalize_slot_splitting(unit, seen, component_defs, true)
 
 	for c in unit.components:
 		if c.component_name == "Jump Jet" and c.critical_slots > 0:
@@ -592,7 +592,7 @@ static func _set_component_defaults(comp: Component) -> void:
 	comp.tech_level = 1
 
 
-static func _finalize_slot_splitting(unit: TacticalUnit, seen: Dictionary, component_defs: Dictionary) -> void:
+static func _finalize_slot_splitting(unit: TacticalUnit, seen: Dictionary, component_defs: Dictionary, warn_on_low_slots: bool = false) -> void:
 	for key in seen:
 		var comp = seen[key]
 		var cname = comp.component_name
@@ -600,6 +600,8 @@ static func _finalize_slot_splitting(unit: TacticalUnit, seen: Dictionary, compo
 		if component_defs.has(cname):
 			var def = component_defs[cname]
 			json_crit = def.get("critical_slots", 1)
+		if warn_on_low_slots and comp.critical_slots < json_crit and json_crit > 1:
+			push_warning("MegaMekParser: %s in %s has %d slots, expected %d" % [cname, comp.location.location_name if comp.location else "?", comp.critical_slots, json_crit])
 		if comp.critical_slots > json_crit:
 			var n_extra = comp.critical_slots / json_crit
 			comp.critical_slots = json_crit
