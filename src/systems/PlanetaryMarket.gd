@@ -57,14 +57,18 @@ func _scarcity_tier(component_name: String, def: Dictionary) -> int:
 			var n = component_name.to_lower()
 			if n.contains("autocannon"):
 				return 2
-			elif n.contains("laser") or n.contains("ppc") or n.contains("flamer"):
+			elif n.contains("laser") or n.contains("ppc"):
 				return 3
+			elif n.contains("flamer"):
+				return 2
 			elif n.contains("lrm") or n.contains("srm") or n.contains("machine gun"):
 				return 2
 			return 2
 		"actuator":
-			return 0
-		"cockpit", "electronics", "engine", "gyro", "jump_jet":
+			return 1
+		"jump_jet":
+			return 1
+		"cockpit", "electronics", "engine", "gyro":
 			return 4
 		_:
 			return 2
