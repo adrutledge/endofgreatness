@@ -112,7 +112,7 @@ func _show_contract_details(c: Contract) -> void:
 
 	var info = ""
 	info += tr("Payment: %d C-Bills") % c.c_bill_payment + "\n"
-	info += tr("Payout per tick: %d C-Bills") % c.payout_per_tick + "\n"
+	info += tr("Payout per month: %d C-Bills") % c.payout_per_month + "\n"
 	info += tr("Salvage rate: %d%% (%s)") % [c.salvage_rate * 100, c.salvage_type] + "\n"
 	var rights_keys = Enums.CommandRights.keys()
 	var rights_name = rights_keys[c.command_rights] if c.command_rights >= 0 and c.command_rights < rights_keys.size() else tr("Unknown")

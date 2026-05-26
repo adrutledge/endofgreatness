@@ -20,7 +20,7 @@ var salvage_pool: Array[Dictionary] = []
 @export var minimum_tonnage: float
 @export var minimum_tactical_unit_counts: Dictionary = {}
 
-var payout_per_tick: int
+var payout_per_month: int
 var total_paid: int = 0
 var is_active: bool = false
 var is_completed: bool = false

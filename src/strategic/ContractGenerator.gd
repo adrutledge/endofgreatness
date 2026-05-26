@@ -62,8 +62,8 @@ func generate_single_contract(issuer: Faction, target: Faction, date: Dictionary
 	contract.minimum_tonnage = (randi() % 200 + 20) * 1.0
 	contract.minimum_tactical_unit_counts = _generate_minimum_units(contract.activity_type)
 
-	var total_ticks = contract.duration
-	contract.payout_per_tick = contract.c_bill_payment / total_ticks if total_ticks > 0 else 0
+	var total_months = max(1, ceil(float(contract.duration) / 30.0))
+	contract.payout_per_month = contract.c_bill_payment / total_months if total_months > 0 else 0
 
 	return contract
 
