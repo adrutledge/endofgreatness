@@ -8,6 +8,8 @@ var price_modifiers: Dictionary = {}
 var refresh_counter: int = 0
 var refresh_interval: int = 7
 var _needs_rebuild: bool = false
+var _test_defs: Dictionary = {}
+var _DataManager = null
 
 func setup(factions_on_planet: Array[String], exclude_faction: String = "") -> void:
 	faction_codes = factions_on_planet.duplicate()
@@ -15,17 +17,31 @@ func setup(factions_on_planet: Array[String], exclude_faction: String = "") -> v
 	faction_codes.erase(exclude_faction)
 	rebuild_inventory()
 
+func _dm() -> Node:
+	if _DataManager == null:
+		_DataManager = Engine.get_main_loop().root.get_node_or_null("DataManager") if Engine.get_main_loop() else null
+	return _DataManager
+
+
+func _get_defs_source() -> Dictionary:
+	if not _test_defs.is_empty():
+		return _test_defs
+	var dm = _dm()
+	return dm.component_defs if dm else {}
+
+
 func rebuild_inventory() -> void:
 	inventory.clear()
 	price_modifiers.clear()
 	var seen: Dictionary = {}
+	var defs = _get_defs_source()
 
 	if faction_codes.is_empty():
-		for name in DataManager.component_defs:
+		for name in defs:
 			_add_to_inventory(name)
 	else:
 		for code in faction_codes:
-			var items = DataManager.get_faction_market_components(code)
+			var items = defs.keys() if not _test_defs.is_empty() else (_dm().get_faction_market_components(code) if _dm() else defs.keys())
 			for name in items:
 				if not seen.has(name):
 					seen[name] = true
@@ -34,7 +50,7 @@ func rebuild_inventory() -> void:
 	_randomize_prices()
 
 func _add_to_inventory(component_name: String) -> void:
-	var def = DataManager.component_defs.get(component_name)
+	var def = _get_defs_source().get(component_name)
 	if not def:
 		return
 	var base_qty = _base_stock(component_name, def)
@@ -47,7 +63,7 @@ func _add_to_inventory(component_name: String) -> void:
 		"tonnage": def.get("tonnage", 0.0)
 	}
 
-func _scarcity_tier(component_name: String, def: Dictionary) -> int:
+func scarcity_tier(component_name: String, def: Dictionary) -> int:
 	var ctype = def.get("component_type", "")
 	match ctype:
 		"ammo", "armor":
@@ -76,7 +92,7 @@ func _scarcity_tier(component_name: String, def: Dictionary) -> int:
 
 
 func _base_stock(component_name: String, def: Dictionary) -> int:
-	var tier = _scarcity_tier(component_name, def)
+	var tier = scarcity_tier(component_name, def)
 	match tier:
 		0:
 			return randi() % 30 + 20
@@ -116,8 +132,9 @@ func _randomize_quantities() -> void:
 		entry.quantity = clampi(entry.quantity + delta, 0, entry.max_quantity)
 
 func _randomize_prices() -> void:
+	var defs = _get_defs_source()
 	for name in inventory:
-		var def = DataManager.component_defs.get(name)
+		var def = defs.get(name)
 		if not def:
 			continue
 		var base_cost = def.get("cost", 1000)
@@ -151,7 +168,7 @@ func sell(item_name: String, quantity: int) -> void:
 	if entry:
 		entry.quantity += quantity
 	else:
-		var def = DataManager.component_defs.get(item_name)
+		var def = _get_defs_source().get(item_name)
 		if def:
 			inventory[item_name] = {
 				"name": item_name,

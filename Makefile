@@ -10,6 +10,9 @@ MTF_DEPS := $(shell find data/components/ -name "*.json" | sort)
 MTF_TEST := tests/test_mtf_parser.gd
 MTF_STAMP := .tested_mtf
 
+MARKET_TEST := tests/test_market_population.gd
+MARKET_STAMP := .tested_market
+
 STRAT_GEN_SRC := src/strategic/StrategicUnitGenerator.gd src/strategic/RATParser.gd
 STRAT_GEN_DEPS := $(shell find src/data/ -name "*.gd" | sort) src/core/GameState.gd
 STRAT_GEN_DATA := $(shell find data/rat/ -name "*.json" | sort)
@@ -39,11 +42,15 @@ $(MTF_STAMP): $(MTF_SRC) $(MTF_DEPS) $(MTF_TEST)
 	@$(GODOT) --headless --script $(MTF_TEST) 2>&1 | grep -E "^(PASS|FAIL|Results)"
 	@touch $(MTF_STAMP)
 
+$(MARKET_STAMP): $(MARKET_TEST)
+	@$(GODOT) --headless --script $(MARKET_TEST) 2>&1 | grep -E "^(PASS|FAIL|Results)"
+	@touch $(MARKET_STAMP)
+
 $(STRAT_GEN_STAMP): $(STRAT_GEN_SRC) $(STRAT_GEN_DEPS) $(STRAT_GEN_DATA) $(STRAT_GEN_TEST)
 	@$(GODOT) --headless --script $(STRAT_GEN_TEST) 2>&1 | grep -E "^(PASS|FAIL|Results)"
 	@touch $(STRAT_GEN_STAMP)
 
-test: $(MTF_STAMP) $(STRAT_GEN_STAMP)
+test: $(MTF_STAMP) $(MARKET_STAMP) $(STRAT_GEN_STAMP)
 
 ## Headless generator integration test (requires autoloads, runs full engine)
 test-gen:
