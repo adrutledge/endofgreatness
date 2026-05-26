@@ -17,7 +17,7 @@
   "refit_kit_discount": 0.9,
   "logistics_difficulty_enabled": true,
   "logistics_difficulty_contract_types": ["assault", "raid"],
-  "independent_command_logistics_enabled": true,
+  "independent_command_logistics_enabled": false,
   "aerospace_enabled": false,
   "vehicles_enabled": false,
   "infantry_enabled": false
