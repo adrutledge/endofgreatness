@@ -7,6 +7,7 @@ var _generator: ContractGenerator
 var _available: Array[Contract] = []
 var _selected_contract: Contract
 var _selected_is_active: bool = false
+var _dirty: bool = true
 
 @onready var available_list: ItemList = %AvailableList
 @onready var active_list: ItemList = %ActiveList
@@ -47,12 +48,18 @@ func _ready() -> void:
 
 	_generator = ContractGenerator.new()
 	add_child(_generator)
+	TimeManager.date_changed.connect(_on_date_changed)
 	Helpers.debug_print("ContractBoard", "_ready done")
+
+
+func _on_date_changed(date: Dictionary) -> void:
+	var day = date.get("day", 1)
+	if day == 1:
+		_dirty = true
 
 
 func populate() -> void:
 	Helpers.debug_print("ContractBoard", "populate")
-	_available.clear()
 	available_list.clear()
 	active_list.clear()
 	_clear_details()
@@ -62,9 +69,11 @@ func populate() -> void:
 		Helpers.debug_warn("ContractBoard", "populate — TimeManager/GameState/player not ready")
 		return
 
-	var date = TimeManager.current_date
-	var location = GameState.player.current_planet if GameState.player.current_planet else ""
-	_available = _generator.generate_contracts(date, location, 0, {})
+	if _dirty:
+		_dirty = false
+		var date = TimeManager.current_date
+		var location = GameState.player.current_planet if GameState.player.current_planet else ""
+		_available = _generator.generate_contracts(date, location, 0, {})
 
 	for c in _available:
 		if not c:
