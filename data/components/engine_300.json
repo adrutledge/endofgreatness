@@ -1,7 +1,7 @@
 {
   "name": "Fusion Engine 300",
   "tonnage": 19,
-  "critical_slots": 8,
+  "critical_slots": 6,
   "cost": 360000,
   "tech_base": "inner_sphere",
   "quality_range": {

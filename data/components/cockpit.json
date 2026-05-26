@@ -1,7 +1,7 @@
 {
   "name": "Standard Cockpit",
   "tonnage": 3,
-  "critical_slots": 3,
+  "critical_slots": 1,
   "cost": 100000,
   "tech_base": "inner_sphere",
   "quality_range": {

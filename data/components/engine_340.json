@@ -1,7 +1,7 @@
 {
   "name": "Fusion Engine 340",
   "tonnage": 102,
-  "critical_slots": 5,
+  "critical_slots": 6,
   "cost": 1700000,
   "tech_base": "inner_sphere",
   "quality_range": {

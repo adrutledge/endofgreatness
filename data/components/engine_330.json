@@ -1,7 +1,7 @@
 {
   "name": "Fusion Engine 330",
   "tonnage": 99,
-  "critical_slots": 5,
+  "critical_slots": 6,
   "cost": 1650000,
   "tech_base": "inner_sphere",
   "quality_range": {

@@ -1,7 +1,7 @@
 {
   "name": "Fusion Engine 250",
   "tonnage": 50,
-  "critical_slots": 4,
+  "critical_slots": 6,
   "cost": 1250000,
   "tech_base": "inner_sphere",
   "quality_range": {
