@@ -573,6 +573,7 @@ func _load_config() -> void:
 
 func populate() -> void:
 	Helpers.debug_print("LogisticsPanel", "populate — current_tab=%d" % tabs.current_tab if tabs else -1)
+	print("populate: tabs.current_tab=", tabs.current_tab if tabs else -1)
 	balance_label.text = tr("Balance: ") + Helpers.fmt_money(EconomySystem.get_balance())
 	refresh_current_tab()
 
@@ -593,6 +594,8 @@ func _on_tab_changed(_tab: int) -> void:
 		1:
 			balance_label.text = tr("Balance: ") + Helpers.fmt_money(EconomySystem.get_balance())
 			_refresh_market_tab()
+			if _selected_market_planet.is_empty():
+				_selected_market_planet = "Galatea"
 		2:
 			_refresh_inventory()
 
@@ -718,16 +721,12 @@ func _on_delivery_arrived(_item_name: String, _quantity: int) -> void:
 func _refresh_local() -> void:
 	local_list.clear()
 	current_items = EconomySystem.current_market.get_available_items()
-	print("_refresh_local: found ", current_items.size(), " items from market")
 	var query = local_search.text.strip_edges().to_lower()
 	for item in current_items:
 		if query and not item.name.to_lower().contains(query):
 			continue
 		local_list.add_item("%s  x%d  %s" % [item.name, item.quantity, Helpers.fmt_money(item.cost)])
-	if local_list.item_count > 0:
-		print("_refresh_local: added ", local_list.item_count, " items to list")
-	else:
-		print("_refresh_local: list is EMPTY")
+	print("_refresh_local items: ", current_items.size(), " added: ", local_list.item_count)
 
 
 func _on_local_search(_new_text: String) -> void:
