@@ -1,7 +1,7 @@
 {
   "name": "Fusion Engine 55",
   "tonnage": 11,
-  "critical_slots": 3,
+  "critical_slots": 6,
   "cost": 275000,
   "tech_base": "inner_sphere",
   "quality_range": {

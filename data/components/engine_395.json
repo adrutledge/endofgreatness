@@ -1,7 +1,7 @@
 {
   "name": "Fusion Engine 395",
   "tonnage": 79,
-  "critical_slots": 3,
+  "critical_slots": 6,
   "cost": 1975000,
   "tech_base": "inner_sphere",
   "quality_range": {

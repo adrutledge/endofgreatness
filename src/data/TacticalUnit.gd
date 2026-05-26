@@ -181,7 +181,7 @@ func validate_tm() -> Dictionary:
 			errors.append("Missing motion type")
 
 		if movement_mp > 0 and tonnage > 0:
-			var sf = _vehicle_suspension_factor(motion_type, tonnage)
+			var sf = get_suspension_factor(motion_type, tonnage)
 			var base = int(tonnage * movement_mp) - sf
 			if base % 5 != 0:
 				base = base + (5 - base % 5)
@@ -298,8 +298,8 @@ static func _is_ammo(name: String) -> bool:
 	return "ammo" in n
 
 
-static func _vehicle_suspension_factor(mtype: String, veh_tonnage: float) -> int:
-	var data = _load_suspension_factors()
+static func get_suspension_factor(mtype: String, veh_tonnage: float) -> int:
+	var data = load_suspension_factors()
 	var entry = data.get(mtype)
 	if entry == null:
 		return 0
@@ -313,7 +313,7 @@ static func _vehicle_suspension_factor(mtype: String, veh_tonnage: float) -> int
 
 
 static var _suspension_cache = null
-static func _load_suspension_factors() -> Dictionary:
+static func load_suspension_factors() -> Dictionary:
 	if _suspension_cache != null:
 		return _suspension_cache
 	var file = FileAccess.open("res://data/rules/suspension_factors.json", FileAccess.READ)

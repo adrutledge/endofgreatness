@@ -1,7 +1,7 @@
 {
   "name": "Fusion Engine 255",
   "tonnage": 51,
-  "critical_slots": 3,
+  "critical_slots": 6,
   "cost": 1275000,
   "tech_base": "inner_sphere",
   "quality_range": {

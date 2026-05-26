@@ -1,7 +1,7 @@
 {
   "name": "Fusion Engine 355",
   "tonnage": 71,
-  "critical_slots": 3,
+  "critical_slots": 6,
   "cost": 1775000,
   "tech_base": "inner_sphere",
   "quality_range": {

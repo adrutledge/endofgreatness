@@ -1,7 +1,7 @@
 {
   "name": "Fusion Engine 80",
   "tonnage": 16,
-  "critical_slots": 3,
+  "critical_slots": 6,
   "cost": 400000,
   "tech_base": "inner_sphere",
   "quality_range": {

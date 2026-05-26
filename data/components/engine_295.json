@@ -1,7 +1,7 @@
 {
   "name": "Fusion Engine 295",
   "tonnage": 59,
-  "critical_slots": 3,
+  "critical_slots": 6,
   "cost": 1475000,
   "tech_base": "inner_sphere",
   "quality_range": {

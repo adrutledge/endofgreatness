@@ -1,7 +1,7 @@
 {
   "name": "Fusion Engine 105",
   "tonnage": 21,
-  "critical_slots": 3,
+  "critical_slots": 6,
   "cost": 525000,
   "tech_base": "inner_sphere",
   "quality_range": {

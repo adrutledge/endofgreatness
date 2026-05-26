@@ -1,7 +1,7 @@
 {
   "name": "Fusion Engine 10",
   "tonnage": 2,
-  "critical_slots": 3,
+  "critical_slots": 6,
   "cost": 50000,
   "tech_base": "inner_sphere",
   "quality_range": {

@@ -1,7 +1,7 @@
 {
   "name": "Fusion Engine 165",
   "tonnage": 33,
-  "critical_slots": 3,
+  "critical_slots": 6,
   "cost": 825000,
   "tech_base": "inner_sphere",
   "quality_range": {

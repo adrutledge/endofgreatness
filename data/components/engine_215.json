@@ -1,7 +1,7 @@
 {
   "name": "Fusion Engine 215",
   "tonnage": 43,
-  "critical_slots": 3,
+  "critical_slots": 6,
   "cost": 1075000,
   "tech_base": "inner_sphere",
   "quality_range": {

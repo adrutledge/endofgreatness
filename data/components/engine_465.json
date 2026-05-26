@@ -1,7 +1,7 @@
 {
   "name": "Fusion Engine 465",
   "tonnage": 93,
-  "critical_slots": 3,
+  "critical_slots": 6,
   "cost": 2325000,
   "tech_base": "inner_sphere",
   "quality_range": {

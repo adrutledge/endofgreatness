@@ -1,7 +1,7 @@
 {
   "name": "Fusion Engine 125",
   "tonnage": 25,
-  "critical_slots": 3,
+  "critical_slots": 6,
   "cost": 625000,
   "tech_base": "inner_sphere",
   "quality_range": {

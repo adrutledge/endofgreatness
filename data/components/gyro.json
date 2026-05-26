@@ -1,7 +1,7 @@
 {
   "name": "Gyroscope",
   "tonnage": 0,
-  "critical_slots": 2,
+  "critical_slots": 4,
   "cost": 200000,
   "tech_base": "inner_sphere",
   "quality_range": {

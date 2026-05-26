@@ -183,66 +183,17 @@ static func parse_mtf(file_path: String, component_defs: Dictionary = {}) -> Tac
 			comp.rear_facing = is_rear
 
 			if component_defs.has(norm_name):
-				var def = component_defs[norm_name]
-				comp.tonnage = _compute_def_weight(def, context, norm_name)
-				comp.cost = def.get("cost", 0)
-				comp.tech_base = def.get("tech_base", "")
-				var qr = def.get("quality_range", {})
-				comp.quality_range = Vector2(qr.get("min", 1), qr.get("max", 5))
-				comp.repair_difficulty = def.get("repair_difficulty", 1)
-				comp.tech_level = def.get("tech_level", 1)
-				var fhs = def.get("slot_free_heat_sinks", 0)
-				if fhs > 0:
-					unit.slot_free_heat_sinks = fhs
-				var whs = def.get("weight_free_heat_sinks", 0)
-				if whs > 0:
-					unit.weight_free_heat_sinks = whs
+				_populate_component_from_def(comp, component_defs[norm_name], context, norm_name, unit)
 			else:
-				comp.tonnage = 0.0
-				comp.cost = 1000
-				comp.tech_base = "inner_sphere"
-				comp.quality_range = Vector2(1, 5)
-				comp.repair_difficulty = 1
-				comp.tech_level = 1
+				_set_component_defaults(comp)
 
 			seen[key] = comp
 
-	for key in seen:
-		var comp = seen[key]
-		var cname = comp.component_name
-		var json_crit := 1
-		if component_defs.has(cname):
-			var def = component_defs[cname]
-			json_crit = def.get("critical_slots", 1)
-		if comp.critical_slots < json_crit and json_crit > 1:
-			push_warning("MegaMekParser: %s in %s has %d slots, expected %d — invalid component" % [cname, comp.location.location_name if comp.location else "?", comp.critical_slots, json_crit])
-		if comp.critical_slots > json_crit:
-			var n_extra = comp.critical_slots / json_crit
-			comp.critical_slots = json_crit
-			for e in range(1, n_extra):
-				var extra = Component.new()
-				extra.component_name = comp.component_name
-				extra.critical_slots = json_crit
-				extra.location = comp.location
-				extra.status = comp.status
-				extra.tonnage = comp.tonnage
-				extra.cost = comp.cost
-				extra.tech_base = comp.tech_base
-				extra.quality_range = comp.quality_range
-				extra.repair_difficulty = comp.repair_difficulty
-				extra.tech_level = comp.tech_level
-				unit.components.append(extra)
-		unit.components.append(comp)
-
-	var jj_weight = _get_jump_jet_weight(unit.tonnage)
-	if jj_weight > 0.0:
-		for c in unit.components:
-			if c.component_name == "Jump Jet":
-				c.tonnage = c.critical_slots * jj_weight
+	_finalize_slot_splitting(unit, seen, component_defs)
 
 	for c in unit.components:
-		if c.component_name == "Hatchet":
-			c.tonnage = ceil(unit.tonnage * 0.1) * 0.5
+		if c.component_name == "Jump Jet" and c.critical_slots > 0:
+			c.tonnage *= c.critical_slots
 
 	return unit
 
@@ -364,7 +315,7 @@ static func parse_blk(file_path: String, component_defs: Dictionary = {}) -> Tac
 		location_map[name] = cl
 
 	var engine_type_code = int(tags.get("engine_type", "0"))
-	var suspension = _get_suspension_factor(motion_type, unit.tonnage)
+	var suspension = TacticalUnit.get_suspension_factor(motion_type, unit.tonnage)
 	var base_rating = int(unit.tonnage * unit.movement_mp) - suspension
 	if base_rating % 5 != 0:
 		base_rating = base_rating + (5 - base_rating % 5)
@@ -398,27 +349,9 @@ static func parse_blk(file_path: String, component_defs: Dictionary = {}) -> Tac
 		comp.location = location_map.get("Front", null)
 		comp.status = Enums.ComponentStatus.UNDAMAGED
 		if component_defs.has(engine_name):
-			var def = component_defs[engine_name]
-			comp.tonnage = _compute_def_weight(def, blk_ctx, engine_name)
-			comp.cost = def.get("cost", 0)
-			comp.tech_base = def.get("tech_base", "")
-			var qr = def.get("quality_range", {})
-			comp.quality_range = Vector2(qr.get("min", 1), qr.get("max", 5))
-			comp.repair_difficulty = def.get("repair_difficulty", 1)
-			comp.tech_level = def.get("tech_level", 1)
-			var fhs_blk = def.get("slot_free_heat_sinks", 0)
-			if fhs_blk > 0:
-				unit.slot_free_heat_sinks = fhs_blk
-			var whs_blk = def.get("weight_free_heat_sinks", 0)
-			if whs_blk > 0:
-				unit.weight_free_heat_sinks = whs_blk
+			_populate_component_from_def(comp, component_defs[engine_name], blk_ctx, engine_name, unit)
 		else:
-			comp.tonnage = 0.0
-			comp.cost = 1000
-			comp.tech_base = "inner_sphere"
-			comp.quality_range = Vector2(1, 5)
-			comp.repair_difficulty = 1
-			comp.tech_level = 1
+			_set_component_defaults(comp)
 		unit.components.append(comp)
 
 	var seen = {}
@@ -450,49 +383,12 @@ static func parse_blk(file_path: String, component_defs: Dictionary = {}) -> Tac
 				comp.location = location_map.get(loc_name, null)
 				comp.status = Enums.ComponentStatus.UNDAMAGED
 				if component_defs.has(norm_name):
-					var def = component_defs[norm_name]
-					comp.tonnage = _compute_def_weight(def, blk_ctx, norm_name)
-					comp.cost = def.get("cost", 0)
-					comp.tech_base = def.get("tech_base", "")
-					var qr = def.get("quality_range", {})
-					comp.quality_range = Vector2(qr.get("min", 1), qr.get("max", 5))
-					comp.repair_difficulty = def.get("repair_difficulty", 1)
-					comp.tech_level = def.get("tech_level", 1)
+					_populate_component_from_def(comp, component_defs[norm_name], blk_ctx, norm_name)
 				else:
-					comp.tonnage = 0.0
-					comp.cost = 1000
-					comp.tech_base = "inner_sphere"
-					comp.quality_range = Vector2(1, 5)
-					comp.repair_difficulty = 1
-					comp.tech_level = 1
+					_set_component_defaults(comp)
 				seen[bkey] = comp
 
-	for bkey in seen:
-		var comp = seen[bkey]
-		var cname = comp.component_name
-		var json_crit_b := 1
-		if component_defs.has(cname):
-			var def = component_defs[cname]
-			json_crit_b = def.get("critical_slots", 1)
-		if comp.critical_slots < json_crit_b and json_crit_b > 1:
-			push_warning("MegaMekParser: %s in %s has %d slots, expected %d — invalid component" % [cname, comp.location.location_name if comp.location else "?", comp.critical_slots, json_crit_b])
-		if comp.critical_slots > json_crit_b:
-			var n_extra = comp.critical_slots / json_crit_b
-			comp.critical_slots = json_crit_b
-			for e in range(1, n_extra):
-				var extra = Component.new()
-				extra.component_name = comp.component_name
-				extra.critical_slots = json_crit_b
-				extra.location = comp.location
-				extra.status = comp.status
-				extra.tonnage = comp.tonnage
-				extra.cost = comp.cost
-				extra.tech_base = comp.tech_base
-				extra.quality_range = comp.quality_range
-				extra.repair_difficulty = comp.repair_difficulty
-				extra.tech_level = comp.tech_level
-				unit.components.append(extra)
-		unit.components.append(comp)
+	_finalize_slot_splitting(unit, seen, component_defs)
 
 	# --- Add mandatory vehicle equipment ---
 	# Power amplifier (10% of energy weapon tonnage, min 0.5t)
@@ -670,6 +566,61 @@ static func _normalize_component_name(name: String, engine_rating: int) -> Strin
 	return n
 
 
+static func _populate_component_from_def(comp: Component, def: Dictionary, context: Dictionary, norm_name: String, unit: TacticalUnit = null) -> void:
+	comp.tonnage = _compute_def_weight(def, context, norm_name)
+	comp.cost = def.get("cost", 0)
+	comp.tech_base = def.get("tech_base", "")
+	var qr = def.get("quality_range", {})
+	comp.quality_range = Vector2(qr.get("min", 1), qr.get("max", 5))
+	comp.repair_difficulty = def.get("repair_difficulty", 1)
+	comp.tech_level = def.get("tech_level", 1)
+	if unit:
+		var fhs = def.get("slot_free_heat_sinks", 0)
+		if fhs > 0:
+			unit.slot_free_heat_sinks = fhs
+		var whs = def.get("weight_free_heat_sinks", 0)
+		if whs > 0:
+			unit.weight_free_heat_sinks = whs
+
+
+static func _set_component_defaults(comp: Component) -> void:
+	comp.tonnage = 0.0
+	comp.cost = 1000
+	comp.tech_base = "inner_sphere"
+	comp.quality_range = Vector2(1, 5)
+	comp.repair_difficulty = 1
+	comp.tech_level = 1
+
+
+static func _finalize_slot_splitting(unit: TacticalUnit, seen: Dictionary, component_defs: Dictionary) -> void:
+	for key in seen:
+		var comp = seen[key]
+		var cname = comp.component_name
+		var json_crit := 1
+		if component_defs.has(cname):
+			var def = component_defs[cname]
+			json_crit = def.get("critical_slots", 1)
+		if comp.critical_slots < json_crit and json_crit > 1:
+			push_warning("MegaMekParser: %s in %s has %d slots, expected %d" % [cname, comp.location.location_name if comp.location else "?", comp.critical_slots, json_crit])
+		if comp.critical_slots > json_crit:
+			var n_extra = comp.critical_slots / json_crit
+			comp.critical_slots = json_crit
+			for e in range(1, n_extra):
+				var extra = Component.new()
+				extra.component_name = comp.component_name
+				extra.critical_slots = json_crit
+				extra.location = comp.location
+				extra.status = comp.status
+				extra.tonnage = comp.tonnage
+				extra.cost = comp.cost
+				extra.tech_base = comp.tech_base
+				extra.quality_range = comp.quality_range
+				extra.repair_difficulty = comp.repair_difficulty
+				extra.tech_level = comp.tech_level
+				unit.components.append(extra)
+		unit.components.append(comp)
+
+
 static func _build_location_data(tonnage: float, armor_values: Dictionary) -> Dictionary:
 	var result: Dictionary = {}
 	var t = max(1.0, tonnage)
@@ -735,36 +686,6 @@ static func _build_location_data(tonnage: float, armor_values: Dictionary) -> Di
 	return result
 
 
-static func _get_suspension_factor(motion_type: String, tonnage: float) -> int:
-	var data = _load_suspension_factors()
-	var entry = data.get(motion_type)
-	if entry == null:
-		return 0
-	if entry is int:
-		return entry
-	if entry is Array:
-		for bracket in entry:
-			if tonnage <= float(bracket.get("max_tonnage", 999)):
-				return bracket.get("factor", 0)
-	return 0
-
-
-static var _suspension_cache = null
-static func _load_suspension_factors() -> Dictionary:
-	if _suspension_cache != null:
-		return _suspension_cache
-	var file = FileAccess.open("res://data/rules/suspension_factors.json", FileAccess.READ)
-	if not file:
-		_suspension_cache = {}
-		return _suspension_cache
-	var j = JSON.new()
-	if j.parse(file.get_as_text()) != OK:
-		_suspension_cache = {}
-		return _suspension_cache
-	_suspension_cache = j.data
-	return _suspension_cache
-
-
 static func _compute_def_weight(def: Dictionary, context: Dictionary, component_name: String = "") -> float:
 	var wc = def.get("weight_calc", {})
 	var wtype = wc.get("type", "static")
@@ -800,15 +721,6 @@ static func _compute_def_weight(def: Dictionary, context: Dictionary, component_
 			return wc.get("value", def.get("tonnage", 0.0))
 
 
-static func _is_engine_component_name(name: String) -> bool:
-	var lower = name.to_lower()
-	var prefixes = ["fusion engine", "xl engine", "light engine", "compact engine", "xxl engine", "heavy engine", "ice engine", "fuel cell engine"]
-	for p in prefixes:
-		if lower.begins_with(p):
-			return true
-	return false
-
-
 const _STANDARD_FUSION_WEIGHTS: Dictionary = {
 	10: 0.5, 15: 0.5, 20: 0.5, 25: 1.0, 30: 1.0, 35: 1.0,
 	40: 1.5, 45: 1.5, 50: 1.5, 55: 2.0, 60: 2.0, 65: 2.0,
@@ -825,12 +737,3 @@ const _STANDARD_FUSION_WEIGHTS: Dictionary = {
 	370: 34.5, 375: 35.5, 380: 37.0, 385: 38.5, 390: 40.0, 395: 41.5,
 	400: 52.5,
 }
-
-
-static func _get_jump_jet_weight(tonnage: float) -> float:
-	if tonnage <= 55.0:
-		return 0.5
-	elif tonnage <= 85.0:
-		return 1.0
-	else:
-		return 2.0

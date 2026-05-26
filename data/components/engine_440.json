@@ -1,7 +1,7 @@
 {
   "name": "Fusion Engine 440",
   "tonnage": 88,
-  "critical_slots": 3,
+  "critical_slots": 6,
   "cost": 2200000,
   "tech_base": "inner_sphere",
   "quality_range": {
