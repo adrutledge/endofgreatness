@@ -637,10 +637,13 @@ func _on_market_planet_selected(idx: int) -> void:
 
 func _refresh_market_tab() -> void:
 	if not GameState.player.current_planet:
+		print("_refresh_market_tab: no player planet")
 		return
+	print("_refresh_market_tab: planet=", GameState.player.current_planet, " selected=", _selected_market_planet, " sub_tab=", market_tabs.current_tab)
 	_populate_planet_selector()
 	match market_tabs.current_tab:
 		0:
+			print("_refresh_market_tab: initializing market for ", _selected_market_planet)
 			EconomySystem.initialize_market(_selected_market_planet)
 			_refresh_local()
 		1:
@@ -715,11 +718,16 @@ func _on_delivery_arrived(_item_name: String, _quantity: int) -> void:
 func _refresh_local() -> void:
 	local_list.clear()
 	current_items = EconomySystem.current_market.get_available_items()
+	print("_refresh_local: found ", current_items.size(), " items from market")
 	var query = local_search.text.strip_edges().to_lower()
 	for item in current_items:
 		if query and not item.name.to_lower().contains(query):
 			continue
 		local_list.add_item("%s  x%d  %s" % [item.name, item.quantity, Helpers.fmt_money(item.cost)])
+	if local_list.item_count > 0:
+		print("_refresh_local: added ", local_list.item_count, " items to list")
+	else:
+		print("_refresh_local: list is EMPTY")
 
 
 func _on_local_search(_new_text: String) -> void:
