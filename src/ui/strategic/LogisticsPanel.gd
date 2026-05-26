@@ -123,11 +123,23 @@ func _build_deliveries_tab() -> void:
 	margin.size_flags_vertical = SIZE_EXPAND_FILL
 	tabs.add_child(margin)
 
+	delivery_list = ItemList.new()
+	delivery_list.name = "DeliveryList"
+	delivery_list.size_flags_horizontal = SIZE_EXPAND_FILL * 2
+	delivery_list.size_flags_vertical = SIZE_EXPAND_FILL
+	delivery_list.add_theme_color_override("font_color", Color(1, 1, 1))
+	delivery_list.add_theme_color_override("font_selected_color", Color(0, 0, 0))
+	delivery_list.select_mode = ItemList.SELECT_SINGLE
+
 	var hbox = HBoxContainer.new()
 	hbox.name = "DeliveriesHBox"
 	hbox.size_flags_vertical = SIZE_EXPAND_FILL
 	margin.add_child(hbox)
 	hbox.add_child(delivery_list)
+
+	var detail_panel = Panel.new()
+	detail_panel.name = "DeliveryDetailPanel"
+	detail_panel.size_flags_horizontal = SIZE_EXPAND_FILL * 3
 	hbox.add_child(detail_panel)
 
 	var dm = MarginContainer.new()
