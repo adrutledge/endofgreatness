@@ -53,6 +53,8 @@ func _derive_factions_for_planet(planet_name: String) -> Array[String]:
 	if planet_name == "Galatea":
 		for code in GameState.factions:
 			var f = GameState.factions[code]
+			if code in ["MRB", "CS"]:
+				continue
 			if not f.is_rebel and not f.is_pirate and not f.is_civilian:
 				results.append(code)
 		return results
