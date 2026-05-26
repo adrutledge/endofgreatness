@@ -123,24 +123,12 @@ func _build_deliveries_tab() -> void:
 	margin.size_flags_vertical = SIZE_EXPAND_FILL
 	tabs.add_child(margin)
 
-	var hsplit = HSplitContainer.new()
-	hsplit.name = "HSplit"
-	hsplit.size_flags_vertical = SIZE_EXPAND_FILL
-	margin.add_child(hsplit)
-
-	delivery_list = ItemList.new()
-	delivery_list.name = "DeliveryList"
-	delivery_list.size_flags_horizontal = SIZE_EXPAND_FILL * 2
-	delivery_list.size_flags_vertical = SIZE_EXPAND_FILL
-	delivery_list.add_theme_color_override("font_color", Color(1, 1, 1))
-	delivery_list.add_theme_color_override("font_selected_color", Color(0, 0, 0))
-	delivery_list.select_mode = ItemList.SELECT_SINGLE
-	hsplit.add_child(delivery_list)
-
-	var detail_panel = Panel.new()
-	detail_panel.name = "DeliveryDetailPanel"
-	detail_panel.size_flags_horizontal = SIZE_EXPAND_FILL * 3
-	hsplit.add_child(detail_panel)
+	var hbox = HBoxContainer.new()
+	hbox.name = "DeliveriesHBox"
+	hbox.size_flags_vertical = SIZE_EXPAND_FILL
+	margin.add_child(hbox)
+	hbox.add_child(delivery_list)
+	hbox.add_child(detail_panel)
 
 	var dm = MarginContainer.new()
 	dm.name = "DeliveryDetailMargin"
@@ -194,8 +182,8 @@ func _build_market_tab() -> void:
 	market_tabs.current_tab = 0
 
 
-func _make_hsplits(min_size: int = 3) -> HSplitContainer:
-	var s = HSplitContainer.new()
+func _make_hbox() -> HBoxContainer:
+	var s = HBoxContainer.new()
 	s.size_flags_vertical = SIZE_EXPAND_FILL
 	return s
 
@@ -217,7 +205,7 @@ func _build_local_tab() -> void:
 	local_count_label.text = ""
 	margin.add_child(local_count_label)
 
-	var hsplit = _make_hsplits()
+	var hsplit = _make_hbox()
 	margin.add_child(hsplit)
 
 	local_list = ItemList.new()
@@ -338,7 +326,7 @@ func _build_units_tab() -> void:
 	unit_weight_filter.selected = 0
 	fb.add_child(unit_weight_filter)
 
-	var hsplit = _make_hsplits()
+	var hsplit = _make_hbox()
 	vb.add_child(hsplit)
 
 	unit_list = ItemList.new()
@@ -510,7 +498,7 @@ func _build_inventory_tab() -> void:
 	reorder_min_button.size_flags_horizontal = SIZE_EXPAND_FILL * 2
 	fb.add_child(reorder_min_button)
 
-	var hsplit = _make_hsplits()
+	var hsplit = _make_hbox()
 	vb.add_child(hsplit)
 
 	inv_list = ItemList.new()
