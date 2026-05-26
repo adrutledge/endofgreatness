@@ -600,8 +600,6 @@ static func _finalize_slot_splitting(unit: TacticalUnit, seen: Dictionary, compo
 		if component_defs.has(cname):
 			var def = component_defs[cname]
 			json_crit = def.get("critical_slots", 1)
-		if comp.critical_slots < json_crit and json_crit > 1:
-			push_warning("MegaMekParser: %s in %s has %d slots, expected %d" % [cname, comp.location.location_name if comp.location else "?", comp.critical_slots, json_crit])
 		if comp.critical_slots > json_crit:
 			var n_extra = comp.critical_slots / json_crit
 			comp.critical_slots = json_crit
