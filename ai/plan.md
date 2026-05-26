@@ -298,7 +298,7 @@
 - **Engine rating constraints**: engine_rating must be multiple of 5; for mechs, engine_rating = walk_mp × tonnage (mapped through standard engine rating table); engine type (Standard/Light/XL/XXL/Compact) affects critical slots, weight, and cost per TM
   - **Engine critical slot placement by type**: Standard = 6 CT slots; XL = 6 (3 LT + 3 RT); Light = 4 (2 LT + 2 RT); Compact = 4 CT; XXL = 10 (5 LT + 5 RT); current JSON `critical_slots` field represents total slots across all locations, but post-3025 slot placement must track which locations the engine occupies (not just total count); paper doll and parser will need per-location engine slot maps rather than a single integer
 - **Gyro compatibility**: gyro mass = `ceil(engine_rating / 100) × multiplier`; gyro type (Standard/XL/Compact/Heavy/None) determines critical slots and mass
-  - **Gyro critical slots by type**: Standard = 4 CT; XL = 2 CT; Compact = 2 CT; Heavy = 3 CT; None = 0
+  - **Gyro critical slots by type**: Standard = 4 CT; XL = 6 CT; Compact = 2 CT; Heavy = 3 CT; None = 0
   - **Gyro weight multipliers** (applied to base mass `ceil(engine_rating / 100)`): Standard = 1.0; XL = 0.5; Compact = 1.5; Heavy = 2.0; None = 0.0
   - **Gyro slot placement**: unlike engines, all gyro types occupy Center Torso exclusively; post-3025, per-location slot tracking must account for gyro slots in CT alongside engine, not in side torsos
 - **Heat sink adequacy**: base 10 free heat sinks from engine; each additional heat sink weighs 1t; total dissipation must cover alpha-strike heat (weapon heat + jump heat); excess heat sink count above dissipation capacity flagged as warning

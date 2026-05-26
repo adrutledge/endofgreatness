@@ -581,11 +581,7 @@ func populate() -> void:
 func refresh_current_tab() -> void:
 	match tabs.current_tab:
 		0: _refresh_deliveries()
-		1:
-			if _selected_market_planet.is_empty():
-				_selected_market_planet = "Galatea"
-			EconomySystem.initialize_market(_selected_market_planet)
-			_refresh_local()
+		1: _refresh_market_tab()
 		2: _refresh_inventory()
 
 
@@ -598,8 +594,6 @@ func _on_tab_changed(_tab: int) -> void:
 		1:
 			balance_label.text = tr("Balance: ") + Helpers.fmt_money(EconomySystem.get_balance())
 			_refresh_market_tab()
-			if _selected_market_planet.is_empty():
-				_selected_market_planet = "Galatea"
 		2:
 			_refresh_inventory()
 
@@ -644,13 +638,16 @@ func _on_market_planet_selected(idx: int) -> void:
 
 func _refresh_market_tab() -> void:
 	if not GameState.player.current_planet:
-		print("_refresh_market_tab: no player planet")
 		return
-	print("_refresh_market_tab: planet=", GameState.player.current_planet, " selected=", _selected_market_planet, " sub_tab=", market_tabs.current_tab)
+	if _selected_market_planet.is_empty():
+		_selected_market_planet = "Galatea"
 	_populate_planet_selector()
+	call_deferred("_do_refresh_market_tab")
+
+
+func _do_refresh_market_tab() -> void:
 	match market_tabs.current_tab:
 		0:
-			print("_refresh_market_tab: initializing market for ", _selected_market_planet)
 			EconomySystem.initialize_market(_selected_market_planet)
 			_refresh_local()
 		1:
