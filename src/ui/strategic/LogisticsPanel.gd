@@ -131,6 +131,7 @@ func _build_deliveries_tab() -> void:
 	delivery_list = ItemList.new()
 	delivery_list.name = "DeliveryList"
 	delivery_list.size_flags_horizontal = SIZE_EXPAND_FILL * 2
+	delivery_list.size_flags_vertical = SIZE_EXPAND_FILL
 	delivery_list.add_theme_color_override("font_color", Color(1, 1, 1))
 	delivery_list.add_theme_color_override("font_selected_color", Color(0, 0, 0))
 	delivery_list.select_mode = ItemList.SELECT_SINGLE
@@ -222,6 +223,7 @@ func _build_local_tab() -> void:
 	local_list = ItemList.new()
 	local_list.name = "LocalList"
 	local_list.size_flags_horizontal = SIZE_EXPAND_FILL * 2
+	local_list.size_flags_vertical = SIZE_EXPAND_FILL
 	local_list.select_mode = ItemList.SELECT_SINGLE
 	local_list.add_theme_color_override("font_color", Color(1, 1, 1))
 	local_list.add_theme_color_override("font_selected_color", Color(0, 0, 0))
@@ -338,6 +340,7 @@ func _build_units_tab() -> void:
 	unit_list = ItemList.new()
 	unit_list.name = "UnitList"
 	unit_list.size_flags_horizontal = SIZE_EXPAND_FILL * 2
+	unit_list.size_flags_vertical = SIZE_EXPAND_FILL
 	unit_list.select_mode = ItemList.SELECT_SINGLE
 	unit_list.add_theme_color_override("font_color", Color(1, 1, 1))
 	unit_list.add_theme_color_override("font_selected_color", Color(0, 0, 0))
@@ -509,6 +512,7 @@ func _build_inventory_tab() -> void:
 	inv_list = ItemList.new()
 	inv_list.name = "InvList"
 	inv_list.size_flags_horizontal = SIZE_EXPAND_FILL * 2
+	inv_list.size_flags_vertical = SIZE_EXPAND_FILL
 	inv_list.select_mode = ItemList.SELECT_SINGLE
 	inv_list.add_theme_color_override("font_color", Color(1, 1, 1))
 	inv_list.add_theme_color_override("font_selected_color", Color(0, 0, 0))
@@ -732,9 +736,7 @@ func _on_delivery_arrived(_item_name: String, _quantity: int) -> void:
 
 func _refresh_local() -> void:
 	local_list.clear()
-	local_list.add_item("DEBUG: _refresh_local called")
 	current_items = EconomySystem.current_market.get_available_items()
-	local_list.add_item("DEBUG: %d items from market" % current_items.size())
 	var query = local_search.text.strip_edges().to_lower()
 	for item in current_items:
 		if query and not item.name.to_lower().contains(query):
