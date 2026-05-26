@@ -40,6 +40,7 @@ var delivery_detail_info: Label
 # Market — local tab
 var local_list: ItemList
 var local_search: LineEdit
+var local_count_label: Label
 var local_name: Label
 var local_cost: Label
 var local_tech: Label
@@ -130,6 +131,8 @@ func _build_deliveries_tab() -> void:
 	delivery_list = ItemList.new()
 	delivery_list.name = "DeliveryList"
 	delivery_list.size_flags_horizontal = SIZE_EXPAND_FILL * 2
+	delivery_list.add_theme_color_override("font_color", Color(1, 1, 1))
+	delivery_list.add_theme_color_override("font_selected_color", Color(0, 0, 0))
 	delivery_list.select_mode = ItemList.SELECT_SINGLE
 	hsplit.add_child(delivery_list)
 
@@ -208,6 +211,11 @@ func _build_local_tab() -> void:
 	local_search.size_flags_vertical = SIZE_SHRINK_CENTER
 	margin.add_child(local_search)
 
+	local_count_label = Label.new()
+	local_count_label.name = "LocalCount"
+	local_count_label.text = ""
+	margin.add_child(local_count_label)
+
 	var hsplit = _make_hsplits()
 	margin.add_child(hsplit)
 
@@ -215,6 +223,8 @@ func _build_local_tab() -> void:
 	local_list.name = "LocalList"
 	local_list.size_flags_horizontal = SIZE_EXPAND_FILL * 2
 	local_list.select_mode = ItemList.SELECT_SINGLE
+	local_list.add_theme_color_override("font_color", Color(1, 1, 1))
+	local_list.add_theme_color_override("font_selected_color", Color(0, 0, 0))
 	hsplit.add_child(local_list)
 
 	var detail_panel = Panel.new()
@@ -329,6 +339,8 @@ func _build_units_tab() -> void:
 	unit_list.name = "UnitList"
 	unit_list.size_flags_horizontal = SIZE_EXPAND_FILL * 2
 	unit_list.select_mode = ItemList.SELECT_SINGLE
+	unit_list.add_theme_color_override("font_color", Color(1, 1, 1))
+	unit_list.add_theme_color_override("font_selected_color", Color(0, 0, 0))
 	hsplit.add_child(unit_list)
 
 	var detail_panel = Panel.new()
@@ -406,6 +418,8 @@ func _build_remote_tab() -> void:
 	remote_list.name = "RemoteList"
 	remote_list.size_flags_vertical = SIZE_EXPAND_FILL
 	remote_list.select_mode = ItemList.SELECT_SINGLE
+	remote_list.add_theme_color_override("font_color", Color(1, 1, 1))
+	remote_list.add_theme_color_override("font_selected_color", Color(0, 0, 0))
 	vb.add_child(remote_list)
 
 	var order_panel = Panel.new()
@@ -496,6 +510,8 @@ func _build_inventory_tab() -> void:
 	inv_list.name = "InvList"
 	inv_list.size_flags_horizontal = SIZE_EXPAND_FILL * 2
 	inv_list.select_mode = ItemList.SELECT_SINGLE
+	inv_list.add_theme_color_override("font_color", Color(1, 1, 1))
+	inv_list.add_theme_color_override("font_selected_color", Color(0, 0, 0))
 	hsplit.add_child(inv_list)
 
 	var detail_panel = Panel.new()
@@ -722,7 +738,7 @@ func _refresh_local() -> void:
 		if query and not item.name.to_lower().contains(query):
 			continue
 		local_list.add_item("%s  x%d  %s" % [item.name, item.quantity, Helpers.fmt_money(item.cost)])
-	print("_refresh_local items: ", current_items.size(), " added: ", local_list.item_count)
+	local_count_label.text = tr("Items: %d (%d shown)") % [current_items.size(), local_list.item_count]
 
 
 func _on_local_search(_new_text: String) -> void:
