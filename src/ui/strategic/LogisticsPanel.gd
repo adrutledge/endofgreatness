@@ -960,29 +960,17 @@ func _on_dispatch() -> void:
 	if qty <= 0 or comp_name.is_empty():
 		return
 
-	var inv: Dictionary = GameState.player_inventory
-	var current = inv.get(comp_name, 0)
-	if qty > current:
+	var target = _get_selected_opu()
+	if target == null:
 		return
 
-	# Find the operational unit and add to its deployment cache
-	for ou in GameState.player.organizational_units:
-		for opu in ou.sub_units:
-			var key = "%s — %s" % [ou.unit_name, opu.unit_name]
-			if key == dispatch_unit_dropdown.get_item_text(dispatch_unit_dropdown.selected):
-				if opu.get("deployment_cache") == null:
-					opu.set("deployment_cache", {})
-				opu.deployment_cache[comp_name] = opu.deployment_cache.get(comp_name, 0) + qty
-				inv[comp_name] = current - qty
-				if inv[comp_name] <= 0:
-					inv.erase(comp_name)
-				GameState.log_event("dispatch", {
-					"item": comp_name,
-					"quantity": qty,
-					"to_unit": opu.unit_name,
-				})
-				_refresh_inventory()
-				return
+	if InventoryManager.dispatch_to_unit(comp_name, qty, target):
+		GameState.log_event("dispatch", {
+			"item": comp_name,
+			"quantity": qty,
+			"to_unit": target.unit_name,
+		})
+		_refresh_inventory()
 
 
 func _get_selected_opu():
@@ -1017,10 +1005,6 @@ func _on_reorder_to_min() -> void:
 	var market = EconomySystem.current_market
 
 	var inv: Dictionary = GameState.player_inventory
-	if per_unit:
-		if target_opu.get("deployment_cache") == null:
-			target_opu.set("deployment_cache", {})
-
 	var orders_placed := 0
 	var local_bought := 0
 	var dispatched := 0
@@ -1059,11 +1043,7 @@ func _on_reorder_to_min() -> void:
 		if per_unit:
 			var global_qty = inv.get(comp_name, 0)
 			var dispatch_qty = min(remaining, global_qty)
-			if dispatch_qty > 0:
-				target_opu.deployment_cache[comp_name] = target_opu.deployment_cache.get(comp_name, 0) + dispatch_qty
-				inv[comp_name] = global_qty - dispatch_qty
-				if inv[comp_name] <= 0:
-					inv.erase(comp_name)
+			if dispatch_qty > 0 and InventoryManager.dispatch_to_unit(comp_name, dispatch_qty, target_opu):
 				remaining -= dispatch_qty
 				dispatched += dispatch_qty
 				if remaining <= 0:

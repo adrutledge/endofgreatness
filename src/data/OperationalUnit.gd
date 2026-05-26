@@ -10,6 +10,7 @@ extends Resource
 @export var contract_id: String = ""
 @export var is_deployed: bool = false
 @export var hex_position: Vector2i
+@export var deployment_cache: Dictionary = {}
 
 func get_all_tactical_units() -> Array[TacticalUnit]:
 	var result: Array[TacticalUnit] = []

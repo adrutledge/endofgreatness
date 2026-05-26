@@ -14,5 +14,8 @@
   "dropship_cost_per_ton": 5000,
   "jumpship_cost_per_ton_per_jump": 10000,
   "refit_canon_only": 1,
-  "refit_kit_discount": 0.9
+  "refit_kit_discount": 0.9,
+  "logistics_difficulty_enabled": true,
+  "logistics_difficulty_contract_types": ["assault", "raid"],
+  "independent_command_logistics_enabled": true
 }
