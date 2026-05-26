@@ -224,9 +224,13 @@ func _build_local_tab() -> void:
 	local_list.name = "LocalList"
 	local_list.size_flags_horizontal = SIZE_EXPAND_FILL * 2
 	local_list.size_flags_vertical = SIZE_EXPAND_FILL
+	local_list.custom_minimum_size = Vector2(100, 100)
 	local_list.select_mode = ItemList.SELECT_SINGLE
 	local_list.add_theme_color_override("font_color", Color(1, 1, 1))
 	local_list.add_theme_color_override("font_selected_color", Color(0, 0, 0))
+	var list_bg = StyleBoxFlat.new()
+	list_bg.bg_color = Color(0.15, 0.15, 0.2, 1.0)
+	local_list.add_theme_stylebox_override("panel", list_bg)
 	hsplit.add_child(local_list)
 
 	var detail_panel = Panel.new()
@@ -738,11 +742,15 @@ func _refresh_local() -> void:
 	local_list.clear()
 	current_items = EconomySystem.current_market.get_available_items()
 	var query = local_search.text.strip_edges().to_lower()
+	var added := 0
 	for item in current_items:
 		if query and not item.name.to_lower().contains(query):
 			continue
-		local_list.add_item("%s  x%d  %s" % [item.name, item.quantity, Helpers.fmt_money(item.cost)])
-	local_count_label.text = tr("Items: %d (%d shown)") % [current_items.size(), local_list.item_count]
+		local_list.add_item(str(added) + ": " + item.name + "  x" + str(item.quantity) + "  " + Helpers.fmt_money(item.cost))
+		added += 1
+	local_count_label.text = tr("Items: %d (%d shown)") % [current_items.size(), added]
+	if added == 0:
+		local_list.add_item("[No items match filter]")
 
 
 func _on_local_search(_new_text: String) -> void:
