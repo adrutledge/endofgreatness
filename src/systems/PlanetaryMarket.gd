@@ -7,6 +7,7 @@ var inventory: Dictionary = {}
 var price_modifiers: Dictionary = {}
 var refresh_counter: int = 0
 var refresh_interval: int = 7
+var _needs_rebuild: bool = false
 
 func setup(factions_on_planet: Array[String], exclude_faction: String = "") -> void:
 	faction_codes = factions_on_planet.duplicate()
@@ -90,7 +91,17 @@ func _base_stock(component_name: String, def: Dictionary) -> int:
 		_:
 			return randi() % 5 + 3
 
+func mark_for_rebuild() -> void:
+	_needs_rebuild = true
+
+func _ensure_fresh() -> void:
+	if not _needs_rebuild:
+		return
+	_needs_rebuild = false
+	rebuild_inventory()
+
 func refresh() -> void:
+	_ensure_fresh()
 	refresh_counter += 1
 	if refresh_counter < refresh_interval:
 		return
@@ -115,6 +126,7 @@ func _randomize_prices() -> void:
 		inventory[name].cost = int(base_cost * price_modifiers[name])
 
 func get_available_items() -> Array[Dictionary]:
+	_ensure_fresh()
 	var result: Array[Dictionary] = []
 	for name in inventory:
 		if inventory[name].quantity > 0:
@@ -122,9 +134,11 @@ func get_available_items() -> Array[Dictionary]:
 	return result
 
 func get_item(item_name: String) -> Dictionary:
+	_ensure_fresh()
 	return inventory.get(item_name, {})
 
 func buy(item_name: String, quantity: int) -> bool:
+	_ensure_fresh()
 	var entry = inventory.get(item_name)
 	if not entry or entry.quantity < quantity:
 		return false
@@ -132,6 +146,7 @@ func buy(item_name: String, quantity: int) -> bool:
 	return true
 
 func sell(item_name: String, quantity: int) -> void:
+	_ensure_fresh()
 	var entry = inventory.get(item_name)
 	if entry:
 		entry.quantity += quantity
@@ -148,5 +163,6 @@ func sell(item_name: String, quantity: int) -> void:
 			}
 
 func get_price(item_name: String) -> int:
+	_ensure_fresh()
 	var entry = inventory.get(item_name)
 	return entry.get("cost", 0) if entry else 0

@@ -210,7 +210,7 @@ func _on_date_changed(date: Dictionary) -> void:
 		last_bill_month = month
 		last_bill_year = year
 		if GameState.player.current_planet == "Galatea":
-			current_market.rebuild_inventory()
+			current_market.mark_for_rebuild()
 
 	# Warn on negative balance (once per negative period)
 	if get_balance() < 0:
