@@ -78,7 +78,7 @@ func _show_detail(entry: Dictionary) -> void:
 			detail_title.text = data.get("title", "Strategic Event")
 			detail_body.text = data.get("description", "")
 		"event_outcome":
-			detail_title.text = "Outcome: " + data.get("event_id", "")
+			detail_title.text = tr("Outcome: ")
 			var lines = []
 			var msg = data.get("message", "")
 			if msg:
@@ -94,13 +94,13 @@ func _show_detail(entry: Dictionary) -> void:
 			var pe = data.get("personnel_effect", "")
 			if pe:
 				lines.append("Personnel effect: " + pe)
-			detail_body.text = "\n".join(lines)
+			detail_body.text = tr("\n")
 		_:
 			detail_title.text = type_str.capitalize()
 			var lines = []
 			for k in data:
 				lines.append(k + ": " + str(data[k]))
-			detail_body.text = "\n".join(lines)
+			detail_body.text = tr("\n")
 
 func _on_close() -> void:
 	hide()

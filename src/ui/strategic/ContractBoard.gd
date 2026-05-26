@@ -92,7 +92,7 @@ func _on_available_selected(index: int) -> void:
 	_selected_contract = _available[index]
 	_selected_is_active = false
 	accept_button.disabled = false
-	accept_button.text = "Accept Contract"
+	accept_button.text = tr("Accept Contract")
 	_show_contract_details(_selected_contract)
 
 
@@ -108,27 +108,30 @@ func _on_active_selected(index: int) -> void:
 
 func _show_contract_details(c: Contract) -> void:
 	detail_name.text = "%s — %s" % [c.issuer, c.activity_type]
-	detail_type.text = "Location: %s  |  Duration: %d days" % [c.planet, c.duration]
+	detail_type.text = tr("Location: %s  |  Duration: %d days") % [c.planet, c.duration]
 
 	var info = ""
-	info += "Payment: %d C-Bills\n" % c.c_bill_payment
-	info += "Payout per tick: %d C-Bills\n" % c.payout_per_tick
-	info += "Salvage rate: %d%% (%s)\n" % [c.salvage_rate * 100, c.salvage_type]
+	info += tr("Payment: %d C-Bills") % c.c_bill_payment + "\n"
+	info += tr("Payout per tick: %d C-Bills") % c.payout_per_tick + "\n"
+	info += tr("Salvage rate: %d%% (%s)") % [c.salvage_rate * 100, c.salvage_type] + "\n"
 	var rights_keys = Enums.CommandRights.keys()
-	info += "Command rights: %s\n" % (rights_keys[c.command_rights] if c.command_rights >= 0 and c.command_rights < rights_keys.size() else "Unknown")
-	info += "Transport coverage: %d%%\n" % (c.transport_coverage * 100)
-	info += "Battle loss reimbursement: %d%%\n" % (c.battle_loss_reimbursement_rate * 100)
-	info += "Minimum tonnage: %.0f tons\n" % c.minimum_tonnage
-	info += "Minimum tactical units:\n"
+	var rights_name = rights_keys[c.command_rights] if c.command_rights >= 0 and c.command_rights < rights_keys.size() else tr("Unknown")
+	info += tr("Command rights: %s") % rights_name + "\n"
+	info += tr("Transport coverage: %d%%") % (c.transport_coverage * 100) + "\n"
+	info += tr("Battle loss reimbursement: %d%%") % (c.battle_loss_reimbursement_rate * 100) + "\n"
+	info += tr("Minimum tonnage: %.0f tons") % c.minimum_tonnage + "\n"
+	info += tr("Minimum tactical units:") + "\n"
 	for k in c.minimum_tactical_unit_counts:
 		info += "  %s: %d\n" % [k, c.minimum_tactical_unit_counts[k]]
 
+	var status = ""
 	if c.is_active:
-		info += "\nStatus: ACTIVE"
-	if c.is_completed:
-		info += "\nStatus: COMPLETED"
-	if not c.is_active and not c.is_completed:
-		info += "\nStatus: Available"
+		status = tr("ACTIVE")
+	elif c.is_completed:
+		status = tr("COMPLETED")
+	else:
+		status = tr("Available")
+	info += "\n" + tr("Status: %s") % status
 
 	detail_info.text = info
 

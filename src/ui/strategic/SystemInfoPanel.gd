@@ -18,7 +18,7 @@ func _ready() -> void:
 func show_system(data: Dictionary) -> void:
 	system_data = data
 	name_label.text = data.get("name", "Unknown")
-	spectral_label.text = "Spectral Class: " + data.get("spectral_class", "Unknown")
+	spectral_label.text = tr("Spectral Class: ")
 
 	var owner = data.get("owner_faction", "")
 	var faction_display = "Owner: " + owner if owner else "Unowned"
@@ -28,7 +28,7 @@ func show_system(data: Dictionary) -> void:
 	factions_label.text = faction_display
 
 	var player_present = GameState.player.current_planet == data.get("name", "")
-	player_label.text = "Player units present" if player_present else ""
+	player_label.text = tr("Player units present")
 	player_label.visible = player_present
 
 	_populate_planets(data.get("planets", []))
@@ -40,7 +40,7 @@ func _populate_planets(planets: Array) -> void:
 
 	if planets.is_empty():
 		var lbl := Label.new()
-		lbl.text = "No planets"
+		lbl.text = tr("No planets")
 		details_container.add_child(lbl)
 		return
 
@@ -80,20 +80,20 @@ func _populate_planets(planets: Array) -> void:
 			if parts.size() > 0:
 				lines.append("USILR: " + ", ".join(parts))
 
-		info.text = "\n".join(lines)
+		info.text = tr("\n")
 		info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		section.add_child(info)
 
 		var hpg = p.get("hpg_class")
 		if hpg:
 			var hpg_label := Label.new()
-			hpg_label.text = "HPG: Class " + str(hpg)
+			hpg_label.text = tr("HPG: Class ")
 			section.add_child(hpg_label)
 
 		var relay = p.get("relay_station")
 		if relay == true:
 			var relay_label := Label.new()
-			relay_label.text = "Relay Station present"
+			relay_label.text = tr("Relay Station present")
 			relay_label.add_theme_color_override("font_color", Color(0.5, 1, 0.5))
 			section.add_child(relay_label)
 

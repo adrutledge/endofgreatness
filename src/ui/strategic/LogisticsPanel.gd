@@ -204,7 +204,7 @@ func _build_local_tab() -> void:
 
 	local_search = LineEdit.new()
 	local_search.name = "LocalSearch"
-	local_search.placeholder_text = "Search local market..."
+	local_search.placeholder_text = tr("Search local market...")
 	local_search.size_flags_vertical = SIZE_SHRINK_CENTER
 	margin.add_child(local_search)
 
@@ -261,7 +261,7 @@ func _build_local_tab() -> void:
 	dv.add_child(bh)
 
 	var ql = Label.new()
-	ql.text = "Qty:"
+	ql.text = tr("Qty:")
 	bh.add_child(ql)
 
 	local_qty_spin = SpinBox.new()
@@ -274,7 +274,7 @@ func _build_local_tab() -> void:
 
 	buy_button = Button.new()
 	buy_button.name = "BuyButton"
-	buy_button.text = "Buy"
+	buy_button.text = tr("Buy")
 	buy_button.disabled = true
 	bh.add_child(buy_button)
 
@@ -300,14 +300,14 @@ func _build_units_tab() -> void:
 
 	unit_search = LineEdit.new()
 	unit_search.name = "UnitSearch"
-	unit_search.placeholder_text = "Search units..."
+	unit_search.placeholder_text = tr("Search units...")
 	unit_search.size_flags_horizontal = SIZE_EXPAND_FILL * 3
 	fb.add_child(unit_search)
 
 	unit_type_filter = OptionButton.new()
 	unit_type_filter.name = "UnitTypeFilter"
 	unit_type_filter.size_flags_horizontal = SIZE_EXPAND_FILL
-	unit_type_filter.text = "All Types"
+	unit_type_filter.text = tr("All Types")
 	for t in ["All Types", "Mechs", "Vehicles"]:
 		unit_type_filter.add_item(t)
 	unit_type_filter.selected = 0
@@ -316,7 +316,7 @@ func _build_units_tab() -> void:
 	unit_weight_filter = OptionButton.new()
 	unit_weight_filter.name = "UnitWeightFilter"
 	unit_weight_filter.size_flags_horizontal = SIZE_EXPAND_FILL
-	unit_weight_filter.text = "All Weights"
+	unit_weight_filter.text = tr("All Weights")
 	for t in ["All Weights", "Light", "Medium", "Heavy", "Assault"]:
 		unit_weight_filter.add_item(t)
 	unit_weight_filter.selected = 0
@@ -370,7 +370,7 @@ func _build_units_tab() -> void:
 
 	buy_unit_button = Button.new()
 	buy_unit_button.name = "BuyUnitButton"
-	buy_unit_button.text = "Buy"
+	buy_unit_button.text = tr("Buy")
 	buy_unit_button.disabled = true
 	bh.add_child(buy_unit_button)
 
@@ -394,7 +394,7 @@ func _build_remote_tab() -> void:
 
 	remote_search = LineEdit.new()
 	remote_search.name = "RemoteSearch"
-	remote_search.placeholder_text = "Search surrounding systems..."
+	remote_search.placeholder_text = tr("Search surrounding systems...")
 	vb.add_child(remote_search)
 
 	remote_status = Label.new()
@@ -434,7 +434,7 @@ func _build_remote_tab() -> void:
 	ov.add_child(oh)
 
 	var oql = Label.new()
-	oql.text = "Qty:"
+	oql.text = tr("Qty:")
 	oh.add_child(oql)
 
 	order_qty_spin = SpinBox.new()
@@ -447,7 +447,7 @@ func _build_remote_tab() -> void:
 
 	order_button = Button.new()
 	order_button.name = "OrderButton"
-	order_button.text = "Order"
+	order_button.text = tr("Order")
 	order_button.disabled = true
 	oh.add_child(order_button)
 
@@ -473,19 +473,19 @@ func _build_inventory_tab() -> void:
 
 	inv_filter_only_unit = CheckButton.new()
 	inv_filter_only_unit.name = "InvFilterOnlyUnit"
-	inv_filter_only_unit.text = "Only unit components"
+	inv_filter_only_unit.text = tr("Only unit components")
 	inv_filter_only_unit.size_flags_horizontal = SIZE_EXPAND_FILL * 3
 	fb.add_child(inv_filter_only_unit)
 
 	inv_filter_below_min = CheckButton.new()
 	inv_filter_below_min.name = "InvFilterBelowMin"
-	inv_filter_below_min.text = "Below minimum only"
+	inv_filter_below_min.text = tr("Below minimum only")
 	inv_filter_below_min.size_flags_horizontal = SIZE_EXPAND_FILL * 3
 	fb.add_child(inv_filter_below_min)
 
 	reorder_min_button = Button.new()
 	reorder_min_button.name = "ReorderMinButton"
-	reorder_min_button.text = "Reorder to Minimum"
+	reorder_min_button.text = tr("Reorder to Minimum")
 	reorder_min_button.size_flags_horizontal = SIZE_EXPAND_FILL * 2
 	fb.add_child(reorder_min_button)
 
@@ -531,12 +531,12 @@ func _build_inventory_tab() -> void:
 
 	dispatch_unit_label = Label.new()
 	dispatch_unit_label.name = "DispatchUnitLabel"
-	dispatch_unit_label.text = "Dispatch to unit:"
+	dispatch_unit_label.text = tr("Dispatch to unit:")
 	dv.add_child(dispatch_unit_label)
 
 	dispatch_unit_dropdown = OptionButton.new()
 	dispatch_unit_dropdown.name = "DispatchUnitDropdown"
-	dispatch_unit_dropdown.text = "Select unit..."
+	dispatch_unit_dropdown.text = tr("Select unit...")
 	dv.add_child(dispatch_unit_dropdown)
 
 	var dh = HBoxContainer.new()
@@ -553,7 +553,7 @@ func _build_inventory_tab() -> void:
 
 	dispatch_button = Button.new()
 	dispatch_button.name = "DispatchButton"
-	dispatch_button.text = "Dispatch"
+	dispatch_button.text = tr("Dispatch")
 	dh.add_child(dispatch_button)
 
 	inv_filter_only_unit.toggled.connect(_refresh_inventory)
@@ -573,7 +573,7 @@ func _load_config() -> void:
 
 func populate() -> void:
 	Helpers.debug_print("LogisticsPanel", "populate — current_tab=%d" % tabs.current_tab if tabs else -1)
-	balance_label.text = "Balance: " + Helpers.fmt_money(EconomySystem.get_balance())
+	balance_label.text = tr("Balance: ")
 	refresh_current_tab()
 
 
@@ -591,7 +591,7 @@ func _on_tab_changed(_tab: int) -> void:
 		0:
 			_refresh_deliveries()
 		1:
-			balance_label.text = "Balance: " + Helpers.fmt_money(EconomySystem.get_balance())
+			balance_label.text = tr("Balance: ")
 			_refresh_market_tab()
 		2:
 			_refresh_inventory()
@@ -700,7 +700,7 @@ func _on_delivery_selected(index: int) -> void:
 	if def:
 		lines.append("Tonnage: " + str(def.get("tonnage", 0)) + "t")
 		lines.append("Cost: " + Helpers.fmt_money(def.get("cost", 0)) + " per unit")
-	delivery_detail_info.text = "\n".join(lines)
+	delivery_detail_info.text = tr("\n")
 
 
 func _on_delivery_arrived(_item_name: String, _quantity: int) -> void:
@@ -746,10 +746,10 @@ func _on_local_item_selected(index: int) -> void:
 	var item = visible[index]
 	selected_item_name = item.name
 	local_name.text = item.name
-	local_cost.text = "Cost: " + Helpers.fmt_money(item.cost)
-	local_tech.text = "Tech Level: " + str(item.tech_level)
-	local_tonnage.text = "Tonnage: " + str(item.tonnage) + "t"
-	local_qty.text = "In stock: " + str(item.quantity)
+	local_cost.text = tr("Cost: ")
+	local_tech.text = tr("Tech Level: ")
+	local_tonnage.text = tr("Tonnage: ")
+	local_qty.text = tr("In stock: ")
 	local_qty_spin.max_value = max(item.quantity, 1)
 	local_qty_spin.value = 1
 	buy_button.disabled = false
@@ -769,12 +769,12 @@ func _on_buy() -> void:
 			"location": GameState.player.current_planet
 		})
 		_refresh_local()
-		balance_label.text = "Balance: " + Helpers.fmt_money(EconomySystem.get_balance())
-		local_name.text = "Purchased " + str(qty) + "x " + selected_item_name
+		balance_label.text = tr("Balance: ")
+		local_name.text = tr("Purchased ")
 		local_qty.text = ""
 		buy_button.disabled = true
 	else:
-		local_name.text = "Purchase failed — insufficient funds"
+		local_name.text = tr("Purchase failed — insufficient funds")
 
 
 func _on_remote_search(new_text: String) -> void:
@@ -782,15 +782,15 @@ func _on_remote_search(new_text: String) -> void:
 	_clear_remote_detail()
 	remote_item_name = new_text.strip_edges()
 	if remote_item_name.length() < 2:
-		remote_status.text = "Type at least 2 characters"
+		remote_status.text = tr("Type at least 2 characters")
 		return
 	if not GameState.player.current_planet:
-		remote_status.text = "No planet selected"
+		remote_status.text = tr("No planet selected")
 		return
 
 	remote_results = EconomySystem.search_remote_sources(remote_item_name)
 	if remote_results.is_empty():
-		remote_status.text = "No sources found within 2 jumps"
+		remote_status.text = tr("No sources found within 2 jumps")
 		return
 
 	for r in remote_results:
@@ -816,8 +816,8 @@ func _on_remote_item_selected(index: int) -> void:
 		return
 	selected_remote_idx = index
 	var r = remote_results[index]
-	order_cost_label.text = "Cost: " + Helpers.fmt_money(r.cost_per_unit) + " per unit"
-	order_travel_label.text = "Travel: " + str(r.travel_days) + " days (" + str(r.jumps) + " jump(s))"
+	order_cost_label.text = tr("Cost: ")
+	order_travel_label.text = tr("Travel: ")
 	order_qty_spin.max_value = max(r.quantity, 1)
 	order_qty_spin.value = 1
 	order_button.disabled = false
@@ -838,11 +838,11 @@ func _on_order() -> void:
 			"source": r.source_system,
 			"eta_days": r.travel_days
 		})
-		balance_label.text = "Balance: " + Helpers.fmt_money(EconomySystem.get_balance())
+		balance_label.text = tr("Balance: ")
 		order_button.disabled = true
-		order_cost_label.text = "Order placed — arrives in " + str(r.travel_days) + " days"
+		order_cost_label.text = tr("Order placed — arrives in ")
 	else:
-		order_cost_label.text = "Order failed — insufficient funds"
+		order_cost_label.text = tr("Order failed — insufficient funds")
 
 
 # =====================
@@ -899,7 +899,7 @@ func _on_inv_item_selected(index: int) -> void:
 	var inv: Dictionary = GameState.player_inventory
 
 	inv_detail_name.text = comp_name
-	inv_detail_qty.text = "Quantity: " + str(inv.get(comp_name, 0))
+	inv_detail_qty.text = tr("Quantity: ")
 
 	var min_s = _spares_config.get("auto_reorder_min_stock", 0)
 	var tgt = _spares_config.get("auto_reorder_target_stock", 0)
@@ -908,7 +908,7 @@ func _on_inv_item_selected(index: int) -> void:
 
 	var def = DataManager.component_defs.get(comp_name)
 	if def:
-		inv_detail_cost.text = "Unit cost: " + Helpers.fmt_money(def.get("cost", 0))
+		inv_detail_cost.text = tr("Unit cost: ")
 	else:
 		inv_detail_cost.text = ""
 
@@ -989,13 +989,13 @@ func _get_selected_opu():
 
 func _on_reorder_to_min() -> void:
 	if not GameState.player.current_planet:
-		inv_detail_name.text = "Select a planet first"
+		inv_detail_name.text = tr("Select a planet first")
 		return
 
 	var min_stock = _spares_config.get("auto_reorder_min_stock", 0)
 	var target_stock = _spares_config.get("auto_reorder_target_stock", 0)
 	if min_stock <= 0 or target_stock <= 0:
-		inv_detail_name.text = "Set min/target stock in spares_config.json first"
+		inv_detail_name.text = tr("Set min/target stock in spares_config.json first")
 		return
 
 	var target_opu = _get_selected_opu()
@@ -1089,7 +1089,7 @@ func _on_reorder_to_min() -> void:
 				else:
 					inv[comp_name] = inv.get(comp_name, 0) + order_qty
 
-	balance_label.text = "Balance: " + Helpers.fmt_money(EconomySystem.get_balance())
+	balance_label.text = tr("Balance: ")
 	var parts: Array[String] = []
 	if dispatched > 0:
 		parts.append("dispatched %d from stores" % dispatched)
@@ -1099,7 +1099,7 @@ func _on_reorder_to_min() -> void:
 		parts.append("%d remote orders" % orders_placed)
 	if parts.is_empty():
 		parts.append("nothing needed")
-	inv_detail_name.text = ", ".join(parts) + " for %s" % Helpers.fmt_money(total_cost)
+	inv_detail_name.text = tr(", ")
 	_refresh_inventory()
 
 
@@ -1208,12 +1208,12 @@ func _on_unit_selected(index: int) -> void:
 	lines.append("[b]Components (" + str(tu.components.size()) + "):[/b]")
 	for c in tu.components:
 		lines.append("  " + c.component_name)
-	unit_detail_specs.text = "\n".join(lines)
+	unit_detail_specs.text = tr("\n")
 
-	unit_price.text = "Price: " + Helpers.fmt_money(selected_unit_cost)
+	unit_price.text = tr("Price: ")
 	unit_status.text = ""
 	var transport_cost = UnitTransportManager.get_daily_transport_cost()
-	unit_status.text = "Transport: 0 CSB (local purchase — on planet)"
+	unit_status.text = tr("Transport: 0 CSB (local purchase — on planet)")
 	buy_unit_button.disabled = false
 
 
@@ -1257,11 +1257,11 @@ func _on_buy_unit() -> void:
 	var template = visible[selected_unit_index]
 
 	if EconomySystem.get_balance() < selected_unit_cost:
-		unit_status.text = "Insufficient funds — need " + Helpers.fmt_money(selected_unit_cost)
+		unit_status.text = tr("Insufficient funds — need ")
 		return
 
 	if not EconomySystem.deduct_funds(selected_unit_cost, "Purchase unit: " + template.unit_name):
-		unit_status.text = "Purchase failed"
+		unit_status.text = tr("Purchase failed")
 		return
 
 	var new_unit = TacticalUnit.new()
@@ -1302,13 +1302,13 @@ func _on_buy_unit() -> void:
 		target_ou.sub_units.append(opu)
 	target_ou.sub_units[0].tactical_units.append(new_unit)
 
-	balance_label.text = "Balance: " + Helpers.fmt_money(EconomySystem.get_balance())
+	balance_label.text = tr("Balance: ")
 	GameState.log_event("unit_purchased", {
 		"unit": template.unit_name,
 		"cost": selected_unit_cost,
 		"location": GameState.player.current_planet
 	})
-	unit_status.text = "Purchased! Added to " + target_ou.unit_name
+	unit_status.text = tr("Purchased! Added to ")
 	buy_unit_button.disabled = true
 	_refresh_units()
 

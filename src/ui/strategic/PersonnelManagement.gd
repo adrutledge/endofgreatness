@@ -302,7 +302,7 @@ func _on_hire_selected() -> void:
 		candidate_detail.text = ""
 		populate_roster()
 	else:
-		candidate_detail.text = "Insufficient funds! Need 5,000 C-Bills."
+		candidate_detail.text = tr("Insufficient funds! Need 5,000 C-Bills.")
 
 func _on_fire() -> void:
 	if selected_personnel:
@@ -329,7 +329,7 @@ func _on_assign() -> void:
 		return
 	_assign_targets = PersonnelManager.get_all_tactical_units()
 	if _assign_targets.is_empty():
-		detail_info.text = "No tactical units available. Create units in Organization Management first."
+		detail_info.text = tr("No tactical units available. Create units in Organization Management first.")
 		return
 
 	var valid_units: Array[TacticalUnit] = []
@@ -342,11 +342,11 @@ func _on_assign() -> void:
 		valid_units.append(u)
 
 	if valid_units.is_empty():
-		detail_info.text = "No suitable units available for this personnel."
+		detail_info.text = tr("No suitable units available for this personnel.")
 		return
 
 	var dialog = AcceptDialog.new()
-	dialog.title = "Assign " + selected_personnel.personnel_name
+	dialog.title = tr("Assign ")
 	dialog.min_size = Vector2i(400, 300)
 
 	var unit_list = ItemList.new()
@@ -369,7 +369,7 @@ func _on_assign() -> void:
 				populate_roster()
 				_update_detail_view(selected_personnel)
 			else:
-				detail_info.text = "Failed to assign " + selected_personnel.personnel_name
+				detail_info.text = tr("Failed to assign ")
 
 	dialog.confirmed.connect(confirm)
 	dialog.close_requested.connect(dialog.queue_free)

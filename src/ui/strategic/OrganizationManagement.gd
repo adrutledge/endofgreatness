@@ -103,8 +103,8 @@ func _on_tree_selected() -> void:
 	match selection_type:
 		SelectionType.STRATEGIC:
 			detail_name.text = GameState.player.unit_name
-			detail_type.text = "Strategic Unit (Player)"
-			detail_info.text = "Organizational Units: " + str(GameState.player.organizational_units.size()) + "\nBalance: " + str(GameState.player.current_balance) + " C-Bills\nLocation: " + (GameState.player.current_planet if GameState.player.current_planet else "Unknown")
+			detail_type.text = tr("Strategic Unit (Player)")
+			detail_info.text = tr("Organizational Units: ")
 			deploy_button.disabled = true
 			remove_button.disabled = true
 			create_button.disabled = false
@@ -114,7 +114,7 @@ func _on_tree_selected() -> void:
 			if not selected_org_unit:
 				return
 			detail_name.text = selected_org_unit.unit_name
-			detail_type.text = "Organizational Unit"
+			detail_type.text = tr("Organizational Unit")
 			var counts = selected_org_unit.get_unit_counts_by_type()
 			var info = "Sub-units: " + str(selected_org_unit.sub_units.size())
 			info += "\nTactical units: " + str(selected_org_unit.get_all_tactical_units().size())
@@ -134,7 +134,7 @@ func _on_tree_selected() -> void:
 			if not selected_op_unit:
 				return
 			detail_name.text = selected_op_unit.unit_name
-			detail_type.text = "Operational Unit"
+			detail_type.text = tr("Operational Unit")
 			var info = "Role: " + selected_op_unit.role
 			info += "\nTactical units: " + str(selected_op_unit.tactical_units.size())
 			info += "\nSub-units: " + str(selected_op_unit.sub_units.size())
@@ -178,23 +178,23 @@ func _on_deploy() -> void:
 		return
 	if GameState.active_contracts.is_empty():
 		Helpers.debug_warn("OrgMgmt", "_on_deploy — no active contracts")
-		detail_info.text = "No active contracts available for deployment."
+		detail_info.text = tr("No active contracts available for deployment.")
 		return
 
 	var contract = GameState.active_contracts[0]
 	if selected_org_unit.contract_id != "":
-		detail_info.text = "Already assigned to contract: " + selected_org_unit.contract_id
+		detail_info.text = tr("Already assigned to contract: ")
 		return
 
 	var shortfalls = _get_deployment_shortfalls(selected_org_unit, contract)
 	if not shortfalls.is_empty():
-		detail_info.text = "Deployment failed — missing:\n" + str(shortfalls)
+		detail_info.text = tr("Deployment failed — missing:\n")
 		return
 
 	for ou in selected_org_unit.sub_units:
 		_set_deployed_recursive(ou, contract)
 	selected_org_unit.contract_id = contract.resource_path
-	detail_info.text = "Deployed " + selected_org_unit.unit_name + " to contract: " + contract.issuer + " on " + contract.planet
+	detail_info.text = tr("Deployed ")
 	populate_tree()
 
 func _get_deployment_shortfalls(org_unit: OrganizationalUnit, contract: Contract) -> Dictionary:
@@ -218,11 +218,11 @@ func _set_deployed_recursive(unit: OperationalUnit, contract: Contract) -> void:
 func _on_create() -> void:
 	Helpers.debug_print("OrgMgmt", "_on_create")
 	var dialog = AcceptDialog.new()
-	dialog.title = "Create Organizational Unit"
+	dialog.title = tr("Create Organizational Unit")
 	dialog.dialog_text = "Enter a name for the new Organizational Unit:"
 
 	var line_edit = LineEdit.new()
-	line_edit.placeholder_text = "Unit name"
+	line_edit.placeholder_text = tr("Unit name")
 	line_edit.size = Vector2(300, 30)
 	dialog.add_child(line_edit)
 	add_child(dialog)

@@ -23,8 +23,9 @@ Plan: `ai/plan.md`
 - [x] Dark/light theme .tres files
 - [x] en.po translation file
 - [x] ThemeManager autoload with toggle + theme_changed signal
-- [~] tr() usage in UI — limited, many hardcoded strings remain
-- [~] Only English locale exists
+- [x] tr() usage throughout all UI files (~120 translatable strings)
+- [~] en.po translation file with all keys
+- [~] Only English locale exists (ready for additional locales)
 
 ### P0.4 — Event Bus
 - [x] EventBus autoload with 20 signals (added month_started, inventory_changed, dispatch_completed, auto_reorder_triggered, funds_low_for_reorder)

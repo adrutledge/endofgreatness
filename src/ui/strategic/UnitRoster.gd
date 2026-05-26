@@ -110,7 +110,7 @@ func _on_tree_selected() -> void:
 	match selection_type:
 		SelectionType.STRATEGIC:
 			detail_title.text = GameState.player.unit_name
-			detail_info.text = "Command Unit"
+			detail_info.text = tr("Command Unit")
 			var total_tus = 0
 			for ou in GameState.player.organizational_units:
 				total_tus += ou.get_all_tactical_units().size()
@@ -126,7 +126,7 @@ func _on_tree_selected() -> void:
 			if not selected_org_unit:
 				return
 			detail_title.text = selected_org_unit.unit_name
-			detail_info.text = "Organizational Unit"
+			detail_info.text = tr("Organizational Unit")
 			var counts = selected_org_unit.get_unit_counts_by_type()
 			var lines = []
 			lines.append("Sub-units: " + str(selected_org_unit.sub_units.size()))
@@ -145,7 +145,7 @@ func _on_tree_selected() -> void:
 			if not selected_op_unit:
 				return
 			detail_title.text = selected_op_unit.unit_name
-			detail_info.text = "Operational Unit"
+			detail_info.text = tr("Operational Unit")
 			var lines = []
 			lines.append("Role: " + selected_op_unit.role)
 			lines.append("Tactical Units: " + str(selected_op_unit.tactical_units.size()))
@@ -225,11 +225,11 @@ func _on_assign_tech() -> void:
 				available.append(p)
 
 	if available.is_empty():
-		repair_label.text = "No available technicians with matching specialization"
+		repair_label.text = tr("No available technicians with matching specialization")
 		return
 
 	var dialog = AcceptDialog.new()
-	dialog.title = "Assign Technician"
+	dialog.title = tr("Assign Technician")
 	dialog.size = Vector2i(500, 400)
 
 	var vbox = VBoxContainer.new()
@@ -261,7 +261,7 @@ func _on_unassign_tech() -> void:
 	if not selected_tactical_unit or selected_tactical_unit.assigned_technicians.is_empty():
 		return
 	var dialog = AcceptDialog.new()
-	dialog.title = "Unassign Technician"
+	dialog.title = tr("Unassign Technician")
 	dialog.size = Vector2i(400, 300)
 
 	var vbox = VBoxContainer.new()

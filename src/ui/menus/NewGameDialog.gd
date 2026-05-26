@@ -65,7 +65,7 @@ func _on_start() -> void:
 	if company_name.is_empty():
 		company_name = ""
 
-	status_label.text = "Generating force..."
+	status_label.text = tr("Generating force...")
 	start_button.disabled = true
 	back_button.disabled = true
 
@@ -76,7 +76,7 @@ func _on_start() -> void:
 	if result.get("success", false):
 		get_tree().change_scene_to_file("res://src/ui/strategic/StarMap.tscn")
 	else:
-		status_label.text = "Error: " + result.get("error", "Unknown error")
+		status_label.text = tr("Error: ")
 		start_button.disabled = false
 		back_button.disabled = false
 

@@ -6,32 +6,365 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "APP_NAME"
-msgstr "End of Greatness"
+msgid ","
+msgstr ","
 
-msgid "NEW_GAME"
-msgstr "New Game"
+msgid "ACTIVE"
+msgstr "ACTIVE"
 
-msgid "LOAD_GAME"
-msgstr "Load Game"
+msgid "Accept Contract"
+msgstr "Accept Contract"
 
-msgid "SETTINGS"
-msgstr "Settings"
+msgid "Add"
+msgstr "Add"
 
-msgid "CREDITS"
-msgstr "Credits"
+msgid "Add Change"
+msgstr "Add Change"
 
-msgid "QUIT"
-msgstr "Quit"
+msgid "All Components"
+msgstr "All Components"
 
-msgid "C_BILLS"
-msgstr "C-Bills"
+msgid "All Types"
+msgstr "All Types"
 
-msgid "DATE"
-msgstr "Date"
+msgid "All Weights"
+msgstr "All Weights"
 
-msgid "PAUSE"
-msgstr "Pause"
+msgid "Already assigned to contract:"
+msgstr "Already assigned to contract:"
 
-msgid "RESUME"
-msgstr "Resume"
+msgid "Already the current variant"
+msgstr "Already the current variant"
+
+msgid "Apply"
+msgstr "Apply"
+
+msgid "Apply Customization"
+msgstr "Apply Customization"
+
+msgid "Assign"
+msgstr "Assign"
+
+msgid "Assign Technician"
+msgstr "Assign Technician"
+
+msgid "Available"
+msgstr "Available"
+
+msgid "Balance:"
+msgstr "Balance:"
+
+msgid "Battle loss reimbursement: %d%%"
+msgstr "Battle loss reimbursement: %d%%"
+
+msgid "Below minimum only"
+msgstr "Below minimum only"
+
+msgid "Buy"
+msgstr "Buy"
+
+msgid "COMPLETED"
+msgstr "COMPLETED"
+
+msgid "Changes reset"
+msgstr "Changes reset"
+
+msgid "Command Unit"
+msgstr "Command Unit"
+
+msgid "Command rights: %s"
+msgstr "Command rights: %s"
+
+msgid "Cost:"
+msgstr "Cost:"
+
+msgid "Create Organizational Unit"
+msgstr "Create Organizational Unit"
+
+msgid "Current Components"
+msgstr "Current Components"
+
+msgid "Current Mech Components"
+msgstr "Current Mech Components"
+
+msgid "Customization History"
+msgstr "Customization History"
+
+msgid "Customization Summary"
+msgstr "Customization Summary"
+
+msgid "Customization failed:"
+msgstr "Customization failed:"
+
+msgid "Deployed"
+msgstr "Deployed"
+
+msgid "Deployment failed — missing:\n"
+msgstr "Deployment failed — missing:\n"
+
+msgid "Dispatch"
+msgstr "Dispatch"
+
+msgid "Dispatch to unit:"
+msgstr "Dispatch to unit:"
+
+msgid "Empty"
+msgstr "Empty"
+
+msgid "Empty slot selected in"
+msgstr "Empty slot selected in"
+
+msgid "Error:"
+msgstr "Error:"
+
+msgid "Facility Gating"
+msgstr "Facility Gating"
+
+msgid "Failed to assign"
+msgstr "Failed to assign"
+
+msgid "Generating force..."
+msgstr "Generating force..."
+
+msgid "HPG: Class"
+msgstr "HPG: Class"
+
+msgid "In stock:"
+msgstr "In stock:"
+
+msgid "Insufficient funds — need"
+msgstr "Insufficient funds — need"
+
+msgid "Insufficient funds! Need 5,000 C-Bills."
+msgstr "Insufficient funds! Need 5,000 C-Bills."
+
+msgid "Labor:"
+msgstr "Labor:"
+
+msgid "Location:"
+msgstr "Location:"
+
+msgid "Location: %s  |  Duration: %d days"
+msgstr "Location: %s  |  Duration: %d days"
+
+msgid "Minimum tactical units:"
+msgstr "Minimum tactical units:"
+
+msgid "Minimum tonnage: %.0f tons"
+msgstr "Minimum tonnage: %.0f tons"
+
+msgid "No active contracts available for deployment."
+msgstr "No active contracts available for deployment."
+
+msgid "No available technicians with matching specialization"
+msgstr "No available technicians with matching specialization"
+
+msgid "No changes specified"
+msgstr "No changes specified"
+
+msgid "No customization history"
+msgstr "No customization history"
+
+msgid "No pending changes"
+msgstr "No pending changes"
+
+msgid "No planet selected"
+msgstr "No planet selected"
+
+msgid "No planets"
+msgstr "No planets"
+
+msgid "No sources found within 2 jumps"
+msgstr "No sources found within 2 jumps"
+
+msgid "No suitable units available for this personnel."
+msgstr "No suitable units available for this personnel."
+
+msgid "No tactical units available. Create units in Organization Management first."
+msgstr "No tactical units available. Create units in Organization Management first."
+
+msgid "Only unit components"
+msgstr "Only unit components"
+
+msgid "Operational Unit"
+msgstr "Operational Unit"
+
+msgid "Order"
+msgstr "Order"
+
+msgid "Order failed — insufficient funds"
+msgstr "Order failed — insufficient funds"
+
+msgid "Order placed — arrives in"
+msgstr "Order placed — arrives in"
+
+msgid "Organizational Unit"
+msgstr "Organizational Unit"
+
+msgid "Organizational Units:"
+msgstr "Organizational Units:"
+
+msgid "Outcome:"
+msgstr "Outcome:"
+
+msgid "Paper Doll — Click a slot to select"
+msgstr "Paper Doll — Click a slot to select"
+
+msgid "Payment: %d C-Bills"
+msgstr "Payment: %d C-Bills"
+
+msgid "Payout per tick: %d C-Bills"
+msgstr "Payout per tick: %d C-Bills"
+
+msgid "Pending Changes"
+msgstr "Pending Changes"
+
+msgid "Player units present"
+msgstr "Player units present"
+
+msgid "Price:"
+msgstr "Price:"
+
+msgid "Purchase failed"
+msgstr "Purchase failed"
+
+msgid "Purchase failed — insufficient funds"
+msgstr "Purchase failed — insufficient funds"
+
+msgid "Purchased"
+msgstr "Purchased"
+
+msgid "Purchased! Added to"
+msgstr "Purchased! Added to"
+
+msgid "Qty:"
+msgstr "Qty:"
+
+msgid "Quantity:"
+msgstr "Quantity:"
+
+msgid "Refit failed:"
+msgstr "Refit failed:"
+
+msgid "Refit kit:"
+msgstr "Refit kit:"
+
+msgid "Relay Station present"
+msgstr "Relay Station present"
+
+msgid "Remove Selected"
+msgstr "Remove Selected"
+
+msgid "Reorder to Minimum"
+msgstr "Reorder to Minimum"
+
+msgid "Replace Selected"
+msgstr "Replace Selected"
+
+msgid "Reset Changes"
+msgstr "Reset Changes"
+
+msgid "Risk Assessment"
+msgstr "Risk Assessment"
+
+msgid "Salvage rate: %d%% (%s)"
+msgstr "Salvage rate: %d%% (%s)"
+
+msgid "Save Changes"
+msgstr "Save Changes"
+
+msgid "Search local market..."
+msgstr "Search local market..."
+
+msgid "Search surrounding systems..."
+msgstr "Search surrounding systems..."
+
+msgid "Search units..."
+msgstr "Search units..."
+
+msgid "Search:"
+msgstr "Search:"
+
+msgid "Select a planet first"
+msgstr "Select a planet first"
+
+msgid "Select unit..."
+msgstr "Select unit..."
+
+msgid "Selected:"
+msgstr "Selected:"
+
+msgid "Set min/target stock in spares_config.json first"
+msgstr "Set min/target stock in spares_config.json first"
+
+msgid "Spectral Class:"
+msgstr "Spectral Class:"
+
+msgid "Status: %s"
+msgstr "Status: %s"
+
+msgid "Strategic Unit (Player)"
+msgstr "Strategic Unit (Player)"
+
+msgid "Tech Level:"
+msgstr "Tech Level:"
+
+msgid "Tech:"
+msgstr "Tech:"
+
+msgid "Tonnage:"
+msgstr "Tonnage:"
+
+msgid "Transport coverage: %d%%"
+msgstr "Transport coverage: %d%%"
+
+msgid "Transport: 0 CSB (local purchase — on planet)"
+msgstr "Transport: 0 CSB (local purchase — on planet)"
+
+msgid "Travel:"
+msgstr "Travel:"
+
+msgid "Type at least 2 characters"
+msgstr "Type at least 2 characters"
+
+msgid "Type:"
+msgstr "Type:"
+
+msgid "Unassign Technician"
+msgstr "Unassign Technician"
+
+msgid "Unit already has an active refit"
+msgstr "Unit already has an active refit"
+
+msgid "Unit already has an active refit or customization"
+msgstr "Unit already has an active refit or customization"
+
+msgid "Unit cost:"
+msgstr "Unit cost:"
+
+msgid "Unit name"
+msgstr "Unit name"
+
+msgid "Unknown"
+msgstr "Unknown"
+
+msgid "Walk MP:"
+msgstr "Walk MP:"
+
+msgid "X"
+msgstr "X"
+
+msgid "[color=#888888]This is the current variant — no refit needed[/color]"
+msgstr "[color=#888888]This is the current variant — no refit needed[/color]"
+
+msgid "filter..."
+msgstr "filter..."
+
+msgid "→ Engine:"
+msgstr "→ Engine:"
+
+msgid "→ Engine: —"
+msgstr "→ Engine: —"
+
+msgid "→ Need Engine:"
+msgstr "→ Need Engine:"

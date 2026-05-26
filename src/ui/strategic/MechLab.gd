@@ -164,7 +164,7 @@ func _setup_tabs() -> void:
 
 func _build_paper_doll_tab() -> void:
 	var header = Label.new()
-	header.text = "Paper Doll — Click a slot to select"
+	header.text = tr("Paper Doll — Click a slot to select")
 	header.add_theme_font_size_override("font_size", 13)
 	paper_doll_tab.add_child(header)
 
@@ -229,12 +229,12 @@ func _build_paper_doll_tab() -> void:
 	paper_doll_tab.add_child(btn_bar)
 
 	paper_doll_reset_btn = Button.new()
-	paper_doll_reset_btn.text = "Reset Changes"
+	paper_doll_reset_btn.text = tr("Reset Changes")
 	paper_doll_reset_btn.pressed.connect(_on_paper_doll_reset)
 	btn_bar.add_child(paper_doll_reset_btn)
 
 	paper_doll_save_btn = Button.new()
-	paper_doll_save_btn.text = "Save Changes"
+	paper_doll_save_btn.text = tr("Save Changes")
 	paper_doll_save_btn.pressed.connect(_on_paper_doll_save_changes)
 	btn_bar.add_child(paper_doll_save_btn)
 
@@ -316,7 +316,7 @@ func _build_components_tab() -> void:
 	components_tab.add_child(filter_hb)
 
 	var type_lbl = Label.new()
-	type_lbl.text = "Type:"
+	type_lbl.text = tr("Type:")
 	type_lbl.add_theme_font_size_override("font_size", 11)
 	filter_hb.add_child(type_lbl)
 
@@ -329,7 +329,7 @@ func _build_components_tab() -> void:
 	filter_hb.add_child(browser_type_filter)
 
 	var tech_lbl = Label.new()
-	tech_lbl.text = "Tech:"
+	tech_lbl.text = tr("Tech:")
 	tech_lbl.add_theme_font_size_override("font_size", 11)
 	filter_hb.add_child(tech_lbl)
 
@@ -346,14 +346,14 @@ func _build_components_tab() -> void:
 	filter_hb.add_child(browser_tech_filter)
 
 	var search_lbl = Label.new()
-	search_lbl.text = "Search:"
+	search_lbl.text = tr("Search:")
 	search_lbl.add_theme_font_size_override("font_size", 11)
 	filter_hb.add_child(search_lbl)
 
 	browser_search = LineEdit.new()
 	browser_search.name = "BrowserSearch"
 	browser_search.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	browser_search.placeholder_text = "filter..."
+	browser_search.placeholder_text = tr("filter...")
 	browser_search.text_changed.connect(_on_browser_filter_changed)
 	filter_hb.add_child(browser_search)
 
@@ -366,7 +366,7 @@ func _build_components_tab() -> void:
 	split.add_child(current_vb)
 
 	var current_title = Label.new()
-	current_title.text = "Current Mech Components"
+	current_title.text = tr("Current Mech Components")
 	current_title.add_theme_font_size_override("font_size", 13)
 	current_vb.add_child(current_title)
 
@@ -374,7 +374,7 @@ func _build_components_tab() -> void:
 	loc_filter_hb.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	current_vb.add_child(loc_filter_hb)
 	var loc_lbl = Label.new()
-	loc_lbl.text = "Location:"
+	loc_lbl.text = tr("Location:")
 	loc_lbl.add_theme_font_size_override("font_size", 11)
 	loc_filter_hb.add_child(loc_lbl)
 	current_location_filter = OptionButton.new()
@@ -390,7 +390,7 @@ func _build_components_tab() -> void:
 	engine_hb.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	current_vb.add_child(engine_hb)
 	var walk_lbl = Label.new()
-	walk_lbl.text = "Walk MP:"
+	walk_lbl.text = tr("Walk MP:")
 	walk_lbl.add_theme_font_size_override("font_size", 11)
 	engine_hb.add_child(walk_lbl)
 	walk_mp_spin = SpinBox.new()
@@ -402,11 +402,11 @@ func _build_components_tab() -> void:
 	engine_hb.add_child(walk_mp_spin)
 	var engine_rating_label = Label.new()
 	engine_rating_label.name = "EngineRatingLabel"
-	engine_rating_label.text = " → Engine: —"
+	engine_rating_label.text = tr(" → Engine: —")
 	engine_rating_label.add_theme_font_size_override("font_size", 11)
 	engine_hb.add_child(engine_rating_label)
 	apply_engine_btn = Button.new()
-	apply_engine_btn.text = "Apply"
+	apply_engine_btn.text = tr("Apply")
 	apply_engine_btn.disabled = true
 	apply_engine_btn.pressed.connect(_on_apply_engine)
 	engine_hb.add_child(apply_engine_btn)
@@ -422,7 +422,7 @@ func _build_components_tab() -> void:
 	split.add_child(browser_vb)
 
 	var browser_title = Label.new()
-	browser_title.text = "All Components"
+	browser_title.text = tr("All Components")
 	browser_title.add_theme_font_size_override("font_size", 13)
 	browser_vb.add_child(browser_title)
 
@@ -437,13 +437,13 @@ func _build_components_tab() -> void:
 	components_tab.add_child(action_bar)
 
 	components_remove_btn = Button.new()
-	components_remove_btn.text = "Remove Selected"
+	components_remove_btn.text = tr("Remove Selected")
 	components_remove_btn.disabled = true
 	components_remove_btn.pressed.connect(_on_components_remove)
 	action_bar.add_child(components_remove_btn)
 
 	components_replace_btn = Button.new()
-	components_replace_btn.text = "Replace Selected"
+	components_replace_btn.text = tr("Replace Selected")
 	components_replace_btn.disabled = true
 	components_replace_btn.pressed.connect(_on_components_replace)
 	action_bar.add_child(components_replace_btn)
@@ -458,7 +458,7 @@ func _build_customize_ui() -> void:
 	scroll.add_child(vb)
 
 	var comp_title = Label.new()
-	comp_title.text = "Current Components"
+	comp_title.text = tr("Current Components")
 	comp_title.add_theme_font_size_override("font_size", 14)
 	vb.add_child(comp_title)
 
@@ -470,7 +470,7 @@ func _build_customize_ui() -> void:
 	vb.add_child(sep1)
 
 	var chg_title = Label.new()
-	chg_title.text = "Add Change"
+	chg_title.text = tr("Add Change")
 	chg_title.add_theme_font_size_override("font_size", 14)
 	vb.add_child(chg_title)
 
@@ -501,7 +501,7 @@ func _build_customize_ui() -> void:
 	change_hb.add_child(new_comp_option)
 
 	add_change_btn = Button.new()
-	add_change_btn.text = "Add"
+	add_change_btn.text = tr("Add")
 	add_change_btn.pressed.connect(_on_add_change)
 	change_hb.add_child(add_change_btn)
 
@@ -509,7 +509,7 @@ func _build_customize_ui() -> void:
 	vb.add_child(sep2)
 
 	var pend_title = Label.new()
-	pend_title.text = "Pending Changes"
+	pend_title.text = tr("Pending Changes")
 	pend_title.add_theme_font_size_override("font_size", 14)
 	vb.add_child(pend_title)
 
@@ -521,7 +521,7 @@ func _build_customize_ui() -> void:
 	vb.add_child(sep3)
 
 	var sum_title = Label.new()
-	sum_title.text = "Customization Summary"
+	sum_title.text = tr("Customization Summary")
 	sum_title.add_theme_font_size_override("font_size", 14)
 	vb.add_child(sum_title)
 
@@ -535,7 +535,7 @@ func _build_customize_ui() -> void:
 	vb.add_child(sep4)
 
 	var risk_title = Label.new()
-	risk_title.text = "Risk Assessment"
+	risk_title.text = tr("Risk Assessment")
 	risk_title.add_theme_font_size_override("font_size", 14)
 	vb.add_child(risk_title)
 
@@ -549,7 +549,7 @@ func _build_customize_ui() -> void:
 	vb.add_child(sep5)
 
 	var fac_title = Label.new()
-	fac_title.text = "Facility Gating"
+	fac_title.text = tr("Facility Gating")
 	fac_title.add_theme_font_size_override("font_size", 14)
 	vb.add_child(fac_title)
 
@@ -560,7 +560,7 @@ func _build_customize_ui() -> void:
 	vb.add_child(facility_label)
 
 	apply_customize_btn = Button.new()
-	apply_customize_btn.text = "Apply Customization"
+	apply_customize_btn.text = tr("Apply Customization")
 	apply_customize_btn.disabled = true
 	apply_customize_btn.pressed.connect(_on_apply_customization)
 	vb.add_child(apply_customize_btn)
@@ -569,7 +569,7 @@ func _build_customize_ui() -> void:
 	vb.add_child(sep6)
 
 	var hist_title = Label.new()
-	hist_title.text = "Customization History"
+	hist_title.text = tr("Customization History")
 	hist_title.add_theme_font_size_override("font_size", 14)
 	vb.add_child(hist_title)
 
@@ -692,7 +692,7 @@ func _on_variant_selected(index: int) -> void:
 	selected_variant = variants[index]
 
 	if selected_variant.model_name == selected_unit.model_name:
-		variant_info.text = "[color=#888888]This is the current variant — no refit needed[/color]"
+		variant_info.text = tr("[color=#888888]This is the current variant — no refit needed[/color]")
 		diff_info.text = ""
 		parts_info.text = ""
 		cost_label.text = ""
@@ -702,7 +702,7 @@ func _on_variant_selected(index: int) -> void:
 
 	var active = RefitManager.get_unit_refit(selected_unit)
 	if active:
-		status_label.text = "Unit already has an active refit"
+		status_label.text = tr("Unit already has an active refit")
 		start_refit_button.disabled = true
 		_update_status()
 		return
@@ -754,13 +754,13 @@ func _on_variant_selected(index: int) -> void:
 	var clas_name = RefitManager.get_refit_class_name(clas_info.overall_class)
 	var clas_hours = RefitManager.CLASS_HOURS[clas_info.overall_class]
 	var kit_bonus = RefitManager.get_refit_kit_bonus({"overall_class": clas_info.overall_class})
-	cost_label.text = "Refit kit: " + Helpers.fmt_money(total_cost) + "  |  Class: " + clas_name
+	cost_label.text = tr("Refit kit: ")
 	diff_info.text += "\n\n[b]Refit Class: " + clas_name + "[/b] (" + str(clas_hours) + " hrs/ton per component)"
 	var kit_text = ""
 	if kit_bonus < 0:
 		kit_text = " | TN bonus: " + str(kit_bonus)
 	var delivery_text = "" if max_delivery <= 0 else " | Kit delivery: " + str(max_delivery) + " days"
-	hours_label.text = "Labor: " + str(hours) + " technician-hours" + delivery_text + kit_text
+	hours_label.text = tr("Labor: ")
 	start_refit_button.disabled = false
 	_update_status()
 
@@ -768,12 +768,12 @@ func _on_start_refit() -> void:
 	if not selected_unit or not selected_variant:
 		return
 	if selected_variant.model_name == selected_unit.model_name:
-		status_label.text = "Already the current variant"
+		status_label.text = tr("Already the current variant")
 		return
 
 	var active = RefitManager.get_unit_refit(selected_unit)
 	if active:
-		status_label.text = "Unit already has an active refit"
+		status_label.text = tr("Unit already has an active refit")
 		return
 
 	var result = RefitManager.start_refit(selected_unit, selected_variant)
@@ -788,7 +788,7 @@ func _on_start_refit() -> void:
 		start_refit_button.disabled = true
 		populate()
 	else:
-		status_label.text = "Refit failed: " + result.reason
+		status_label.text = tr("Refit failed: ")
 
 func _show_customize_view() -> void:
 	if not selected_unit:
@@ -826,7 +826,7 @@ func _refresh_pending_changes() -> void:
 
 	if pending_changes.is_empty():
 		var lbl = Label.new()
-		lbl.text = "  No pending changes"
+		lbl.text = tr("  No pending changes")
 		pending_changes_container.add_child(lbl)
 		return
 
@@ -844,11 +844,11 @@ func _refresh_pending_changes() -> void:
 			"replace":
 				comp_text = "Replace " + ch.get("current_component", "?") + " with " + ch.get("new_component", "?") + " [" + ch.get("location", "?") + "]"
 		var lbl = Label.new()
-		lbl.text = "  " + comp_text
+		lbl.text = tr("  ")
 		lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		hb.add_child(lbl)
 		var rmv = Button.new()
-		rmv.text = "X"
+		rmv.text = tr("X")
 		var idx = i
 		rmv.pressed.connect(func(): _remove_pending_change(idx))
 		hb.add_child(rmv)
@@ -908,7 +908,7 @@ func _remove_pending_change(index: int) -> void:
 
 func _update_customization_summary() -> void:
 	if pending_changes.is_empty():
-		summary_label.text = "  No changes specified"
+		summary_label.text = tr("  No changes specified")
 		risk_label.text = ""
 		facility_label.text = ""
 		apply_customize_btn.disabled = true
@@ -998,7 +998,7 @@ func _on_apply_customization() -> void:
 
 	var active = RefitManager.get_unit_refit(selected_unit)
 	if active:
-		status_label.text = "Unit already has an active refit or customization"
+		status_label.text = tr("Unit already has an active refit or customization")
 		return
 
 	var parts_plan: Array[Dictionary] = []
@@ -1024,7 +1024,7 @@ func _on_apply_customization() -> void:
 		_update_customization_summary()
 		populate()
 	else:
-		status_label.text = "Customization failed: " + result.reason
+		status_label.text = tr("Customization failed: ")
 
 func _show_customization_history() -> void:
 	if not selected_unit:
@@ -1033,7 +1033,7 @@ func _show_customization_history() -> void:
 
 	var log = RefitManager.get_customization_log(selected_unit)
 	if log.is_empty():
-		history_label.text = "  No customization history"
+		history_label.text = tr("  No customization history")
 		return
 
 	var hh = RichTextHelper.new()
@@ -1140,7 +1140,7 @@ func _refresh_paper_doll() -> void:
 					continue
 				slots[idx]["component"] = ""
 				var btn = slots[idx]["button"]
-				btn.text = "Empty"
+				btn.text = tr("Empty")
 				var style = StyleBoxFlat.new()
 				style.bg_color = Color(0.06, 0.06, 0.06)
 				style.border_width_bottom = 1
@@ -1157,7 +1157,7 @@ func _refresh_paper_doll() -> void:
 		for idx in available:
 			slots[idx]["component"] = ""
 			var btn = slots[idx]["button"]
-			btn.text = "Empty"
+			btn.text = tr("Empty")
 			var style = StyleBoxFlat.new()
 			style.bg_color = Color(0.06, 0.06, 0.06)
 			style.border_width_bottom = 1
@@ -1274,12 +1274,12 @@ func _on_paper_doll_slot_pressed(location: String, slot_index: int) -> void:
 		else:
 			var sel_info = paper_doll_tab.get_node_or_null("PaperDollSelectedInfo")
 			if sel_info:
-				sel_info.text = "Empty slot selected in " + location + " — ready for placement"
+				sel_info.text = tr("Empty slot selected in ")
 	else:
 		var sel_info = paper_doll_tab.get_node_or_null("PaperDollSelectedInfo")
 		if sel_info:
 			var comp_type = _classify_component(comp_name)
-			sel_info.text = "Selected: " + comp_name + " [" + comp_type + "] in " + location
+			sel_info.text = tr("Selected: ")
 
 func _highlight_paper_doll_slot(location: String, index: int) -> void:
 	for loc_name in location_names:
@@ -1318,7 +1318,7 @@ func _on_paper_doll_reset() -> void:
 
 	var sel_info = paper_doll_tab.get_node_or_null("PaperDollSelectedInfo")
 	if sel_info:
-		sel_info.text = "Changes reset"
+		sel_info.text = tr("Changes reset")
 
 func _on_paper_doll_save_changes() -> void:
 	if pending_changes.is_empty():
@@ -1385,11 +1385,11 @@ func _update_engine_display() -> void:
 	var en_label = walk_mp_spin.get_parent().get_node_or_null("EngineRatingLabel")
 	if en_label:
 		if needed_rating != current_rating:
-			en_label.text = " → Need Engine: " + str(needed_rating) + " (current: " + str(current_rating) + ")"
+			en_label.text = tr(" → Need Engine: ")
 			if apply_engine_btn:
 				apply_engine_btn.disabled = false
 		else:
-			en_label.text = " → Engine: " + str(needed_rating) + " (current)"
+			en_label.text = tr(" → Engine: ")
 			if apply_engine_btn:
 				apply_engine_btn.disabled = true
 
