@@ -78,7 +78,7 @@ func _show_detail(entry: Dictionary) -> void:
 			detail_title.text = data.get("title", "Strategic Event")
 			detail_body.text = data.get("description", "")
 		"event_outcome":
-			detail_title.text = tr("Outcome: ")
+			detail_title.text = tr("Outcome: ") + data.get("event_id", "")
 			var lines = []
 			var msg = data.get("message", "")
 			if msg:

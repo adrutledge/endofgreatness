@@ -346,7 +346,7 @@ func _on_assign() -> void:
 		return
 
 	var dialog = AcceptDialog.new()
-	dialog.title = tr("Assign ")
+	dialog.title = tr("Assign ") + selected_personnel.personnel_name
 	dialog.min_size = Vector2i(400, 300)
 
 	var unit_list = ItemList.new()
@@ -369,7 +369,7 @@ func _on_assign() -> void:
 				populate_roster()
 				_update_detail_view(selected_personnel)
 			else:
-				detail_info.text = tr("Failed to assign ")
+				detail_info.text = tr("Failed to assign ") + selected_personnel.personnel_name
 
 	dialog.confirmed.connect(confirm)
 	dialog.close_requested.connect(dialog.queue_free)

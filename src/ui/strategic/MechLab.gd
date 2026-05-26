@@ -754,13 +754,13 @@ func _on_variant_selected(index: int) -> void:
 	var clas_name = RefitManager.get_refit_class_name(clas_info.overall_class)
 	var clas_hours = RefitManager.CLASS_HOURS[clas_info.overall_class]
 	var kit_bonus = RefitManager.get_refit_kit_bonus({"overall_class": clas_info.overall_class})
-	cost_label.text = tr("Refit kit: ")
+	cost_label.text = tr("Refit kit: ") + Helpers.fmt_money(total_cost) + "  |  Class: " + clas_name
 	diff_info.text += "\n\n[b]Refit Class: " + clas_name + "[/b] (" + str(clas_hours) + " hrs/ton per component)"
 	var kit_text = ""
 	if kit_bonus < 0:
 		kit_text = " | TN bonus: " + str(kit_bonus)
 	var delivery_text = "" if max_delivery <= 0 else " | Kit delivery: " + str(max_delivery) + " days"
-	hours_label.text = tr("Labor: ")
+	hours_label.text = tr("Labor: ") + str(hours) + " technician-hours" + delivery_text + kit_text
 	start_refit_button.disabled = false
 	_update_status()
 
@@ -788,7 +788,7 @@ func _on_start_refit() -> void:
 		start_refit_button.disabled = true
 		populate()
 	else:
-		status_label.text = tr("Refit failed: ")
+		status_label.text = tr("Refit failed: ") + result.reason
 
 func _show_customize_view() -> void:
 	if not selected_unit:
@@ -844,7 +844,7 @@ func _refresh_pending_changes() -> void:
 			"replace":
 				comp_text = "Replace " + ch.get("current_component", "?") + " with " + ch.get("new_component", "?") + " [" + ch.get("location", "?") + "]"
 		var lbl = Label.new()
-		lbl.text = tr("  ")
+		lbl.text = "  " + comp_text
 		lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		hb.add_child(lbl)
 		var rmv = Button.new()
@@ -1024,7 +1024,7 @@ func _on_apply_customization() -> void:
 		_update_customization_summary()
 		populate()
 	else:
-		status_label.text = tr("Customization failed: ")
+		status_label.text = tr("Customization failed: ") + result.reason
 
 func _show_customization_history() -> void:
 	if not selected_unit:
@@ -1274,12 +1274,12 @@ func _on_paper_doll_slot_pressed(location: String, slot_index: int) -> void:
 		else:
 			var sel_info = paper_doll_tab.get_node_or_null("PaperDollSelectedInfo")
 			if sel_info:
-				sel_info.text = tr("Empty slot selected in ")
+				sel_info.text = tr("Empty slot selected in ") + location + " — ready for placement"
 	else:
 		var sel_info = paper_doll_tab.get_node_or_null("PaperDollSelectedInfo")
 		if sel_info:
 			var comp_type = _classify_component(comp_name)
-			sel_info.text = tr("Selected: ")
+			sel_info.text = tr("Selected: ") + comp_name + " [" + comp_type + "] in " + location
 
 func _highlight_paper_doll_slot(location: String, index: int) -> void:
 	for loc_name in location_names:
@@ -1385,11 +1385,11 @@ func _update_engine_display() -> void:
 	var en_label = walk_mp_spin.get_parent().get_node_or_null("EngineRatingLabel")
 	if en_label:
 		if needed_rating != current_rating:
-			en_label.text = tr(" → Need Engine: ")
+			en_label.text = tr(" → Need Engine: ") + str(needed_rating) + " (current: " + str(current_rating) + ")"
 			if apply_engine_btn:
 				apply_engine_btn.disabled = false
 		else:
-			en_label.text = tr(" → Engine: ")
+			en_label.text = tr(" → Engine: ") + str(needed_rating) + " (current)"
 			if apply_engine_btn:
 				apply_engine_btn.disabled = true
 

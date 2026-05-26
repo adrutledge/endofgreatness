@@ -104,7 +104,7 @@ func _on_tree_selected() -> void:
 		SelectionType.STRATEGIC:
 			detail_name.text = GameState.player.unit_name
 			detail_type.text = tr("Strategic Unit (Player)")
-			detail_info.text = tr("Organizational Units: ")
+			detail_info.text = tr("Organizational Units: ") + str(GameState.player.organizational_units.size()) + "\nBalance: " + str(GameState.player.current_balance) + " C-Bills\nLocation: " + (GameState.player.current_planet if GameState.player.current_planet else "Unknown")
 			deploy_button.disabled = true
 			remove_button.disabled = true
 			create_button.disabled = false
@@ -183,18 +183,18 @@ func _on_deploy() -> void:
 
 	var contract = GameState.active_contracts[0]
 	if selected_org_unit.contract_id != "":
-		detail_info.text = tr("Already assigned to contract: ")
+		detail_info.text = tr("Already assigned to contract: ") + selected_org_unit.contract_id
 		return
 
 	var shortfalls = _get_deployment_shortfalls(selected_org_unit, contract)
 	if not shortfalls.is_empty():
-		detail_info.text = tr("Deployment failed — missing:\n")
+		detail_info.text = tr("Deployment failed — missing:\n") + str(shortfalls)
 		return
 
 	for ou in selected_org_unit.sub_units:
 		_set_deployed_recursive(ou, contract)
 	selected_org_unit.contract_id = contract.resource_path
-	detail_info.text = tr("Deployed ")
+	detail_info.text = tr("Deployed ") + selected_org_unit.unit_name + " to contract: " + contract.issuer + " on " + contract.planet
 	populate_tree()
 
 func _get_deployment_shortfalls(org_unit: OrganizationalUnit, contract: Contract) -> Dictionary:

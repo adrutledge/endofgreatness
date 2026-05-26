@@ -18,7 +18,7 @@ func _ready() -> void:
 func show_system(data: Dictionary) -> void:
 	system_data = data
 	name_label.text = data.get("name", "Unknown")
-	spectral_label.text = tr("Spectral Class: ")
+	spectral_label.text = tr("Spectral Class: ") + data.get("spectral_class", "Unknown")
 
 	var owner = data.get("owner_faction", "")
 	var faction_display = "Owner: " + owner if owner else "Unowned"
@@ -87,7 +87,7 @@ func _populate_planets(planets: Array) -> void:
 		var hpg = p.get("hpg_class")
 		if hpg:
 			var hpg_label := Label.new()
-			hpg_label.text = tr("HPG: Class ")
+			hpg_label.text = tr("HPG: Class ") + str(hpg)
 			section.add_child(hpg_label)
 
 		var relay = p.get("relay_station")

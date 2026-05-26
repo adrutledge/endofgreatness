@@ -76,7 +76,7 @@ func _on_start() -> void:
 	if result.get("success", false):
 		get_tree().change_scene_to_file("res://src/ui/strategic/StarMap.tscn")
 	else:
-		status_label.text = tr("Error: ")
+		status_label.text = tr("Error: ") + result.get("error", "Unknown error")
 		start_button.disabled = false
 		back_button.disabled = false
 
