@@ -581,7 +581,11 @@ func populate() -> void:
 func refresh_current_tab() -> void:
 	match tabs.current_tab:
 		0: _refresh_deliveries()
-		1: _refresh_local()
+		1:
+			if _selected_market_planet.is_empty():
+				_selected_market_planet = "Galatea"
+			EconomySystem.initialize_market(_selected_market_planet)
+			_refresh_local()
 		2: _refresh_inventory()
 
 
