@@ -260,6 +260,7 @@
   - **Integrated**: player units become part of employer's formation — employer controls both operational deployment and can influence tactical objectives (e.g., "hold this hex for 3 turns"); player can still give move/fire orders but must comply with employer's battle plan or face contract penalties
 - Generation logic: battle_loss_reimbursement_rate inversely correlated with c_bill_payment and salvage_rate — high-pay/high-salvage contracts offer less reimbursement; desperate employers (e.g., planetary assault against superior force) may offer full reimbursement
 - Contracts appear on a "contract board" and expire after N ticks if not accepted
+- **Contract breaches** (future — advanced contracting): both employer and employee (player) may breach a contract, each with severity levels (Minor/Major/Critical); employee breaches include: failing to deploy minimum required forces, withdrawing from contract early, refusing a direct order under House/Integrated command, fraternizing with the enemy, committing war crimes that damage employer reputation; employer breaches include: failure to provide promised transport/supplies, non-payment of agreed salvage/payout, ordering the employee to perform illegal acts, abandoning the employee on planet; severity determines reputation damage, MRB sanctions, financial penalties (forfeit of bond, repayment of advance), and potential legal action; both sides have a grace period to cure minor breaches before escalation; tracked per-contract with a breach log for dispute resolution
 
 ### P3.4 — Organization Management
 
