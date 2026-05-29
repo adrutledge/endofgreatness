@@ -20,9 +20,12 @@ STRAT_GEN_TEST := tests/test_strategic_unit_generator.gd
 STRAT_GEN_TEST2 := tests/test_generate_company.gd
 STRAT_GEN_STAMP := .tested_strat_gen
 
-.PHONY: all build run test lint export clean test-gen
+SUCKIT_SRC := tools/suckit/parse_suckit.py
+SUCKIT_STAMP := .tested_suckit
 
-all: lint test build
+.PHONY: all build run test lint export clean test-gen suckit
+
+all: suckit lint test build
 
 build:
 	$(GODOT) --headless --export-release "$(EXPORT_PRESET)" $(EXPORT_DIR)/
@@ -46,11 +49,18 @@ $(MARKET_STAMP): $(MARKET_TEST)
 	@$(GODOT) --headless --script $(MARKET_TEST) 2>&1 | grep -E "^(PASS|FAIL|Results)"
 	@touch $(MARKET_STAMP)
 
+$(SUCKIT_STAMP): $(SUCKIT_SRC)
+	@echo "Generating starmap + timeline from SUCKIT CSV data..."
+	@python3 $(SUCKIT_SRC) 2>&1 | grep -v "^  Skipping"
+	@touch $(SUCKIT_STAMP)
+
+suckit: $(SUCKIT_STAMP)
+
 $(STRAT_GEN_STAMP): $(STRAT_GEN_SRC) $(STRAT_GEN_DEPS) $(STRAT_GEN_DATA) $(STRAT_GEN_TEST)
 	@$(GODOT) --headless --script $(STRAT_GEN_TEST) 2>&1 | grep -E "^(PASS|FAIL|Results)"
 	@touch $(STRAT_GEN_STAMP)
 
-test: $(MTF_STAMP) $(MARKET_STAMP) $(STRAT_GEN_STAMP)
+test: $(SUCKIT_STAMP) $(MTF_STAMP) $(MARKET_STAMP) $(STRAT_GEN_STAMP)
 
 ## Headless generator integration test (requires autoloads, runs full engine)
 test-gen:

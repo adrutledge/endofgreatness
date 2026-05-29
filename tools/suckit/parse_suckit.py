@@ -5,7 +5,7 @@ import csv, json, os, re
 DATA_DIR = os.path.dirname(os.path.abspath(__file__))
 FACTIONS_CSV = os.path.join(DATA_DIR, "Sarna Unified Cartography Kit (Official) - Factions CSV Export.csv")
 SYSTEMS_CSV = os.path.join(DATA_DIR, "Sarna Unified Cartography Kit (Official) - Systems CSV Export.csv")
-OUT_DIR = os.path.join(DATA_DIR, "..")
+OUT_DIR = os.path.join(DATA_DIR, "..", "..", "data")
 
 START_YEAR = 3025
 
