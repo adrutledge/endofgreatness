@@ -42,6 +42,13 @@ func _ready() -> void:
 	Helpers.debug_print("StarMap", "signals connected, loading systems")
 	_load_systems()
 	_calculate_jump_routes()
+	camera.zoom = Vector2(7.0, 7.0)
+	var home = GameState.player.current_planet if GameState.player and not GameState.player.current_planet.is_empty() else "Galatea"
+	var home_data = DataManager.systems_data.get(home, {})
+	var home_coords = home_data.get("coordinates", {})
+	var cx = home_coords.get("x", 0.0)
+	var cy = home_coords.get("y", 0.0)
+	camera.position = Vector2(cx, -cy)
 	queue_redraw()
 	Helpers.debug_print("StarMap", "_ready done, systems=%d routes=%d" % [systems_positions.size(), jump_routes.size()])
 
