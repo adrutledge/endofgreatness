@@ -1,5 +1,8 @@
 # End of Greatness — AI Build Plan
 
+## Core Gameplay Loop (v1)
+Form a unit → take a contract → deploy to the contract → engage in tactical combat → complete the contract → repeat. Everything in Phases 0-6 serves this loop. Features that don't directly feed this loop are deferred to post-v1.
+
 ## Phase 0: Foundation & Tooling
 
 ### P0.1 — Project Scaffold
