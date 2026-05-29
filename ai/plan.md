@@ -133,7 +133,7 @@ Form a unit → take a contract → deploy to the contract planet → explore th
 ---
 
 ## Phase 4 — Operational Layer
-- Planetary hex map: player explores the contract planet, moving units across hexes
+- Procedurally generated planetary hex map: player explores the contract planet, moving units across hexes
 - Exploration reveals objectives, enemies, salvage, and leads into tactical engagements
 - Multiple tactical combats may be necessary to complete a single contract
 - Faction presence on planet
@@ -143,7 +143,7 @@ Form a unit → take a contract → deploy to the contract planet → explore th
 - Flexible combat rules engine per Total Warfare
 
 ## Phase 6 — Tactical Layer
-- Hex combat map, unit representation, combat flow
+- Procedurally generated hex combat map, unit representation, combat flow
 - Tactical AI with strategy patterns
 
 ## Future Work (post-v1)
