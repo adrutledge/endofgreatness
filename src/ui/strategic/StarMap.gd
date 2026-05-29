@@ -7,8 +7,8 @@ var selected_system: Dictionary = {}
 var dragging: bool = false
 
 const JUMP_DISTANCE: float = 30.0
-	const SYSTEM_BASE_RADIUS: float = 3.0
-	const NAME_ZOOM_THRESHOLD: float = 3.0
+const SYSTEM_BASE_RADIUS: float = 3.0
+const NAME_ZOOM_THRESHOLD: float = 3.0
 
 @onready var camera: Camera2D = $Camera2D
 @onready var info_panel = $CanvasLayer/StrategicActions/MarginContainer/VBox/SystemInfoPanel
