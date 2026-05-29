@@ -234,10 +234,10 @@ Key autoloads (defined in project.godot):
 - GameState, EventBus, TimeManager, DataManager, ThemeManager
 - EconomySystem, ReputationSystem, PersonnelManager, RefitManager, UnitTransportManager, InventoryManager
 
-Key next work items by phase:
-- P3.8: Deploy-time allocation UI, auto-allocate defaults (UI deferred)
-- P4: Planetary hex map and operational actions
-- P5: Rules engine architecture
-- P6.1-3,6.5: Tactical map, combat flow, AI
-- P7.2: HUD status badges (funds_low_for_reorder signal ready, badge UI deferred)
-- P8: Save/load system
+Key next work items:
+- UI polish: market table layout, deploy-time allocation UI, HUD badges
+- Planetary hex map and operational actions (Phase 4)
+- Rules engine and tactical layer (Phases 5-6)
+- Save/load system (Phase 8)
+
+All advanced features (aerospace, vehicles, infantry, lostech, advanced narrative, advanced contracting) gated behind campaign toggles and deferred to post-v1. See plan "Future Work" section.
