@@ -148,6 +148,9 @@ func _load_systems() -> void:
 		return
 	for name in data:
 		var sys = data[name]
+		var owner = sys.get("owner_faction", "")
+		if owner == "A":
+			continue
 		var coords = sys.get("coordinates", {})
 		var pos = Vector2(coords.get("x", 0.0), -coords.get("y", 0.0))
 		systems_positions.append({

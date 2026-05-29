@@ -21,7 +21,7 @@ STRAT_GEN_TEST2 := tests/test_generate_company.gd
 STRAT_GEN_STAMP := .tested_strat_gen
 
 SUCKIT_SRC := tools/suckit/parse_suckit.py
-SUCKIT_STAMP := .tested_suckit
+
 
 .PHONY: all build run test lint export clean test-gen suckit
 
@@ -49,18 +49,35 @@ $(MARKET_STAMP): $(MARKET_TEST)
 	@$(GODOT) --headless --script $(MARKET_TEST) 2>&1 | grep -E "^(PASS|FAIL|Results)"
 	@touch $(MARKET_STAMP)
 
-$(SUCKIT_STAMP): $(SUCKIT_SRC)
-	@echo "Generating starmap + timeline from SUCKIT CSV data..."
-	@python3 $(SUCKIT_SRC) 2>&1 | grep -v "^  Skipping"
-	@touch $(SUCKIT_STAMP)
+# Regenerate starmap + timeline from SUCKIT CSVs. Only triggers on explicit `make suckit`
+# or when generated files don't exist (e.g., fresh checkout). CSVs have spaces in filenames
+# so Make can't track them as dependencies — check timestamps in shell instead.
+data/starmap.json: $(SUCKIT_SRC)
+	@csv="$$(ls tools/suckit/*.csv 2>/dev/null | head -1)"; \
+	if [ -z "$$csv" ]; then \
+		echo "SUCKIT CSVs not found — starmap/timeline unchanged"; \
+		touch "$@"; \
+	elif [ -f "data/starmap.json" ] && [ "$$csv" -ot "data/starmap.json" ]; then \
+		:; \
+	else \
+		echo "Generating starmap + timeline from SUCKIT CSV data..."; \
+		python3 $(SUCKIT_SRC) 2>&1 | grep -v "^  Skipping"; \
+	fi
 
-suckit: $(SUCKIT_STAMP)
+data/timeline_events.json: data/starmap.json
+	@:
+
+suckit:
+	@csv="$$(ls tools/suckit/*.csv 2>/dev/null | head -1)"; \
+	if [ -z "$$csv" ]; then echo "No SUCKIT CSVs found"; exit 1; fi; \
+	echo "Regenerating starmap + timeline..."; \
+	python3 $(SUCKIT_SRC) 2>&1 | grep -v "^  Skipping"
 
 $(STRAT_GEN_STAMP): $(STRAT_GEN_SRC) $(STRAT_GEN_DEPS) $(STRAT_GEN_DATA) $(STRAT_GEN_TEST)
 	@$(GODOT) --headless --script $(STRAT_GEN_TEST) 2>&1 | grep -E "^(PASS|FAIL|Results)"
 	@touch $(STRAT_GEN_STAMP)
 
-test: $(SUCKIT_STAMP) $(MTF_STAMP) $(MARKET_STAMP) $(STRAT_GEN_STAMP)
+test: data/starmap.json data/timeline_events.json $(MTF_STAMP) $(MARKET_STAMP) $(STRAT_GEN_STAMP)
 
 ## Headless generator integration test (requires autoloads, runs full engine)
 test-gen:
