@@ -217,6 +217,11 @@ func _build_local_tab() -> void:
 	local_count_label.text = ""
 	margin.add_child(local_count_label)
 
+	var test_label = Label.new()
+	test_label.text = "DEBUG: Local tab loaded"
+	test_label.add_theme_color_override("font_color", Color(1, 0, 0))
+	margin.add_child(test_label)
+
 	var hsplit = _make_hbox()
 	margin.add_child(hsplit)
 
@@ -224,7 +229,6 @@ func _build_local_tab() -> void:
 	local_tree.name = "LocalTree"
 	local_tree.size_flags_horizontal = SIZE_EXPAND_FILL * 2
 	local_tree.size_flags_vertical = SIZE_EXPAND_FILL
-	local_tree.custom_minimum_size = Vector2(100, 100)
 	local_tree.hide_root = true
 	local_tree.columns = 3
 	local_tree.set_column_title(0, tr("Qty"))
