@@ -1,7 +1,7 @@
 {
   "name": "Lyran Commonwealth",
   "short_code": "LC",
-  "color": "#eab308",
+  "color": "#3b82f6",
   "home_worlds": ["Tharkad", "Hesperus II", "Skye"],
   "unique_units": ["Zeus", "Commando", "Banshee", "Griffin"],
   "unique_components": ["Commonwealth Gauss Rifle", "Lyran Durallex Armor"],
