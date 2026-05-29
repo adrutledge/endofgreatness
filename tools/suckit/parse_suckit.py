@@ -28,14 +28,42 @@ with open(SYSTEMS_CSV, newline="", encoding="utf-8") as f:
     timeline_events = []
     system_id_counter = 0
 
+    NAME_RE = re.compile(r'^(.+?)\s+\[(.+?)\s+\((\d+)\+\)(?:\s*/\s*(.+?)\s+\((\d+)\+\))?\]$')
+
+    def resolve_name(raw_name, current_year=3025):
+        """Parse date-marked system names and return the correct name for the given year.
+        Also returns rename_timeline entries for name changes."""
+        m = NAME_RE.match(raw_name)
+        if not m:
+            return raw_name, []
+        old_name = m.group(1)
+        new_name1 = m.group(2)
+        year1 = int(m.group(3))
+        events = []
+        if m.group(4):
+            new_name2 = m.group(4)
+            year2 = int(m.group(5))
+            chosen = new_name2 if year2 <= current_year else (new_name1 if year1 <= current_year else old_name)
+            if year1 <= current_year:
+                events.append({"date": str(year1), "type": "system_rename", "data": {"system": old_name, "new_name": new_name1}})
+            if year2 <= current_year:
+                events.append({"date": str(year2), "type": "system_rename", "data": {"system": new_name1, "new_name": new_name2}})
+        else:
+            chosen = new_name1 if year1 <= current_year else old_name
+            if year1 <= current_year:
+                events.append({"date": str(year1), "type": "system_rename", "data": {"system": old_name, "new_name": new_name1}})
+        return chosen, events
+
     for row in reader:
         sid = int(row["systemID"])
-        name = row["systemName"].strip()
+        raw_name = row["systemName"].strip()
+        name, rename_events = resolve_name(raw_name, 3025)
+        timeline_events.extend(rename_events)
         try:
             x = float(row["x"])
             y = float(row["y"])
         except (ValueError, KeyError):
-            print(f"  Skipping {name}: bad coordinates ({row.get('x', '?')}, {row.get('y', '?')})")
+            print(f"  Skipping {raw_name}: bad coordinates ({row.get('x', '?')}, {row.get('y', '?')})")
             continue
 
         # Read ownership for each year (pipe-separated = contested/overlapping claims)
@@ -119,7 +147,10 @@ print(f"Wrote {len(starmap)} systems to {starmap_path}")
 seen_events = set()
 deduped = []
 for ev in timeline_events:
-    key = (ev["date"], ev["data"]["system"], ev["data"]["to_faction"])
+    if ev["type"] == "ownership_change":
+        key = (ev["date"], ev["data"]["system"], ev["data"]["to_faction"])
+    else:
+        key = (ev["date"], ev["data"]["system"], ev["type"])
     if key not in seen_events:
         seen_events.add(key)
         deduped.append(ev)

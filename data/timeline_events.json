@@ -945,10 +945,18 @@
     }
   },
   {
+    "date": "2822",
+    "type": "system_rename",
+    "data": {
+      "system": "Aer",
+      "new_name": "Finnalon"
+    }
+  },
+  {
     "date": "2830",
     "type": "ownership_change",
     "data": {
-      "system": "Aer [Finnalon (2822+)]",
+      "system": "Finnalon",
       "from_faction": "CC",
       "to_faction": "A"
     }
@@ -1065,7 +1073,7 @@
     "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "Agmond [Bornal (3130+)]",
+      "system": "Agmond",
       "from_faction": "FS",
       "to_faction": "A"
     }
@@ -1074,7 +1082,7 @@
     "date": "3130",
     "type": "ownership_change",
     "data": {
-      "system": "Agmond [Bornal (3130+)]",
+      "system": "Agmond",
       "from_faction": "A",
       "to_faction": "FS"
     }
@@ -4098,7 +4106,7 @@
     "date": "2783",
     "type": "ownership_change",
     "data": {
-      "system": "Anatolia [Pillory (3130+)]",
+      "system": "Anatolia",
       "from_faction": "RW",
       "to_faction": "I"
     }
@@ -4107,7 +4115,7 @@
     "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "Anatolia [Pillory (3130+)]",
+      "system": "Anatolia",
       "from_faction": "I",
       "to_faction": "A"
     }
@@ -4116,7 +4124,7 @@
     "date": "3095",
     "type": "ownership_change",
     "data": {
-      "system": "Anatolia [Pillory (3130+)]",
+      "system": "Anatolia",
       "from_faction": "A",
       "to_faction": "RT"
     }
@@ -5934,7 +5942,7 @@
     "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "Arn [Jia Tian (3130+)]",
+      "system": "Arn",
       "from_faction": "CC",
       "to_faction": "A"
     }
@@ -5943,7 +5951,7 @@
     "date": "3130",
     "type": "ownership_change",
     "data": {
-      "system": "Arn [Jia Tian (3130+)]",
+      "system": "Arn",
       "from_faction": "A",
       "to_faction": "CC"
     }
@@ -7158,7 +7166,7 @@
     "date": "2783",
     "type": "ownership_change",
     "data": {
-      "system": "Austerlitz [Scauld (3130+)]",
+      "system": "Austerlitz",
       "from_faction": "RW",
       "to_faction": "I"
     }
@@ -7167,7 +7175,7 @@
     "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "Austerlitz [Scauld (3130+)]",
+      "system": "Austerlitz",
       "from_faction": "I",
       "to_faction": "A"
     }
@@ -7176,7 +7184,7 @@
     "date": "3095",
     "type": "ownership_change",
     "data": {
-      "system": "Austerlitz [Scauld (3130+)]",
+      "system": "Austerlitz",
       "from_faction": "A",
       "to_faction": "RT"
     }
@@ -7840,9 +7848,17 @@
   },
   {
     "date": "3025",
+    "type": "system_rename",
+    "data": {
+      "system": "Badlands Cluster",
+      "new_name": "Pirates Haven Cluster"
+    }
+  },
+  {
+    "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "Badlands Cluster [Pirates Haven Cluster (3025+)]",
+      "system": "Pirates Haven Cluster",
       "from_faction": "TC",
       "to_faction": "I"
     }
@@ -7851,7 +7867,7 @@
     "date": "2783",
     "type": "ownership_change",
     "data": {
-      "system": "Baggville [Sardinas (3152+)]",
+      "system": "Baggville",
       "from_faction": "RW",
       "to_faction": "LC"
     }
@@ -7860,7 +7876,7 @@
     "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "Baggville [Sardinas (3152+)]",
+      "system": "Baggville",
       "from_faction": "LC",
       "to_faction": "A"
     }
@@ -7869,7 +7885,7 @@
     "date": "3152",
     "type": "ownership_change",
     "data": {
-      "system": "Baggville [Sardinas (3152+)]",
+      "system": "Baggville",
       "from_faction": "A",
       "to_faction": "LC"
     }
@@ -9099,10 +9115,18 @@
     }
   },
   {
+    "date": "2822",
+    "type": "system_rename",
+    "data": {
+      "system": "Belamor",
+      "new_name": "Zanzor"
+    }
+  },
+  {
     "date": "2864",
     "type": "ownership_change",
     "data": {
-      "system": "Belamor [Zanzor (2822+)]",
+      "system": "Zanzor",
       "from_faction": "CC",
       "to_faction": "A"
     }
@@ -14601,7 +14625,7 @@
     "date": "2317",
     "type": "ownership_change",
     "data": {
-      "system": "Carver [Carver V / Liberty (3063+)]",
+      "system": "Carver",
       "from_faction": "TA",
       "to_faction": "TH"
     }
@@ -14610,7 +14634,7 @@
     "date": "2767",
     "type": "ownership_change",
     "data": {
-      "system": "Carver [Carver V / Liberty (3063+)]",
+      "system": "Carver",
       "from_faction": "TH",
       "to_faction": "AE"
     }
@@ -14619,7 +14643,7 @@
     "date": "2783",
     "type": "ownership_change",
     "data": {
-      "system": "Carver [Carver V / Liberty (3063+)]",
+      "system": "Carver",
       "from_faction": "AE",
       "to_faction": "TH"
     }
@@ -14628,7 +14652,7 @@
     "date": "2821",
     "type": "ownership_change",
     "data": {
-      "system": "Carver [Carver V / Liberty (3063+)]",
+      "system": "Carver",
       "from_faction": "TH",
       "to_faction": "CC"
     }
@@ -14637,7 +14661,7 @@
     "date": "3030",
     "type": "ownership_change",
     "data": {
-      "system": "Carver [Carver V / Liberty (3063+)]",
+      "system": "Carver",
       "from_faction": "CC",
       "to_faction": "TFR"
     }
@@ -14646,7 +14670,7 @@
     "date": "3040",
     "type": "ownership_change",
     "data": {
-      "system": "Carver [Carver V / Liberty (3063+)]",
+      "system": "Carver",
       "from_faction": "TFR",
       "to_faction": "FCL"
     }
@@ -14655,7 +14679,7 @@
     "date": "3057",
     "type": "ownership_change",
     "data": {
-      "system": "Carver [Carver V / Liberty (3063+)]",
+      "system": "Carver",
       "from_faction": "FCL",
       "to_faction": "I"
     }
@@ -14664,7 +14688,7 @@
     "date": "3068",
     "type": "ownership_change",
     "data": {
-      "system": "Carver [Carver V / Liberty (3063+)]",
+      "system": "Carver",
       "from_faction": "I",
       "to_faction": "WB"
     }
@@ -14673,7 +14697,7 @@
     "date": "3079",
     "type": "ownership_change",
     "data": {
-      "system": "Carver [Carver V / Liberty (3063+)]",
+      "system": "Carver",
       "from_faction": "WB",
       "to_faction": "CoF"
     }
@@ -14682,7 +14706,7 @@
     "date": "3081",
     "type": "ownership_change",
     "data": {
-      "system": "Carver [Carver V / Liberty (3063+)]",
+      "system": "Carver",
       "from_faction": "CoF",
       "to_faction": "RS"
     }
@@ -14691,7 +14715,7 @@
     "date": "3151",
     "type": "ownership_change",
     "data": {
-      "system": "Carver [Carver V / Liberty (3063+)]",
+      "system": "Carver",
       "from_faction": "RS",
       "to_faction": "CC"
     }
@@ -14700,7 +14724,7 @@
     "date": "3152",
     "type": "ownership_change",
     "data": {
-      "system": "Carver [Carver V / Liberty (3063+)]",
+      "system": "Carver",
       "from_faction": "CC",
       "to_faction": "3SL"
     }
@@ -16209,10 +16233,18 @@
     }
   },
   {
+    "date": "2878",
+    "type": "system_rename",
+    "data": {
+      "system": "Chisholm",
+      "new_name": "Elgin"
+    }
+  },
+  {
     "date": "2341",
     "type": "ownership_change",
     "data": {
-      "system": "Chisholm [Elgin (2878+)]",
+      "system": "Elgin",
       "from_faction": "I",
       "to_faction": "TH"
     }
@@ -16221,7 +16253,7 @@
     "date": "2767",
     "type": "ownership_change",
     "data": {
-      "system": "Chisholm [Elgin (2878+)]",
+      "system": "Elgin",
       "from_faction": "TH",
       "to_faction": "AE"
     }
@@ -16230,7 +16262,7 @@
     "date": "2783",
     "type": "ownership_change",
     "data": {
-      "system": "Chisholm [Elgin (2878+)]",
+      "system": "Elgin",
       "from_faction": "AE",
       "to_faction": "TH"
     }
@@ -16239,7 +16271,7 @@
     "date": "2821",
     "type": "ownership_change",
     "data": {
-      "system": "Chisholm [Elgin (2878+)]",
+      "system": "Elgin",
       "from_faction": "TH",
       "to_faction": "CC"
     }
@@ -16248,7 +16280,7 @@
     "date": "3030",
     "type": "ownership_change",
     "data": {
-      "system": "Chisholm [Elgin (2878+)]",
+      "system": "Elgin",
       "from_faction": "CC",
       "to_faction": "TFR"
     }
@@ -16257,7 +16289,7 @@
     "date": "3040",
     "type": "ownership_change",
     "data": {
-      "system": "Chisholm [Elgin (2878+)]",
+      "system": "Elgin",
       "from_faction": "TFR",
       "to_faction": "FCL"
     }
@@ -16266,7 +16298,7 @@
     "date": "3057",
     "type": "ownership_change",
     "data": {
-      "system": "Chisholm [Elgin (2878+)]",
+      "system": "Elgin",
       "from_faction": "FCL",
       "to_faction": "I"
     }
@@ -16275,7 +16307,7 @@
     "date": "3068",
     "type": "ownership_change",
     "data": {
-      "system": "Chisholm [Elgin (2878+)]",
+      "system": "Elgin",
       "from_faction": "I",
       "to_faction": "WB"
     }
@@ -16284,7 +16316,7 @@
     "date": "3079",
     "type": "ownership_change",
     "data": {
-      "system": "Chisholm [Elgin (2878+)]",
+      "system": "Elgin",
       "from_faction": "WB",
       "to_faction": "CoF"
     }
@@ -16293,7 +16325,7 @@
     "date": "3081",
     "type": "ownership_change",
     "data": {
-      "system": "Chisholm [Elgin (2878+)]",
+      "system": "Elgin",
       "from_faction": "CoF",
       "to_faction": "RS"
     }
@@ -16302,7 +16334,7 @@
     "date": "3151",
     "type": "ownership_change",
     "data": {
-      "system": "Chisholm [Elgin (2878+)]",
+      "system": "Elgin",
       "from_faction": "RS",
       "to_faction": "CC"
     }
@@ -17253,10 +17285,18 @@
     }
   },
   {
+    "date": "2864",
+    "type": "system_rename",
+    "data": {
+      "system": "Commonwealth Mining Outpost 26",
+      "new_name": "Gulf Breeze"
+    }
+  },
+  {
     "date": "3040",
     "type": "ownership_change",
     "data": {
-      "system": "Commonwealth Mining Outpost 26 [Gulf Breeze (2864+)]",
+      "system": "Gulf Breeze",
       "from_faction": "LC",
       "to_faction": "FCL"
     }
@@ -17265,7 +17305,7 @@
     "date": "3057",
     "type": "ownership_change",
     "data": {
-      "system": "Commonwealth Mining Outpost 26 [Gulf Breeze (2864+)]",
+      "system": "Gulf Breeze",
       "from_faction": "FCL",
       "to_faction": "LA"
     }
@@ -17274,7 +17314,7 @@
     "date": "3085",
     "type": "ownership_change",
     "data": {
-      "system": "Commonwealth Mining Outpost 26 [Gulf Breeze (2864+)]",
+      "system": "Gulf Breeze",
       "from_faction": "LA",
       "to_faction": "LC"
     }
@@ -18873,10 +18913,18 @@
     }
   },
   {
+    "date": "2864",
+    "type": "system_rename",
+    "data": {
+      "system": "Cussar",
+      "new_name": "Barlow's Folly"
+    }
+  },
+  {
     "date": "2571",
     "type": "ownership_change",
     "data": {
-      "system": "Cussar [Barlow's Folly (2864+)]",
+      "system": "Barlow's Folly",
       "from_faction": "I",
       "to_faction": "FS"
     }
@@ -18885,7 +18933,7 @@
     "date": "2821",
     "type": "ownership_change",
     "data": {
-      "system": "Cussar [Barlow's Folly (2864+)]",
+      "system": "Barlow's Folly",
       "from_faction": "FS",
       "to_faction": "DC"
     }
@@ -19017,10 +19065,18 @@
     }
   },
   {
+    "date": "2202",
+    "type": "system_rename",
+    "data": {
+      "system": "Cynthiana",
+      "new_name": "Liao"
+    }
+  },
+  {
     "date": "2317",
     "type": "ownership_change",
     "data": {
-      "system": "Cynthiana [Liao (2202+)]",
+      "system": "Liao",
       "from_faction": "LR",
       "to_faction": "DL"
     }
@@ -19029,7 +19085,7 @@
     "date": "2571",
     "type": "ownership_change",
     "data": {
-      "system": "Cynthiana [Liao (2202+)]",
+      "system": "Liao",
       "from_faction": "DL",
       "to_faction": "CC"
     }
@@ -19038,7 +19094,7 @@
     "date": "3030",
     "type": "ownership_change",
     "data": {
-      "system": "Cynthiana [Liao (2202+)]",
+      "system": "Liao",
       "from_faction": "CC",
       "to_faction": "LC"
     }
@@ -19047,7 +19103,7 @@
     "date": "3040",
     "type": "ownership_change",
     "data": {
-      "system": "Cynthiana [Liao (2202+)]",
+      "system": "Liao",
       "from_faction": "LC",
       "to_faction": "FCL"
     }
@@ -19056,7 +19112,7 @@
     "date": "3057",
     "type": "ownership_change",
     "data": {
-      "system": "Cynthiana [Liao (2202+)]",
+      "system": "Liao",
       "from_faction": "FCL",
       "to_faction": "I"
     }
@@ -19065,7 +19121,7 @@
     "date": "3063",
     "type": "ownership_change",
     "data": {
-      "system": "Cynthiana [Liao (2202+)]",
+      "system": "Liao",
       "from_faction": "I",
       "to_faction": "CC"
     }
@@ -19074,7 +19130,7 @@
     "date": "3085",
     "type": "ownership_change",
     "data": {
-      "system": "Cynthiana [Liao (2202+)]",
+      "system": "Liao",
       "from_faction": "CC",
       "to_faction": "RS"
     }
@@ -19083,7 +19139,7 @@
     "date": "3135",
     "type": "ownership_change",
     "data": {
-      "system": "Cynthiana [Liao (2202+)]",
+      "system": "Liao",
       "from_faction": "RS",
       "to_faction": "CC"
     }
@@ -21405,7 +21461,7 @@
     "date": "2783",
     "type": "ownership_change",
     "data": {
-      "system": "Dijonne [Pain (3050+)]",
+      "system": "Dijonne",
       "from_faction": "RW",
       "to_faction": "FFR"
     }
@@ -21414,7 +21470,7 @@
     "date": "2821",
     "type": "ownership_change",
     "data": {
-      "system": "Dijonne [Pain (3050+)]",
+      "system": "Dijonne",
       "from_faction": "FFR",
       "to_faction": "LC"
     }
@@ -21423,7 +21479,7 @@
     "date": "2864",
     "type": "ownership_change",
     "data": {
-      "system": "Dijonne [Pain (3050+)]",
+      "system": "Dijonne",
       "from_faction": "LC",
       "to_faction": "A"
     }
@@ -21432,7 +21488,7 @@
     "date": "3049",
     "type": "ownership_change",
     "data": {
-      "system": "Dijonne [Pain (3050+)]",
+      "system": "Dijonne",
       "from_faction": "A",
       "to_faction": "I"
     }
@@ -21441,7 +21497,7 @@
     "date": "3095",
     "type": "ownership_change",
     "data": {
-      "system": "Dijonne [Pain (3050+)]",
+      "system": "Dijonne",
       "from_faction": "I",
       "to_faction": "RT"
     }
@@ -22284,10 +22340,18 @@
     }
   },
   {
+    "date": "2789",
+    "type": "system_rename",
+    "data": {
+      "system": "Dunklew\u00e4lderdunklerfl\u00fcssenschattenwelt",
+      "new_name": "Bob"
+    }
+  },
+  {
     "date": "2830",
     "type": "ownership_change",
     "data": {
-      "system": "Dunklew\u00e4lderdunklerfl\u00fcssenschattenwelt [Bob (2789+)]",
+      "system": "Bob",
       "from_faction": "DC",
       "to_faction": "A"
     }
@@ -22737,7 +22801,7 @@
     "date": "2783",
     "type": "ownership_change",
     "data": {
-      "system": "Edirne [Brank (3130+)]",
+      "system": "Edirne",
       "from_faction": "RW",
       "to_faction": "I"
     }
@@ -22746,7 +22810,7 @@
     "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "Edirne [Brank (3130+)]",
+      "system": "Edirne",
       "from_faction": "I",
       "to_faction": "A"
     }
@@ -22755,7 +22819,7 @@
     "date": "3095",
     "type": "ownership_change",
     "data": {
-      "system": "Edirne [Brank (3130+)]",
+      "system": "Edirne",
       "from_faction": "A",
       "to_faction": "RT"
     }
@@ -24300,10 +24364,18 @@
     }
   },
   {
+    "date": "2786",
+    "type": "system_rename",
+    "data": {
+      "system": "Erin",
+      "new_name": "Von Strang's World"
+    }
+  },
+  {
     "date": "2783",
     "type": "ownership_change",
     "data": {
-      "system": "Erin [Von Strang's World (2786+)]",
+      "system": "Von Strang's World",
       "from_faction": "RW",
       "to_faction": "I"
     }
@@ -24312,7 +24384,7 @@
     "date": "3049",
     "type": "ownership_change",
     "data": {
-      "system": "Erin [Von Strang's World (2786+)]",
+      "system": "Von Strang's World",
       "from_faction": "I",
       "to_faction": "CJF"
     }
@@ -24321,7 +24393,7 @@
     "date": "3075",
     "type": "ownership_change",
     "data": {
-      "system": "Erin [Von Strang's World (2786+)]",
+      "system": "Von Strang's World",
       "from_faction": "CJF",
       "to_faction": "CHH"
     }
@@ -24330,7 +24402,7 @@
     "date": "3085",
     "type": "ownership_change",
     "data": {
-      "system": "Erin [Von Strang's World (2786+)]",
+      "system": "Von Strang's World",
       "from_faction": "CHH",
       "to_faction": "I"
     }
@@ -29961,10 +30033,18 @@
     }
   },
   {
+    "date": "3025",
+    "type": "system_rename",
+    "data": {
+      "system": "Green Stone",
+      "new_name": "Clayborne II"
+    }
+  },
+  {
     "date": "2783",
     "type": "ownership_change",
     "data": {
-      "system": "Green Stone [Clayborne II (3025+)]",
+      "system": "Clayborne II",
       "from_faction": "RW",
       "to_faction": "I"
     }
@@ -29973,7 +30053,7 @@
     "date": "2864",
     "type": "ownership_change",
     "data": {
-      "system": "Green Stone [Clayborne II (3025+)]",
+      "system": "Clayborne II",
       "from_faction": "I",
       "to_faction": "A"
     }
@@ -29982,7 +30062,7 @@
     "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "Green Stone [Clayborne II (3025+)]",
+      "system": "Clayborne II",
       "from_faction": "A",
       "to_faction": "CF"
     }
@@ -29991,7 +30071,7 @@
     "date": "3081",
     "type": "ownership_change",
     "data": {
-      "system": "Green Stone [Clayborne II (3025+)]",
+      "system": "Clayborne II",
       "from_faction": "CF",
       "to_faction": "I"
     }
@@ -31545,10 +31625,18 @@
     }
   },
   {
+    "date": "2822",
+    "type": "system_rename",
+    "data": {
+      "system": "Hansii",
+      "new_name": "Itsbur"
+    }
+  },
+  {
     "date": "2864",
     "type": "ownership_change",
     "data": {
-      "system": "Hansii [Itsbur (2822+)]",
+      "system": "Itsbur",
       "from_faction": "CC",
       "to_faction": "A"
     }
@@ -32274,10 +32362,18 @@
     }
   },
   {
+    "date": "3025",
+    "type": "system_rename",
+    "data": {
+      "system": "Helbrent",
+      "new_name": "Andiron"
+    }
+  },
+  {
     "date": "2783",
     "type": "ownership_change",
     "data": {
-      "system": "Helbrent [Andiron (3025+)]",
+      "system": "Andiron",
       "from_faction": "RW",
       "to_faction": "LC"
     }
@@ -32286,7 +32382,7 @@
     "date": "2864",
     "type": "ownership_change",
     "data": {
-      "system": "Helbrent [Andiron (3025+)]",
+      "system": "Andiron",
       "from_faction": "LC",
       "to_faction": "A"
     }
@@ -32295,7 +32391,7 @@
     "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "Helbrent [Andiron (3025+)]",
+      "system": "Andiron",
       "from_faction": "A",
       "to_faction": "CF"
     }
@@ -32304,7 +32400,7 @@
     "date": "3081",
     "type": "ownership_change",
     "data": {
-      "system": "Helbrent [Andiron (3025+)]",
+      "system": "Andiron",
       "from_faction": "CF",
       "to_faction": "I"
     }
@@ -33048,10 +33144,18 @@
     }
   },
   {
+    "date": "2864",
+    "type": "system_rename",
+    "data": {
+      "system": "Himmels",
+      "new_name": "Baltazar III"
+    }
+  },
+  {
     "date": "2783",
     "type": "ownership_change",
     "data": {
-      "system": "Himmels [Baltazar III (2864+)]",
+      "system": "Baltazar III",
       "from_faction": "RW",
       "to_faction": "I"
     }
@@ -33060,7 +33164,7 @@
     "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "Himmels [Baltazar III (2864+)]",
+      "system": "Baltazar III",
       "from_faction": "I",
       "to_faction": "CF"
     }
@@ -33069,7 +33173,7 @@
     "date": "3081",
     "type": "ownership_change",
     "data": {
-      "system": "Himmels [Baltazar III (2864+)]",
+      "system": "Baltazar III",
       "from_faction": "CF",
       "to_faction": "I"
     }
@@ -34092,10 +34196,18 @@
     }
   },
   {
+    "date": "3022",
+    "type": "system_rename",
+    "data": {
+      "system": "Huanghuadian",
+      "new_name": "Tincalunas"
+    }
+  },
+  {
     "date": "2822",
     "type": "ownership_change",
     "data": {
-      "system": "Huanghuadian [Tincalunas (3022+)]",
+      "system": "Tincalunas",
       "from_faction": "CC",
       "to_faction": "A"
     }
@@ -34104,7 +34216,7 @@
     "date": "3130",
     "type": "ownership_change",
     "data": {
-      "system": "Huanghuadian [Tincalunas (3022+)]",
+      "system": "Tincalunas",
       "from_faction": "A",
       "to_faction": "FrR"
     }
@@ -35667,10 +35779,18 @@
     }
   },
   {
+    "date": "3025",
+    "type": "system_rename",
+    "data": {
+      "system": "Iolas",
+      "new_name": "Diedre's Den"
+    }
+  },
+  {
     "date": "2783",
     "type": "ownership_change",
     "data": {
-      "system": "Iolas [Diedre's Den (3025+)]",
+      "system": "Diedre's Den",
       "from_faction": "RW",
       "to_faction": "I"
     }
@@ -35679,7 +35799,7 @@
     "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "Iolas [Diedre's Den (3025+)]",
+      "system": "Diedre's Den",
       "from_faction": "I",
       "to_faction": "CF"
     }
@@ -35688,7 +35808,7 @@
     "date": "3081",
     "type": "ownership_change",
     "data": {
-      "system": "Iolas [Diedre's Den (3025+)]",
+      "system": "Diedre's Den",
       "from_faction": "CF",
       "to_faction": "I"
     }
@@ -36405,10 +36525,18 @@
     }
   },
   {
+    "date": "2822",
+    "type": "system_rename",
+    "data": {
+      "system": "Jardine",
+      "new_name": "Herakleion"
+    }
+  },
+  {
     "date": "2571",
     "type": "ownership_change",
     "data": {
-      "system": "Jardine [Herakleion (2822+)]",
+      "system": "Herakleion",
       "from_faction": "I",
       "to_faction": "FWL"
     }
@@ -36417,7 +36545,7 @@
     "date": "2830",
     "type": "ownership_change",
     "data": {
-      "system": "Jardine [Herakleion (2822+)]",
+      "system": "Herakleion",
       "from_faction": "FWL",
       "to_faction": "CS(H)"
     }
@@ -36426,7 +36554,7 @@
     "date": "3057",
     "type": "ownership_change",
     "data": {
-      "system": "Jardine [Herakleion (2822+)]",
+      "system": "Herakleion",
       "from_faction": "CS(H)",
       "to_faction": "WB(H)"
     }
@@ -36435,7 +36563,7 @@
     "date": "3075",
     "type": "ownership_change",
     "data": {
-      "system": "Jardine [Herakleion (2822+)]",
+      "system": "Herakleion",
       "from_faction": "WB(H)",
       "to_faction": "A"
     }
@@ -36828,10 +36956,18 @@
     }
   },
   {
+    "date": "3025",
+    "type": "system_rename",
+    "data": {
+      "system": "Jodipur",
+      "new_name": "Neukirchen"
+    }
+  },
+  {
     "date": "3040",
     "type": "ownership_change",
     "data": {
-      "system": "Jodipur [Neukirchen (3025+)]",
+      "system": "Neukirchen",
       "from_faction": "FS",
       "to_faction": "FCF"
     }
@@ -36840,7 +36976,7 @@
     "date": "3067",
     "type": "ownership_change",
     "data": {
-      "system": "Jodipur [Neukirchen (3025+)]",
+      "system": "Neukirchen",
       "from_faction": "FCF",
       "to_faction": "FS"
     }
@@ -39744,10 +39880,18 @@
     }
   },
   {
+    "date": "2822",
+    "type": "system_rename",
+    "data": {
+      "system": "Kirkv\u00e5g",
+      "new_name": "Toch Zu"
+    }
+  },
+  {
     "date": "2864",
     "type": "ownership_change",
     "data": {
-      "system": "Kirkv\u00e5g [Toch Zu (2822+)]",
+      "system": "Toch Zu",
       "from_faction": "CC",
       "to_faction": "A"
     }
@@ -42057,10 +42201,18 @@
     }
   },
   {
+    "date": "2822",
+    "type": "system_rename",
+    "data": {
+      "system": "Lamu",
+      "new_name": "Tunlmar"
+    }
+  },
+  {
     "date": "2864",
     "type": "ownership_change",
     "data": {
-      "system": "Lamu [Tunlmar (2822+)]",
+      "system": "Tunlmar",
       "from_faction": "CC",
       "to_faction": "A"
     }
@@ -44400,7 +44552,7 @@
     "date": "2783",
     "type": "ownership_change",
     "data": {
-      "system": "Lushun [Jibbet (3130+)]",
+      "system": "Lushun",
       "from_faction": "RW",
       "to_faction": "FFR"
     }
@@ -44409,7 +44561,7 @@
     "date": "2821",
     "type": "ownership_change",
     "data": {
-      "system": "Lushun [Jibbet (3130+)]",
+      "system": "Lushun",
       "from_faction": "FFR",
       "to_faction": "I"
     }
@@ -44418,7 +44570,7 @@
     "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "Lushun [Jibbet (3130+)]",
+      "system": "Lushun",
       "from_faction": "I",
       "to_faction": "A"
     }
@@ -44427,7 +44579,7 @@
     "date": "3095",
     "type": "ownership_change",
     "data": {
-      "system": "Lushun [Jibbet (3130+)]",
+      "system": "Lushun",
       "from_faction": "A",
       "to_faction": "RT"
     }
@@ -44697,7 +44849,7 @@
     "date": "2783",
     "type": "ownership_change",
     "data": {
-      "system": "Lywick [Ferreusvirgo (3130+)]",
+      "system": "Lywick",
       "from_faction": "RW",
       "to_faction": "FFR"
     }
@@ -44706,7 +44858,7 @@
     "date": "2821",
     "type": "ownership_change",
     "data": {
-      "system": "Lywick [Ferreusvirgo (3130+)]",
+      "system": "Lywick",
       "from_faction": "FFR",
       "to_faction": "I"
     }
@@ -44715,7 +44867,7 @@
     "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "Lywick [Ferreusvirgo (3130+)]",
+      "system": "Lywick",
       "from_faction": "I",
       "to_faction": "A"
     }
@@ -44724,7 +44876,7 @@
     "date": "3095",
     "type": "ownership_change",
     "data": {
-      "system": "Lywick [Ferreusvirgo (3130+)]",
+      "system": "Lywick",
       "from_faction": "A",
       "to_faction": "RT"
     }
@@ -47601,10 +47753,18 @@
     }
   },
   {
+    "date": "2537",
+    "type": "system_rename",
+    "data": {
+      "system": "Meglan",
+      "new_name": "Victoria"
+    }
+  },
+  {
     "date": "3040",
     "type": "ownership_change",
     "data": {
-      "system": "Meglan [Victoria (2537+)]",
+      "system": "Victoria",
       "from_faction": "FS",
       "to_faction": "FCF"
     }
@@ -47613,7 +47773,7 @@
     "date": "3067",
     "type": "ownership_change",
     "data": {
-      "system": "Meglan [Victoria (2537+)]",
+      "system": "Victoria",
       "from_faction": "FCF",
       "to_faction": "FS"
     }
@@ -51201,10 +51361,18 @@
     }
   },
   {
+    "date": "2822",
+    "type": "system_rename",
+    "data": {
+      "system": "Murris",
+      "new_name": "Kalindam"
+    }
+  },
+  {
     "date": "2864",
     "type": "ownership_change",
     "data": {
-      "system": "Murris [Kalindam (2822+)]",
+      "system": "Kalindam",
       "from_faction": "CC",
       "to_faction": "A"
     }
@@ -52317,10 +52485,18 @@
     }
   },
   {
+    "date": "2349",
+    "type": "system_rename",
+    "data": {
+      "system": "New Britain",
+      "new_name": "Inglesmond"
+    }
+  },
+  {
     "date": "2767",
     "type": "ownership_change",
     "data": {
-      "system": "New Britain [Inglesmond (2349+)]",
+      "system": "Inglesmond",
       "from_faction": "TH",
       "to_faction": "AE"
     }
@@ -52329,7 +52505,7 @@
     "date": "2783",
     "type": "ownership_change",
     "data": {
-      "system": "New Britain [Inglesmond (2349+)]",
+      "system": "Inglesmond",
       "from_faction": "AE",
       "to_faction": "TH"
     }
@@ -52338,7 +52514,7 @@
     "date": "2821",
     "type": "ownership_change",
     "data": {
-      "system": "New Britain [Inglesmond (2349+)]",
+      "system": "Inglesmond",
       "from_faction": "TH",
       "to_faction": "DC"
     }
@@ -52347,7 +52523,7 @@
     "date": "2830",
     "type": "ownership_change",
     "data": {
-      "system": "New Britain [Inglesmond (2349+)]",
+      "system": "Inglesmond",
       "from_faction": "DC",
       "to_faction": "A"
     }
@@ -52779,7 +52955,7 @@
     "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "New Galicia [The Institute (3152+)]",
+      "system": "New Galicia",
       "from_faction": "FWL",
       "to_faction": "A"
     }
@@ -52788,7 +52964,7 @@
     "date": "3152",
     "type": "ownership_change",
     "data": {
-      "system": "New Galicia [The Institute (3152+)]",
+      "system": "New Galicia",
       "from_faction": "A",
       "to_faction": "FWL"
     }
@@ -56046,7 +56222,7 @@
     "date": "2783",
     "type": "ownership_change",
     "data": {
-      "system": "Oporto [Veil (3075+)]",
+      "system": "Oporto",
       "from_faction": "RW",
       "to_faction": "I"
     }
@@ -56055,7 +56231,7 @@
     "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "Oporto [Veil (3075+)]",
+      "system": "Oporto",
       "from_faction": "I",
       "to_faction": "A"
     }
@@ -56064,7 +56240,7 @@
     "date": "3067",
     "type": "ownership_change",
     "data": {
-      "system": "Oporto [Veil (3075+)]",
+      "system": "Oporto",
       "from_faction": "A",
       "to_faction": "I"
     }
@@ -56073,7 +56249,7 @@
     "date": "3095",
     "type": "ownership_change",
     "data": {
-      "system": "Oporto [Veil (3075+)]",
+      "system": "Oporto",
       "from_faction": "I",
       "to_faction": "RT"
     }
@@ -56082,7 +56258,7 @@
     "date": "3135",
     "type": "ownership_change",
     "data": {
-      "system": "Oporto [Veil (3075+)]",
+      "system": "Oporto",
       "from_faction": "RT",
       "to_faction": "A"
     }
@@ -56469,7 +56645,7 @@
     "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "Ouagadougou [Silence (3130+)]",
+      "system": "Ouagadougou",
       "from_faction": "DC",
       "to_faction": "A"
     }
@@ -56478,7 +56654,7 @@
     "date": "3130",
     "type": "ownership_change",
     "data": {
-      "system": "Ouagadougou [Silence (3130+)]",
+      "system": "Ouagadougou",
       "from_faction": "A",
       "to_faction": "DC"
     }
@@ -57988,9 +58164,17 @@
   },
   {
     "date": "3025",
+    "type": "system_rename",
+    "data": {
+      "system": "Perrot",
+      "new_name": "Shaula"
+    }
+  },
+  {
+    "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "Perrot [Shaula (3025+)]",
+      "system": "Shaula",
       "from_faction": "LC",
       "to_faction": "D(DC/LC)"
     }
@@ -57999,7 +58183,7 @@
     "date": "3030",
     "type": "ownership_change",
     "data": {
-      "system": "Perrot [Shaula (3025+)]",
+      "system": "Shaula",
       "from_faction": "D(DC/LC)",
       "to_faction": "LC"
     }
@@ -58008,7 +58192,7 @@
     "date": "3040",
     "type": "ownership_change",
     "data": {
-      "system": "Perrot [Shaula (3025+)]",
+      "system": "Shaula",
       "from_faction": "LC",
       "to_faction": "FCL"
     }
@@ -58017,7 +58201,7 @@
     "date": "3052",
     "type": "ownership_change",
     "data": {
-      "system": "Perrot [Shaula (3025+)]",
+      "system": "Shaula",
       "from_faction": "FCL",
       "to_faction": "CWF"
     }
@@ -58026,7 +58210,7 @@
     "date": "3145",
     "type": "ownership_change",
     "data": {
-      "system": "Perrot [Shaula (3025+)]",
+      "system": "Shaula",
       "from_faction": "CWF",
       "to_faction": "CJF"
     }
@@ -58035,7 +58219,7 @@
     "date": "3151",
     "type": "ownership_change",
     "data": {
-      "system": "Perrot [Shaula (3025+)]",
+      "system": "Shaula",
       "from_faction": "CJF",
       "to_faction": "CHH"
     }
@@ -59430,7 +59614,7 @@
     "date": "2783",
     "type": "ownership_change",
     "data": {
-      "system": "Port Vail [The Rack (3050+)]",
+      "system": "Port Vail",
       "from_faction": "RW",
       "to_faction": "LC"
     }
@@ -59439,7 +59623,7 @@
     "date": "2864",
     "type": "ownership_change",
     "data": {
-      "system": "Port Vail [The Rack (3050+)]",
+      "system": "Port Vail",
       "from_faction": "LC",
       "to_faction": "A"
     }
@@ -59448,7 +59632,7 @@
     "date": "3049",
     "type": "ownership_change",
     "data": {
-      "system": "Port Vail [The Rack (3050+)]",
+      "system": "Port Vail",
       "from_faction": "A",
       "to_faction": "I"
     }
@@ -59457,7 +59641,7 @@
     "date": "3095",
     "type": "ownership_change",
     "data": {
-      "system": "Port Vail [The Rack (3050+)]",
+      "system": "Port Vail",
       "from_faction": "I",
       "to_faction": "RT"
     }
@@ -60066,10 +60250,18 @@
     }
   },
   {
+    "date": "2769",
+    "type": "system_rename",
+    "data": {
+      "system": "SLSC M8V.8476",
+      "new_name": "Project Libra Umbrella / Skyfog"
+    }
+  },
+  {
     "date": "2767",
     "type": "ownership_change",
     "data": {
-      "system": "SLSC M8V.8476 [Project Libra Umbrella / Skyfog (2769+)]",
+      "system": "Project Libra Umbrella / Skyfog",
       "from_faction": "MOC",
       "to_faction": "SL"
     }
@@ -60078,7 +60270,7 @@
     "date": "2783",
     "type": "ownership_change",
     "data": {
-      "system": "SLSC M8V.8476 [Project Libra Umbrella / Skyfog (2769+)]",
+      "system": "Project Libra Umbrella / Skyfog",
       "from_faction": "SL",
       "to_faction": "MOC"
     }
@@ -60087,7 +60279,7 @@
     "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "SLSC M8V.8476 [Project Libra Umbrella / Skyfog (2769+)]",
+      "system": "Project Libra Umbrella / Skyfog",
       "from_faction": "MOC",
       "to_faction": "IE"
     }
@@ -60330,7 +60522,7 @@
     "date": "2864",
     "type": "ownership_change",
     "data": {
-      "system": "Qualip [Kerensky's Vision (3130+)]",
+      "system": "Qualip",
       "from_faction": "LC",
       "to_faction": "A"
     }
@@ -60339,7 +60531,7 @@
     "date": "3130",
     "type": "ownership_change",
     "data": {
-      "system": "Qualip [Kerensky's Vision (3130+)]",
+      "system": "Qualip",
       "from_faction": "A",
       "to_faction": "CWF"
     }
@@ -60348,7 +60540,7 @@
     "date": "3145",
     "type": "ownership_change",
     "data": {
-      "system": "Qualip [Kerensky's Vision (3130+)]",
+      "system": "Qualip",
       "from_faction": "CWF",
       "to_faction": "CJF"
     }
@@ -60357,7 +60549,7 @@
     "date": "3151",
     "type": "ownership_change",
     "data": {
-      "system": "Qualip [Kerensky's Vision (3130+)]",
+      "system": "Qualip",
       "from_faction": "CJF",
       "to_faction": "TamP"
     }
@@ -60660,19 +60852,10 @@
     }
   },
   {
-    "date": "3025",
-    "type": "ownership_change",
-    "data": {
-      "system": "Quimper [Chirac (3130+)]",
-      "from_faction": "FS",
-      "to_faction": "A"
-    }
-  },
-  {
     "date": "3130",
     "type": "ownership_change",
     "data": {
-      "system": "Quimper [Chirac (3130+)]",
+      "system": "Quimper",
       "from_faction": "A",
       "to_faction": "FS"
     }
@@ -62028,10 +62211,18 @@
     }
   },
   {
+    "date": "2822",
+    "type": "system_rename",
+    "data": {
+      "system": "Rhodos",
+      "new_name": "Runrig"
+    }
+  },
+  {
     "date": "2830",
     "type": "ownership_change",
     "data": {
-      "system": "Rhodos [Runrig (2822+)]",
+      "system": "Runrig",
       "from_faction": "CC",
       "to_faction": "A"
     }
@@ -64863,10 +65054,18 @@
     }
   },
   {
+    "date": "2750",
+    "type": "system_rename",
+    "data": {
+      "system": "Sanurcha",
+      "new_name": "Ildrong"
+    }
+  },
+  {
     "date": "2864",
     "type": "ownership_change",
     "data": {
-      "system": "Sanurcha [Ildrong (2750+)]",
+      "system": "Ildrong",
       "from_faction": "FS",
       "to_faction": "A"
     }
@@ -65235,7 +65434,7 @@
     "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "Sartu [Bastille (3130+)]",
+      "system": "Sartu",
       "from_faction": "TC",
       "to_faction": "A"
     }
@@ -65244,7 +65443,7 @@
     "date": "3130",
     "type": "ownership_change",
     "data": {
-      "system": "Sartu [Bastille (3130+)]",
+      "system": "Sartu",
       "from_faction": "A",
       "to_faction": "FS"
     }
@@ -66378,7 +66577,7 @@
     "date": "2783",
     "type": "ownership_change",
     "data": {
-      "system": "Seven Lands [Garotte (3130+)]",
+      "system": "Seven Lands",
       "from_faction": "RW",
       "to_faction": "I"
     }
@@ -66387,7 +66586,7 @@
     "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "Seven Lands [Garotte (3130+)]",
+      "system": "Seven Lands",
       "from_faction": "I",
       "to_faction": "A"
     }
@@ -66396,7 +66595,7 @@
     "date": "3095",
     "type": "ownership_change",
     "data": {
-      "system": "Seven Lands [Garotte (3130+)]",
+      "system": "Seven Lands",
       "from_faction": "A",
       "to_faction": "RT"
     }
@@ -66501,10 +66700,18 @@
     }
   },
   {
+    "date": "3022",
+    "type": "system_rename",
+    "data": {
+      "system": "Shaobuon",
+      "new_name": "Liu's Memory"
+    }
+  },
+  {
     "date": "2864",
     "type": "ownership_change",
     "data": {
-      "system": "Shaobuon [Liu's Memory (3022+)]",
+      "system": "Liu's Memory",
       "from_faction": "CC",
       "to_faction": "A"
     }
@@ -66513,7 +66720,7 @@
     "date": "3130",
     "type": "ownership_change",
     "data": {
-      "system": "Shaobuon [Liu's Memory (3022+)]",
+      "system": "Liu's Memory",
       "from_faction": "A",
       "to_faction": "CC"
     }
@@ -66609,10 +66816,18 @@
     }
   },
   {
+    "date": "2822",
+    "type": "system_rename",
+    "data": {
+      "system": "Shaun",
+      "new_name": "Burl"
+    }
+  },
+  {
     "date": "2864",
     "type": "ownership_change",
     "data": {
-      "system": "Shaun [Burl (2822+)]",
+      "system": "Burl",
       "from_faction": "CC",
       "to_faction": "A"
     }
@@ -70275,7 +70490,7 @@
     "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "Stonarboi [Almotacen (3152+)]",
+      "system": "Stonarboi",
       "from_faction": "LC",
       "to_faction": "A"
     }
@@ -70284,7 +70499,7 @@
     "date": "3152",
     "type": "ownership_change",
     "data": {
-      "system": "Stonarboi [Almotacen (3152+)]",
+      "system": "Stonarboi",
       "from_faction": "A",
       "to_faction": "I"
     }
@@ -71778,7 +71993,7 @@
     "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "Takata [New Start (3130+)]",
+      "system": "Takata",
       "from_faction": "DC",
       "to_faction": "A"
     }
@@ -71787,7 +72002,7 @@
     "date": "3130",
     "type": "ownership_change",
     "data": {
-      "system": "Takata [New Start (3130+)]",
+      "system": "Takata",
       "from_faction": "A",
       "to_faction": "DC"
     }
@@ -72234,10 +72449,18 @@
     }
   },
   {
+    "date": "2822",
+    "type": "system_rename",
+    "data": {
+      "system": "Tangerz",
+      "new_name": "Mayadi"
+    }
+  },
+  {
     "date": "2830",
     "type": "ownership_change",
     "data": {
-      "system": "Tangerz [Mayadi (2822+)]",
+      "system": "Mayadi",
       "from_faction": "DC",
       "to_faction": "CS(H)"
     }
@@ -72246,7 +72469,7 @@
     "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "Tangerz [Mayadi (2822+)]",
+      "system": "Mayadi",
       "from_faction": "CS(H)",
       "to_faction": "A"
     }
@@ -72255,7 +72478,7 @@
     "date": "3057",
     "type": "ownership_change",
     "data": {
-      "system": "Tangerz [Mayadi (2822+)]",
+      "system": "Mayadi",
       "from_faction": "A",
       "to_faction": "WB(H)"
     }
@@ -72264,7 +72487,7 @@
     "date": "3081",
     "type": "ownership_change",
     "data": {
-      "system": "Tangerz [Mayadi (2822+)]",
+      "system": "Mayadi",
       "from_faction": "WB(H)",
       "to_faction": "RS(H)"
     }
@@ -72273,7 +72496,7 @@
     "date": "3152",
     "type": "ownership_change",
     "data": {
-      "system": "Tangerz [Mayadi (2822+)]",
+      "system": "Mayadi",
       "from_faction": "RS(H)",
       "to_faction": "A"
     }
@@ -72657,10 +72880,18 @@
     }
   },
   {
+    "date": "2116",
+    "type": "system_rename",
+    "data": {
+      "system": "Tau Ceti",
+      "new_name": "New Earth"
+    }
+  },
+  {
     "date": "2317",
     "type": "ownership_change",
     "data": {
-      "system": "Tau Ceti [New Earth (2116+)]",
+      "system": "New Earth",
       "from_faction": "TA",
       "to_faction": "TH"
     }
@@ -72669,7 +72900,7 @@
     "date": "2767",
     "type": "ownership_change",
     "data": {
-      "system": "Tau Ceti [New Earth (2116+)]",
+      "system": "New Earth",
       "from_faction": "TH",
       "to_faction": "AE"
     }
@@ -72678,7 +72909,7 @@
     "date": "2783",
     "type": "ownership_change",
     "data": {
-      "system": "Tau Ceti [New Earth (2116+)]",
+      "system": "New Earth",
       "from_faction": "AE",
       "to_faction": "TH"
     }
@@ -72687,7 +72918,7 @@
     "date": "2821",
     "type": "ownership_change",
     "data": {
-      "system": "Tau Ceti [New Earth (2116+)]",
+      "system": "New Earth",
       "from_faction": "TH",
       "to_faction": "LC"
     }
@@ -72696,7 +72927,7 @@
     "date": "3040",
     "type": "ownership_change",
     "data": {
-      "system": "Tau Ceti [New Earth (2116+)]",
+      "system": "New Earth",
       "from_faction": "LC",
       "to_faction": "FCL"
     }
@@ -72705,7 +72936,7 @@
     "date": "3057",
     "type": "ownership_change",
     "data": {
-      "system": "Tau Ceti [New Earth (2116+)]",
+      "system": "New Earth",
       "from_faction": "FCL",
       "to_faction": "LA"
     }
@@ -72714,7 +72945,7 @@
     "date": "3068",
     "type": "ownership_change",
     "data": {
-      "system": "Tau Ceti [New Earth (2116+)]",
+      "system": "New Earth",
       "from_faction": "LA",
       "to_faction": "WB"
     }
@@ -72723,7 +72954,7 @@
     "date": "3079",
     "type": "ownership_change",
     "data": {
-      "system": "Tau Ceti [New Earth (2116+)]",
+      "system": "New Earth",
       "from_faction": "WB",
       "to_faction": "CoF"
     }
@@ -72732,7 +72963,7 @@
     "date": "3081",
     "type": "ownership_change",
     "data": {
-      "system": "Tau Ceti [New Earth (2116+)]",
+      "system": "New Earth",
       "from_faction": "CoF",
       "to_faction": "RS"
     }
@@ -72741,7 +72972,7 @@
     "date": "3151",
     "type": "ownership_change",
     "data": {
-      "system": "Tau Ceti [New Earth (2116+)]",
+      "system": "New Earth",
       "from_faction": "RS",
       "to_faction": "3SL"
     }
@@ -73386,10 +73617,18 @@
     }
   },
   {
+    "date": "3022",
+    "type": "system_rename",
+    "data": {
+      "system": "Thamel",
+      "new_name": "Wyeth's Glory"
+    }
+  },
+  {
     "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "Thamel [Wyeth's Glory (3022+)]",
+      "system": "Wyeth's Glory",
       "from_faction": "CC",
       "to_faction": "A"
     }
@@ -73398,7 +73637,7 @@
     "date": "3130",
     "type": "ownership_change",
     "data": {
-      "system": "Thamel [Wyeth's Glory (3022+)]",
+      "system": "Wyeth's Glory",
       "from_faction": "A",
       "to_faction": "CC"
     }
@@ -74406,7 +74645,7 @@
     "date": "2864",
     "type": "ownership_change",
     "data": {
-      "system": "Tintavel [Dalrymple (3152+)]",
+      "system": "Tintavel",
       "from_faction": "FWL",
       "to_faction": "A"
     }
@@ -74415,7 +74654,7 @@
     "date": "3152",
     "type": "ownership_change",
     "data": {
-      "system": "Tintavel [Dalrymple (3152+)]",
+      "system": "Tintavel",
       "from_faction": "A",
       "to_faction": "FWL"
     }
@@ -75051,10 +75290,18 @@
     }
   },
   {
+    "date": "2863",
+    "type": "system_rename",
+    "data": {
+      "system": "Treeline",
+      "new_name": "Winfield"
+    }
+  },
+  {
     "date": "2783",
     "type": "ownership_change",
     "data": {
-      "system": "Treeline [Winfield (2863+)]",
+      "system": "Winfield",
       "from_faction": "RW",
       "to_faction": "LC"
     }
@@ -75063,7 +75310,7 @@
     "date": "3040",
     "type": "ownership_change",
     "data": {
-      "system": "Treeline [Winfield (2863+)]",
+      "system": "Winfield",
       "from_faction": "LC",
       "to_faction": "FCL"
     }
@@ -75072,7 +75319,7 @@
     "date": "3050a",
     "type": "ownership_change",
     "data": {
-      "system": "Treeline [Winfield (2863+)]",
+      "system": "Winfield",
       "from_faction": "FCL",
       "to_faction": "CJF"
     }
@@ -75081,7 +75328,7 @@
     "date": "3130",
     "type": "ownership_change",
     "data": {
-      "system": "Treeline [Winfield (2863+)]",
+      "system": "Winfield",
       "from_faction": "CJF",
       "to_faction": "CHH"
     }
@@ -76599,10 +76846,18 @@
     }
   },
   {
+    "date": "2822",
+    "type": "system_rename",
+    "data": {
+      "system": "Untran",
+      "new_name": "Achtur"
+    }
+  },
+  {
     "date": "2864",
     "type": "ownership_change",
     "data": {
-      "system": "Untran [Achtur (2822+)]",
+      "system": "Achtur",
       "from_faction": "CC",
       "to_faction": "A"
     }
@@ -77247,10 +77502,18 @@
     }
   },
   {
+    "date": "2864",
+    "type": "system_rename",
+    "data": {
+      "system": "Valladolid",
+      "new_name": "Mudd's Hut"
+    }
+  },
+  {
     "date": "2783",
     "type": "ownership_change",
     "data": {
-      "system": "Valladolid [Mudd's Hut (2864+)]",
+      "system": "Mudd's Hut",
       "from_faction": "RW",
       "to_faction": "I"
     }
@@ -77259,7 +77522,7 @@
     "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "Valladolid [Mudd's Hut (2864+)]",
+      "system": "Mudd's Hut",
       "from_faction": "I",
       "to_faction": "A"
     }
@@ -82746,10 +83009,18 @@
     }
   },
   {
+    "date": "3022",
+    "type": "system_rename",
+    "data": {
+      "system": "Zhaomaon",
+      "new_name": "Cluff's Stand"
+    }
+  },
+  {
     "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "Zhaomaon [Cluff's Stand (3022+)]",
+      "system": "Cluff's Stand",
       "from_faction": "CC",
       "to_faction": "A"
     }
@@ -82758,7 +83029,7 @@
     "date": "3130",
     "type": "ownership_change",
     "data": {
-      "system": "Zhaomaon [Cluff's Stand (3022+)]",
+      "system": "Cluff's Stand",
       "from_faction": "A",
       "to_faction": "CC"
     }
@@ -83610,10 +83881,18 @@
     }
   },
   {
+    "date": "3025",
+    "type": "system_rename",
+    "data": {
+      "system": "Dersidatz",
+      "new_name": "Blantleff"
+    }
+  },
+  {
     "date": "3030",
     "type": "ownership_change",
     "data": {
-      "system": "Dersidatz [Blantleff (3025+)]",
+      "system": "Blantleff",
       "from_faction": "LL",
       "to_faction": "CF"
     }
@@ -83622,7 +83901,7 @@
     "date": "3067",
     "type": "ownership_change",
     "data": {
-      "system": "Dersidatz [Blantleff (3025+)]",
+      "system": "Blantleff",
       "from_faction": "CF",
       "to_faction": "MH"
     }
@@ -83631,7 +83910,7 @@
     "date": "3075",
     "type": "ownership_change",
     "data": {
-      "system": "Dersidatz [Blantleff (3025+)]",
+      "system": "Blantleff",
       "from_faction": "MH",
       "to_faction": "CF"
     }
@@ -83640,7 +83919,7 @@
     "date": "3081",
     "type": "ownership_change",
     "data": {
-      "system": "Dersidatz [Blantleff (3025+)]",
+      "system": "Blantleff",
       "from_faction": "CF",
       "to_faction": "I"
     }
@@ -83649,7 +83928,7 @@
     "date": "3085",
     "type": "ownership_change",
     "data": {
-      "system": "Dersidatz [Blantleff (3025+)]",
+      "system": "Blantleff",
       "from_faction": "I",
       "to_faction": "MH"
     }
@@ -83935,9 +84214,17 @@
   },
   {
     "date": "3025",
+    "type": "system_rename",
+    "data": {
+      "system": "Blackbone",
+      "new_name": "Nyserta"
+    }
+  },
+  {
+    "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "Blackbone [Nyserta (3025+)]",
+      "system": "Nyserta",
       "from_faction": "I",
       "to_faction": "EF"
     }
@@ -83946,7 +84233,7 @@
     "date": "3049",
     "type": "ownership_change",
     "data": {
-      "system": "Blackbone [Nyserta (3025+)]",
+      "system": "Nyserta",
       "from_faction": "EF",
       "to_faction": "CGB"
     }
@@ -83955,7 +84242,7 @@
     "date": "3052",
     "type": "ownership_change",
     "data": {
-      "system": "Blackbone [Nyserta (3025+)]",
+      "system": "Nyserta",
       "from_faction": "CGB",
       "to_faction": "CDS"
     }
@@ -83964,7 +84251,7 @@
     "date": "3057",
     "type": "ownership_change",
     "data": {
-      "system": "Blackbone [Nyserta (3025+)]",
+      "system": "Nyserta",
       "from_faction": "CDS",
       "to_faction": "CWF"
     }
@@ -83973,7 +84260,7 @@
     "date": "3075",
     "type": "ownership_change",
     "data": {
-      "system": "Blackbone [Nyserta (3025+)]",
+      "system": "Nyserta",
       "from_faction": "CWF",
       "to_faction": "CHH"
     }
@@ -83982,7 +84269,7 @@
     "date": "3095",
     "type": "ownership_change",
     "data": {
-      "system": "Blackbone [Nyserta (3025+)]",
+      "system": "Nyserta",
       "from_faction": "CHH",
       "to_faction": "FCo"
     }
@@ -84309,6 +84596,14 @@
       "system": "Hellespont",
       "from_faction": "TC",
       "to_faction": "I"
+    }
+  },
+  {
+    "date": "2988",
+    "type": "system_rename",
+    "data": {
+      "system": "Hope IV",
+      "new_name": "Lost Hope / Randis IV"
     }
   },
   {
@@ -85419,10 +85714,18 @@
     }
   },
   {
+    "date": "2850",
+    "type": "system_rename",
+    "data": {
+      "system": "Zara",
+      "new_name": "Homer"
+    }
+  },
+  {
     "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "Zara [Homer (2850+)]",
+      "system": "Homer",
       "from_faction": "CCC",
       "to_faction": "C"
     }
@@ -85431,7 +85734,7 @@
     "date": "3075",
     "type": "ownership_change",
     "data": {
-      "system": "Zara [Homer (2850+)]",
+      "system": "Homer",
       "from_faction": "C",
       "to_faction": "CCC"
     }
@@ -85440,16 +85743,24 @@
     "date": "3085",
     "type": "ownership_change",
     "data": {
-      "system": "Zara [Homer (2850+)]",
+      "system": "Homer",
       "from_faction": "CCC",
       "to_faction": "C"
+    }
+  },
+  {
+    "date": "2752",
+    "type": "system_rename",
+    "data": {
+      "system": "Project Sagitarius Umbrella",
+      "new_name": "McEvedy's Folly"
     }
   },
   {
     "date": "2765",
     "type": "ownership_change",
     "data": {
-      "system": "Project Sagitarius Umbrella [McEvedy's Folly (2752+)]",
+      "system": "McEvedy's Folly",
       "from_faction": "SL",
       "to_faction": "I"
     }
@@ -85458,7 +85769,7 @@
     "date": "2786",
     "type": "ownership_change",
     "data": {
-      "system": "Project Sagitarius Umbrella [McEvedy's Folly (2752+)]",
+      "system": "McEvedy's Folly",
       "from_faction": "I",
       "to_faction": "A"
     }
@@ -85467,7 +85778,7 @@
     "date": "3067",
     "type": "ownership_change",
     "data": {
-      "system": "Project Sagitarius Umbrella [McEvedy's Folly (2752+)]",
+      "system": "McEvedy's Folly",
       "from_faction": "A",
       "to_faction": "MOC"
     }
@@ -85476,7 +85787,7 @@
     "date": "3068",
     "type": "ownership_change",
     "data": {
-      "system": "Project Sagitarius Umbrella [McEvedy's Folly (2752+)]",
+      "system": "McEvedy's Folly",
       "from_faction": "MOC",
       "to_faction": "I"
     }
@@ -85977,10 +86288,18 @@
     }
   },
   {
+    "date": "3025",
+    "type": "system_rename",
+    "data": {
+      "system": "SLSC G9IV.1877",
+      "new_name": "Richmond's World / Murrain"
+    }
+  },
+  {
     "date": "2765",
     "type": "ownership_change",
     "data": {
-      "system": "SLSC G9IV.1877 [Richmond's World / Murrain (3025+)]",
+      "system": "Richmond's World / Murrain",
       "from_faction": "OA",
       "to_faction": "A"
     }
@@ -85989,7 +86308,7 @@
     "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "SLSC G9IV.1877 [Richmond's World / Murrain (3025+)]",
+      "system": "Richmond's World / Murrain",
       "from_faction": "A",
       "to_faction": "IE"
     }
@@ -86130,10 +86449,18 @@
     }
   },
   {
+    "date": "3022",
+    "type": "system_rename",
+    "data": {
+      "system": "Polybius",
+      "new_name": "Appian"
+    }
+  },
+  {
     "date": "3130",
     "type": "ownership_change",
     "data": {
-      "system": "Polybius [Appian (3022+)]",
+      "system": "Appian",
       "from_faction": "I",
       "to_faction": "FrR"
     }
@@ -86202,10 +86529,18 @@
     }
   },
   {
+    "date": "2890",
+    "type": "system_rename",
+    "data": {
+      "system": "Abeline",
+      "new_name": "Taygete"
+    }
+  },
+  {
     "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "Abeline [Taygete (2890+)]",
+      "system": "Taygete",
       "from_faction": "I",
       "to_faction": "A"
     }
@@ -86265,19 +86600,43 @@
     }
   },
   {
+    "date": "2864",
+    "type": "system_rename",
+    "data": {
+      "system": "Chaadan",
+      "new_name": "Chadan"
+    }
+  },
+  {
+    "date": "3022",
+    "type": "system_rename",
+    "data": {
+      "system": "Chadan",
+      "new_name": "Chandan"
+    }
+  },
+  {
     "date": "3030",
     "type": "ownership_change",
     "data": {
-      "system": "Chaadan [Chadan (2864+) / Chandan (3022+)]",
+      "system": "Chandan",
       "from_faction": "I",
       "to_faction": "A"
+    }
+  },
+  {
+    "date": "3022",
+    "type": "system_rename",
+    "data": {
+      "system": "Don't",
+      "new_name": "Mantharaka"
     }
   },
   {
     "date": "2822",
     "type": "ownership_change",
     "data": {
-      "system": "Don't [Mantharaka (3022+)]",
+      "system": "Mantharaka",
       "from_faction": "I",
       "to_faction": "DD"
     }
@@ -86286,7 +86645,7 @@
     "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "Don't [Mantharaka (3022+)]",
+      "system": "Mantharaka",
       "from_faction": "DD",
       "to_faction": "I"
     }
@@ -86295,7 +86654,7 @@
     "date": "3030",
     "type": "ownership_change",
     "data": {
-      "system": "Don't [Mantharaka (3022+)]",
+      "system": "Mantharaka",
       "from_faction": "I",
       "to_faction": "A"
     }
@@ -86304,7 +86663,7 @@
     "date": "3152",
     "type": "ownership_change",
     "data": {
-      "system": "Don't [Mantharaka (3022+)]",
+      "system": "Mantharaka",
       "from_faction": "A",
       "to_faction": "FrR"
     }
@@ -86391,10 +86750,18 @@
     }
   },
   {
+    "date": "3022",
+    "type": "system_rename",
+    "data": {
+      "system": "Tiburon",
+      "new_name": "Tiverton"
+    }
+  },
+  {
     "date": "2822",
     "type": "ownership_change",
     "data": {
-      "system": "Tiburon [Tiverton (3022+)]",
+      "system": "Tiverton",
       "from_faction": "I",
       "to_faction": "A"
     }
@@ -86403,7 +86770,7 @@
     "date": "3025",
     "type": "ownership_change",
     "data": {
-      "system": "Tiburon [Tiverton (3022+)]",
+      "system": "Tiverton",
       "from_faction": "A",
       "to_faction": "I"
     }
@@ -86412,16 +86779,32 @@
     "date": "3030",
     "type": "ownership_change",
     "data": {
-      "system": "Tiburon [Tiverton (3022+)]",
+      "system": "Tiverton",
       "from_faction": "I",
       "to_faction": "A"
+    }
+  },
+  {
+    "date": "2822",
+    "type": "system_rename",
+    "data": {
+      "system": "Wheeler",
+      "new_name": "Perian"
+    }
+  },
+  {
+    "date": "3022",
+    "type": "system_rename",
+    "data": {
+      "system": "Perian",
+      "new_name": "Mystras"
     }
   },
   {
     "date": "2786",
     "type": "ownership_change",
     "data": {
-      "system": "Wheeler [Perian (2822+) / Mystras (3022+)]",
+      "system": "Mystras",
       "from_faction": "I",
       "to_faction": "A"
     }
@@ -86430,7 +86813,7 @@
     "date": "2822",
     "type": "ownership_change",
     "data": {
-      "system": "Wheeler [Perian (2822+) / Mystras (3022+)]",
+      "system": "Mystras",
       "from_faction": "A",
       "to_faction": "I"
     }
@@ -86439,7 +86822,7 @@
     "date": "3030",
     "type": "ownership_change",
     "data": {
-      "system": "Wheeler [Perian (2822+) / Mystras (3022+)]",
+      "system": "Mystras",
       "from_faction": "I",
       "to_faction": "A"
     }

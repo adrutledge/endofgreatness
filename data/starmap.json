@@ -841,7 +841,7 @@
     ]
   },
   {
-    "name": "Adhara [Trip (3040+)]",
+    "name": "Adhara",
     "coordinates": {
       "x": -123.314,
       "y": -468.96
@@ -850,7 +850,7 @@
     "owner_faction": "MOC",
     "planets": [
       {
-        "name": "Adhara [Trip (3040+)] III",
+        "name": "Adhara III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -986,7 +986,7 @@
     ]
   },
   {
-    "name": "Aer [Finnalon (2822+)]",
+    "name": "Finnalon",
     "coordinates": {
       "x": 55.145,
       "y": -187.635
@@ -995,7 +995,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Aer [Finnalon (2822+)] III",
+        "name": "Finnalon III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -1189,7 +1189,7 @@
     ]
   },
   {
-    "name": "Agmond [Bornal (3130+)]",
+    "name": "Agmond",
     "coordinates": {
       "x": 395.843,
       "y": -140.358
@@ -1198,7 +1198,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Agmond [Bornal (3130+)] III",
+        "name": "Agmond III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -3596,7 +3596,7 @@
     ]
   },
   {
-    "name": "Anatolia [Pillory (3130+)]",
+    "name": "Anatolia",
     "coordinates": {
       "x": -432.787,
       "y": 276.444
@@ -3605,7 +3605,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Anatolia [Pillory (3130+)] III",
+        "name": "Anatolia III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -5220,7 +5220,7 @@
     ]
   },
   {
-    "name": "Arn [Jia Tian (3130+)]",
+    "name": "Arn",
     "coordinates": {
       "x": -29.949,
       "y": -419.973
@@ -5229,7 +5229,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Arn [Jia Tian (3130+)] III",
+        "name": "Arn III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -6177,7 +6177,7 @@
     ]
   },
   {
-    "name": "Austerlitz [Scauld (3130+)]",
+    "name": "Austerlitz",
     "coordinates": {
       "x": -432.673,
       "y": 306.258
@@ -6186,7 +6186,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Austerlitz [Scauld (3130+)] III",
+        "name": "Austerlitz III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -6815,7 +6815,7 @@
     ]
   },
   {
-    "name": "Badlands Cluster [Pirates Haven Cluster (3025+)]",
+    "name": "Pirates Haven Cluster",
     "coordinates": {
       "x": 424.959,
       "y": -349.827
@@ -6824,7 +6824,7 @@
     "owner_faction": "I",
     "planets": [
       {
-        "name": "Badlands Cluster [Pirates Haven Cluster (3025+)] III",
+        "name": "Pirates Haven Cluster III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -6844,7 +6844,7 @@
     ]
   },
   {
-    "name": "Baggville [Sardinas (3152+)]",
+    "name": "Baggville",
     "coordinates": {
       "x": -308.21,
       "y": 330.433
@@ -6853,7 +6853,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Baggville [Sardinas (3152+)] III",
+        "name": "Baggville III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -8410,7 +8410,7 @@
     ]
   },
   {
-    "name": "Belamor [Zanzor (2822+)]",
+    "name": "Zanzor",
     "coordinates": {
       "x": 61.806,
       "y": -293.804
@@ -8419,7 +8419,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Belamor [Zanzor (2822+)] III",
+        "name": "Zanzor III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -14094,7 +14094,7 @@
     ]
   },
   {
-    "name": "Carver [Carver V / Liberty (3063+)]",
+    "name": "Carver",
     "coordinates": {
       "x": -5.436,
       "y": -20.722
@@ -14103,7 +14103,7 @@
     "owner_faction": "CC",
     "planets": [
       {
-        "name": "Carver [Carver V / Liberty (3063+)] III",
+        "name": "Carver III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -15776,7 +15776,7 @@
     ]
   },
   {
-    "name": "Chisholm [Elgin (2878+)]",
+    "name": "Elgin",
     "coordinates": {
       "x": 1.54,
       "y": -50.974
@@ -15785,7 +15785,7 @@
     "owner_faction": "CC",
     "planets": [
       {
-        "name": "Chisholm [Elgin (2878+)] III",
+        "name": "Elgin III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -16849,7 +16849,7 @@
     ]
   },
   {
-    "name": "Commonwealth Mining Outpost 26 [Gulf Breeze (2864+)]",
+    "name": "Gulf Breeze",
     "coordinates": {
       "x": -304.289,
       "y": 203.387
@@ -16858,7 +16858,7 @@
     "owner_faction": "LC",
     "planets": [
       {
-        "name": "Commonwealth Mining Outpost 26 [Gulf Breeze (2864+)] III",
+        "name": "Gulf Breeze III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -18444,7 +18444,7 @@
     ]
   },
   {
-    "name": "Cussar [Barlow's Folly (2864+)]",
+    "name": "Barlow's Folly",
     "coordinates": {
       "x": 173.189,
       "y": 66.905
@@ -18453,7 +18453,7 @@
     "owner_faction": "DC",
     "planets": [
       {
-        "name": "Cussar [Barlow's Folly (2864+)] III",
+        "name": "Barlow's Folly III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -18560,7 +18560,7 @@
     ]
   },
   {
-    "name": "Cynthiana [Liao (2202+)]",
+    "name": "Liao",
     "coordinates": {
       "x": 34.29,
       "y": -68.578
@@ -18569,7 +18569,7 @@
     "owner_faction": "CC",
     "planets": [
       {
-        "name": "Cynthiana [Liao (2202+)] III",
+        "name": "Liao III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -20764,7 +20764,7 @@
     ]
   },
   {
-    "name": "Dijonne [Pain (3050+)]",
+    "name": "Dijonne",
     "coordinates": {
       "x": -408.667,
       "y": 349.654
@@ -20773,7 +20773,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Dijonne [Pain (3050+)] III",
+        "name": "Dijonne III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -21837,7 +21837,7 @@
     ]
   },
   {
-    "name": "Dunklew\u00e4lderdunklerfl\u00fcssenschattenwelt [Bob (2789+)]",
+    "name": "Bob",
     "coordinates": {
       "x": 440.689,
       "y": 243.842
@@ -21846,7 +21846,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Dunklew\u00e4lderdunklerfl\u00fcssenschattenwelt [Bob (2789+)] III",
+        "name": "Bob III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -22301,7 +22301,7 @@
     ]
   },
   {
-    "name": "Edirne [Brank (3130+)]",
+    "name": "Edirne",
     "coordinates": {
       "x": -462.404,
       "y": 290.917
@@ -22310,7 +22310,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Edirne [Brank (3130+)] III",
+        "name": "Edirne III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -23664,7 +23664,7 @@
     ]
   },
   {
-    "name": "Erin [Von Strang's World (2786+)]",
+    "name": "Von Strang's World",
     "coordinates": {
       "x": -160.065,
       "y": 515.891
@@ -23673,7 +23673,7 @@
     "owner_faction": "I",
     "planets": [
       {
-        "name": "Erin [Von Strang's World (2786+)] III",
+        "name": "Von Strang's World III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -29058,7 +29058,7 @@
     ]
   },
   {
-    "name": "Green Stone [Clayborne II (3025+)]",
+    "name": "Clayborne II",
     "coordinates": {
       "x": -405.913,
       "y": -79.963
@@ -29067,7 +29067,7 @@
     "owner_faction": "CF",
     "planets": [
       {
-        "name": "Green Stone [Clayborne II (3025+)] III",
+        "name": "Clayborne II III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -30508,7 +30508,7 @@
     ]
   },
   {
-    "name": "Hansii [Itsbur (2822+)]",
+    "name": "Itsbur",
     "coordinates": {
       "x": 64.184,
       "y": -362.85
@@ -30517,7 +30517,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Hansii [Itsbur (2822+)] III",
+        "name": "Itsbur III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -31349,7 +31349,7 @@
     ]
   },
   {
-    "name": "Helbrent [Andiron (3025+)]",
+    "name": "Andiron",
     "coordinates": {
       "x": -424.484,
       "y": -47.393
@@ -31358,7 +31358,7 @@
     "owner_faction": "CF",
     "planets": [
       {
-        "name": "Helbrent [Andiron (3025+)] III",
+        "name": "Andiron III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -32248,7 +32248,7 @@
     ]
   },
   {
-    "name": "Himmels [Baltazar III (2864+)]",
+    "name": "Baltazar III",
     "coordinates": {
       "x": -440.091,
       "y": -59.547
@@ -32257,7 +32257,7 @@
     "owner_faction": "CF",
     "planets": [
       {
-        "name": "Himmels [Baltazar III (2864+)] III",
+        "name": "Baltazar III III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -33292,7 +33292,7 @@
     ]
   },
   {
-    "name": "Huanghuadian [Tincalunas (3022+)]",
+    "name": "Tincalunas",
     "coordinates": {
       "x": 42.347,
       "y": -432.173
@@ -33301,7 +33301,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Huanghuadian [Tincalunas (3022+)] III",
+        "name": "Tincalunas III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -34916,7 +34916,7 @@
     ]
   },
   {
-    "name": "Iolas [Diedre's Den (3025+)]",
+    "name": "Diedre's Den",
     "coordinates": {
       "x": -417.614,
       "y": -62.53
@@ -34925,7 +34925,7 @@
     "owner_faction": "CF",
     "planets": [
       {
-        "name": "Iolas [Diedre's Den (3025+)] III",
+        "name": "Diedre's Den III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -35844,7 +35844,7 @@
     ]
   },
   {
-    "name": "Jardine [Herakleion (2822+)]",
+    "name": "Herakleion",
     "coordinates": {
       "x": -200.944,
       "y": -91.199
@@ -35853,7 +35853,7 @@
     "owner_faction": "CS(H)",
     "planets": [
       {
-        "name": "Jardine [Herakleion (2822+)] III",
+        "name": "Herakleion III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -36395,7 +36395,7 @@
     ]
   },
   {
-    "name": "Jodipur [Neukirchen (3025+)]",
+    "name": "Neukirchen",
     "coordinates": {
       "x": 406.348,
       "y": -247.142
@@ -36404,7 +36404,7 @@
     "owner_faction": "FS",
     "planets": [
       {
-        "name": "Jodipur [Neukirchen (3025+)] III",
+        "name": "Neukirchen III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -39556,7 +39556,7 @@
     ]
   },
   {
-    "name": "Kirkv\u00e5g [Toch Zu (2822+)]",
+    "name": "Toch Zu",
     "coordinates": {
       "x": 64.325,
       "y": -317.163
@@ -39565,7 +39565,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Kirkv\u00e5g [Toch Zu (2822+)] III",
+        "name": "Toch Zu III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -41992,7 +41992,7 @@
     ]
   },
   {
-    "name": "Lamu [Tunlmar (2822+)]",
+    "name": "Tunlmar",
     "coordinates": {
       "x": 51.243,
       "y": -233.764
@@ -42001,7 +42001,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Lamu [Tunlmar (2822+)] III",
+        "name": "Tunlmar III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -44602,7 +44602,7 @@
     ]
   },
   {
-    "name": "Lushun [Jibbet (3130+)]",
+    "name": "Lushun",
     "coordinates": {
       "x": -412.162,
       "y": 326.432
@@ -44611,7 +44611,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Lushun [Jibbet (3130+)] III",
+        "name": "Lushun III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -44892,7 +44892,7 @@
     ]
   },
   {
-    "name": "Lywick [Ferreusvirgo (3130+)]",
+    "name": "Lywick",
     "coordinates": {
       "x": -439.431,
       "y": 334.98
@@ -44901,7 +44901,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Lywick [Ferreusvirgo (3130+)] III",
+        "name": "Lywick III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -48082,7 +48082,7 @@
     ]
   },
   {
-    "name": "Meglan [Victoria (2537+)]",
+    "name": "Victoria",
     "coordinates": {
       "x": 225.66,
       "y": -176.869
@@ -48091,7 +48091,7 @@
     "owner_faction": "FS",
     "planets": [
       {
-        "name": "Meglan [Victoria (2537+)] III",
+        "name": "Victoria III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -51533,7 +51533,7 @@
     ]
   },
   {
-    "name": "Murris [Kalindam (2822+)]",
+    "name": "Kalindam",
     "coordinates": {
       "x": 52.218,
       "y": -379.328
@@ -51542,7 +51542,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Murris [Kalindam (2822+)] III",
+        "name": "Kalindam III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -52722,7 +52722,7 @@
     ]
   },
   {
-    "name": "New Britain [Inglesmond (2349+)]",
+    "name": "Inglesmond",
     "coordinates": {
       "x": 33.896,
       "y": 33.94
@@ -52731,7 +52731,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "New Britain [Inglesmond (2349+)] III",
+        "name": "Inglesmond III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -53041,7 +53041,7 @@
     ]
   },
   {
-    "name": "New Galicia [The Institute (3152+)]",
+    "name": "New Galicia",
     "coordinates": {
       "x": -364.78,
       "y": -217.92
@@ -53050,7 +53050,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "New Galicia [The Institute (3152+)] III",
+        "name": "New Galicia III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -56347,7 +56347,7 @@
     ]
   },
   {
-    "name": "Oporto [Veil (3075+)]",
+    "name": "Oporto",
     "coordinates": {
       "x": -449.954,
       "y": 307.611
@@ -56356,7 +56356,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Oporto [Veil (3075+)] III",
+        "name": "Oporto III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -56811,7 +56811,7 @@
     ]
   },
   {
-    "name": "Ouagadougou [Silence (3130+)]",
+    "name": "Ouagadougou",
     "coordinates": {
       "x": 217.462,
       "y": 413.615
@@ -56820,7 +56820,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Ouagadougou [Silence (3130+)] III",
+        "name": "Ouagadougou III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -58435,7 +58435,7 @@
     ]
   },
   {
-    "name": "Perrot [Shaula (3025+)]",
+    "name": "Shaula",
     "coordinates": {
       "x": -30.648,
       "y": 269.788
@@ -58444,7 +58444,7 @@
     "owner_faction": "D(DC/LC)",
     "planets": [
       {
-        "name": "Perrot [Shaula (3025+)] III",
+        "name": "Shaula III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -59566,7 +59566,7 @@
     ]
   },
   {
-    "name": "Port Vail [The Rack (3050+)]",
+    "name": "Port Vail",
     "coordinates": {
       "x": -400.859,
       "y": 370.983
@@ -59575,7 +59575,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Port Vail [The Rack (3050+)] III",
+        "name": "Port Vail III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -60117,7 +60117,7 @@
     ]
   },
   {
-    "name": "SLSC M8V.8476 [Project Libra Umbrella / Skyfog (2769+)]",
+    "name": "Project Libra Umbrella / Skyfog",
     "coordinates": {
       "x": -59.979,
       "y": -541.794
@@ -60126,7 +60126,7 @@
     "owner_faction": "IE",
     "planets": [
       {
-        "name": "SLSC M8V.8476 [Project Libra Umbrella / Skyfog (2769+)] III",
+        "name": "Project Libra Umbrella / Skyfog III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -60523,7 +60523,7 @@
     ]
   },
   {
-    "name": "Qualip [Kerensky's Vision (3130+)]",
+    "name": "Qualip",
     "coordinates": {
       "x": -72.643,
       "y": 189.27
@@ -60532,7 +60532,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Qualip [Kerensky's Vision (3130+)] III",
+        "name": "Qualip III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -60842,7 +60842,7 @@
     ]
   },
   {
-    "name": "Quimper [Chirac (3130+)]",
+    "name": "Quimper",
     "coordinates": {
       "x": 380.419,
       "y": -239.333
@@ -60851,7 +60851,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Quimper [Chirac (3130+)] III",
+        "name": "Quimper III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -62350,7 +62350,7 @@
     ]
   },
   {
-    "name": "Rhodos [Runrig (2822+)]",
+    "name": "Runrig",
     "coordinates": {
       "x": 48.925,
       "y": -217.144
@@ -62359,7 +62359,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Rhodos [Runrig (2822+)] III",
+        "name": "Runrig III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -64728,7 +64728,7 @@
     ]
   },
   {
-    "name": "Sanurcha [Ildrong (2750+)]",
+    "name": "Ildrong",
     "coordinates": {
       "x": 430.311,
       "y": -219.14
@@ -64737,7 +64737,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Sanurcha [Ildrong (2750+)] III",
+        "name": "Ildrong III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -65105,7 +65105,7 @@
     ]
   },
   {
-    "name": "Sartu [Bastille (3130+)]",
+    "name": "Sartu",
     "coordinates": {
       "x": 297.215,
       "y": -342.833
@@ -65114,7 +65114,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Sartu [Bastille (3130+)] III",
+        "name": "Sartu III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -66294,7 +66294,7 @@
     ]
   },
   {
-    "name": "Seven Lands [Garotte (3130+)]",
+    "name": "Seven Lands",
     "coordinates": {
       "x": -456.51,
       "y": 261.635
@@ -66303,7 +66303,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Seven Lands [Garotte (3130+)] III",
+        "name": "Seven Lands III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -66439,7 +66439,7 @@
     ]
   },
   {
-    "name": "Shaobuon [Liu's Memory (3022+)]",
+    "name": "Liu's Memory",
     "coordinates": {
       "x": -10.824,
       "y": -416.351
@@ -66448,7 +66448,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Shaobuon [Liu's Memory (3022+)] III",
+        "name": "Liu's Memory III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -66613,7 +66613,7 @@
     ]
   },
   {
-    "name": "Shaun [Burl (2822+)]",
+    "name": "Burl",
     "coordinates": {
       "x": 53.27,
       "y": -328.061
@@ -66622,7 +66622,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Shaun [Burl (2822+)] III",
+        "name": "Burl III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -70064,7 +70064,7 @@
     ]
   },
   {
-    "name": "Stonarboi [Almotacen (3152+)]",
+    "name": "Stonarboi",
     "coordinates": {
       "x": -99.116,
       "y": 309.722
@@ -70073,7 +70073,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Stonarboi [Almotacen (3152+)] III",
+        "name": "Stonarboi III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -71514,7 +71514,7 @@
     ]
   },
   {
-    "name": "Takata [New Start (3130+)]",
+    "name": "Takata",
     "coordinates": {
       "x": 366.201,
       "y": 301.521
@@ -71523,7 +71523,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Takata [New Start (3130+)] III",
+        "name": "Takata III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -71862,7 +71862,7 @@
     ]
   },
   {
-    "name": "Tangerz [Mayadi (2822+)]",
+    "name": "Mayadi",
     "coordinates": {
       "x": 158.383,
       "y": 106.747
@@ -71871,7 +71871,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Tangerz [Mayadi (2822+)] III",
+        "name": "Mayadi III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -72442,7 +72442,7 @@
     ]
   },
   {
-    "name": "Tau Ceti [New Earth (2116+)]",
+    "name": "New Earth",
     "coordinates": {
       "x": -12.415,
       "y": 3.055
@@ -72451,7 +72451,7 @@
     "owner_faction": "LC",
     "planets": [
       {
-        "name": "Tau Ceti [New Earth (2116+)] III",
+        "name": "New Earth III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -73196,7 +73196,7 @@
     ]
   },
   {
-    "name": "Thamel [Wyeth's Glory (3022+)]",
+    "name": "Wyeth's Glory",
     "coordinates": {
       "x": 24.526,
       "y": -415.047
@@ -73205,7 +73205,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Thamel [Wyeth's Glory (3022+)] III",
+        "name": "Wyeth's Glory III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -73979,7 +73979,7 @@
     ]
   },
   {
-    "name": "Tintavel [Dalrymple (3152+)]",
+    "name": "Tintavel",
     "coordinates": {
       "x": -98.381,
       "y": -243.791
@@ -73988,7 +73988,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Tintavel [Dalrymple (3152+)] III",
+        "name": "Tintavel III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -74733,7 +74733,7 @@
     ]
   },
   {
-    "name": "Treeline [Winfield (2863+)]",
+    "name": "Winfield",
     "coordinates": {
       "x": -111.711,
       "y": 405.264
@@ -74742,7 +74742,7 @@
     "owner_faction": "LC",
     "planets": [
       {
-        "name": "Treeline [Winfield (2863+)] III",
+        "name": "Winfield III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -76299,7 +76299,7 @@
     ]
   },
   {
-    "name": "Untran [Achtur (2822+)]",
+    "name": "Achtur",
     "coordinates": {
       "x": 43.559,
       "y": -421.61
@@ -76308,7 +76308,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Untran [Achtur (2822+)] III",
+        "name": "Achtur III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -76850,7 +76850,7 @@
     ]
   },
   {
-    "name": "Valladolid [Mudd's Hut (2864+)]",
+    "name": "Mudd's Hut",
     "coordinates": {
       "x": -556.328,
       "y": 200.497
@@ -76859,7 +76859,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Valladolid [Mudd's Hut (2864+)] III",
+        "name": "Mudd's Hut III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -82244,7 +82244,7 @@
     ]
   },
   {
-    "name": "Zhaomaon [Cluff's Stand (3022+)]",
+    "name": "Cluff's Stand",
     "coordinates": {
       "x": 1.344,
       "y": -428.929
@@ -82253,7 +82253,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Zhaomaon [Cluff's Stand (3022+)] III",
+        "name": "Cluff's Stand III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -82998,7 +82998,7 @@
     ]
   },
   {
-    "name": "Dersidatz [Blantleff (3025+)]",
+    "name": "Blantleff",
     "coordinates": {
       "x": -467.615,
       "y": -115.732
@@ -83007,7 +83007,7 @@
     "owner_faction": "LL",
     "planets": [
       {
-        "name": "Dersidatz [Blantleff (3025+)] III",
+        "name": "Blantleff III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -83665,7 +83665,7 @@
     ]
   },
   {
-    "name": "Blackbone [Nyserta (3025+)]",
+    "name": "Nyserta",
     "coordinates": {
       "x": -17.788,
       "y": 498.689
@@ -83674,7 +83674,7 @@
     "owner_faction": "EF",
     "planets": [
       {
-        "name": "Blackbone [Nyserta (3025+)] III",
+        "name": "Nyserta III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -84274,7 +84274,7 @@
     ]
   },
   {
-    "name": "Hope IV [Lost Hope / Randis IV (2988+)]",
+    "name": "Lost Hope / Randis IV",
     "coordinates": {
       "x": 621.531,
       "y": -342.902
@@ -84283,7 +84283,7 @@
     "owner_faction": "I",
     "planets": [
       {
-        "name": "Hope IV [Lost Hope / Randis IV (2988+)] III",
+        "name": "Lost Hope / Randis IV III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -86130,7 +86130,7 @@
     ]
   },
   {
-    "name": "Zara [Homer (2850+)]",
+    "name": "Homer",
     "coordinates": {
       "x": -78.675,
       "y": 1799.056
@@ -86139,7 +86139,7 @@
     "owner_faction": "C",
     "planets": [
       {
-        "name": "Zara [Homer (2850+)] III",
+        "name": "Homer III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -86159,7 +86159,7 @@
     ]
   },
   {
-    "name": "Project Sagitarius Umbrella [McEvedy's Folly (2752+)]",
+    "name": "McEvedy's Folly",
     "coordinates": {
       "x": -408.064,
       "y": -493.891
@@ -86168,7 +86168,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Project Sagitarius Umbrella [McEvedy's Folly (2752+)] III",
+        "name": "McEvedy's Folly III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -88334,7 +88334,7 @@
     ]
   },
   {
-    "name": "SLSC G9IV.1877 [Richmond's World / Murrain (3025+)]",
+    "name": "Richmond's World / Murrain",
     "coordinates": {
       "x": 896.113,
       "y": 28.78
@@ -88343,7 +88343,7 @@
     "owner_faction": "IE",
     "planets": [
       {
-        "name": "SLSC G9IV.1877 [Richmond's World / Murrain (3025+)] III",
+        "name": "Richmond's World / Murrain III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -89668,7 +89668,7 @@
     ]
   },
   {
-    "name": "Polybius [Appian (3022+)]",
+    "name": "Appian",
     "coordinates": {
       "x": 44.17,
       "y": -466.637
@@ -89677,7 +89677,7 @@
     "owner_faction": "I",
     "planets": [
       {
-        "name": "Polybius [Appian (3022+)] III",
+        "name": "Appian III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -90103,7 +90103,7 @@
     ]
   },
   {
-    "name": "Abeline [Taygete (2890+)]",
+    "name": "Taygete",
     "coordinates": {
       "x": -26.218,
       "y": -481.285
@@ -90112,7 +90112,7 @@
     "owner_faction": "A",
     "planets": [
       {
-        "name": "Abeline [Taygete (2890+)] III",
+        "name": "Taygete III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -90306,7 +90306,7 @@
     ]
   },
   {
-    "name": "Chaadan [Chadan (2864+) / Chandan (3022+)]",
+    "name": "Chandan",
     "coordinates": {
       "x": 18.195,
       "y": -508.44
@@ -90315,7 +90315,7 @@
     "owner_faction": "I",
     "planets": [
       {
-        "name": "Chaadan [Chadan (2864+) / Chandan (3022+)] III",
+        "name": "Chandan III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -90335,7 +90335,7 @@
     ]
   },
   {
-    "name": "Don't [Mantharaka (3022+)]",
+    "name": "Mantharaka",
     "coordinates": {
       "x": 38.127,
       "y": -489.219
@@ -90344,7 +90344,7 @@
     "owner_faction": "I",
     "planets": [
       {
-        "name": "Don't [Mantharaka (3022+)] III",
+        "name": "Mantharaka III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -90625,7 +90625,7 @@
     ]
   },
   {
-    "name": "Tiburon [Tiverton (3022+)]",
+    "name": "Tiverton",
     "coordinates": {
       "x": 75.876,
       "y": -505.977
@@ -90634,7 +90634,7 @@
     "owner_faction": "I",
     "planets": [
       {
-        "name": "Tiburon [Tiverton (3022+)] III",
+        "name": "Tiverton III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
@@ -90654,7 +90654,7 @@
     ]
   },
   {
-    "name": "Wheeler [Perian (2822+) / Mystras (3022+)]",
+    "name": "Mystras",
     "coordinates": {
       "x": 196.373,
       "y": -497.192
@@ -90663,7 +90663,7 @@
     "owner_faction": "I",
     "planets": [
       {
-        "name": "Wheeler [Perian (2822+) / Mystras (3022+)] III",
+        "name": "Mystras III",
         "gravity": 1.0,
         "atmosphere": "breathable",
         "temperature": 22,
