@@ -7,7 +7,8 @@ var selected_system: Dictionary = {}
 var dragging: bool = false
 
 const JUMP_DISTANCE: float = 30.0
-const SYSTEM_BASE_RADIUS: float = 5.0
+	const SYSTEM_BASE_RADIUS: float = 3.0
+	const NAME_ZOOM_THRESHOLD: float = 3.0
 
 @onready var camera: Camera2D = $Camera2D
 @onready var info_panel = $CanvasLayer/StrategicActions/MarginContainer/VBox/SystemInfoPanel
@@ -188,25 +189,25 @@ func _draw() -> void:
 	for route in jump_routes:
 		draw_line(route["from"], route["to"], Color(0.35, 0.35, 0.55, 0.4), 1.0, true)
 
+	var show_names = camera.zoom.x >= NAME_ZOOM_THRESHOLD
 	for sys in systems_positions:
 		var pos = sys["pos"]
 		var data = sys["data"]
 		var owner = data.get("owner_faction", "")
 		var color = _get_faction_color(owner)
-		var radius = _get_spectral_radius(data.get("spectral_class", ""))
 
-		draw_circle(pos, radius, color)
-		draw_circle(pos, radius + 1, Color(1, 1, 1, 0.25), false, 1.0)
+		draw_circle(pos, SYSTEM_BASE_RADIUS, color)
+		draw_circle(pos, SYSTEM_BASE_RADIUS + 1, Color(1, 1, 1, 0.25), false, 1.0)
 
-		var font = ThemeDB.fallback_font
-		var font_size = ThemeDB.fallback_font_size
-		var text_pos = pos + Vector2(radius + 3, -radius)
-		draw_string(font, text_pos, sys["name"], HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color(1, 1, 1, 0.85))
+		if show_names:
+			var font = ThemeDB.fallback_font
+			var font_size = ThemeDB.fallback_font_size
+			var text_pos = pos + Vector2(SYSTEM_BASE_RADIUS + 3, -SYSTEM_BASE_RADIUS)
+			draw_string(font, text_pos, sys["name"], HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color(1, 1, 1, 0.85))
 
 	if not selected_system.is_empty():
 		var sel_pos = selected_system.get("pos", Vector2.ZERO)
-		var sel_radius = _get_spectral_radius(selected_system.get("data", {}).get("spectral_class", ""))
-		draw_circle(sel_pos, sel_radius + 4, Color(1, 1, 0, 0.6), false, 2.0)
+		draw_circle(sel_pos, SYSTEM_BASE_RADIUS + 4, Color(1, 1, 0, 0.6), false, 2.0)
 
 		for sys in systems_positions:
 			if sys == selected_system:
