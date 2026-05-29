@@ -30,7 +30,7 @@ func _on_date_changed(date: Dictionary) -> void:
 		return
 
 	var today = TimeManager.total_days
-	if today == _last_auto_reorder_day:
+	if today - _last_auto_reorder_day < 7:
 		return
 	_last_auto_reorder_day = today
 
