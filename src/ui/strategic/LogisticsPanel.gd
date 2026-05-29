@@ -748,8 +748,8 @@ func _on_delivery_arrived(_item_name: String, _quantity: int) -> void:
 
 func _refresh_local() -> void:
 	local_tree.clear()
+	var root = local_tree.create_item()
 	current_items = EconomySystem.current_market.get_available_items()
-	var root = local_tree.get_root()
 	var query = local_search.text.strip_edges().to_lower()
 	var added := 0
 	for item in current_items:
