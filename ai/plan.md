@@ -184,3 +184,6 @@ Color blind friendly palette option for paper doll and HUD.
 
 ### Save System Pattern (future)
 Multiple autosaves on rotating schedule with metadata.
+
+### Save File Self-Containment (constraint)
+A save file must contain ALL state needed to restore an active game on a fresh install — no reliance on external data files (archetypes, RAT tables, faction definitions, timeline events) that might differ between installations. NPC persistence must serialize full state (not regenerate from archetype+seed). The save is the single source of truth; external data is for initial generation only.
