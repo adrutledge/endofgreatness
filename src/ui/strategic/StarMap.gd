@@ -158,6 +158,9 @@ func _load_systems() -> void:
 		var owner = sys.get("owner_faction", "")
 		if owner == "A":
 			continue
+		var clan_codes = ["C", "CBS", "CBR", "CCC", "CCY", "CDS", "CFM", "CGB", "CHH", "CIH", "CJF", "CNC", "CSA", "CSJ", "CSV", "CWF"]
+		if owner in clan_codes:
+			continue
 		var coords = sys.get("coordinates", {})
 		var cx = coords.get("x", 0.0)
 		var cy = coords.get("y", 0.0)
