@@ -157,6 +157,7 @@ Form a unit → take a contract → deploy to the contract planet → explore th
 
 - Contract chains with branching, NPC persistence, major lore events
 - Organic narrative cluster: bounty board, bounties on player, pirate interference, LosTech rumor tracking
+- Mech gladiatorial games (Solaris VII): non-contract mech duels and team battles with prize money, reputation gains, and unique NPC rivals; separate career tracking from mercenary contracts
 
 ### Advanced Contracting
 
