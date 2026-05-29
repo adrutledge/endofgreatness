@@ -183,7 +183,7 @@ Each LOGISTICAL-role personnel gets limited checks/day; large units need multipl
 Color blind friendly palette option for paper doll and HUD.
 
 ### Save System Pattern (future)
-Multiple autosaves on rotating schedule with metadata.
+Autosaves default to the last day of each month (configurable interval). Multiple rotating slots with metadata (date, contract, location).
 
 ### Save File Self-Containment (constraint)
 A save file must restore all player campaign state on a fresh install (balance, inventory, units, personnel, contract chain progress). Invariant game data shipped with every install (component defs, faction data, RAT tables, timeline events, NPC archetypes) is assumed identical and does NOT need to be duplicated in the save. NPC persistence uses archetype reference + seed + limited flags (relationship, alive/dead, hostility), keeping saves lightweight while remaining self-contained for campaign state.
