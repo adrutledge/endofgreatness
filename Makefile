@@ -25,7 +25,7 @@ SUCKIT_SRC := tools/suckit/parse_suckit.py
 
 .PHONY: all build run test lint export clean test-gen suckit
 
-all: suckit lint test build
+all: lint test build
 
 build:
 	$(GODOT) --headless --export-release "$(EXPORT_PRESET)" $(EXPORT_DIR)/
@@ -42,10 +42,12 @@ rune:
 	OPENCODE_DEBUG=true $(GODOT) --path . $(GODOT_FLAGS)
 
 $(MTF_STAMP): $(MTF_SRC) $(MTF_DEPS) $(MTF_TEST)
+	@echo "[MTF Parser]"
 	@$(GODOT) --headless --script $(MTF_TEST) 2>&1 | grep -E "^(PASS|FAIL|Results)"
 	@touch $(MTF_STAMP)
 
 $(MARKET_STAMP): $(MARKET_TEST)
+	@echo "[Market Population]"
 	@$(GODOT) --headless --script $(MARKET_TEST) 2>&1 | grep -E "^(PASS|FAIL|Results)"
 	@touch $(MARKET_STAMP)
 
@@ -74,6 +76,7 @@ suckit:
 	python3 $(SUCKIT_SRC) 2>&1 | grep -v "^  Skipping"
 
 $(STRAT_GEN_STAMP): $(STRAT_GEN_SRC) $(STRAT_GEN_DEPS) $(STRAT_GEN_DATA) $(STRAT_GEN_TEST)
+	@echo "[Strat Unit Generator]"
 	@$(GODOT) --headless --script $(STRAT_GEN_TEST) 2>&1 | grep -E "^(PASS|FAIL|Results)"
 	@touch $(STRAT_GEN_STAMP)
 
