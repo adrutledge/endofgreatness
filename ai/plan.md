@@ -1,7 +1,7 @@
 # End of Greatness — AI Build Plan
 
 ## Core Gameplay Loop (v1)
-Form a unit → take a contract → deploy to the contract → engage in tactical combat → complete the contract → repeat. Everything in Phases 0-6 serves this loop. Features that don't directly feed this loop are deferred to post-v1.
+Form a unit → take a contract → deploy to the contract planet → explore the planetary hex map → engage in tactical combat(s) as objectives are encountered → complete the contract → repeat. Everything in Phases 0-6 serves this loop. Features that don't directly feed this loop are deferred to post-v1.
 
 ## Phase 0: Foundation & Tooling
 
@@ -133,7 +133,10 @@ Form a unit → take a contract → deploy to the contract → engage in tactica
 ---
 
 ## Phase 4 — Operational Layer
-- Planetary hex map, operational actions, faction presence on planet
+- Planetary hex map: player explores the contract planet, moving units across hexes
+- Exploration reveals objectives, enemies, salvage, and leads into tactical engagements
+- Multiple tactical combats may be necessary to complete a single contract
+- Faction presence on planet
 - Deploy-time allocation UI, auto-allocate defaults
 
 ## Phase 5 — Rules Engine
