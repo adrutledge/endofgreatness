@@ -159,7 +159,12 @@ func _load_systems() -> void:
 		if owner == "A":
 			continue
 		var coords = sys.get("coordinates", {})
-		var pos = Vector2(coords.get("x", 0.0), -coords.get("y", 0.0))
+		var cx = coords.get("x", 0.0)
+		var cy = coords.get("y", 0.0)
+		var dist = sqrt(cx * cx + cy * cy)
+		if dist > 720.0:
+			continue
+		var pos = Vector2(cx, -cy)
 		systems_positions.append({
 			"name": name,
 			"pos": pos,
