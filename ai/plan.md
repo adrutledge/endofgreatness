@@ -144,7 +144,7 @@ Form a unit → take a contract → deploy to the contract planet → explore th
 
 ## Phase 6 — Tactical Layer
 - Procedurally generated hex combat map, unit representation, combat flow
-- Tactical mission types: convoy defense, convoy ambush, assault, infiltration, recon in force, raid, breakthrough, holding action, extraction, objective assault
+- Tactical mission types: convoy defense, convoy ambush, assault, infiltration, recon in force, raid, breakthrough, holding action, extraction, objective assault, assassination, assassination defense
 - Tactical AI with strategy patterns per side: non-combatant, convoy, aggressive, defensive, ambush, ambushed, pursuit, withdrawal, objective-guard
 
 ## Future Work (post-v1)
