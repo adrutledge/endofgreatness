@@ -230,6 +230,7 @@ func _build_local_tab() -> void:
 	local_tree.size_flags_horizontal = SIZE_EXPAND_FILL * 2
 	local_tree.size_flags_vertical = SIZE_EXPAND_FILL
 	local_tree.hide_root = true
+	local_tree.allow_reselect = true
 	local_tree.columns = 3
 	local_tree.set_column_title(0, tr("Qty"))
 	local_tree.set_column_title(1, tr("Item"))
@@ -753,6 +754,7 @@ func _on_delivery_arrived(_item_name: String, _quantity: int) -> void:
 func _refresh_local() -> void:
 	local_tree.clear()
 	var root = local_tree.create_item()
+	root.set_text(0, "")
 	current_items = EconomySystem.current_market.get_available_items()
 	var query = local_search.text.strip_edges().to_lower()
 	var added := 0
