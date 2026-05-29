@@ -186,4 +186,4 @@ Color blind friendly palette option for paper doll and HUD.
 Multiple autosaves on rotating schedule with metadata.
 
 ### Save File Self-Containment (constraint)
-A save file must contain ALL state needed to restore an active game on a fresh install — no reliance on external data files (archetypes, RAT tables, faction definitions, timeline events) that might differ between installations. NPC persistence must serialize full state (not regenerate from archetype+seed). The save is the single source of truth; external data is for initial generation only.
+A save file must restore all player campaign state on a fresh install (balance, inventory, units, personnel, contract chain progress). Invariant game data shipped with every install (component defs, faction data, RAT tables, timeline events, NPC archetypes) is assumed identical and does NOT need to be duplicated in the save. NPC persistence uses archetype reference + seed + limited flags (relationship, alive/dead, hostility), keeping saves lightweight while remaining self-contained for campaign state.
