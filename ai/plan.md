@@ -144,7 +144,7 @@ Form a unit → take a contract → deploy to the contract planet → explore th
 
 ## Phase 6 — Tactical Layer
 - Procedurally generated hex combat map, unit representation, combat flow
-- Tactical AI with strategy patterns
+- Tactical AI with strategy patterns: non-combatant, convoy, aggressive, defensive, ambush, ambushed, pursuit, withdrawal, and objective-guard
 
 ## Future Work (post-v1)
 
