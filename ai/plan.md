@@ -264,9 +264,9 @@
 - Generation logic: battle_loss_reimbursement_rate inversely correlated with c_bill_payment and salvage_rate — high-pay/high-salvage contracts offer less reimbursement; desperate employers (e.g., planetary assault against superior force) may offer full reimbursement
 - Contracts appear on a "contract board" and expire after N ticks if not accepted
 - **Contract duration**:
-  - Garrison and cadre duty contracts tend to be longer (low single-digit months — 1–6 months, weighted toward 1–3)
-  - Standard contracts (assault, raid, pirate hunting, objective raids) fall in the middle (weeks to a few months)
-  - Emergency contracts are short (days to a few weeks); these tend to be riot duty, defense duty, or small-scale raids, offering Independent command rights and better salvage/pay than standard contracts of similar difficulty, but with a wider difficulty window (easier or harder than expected) reflecting the employer's desperation and incomplete intelligence; emergency contracts expire faster (fewer ticks before removal)
+  - Garrison and cadre duty: around a year (low double-digit months, 9–14)
+  - Planetary assault and pirate hunting: 1–6 months, weighted toward 3–5
+  - Emergency contracts: days to a few weeks; these tend to be riot duty, defense duty, or small-scale raids, offering Independent command rights and better salvage/pay than standard contracts of similar difficulty, but with a wider difficulty window (easier or harder than expected) reflecting the employer's desperation and incomplete intelligence; emergency contracts expire faster (fewer ticks before removal)
 - **Contract breaches** (future — advanced contracting): both employer and employee (player) may breach a contract, each with severity levels (Minor/Major/Critical); employee breaches include: failing to deploy minimum required forces, withdrawing from contract early, refusing a direct order under House/Integrated command, fraternizing with the enemy, committing war crimes that damage employer reputation; employer breaches include: failure to provide promised transport/supplies, non-payment of agreed salvage/payout, ordering the employee to perform illegal acts, abandoning the employee on planet; severity determines reputation damage, MRB sanctions, financial penalties (forfeit of bond, repayment of advance), and potential legal action; both sides have a grace period to cure minor breaches before escalation; tracked per-contract with a breach log for dispute resolution
 
 ### P3.4 — Organization Management
