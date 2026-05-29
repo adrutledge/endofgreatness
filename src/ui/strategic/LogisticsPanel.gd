@@ -38,7 +38,7 @@ var delivery_detail_title: Label
 var delivery_detail_info: Label
 
 # Market — local tab
-var local_tree: Tree
+var local_list: ItemList
 var local_search: LineEdit
 var local_count_label: Label
 var local_name: Label
@@ -217,35 +217,20 @@ func _build_local_tab() -> void:
 	local_count_label.text = ""
 	margin.add_child(local_count_label)
 
-	var test_label = Label.new()
-	test_label.text = "DEBUG: Local tab loaded"
-	test_label.add_theme_color_override("font_color", Color(1, 0, 0))
-	margin.add_child(test_label)
-
 	var hsplit = _make_hbox()
 	margin.add_child(hsplit)
 
-	local_tree = Tree.new()
-	local_tree.name = "LocalTree"
-	local_tree.size_flags_horizontal = SIZE_EXPAND_FILL * 2
-	local_tree.size_flags_vertical = SIZE_EXPAND_FILL
-	local_tree.hide_root = true
-	local_tree.allow_reselect = true
-	local_tree.columns = 3
-	local_tree.set_column_title(0, tr("Qty"))
-	local_tree.set_column_title(1, tr("Item"))
-	local_tree.set_column_title(2, tr("Cost"))
-	local_tree.set_column_expand(0, false)
-	local_tree.set_column_min_width(0, 60)
-	local_tree.set_column_expand(1, true)
-	local_tree.set_column_expand(2, false)
-	local_tree.set_column_min_width(2, 100)
-	local_tree.add_theme_color_override("font_color", Color(1, 1, 1))
-	var tree_bg = StyleBoxFlat.new()
-	tree_bg.bg_color = Color(0.15, 0.15, 0.2, 1.0)
-	local_tree.add_theme_stylebox_override("panel", tree_bg)
-	local_tree.item_selected.connect(_on_local_tree_selected)
-	hsplit.add_child(local_tree)
+	local_list = ItemList.new()
+	local_list.name = "LocalList"
+	local_list.size_flags_horizontal = SIZE_EXPAND_FILL * 2
+	local_list.size_flags_vertical = SIZE_EXPAND_FILL
+	local_list.select_mode = ItemList.SELECT_SINGLE
+	local_list.add_theme_color_override("font_color", Color(1, 1, 1))
+	local_list.add_theme_color_override("font_selected_color", Color(0, 0, 0))
+	var list_bg = StyleBoxFlat.new()
+	list_bg.bg_color = Color(0.15, 0.15, 0.2, 1.0)
+	local_list.add_theme_stylebox_override("panel", list_bg)
+	hsplit.add_child(local_list)
 
 	var detail_panel = Panel.new()
 	detail_panel.name = "LocalDetail"
@@ -309,6 +294,7 @@ func _build_local_tab() -> void:
 	bh.add_child(buy_button)
 
 	local_search.text_changed.connect(_on_local_search)
+	local_list.item_selected.connect(_on_local_item_selected)
 	buy_button.pressed.connect(_on_buy)
 
 
@@ -752,49 +738,25 @@ func _on_delivery_arrived(_item_name: String, _quantity: int) -> void:
 # =====================
 
 func _refresh_local() -> void:
-	local_tree.clear()
-	var root = local_tree.create_item()
-	root.set_text(0, "")
+	local_list.clear()
 	current_items = EconomySystem.current_market.get_available_items()
 	var query = local_search.text.strip_edges().to_lower()
 	var added := 0
 	for item in current_items:
 		if query and not item.name.to_lower().contains(query):
 			continue
-		var row = local_tree.create_item(root)
-		row.set_text(0, str(item.quantity))
-		row.set_text_alignment(0, 2)
-		row.set_text(1, item.name)
-		row.set_text(2, Helpers.fmt_money(item.cost))
-		row.set_text_alignment(2, 2)
-		row.set_metadata(0, item)
+		local_list.add_item(tr("%s  x%d  %s") % [item.name, item.quantity, Helpers.fmt_money(item.cost)])
 		added += 1
 	local_count_label.text = tr("Items: %d (%d shown)") % [current_items.size(), added]
 	if added == 0:
-		var row = local_tree.create_item(root)
-		row.set_text(1, tr("[No items match filter]"))
+		local_list.add_item(tr("[No items match filter]"))
 
 
 func _on_local_search(_new_text: String) -> void:
 	_refresh_local()
 
 
-func _on_local_tree_selected() -> void:
-	var item = local_tree.get_selected()
-	if not item:
-		return
-	var data = item.get_metadata(0)
-	if not data:
-		return
-	selected_item_name = data.name
-	local_name.text = data.name
-	local_cost.text = tr("Cost: ") + Helpers.fmt_money(data.cost)
-	local_tech.text = tr("Tech Level: ") + str(data.tech_level)
-	local_tonnage.text = tr("Tonnage: ") + str(data.tonnage) + "t"
-	local_qty.text = tr("In stock: ") + str(data.quantity)
-	local_qty_spin.max_value = max(data.quantity, 1)
-	local_qty_spin.value = 1
-	buy_button.disabled = false
+
 
 
 func _get_filtered_local_items() -> Array[Dictionary]:
@@ -880,7 +842,7 @@ func _clear_remote_detail() -> void:
 
 func _on_remote_item_selected(index: int) -> void:
 	selected_item_name = ""
-	local_tree.deselect_all()
+	local_list.deselect_all()
 	buy_button.disabled = true
 
 	if index < 0 or index >= remote_results.size():
