@@ -129,19 +129,22 @@
 
 ---
 
-## Future Work (post-v1)
-
-### Phase 4 — Operational Layer
+## Phase 4 — Operational Layer
 - Planetary hex map, operational actions, faction presence on planet
-- Opposed planetary landings, escort/convoy mechanics
 - Deploy-time allocation UI, auto-allocate defaults
 
-### Phase 5 — Rules Engine
+## Phase 5 — Rules Engine
 - Flexible combat rules engine per Total Warfare
 
-### Phase 6 — Tactical Layer
+## Phase 6 — Tactical Layer
 - Hex combat map, unit representation, combat flow
 - Tactical AI with strategy patterns
+
+## Future Work (post-v1)
+
+### Aerospace
+- Aerospace assets (owned DropShips, fighters), interdiction of supply lines
+- Opposed planetary landings, escort/convoy mechanics
 
 ### Advanced Narrative (P3.3 expansion)
 
@@ -157,10 +160,6 @@
 
 - Black markets, factory-direct purchases via reputation
 - Logistics personnel daily check limits
-
-### Aerospace
-
-- Aerospace assets (owned DropShips, fighters), interdiction of supply lines
 
 ### Advanced Tech (post-3025/Lostech)
 
