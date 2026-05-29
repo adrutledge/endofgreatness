@@ -21,17 +21,27 @@ func show_system(data: Dictionary) -> void:
 	spectral_label.text = tr("Spectral Class: ") + data.get("spectral_class", "Unknown")
 
 	var owner = data.get("owner_faction", "")
-	var faction_display = "Owner: " + owner if owner else "Unowned"
+	var owner_name = owner
+	var faction = GameState.factions.get(owner) if owner else null
+	if faction:
+		owner_name = faction.faction_name
+	var faction_display = tr("Owner: ") + owner_name if owner else tr("Unowned")
 	var factions_present = data.get("factions_present", [])
 	if factions_present is Array and factions_present.size() > 0:
-		faction_display += "\nPresent: " + ", ".join(factions_present)
+		faction_display += "\n" + tr("Present: ") + ", ".join(factions_present)
 	factions_label.text = faction_display
 
 	var player_present = GameState.player.current_planet == data.get("name", "")
 	player_label.text = tr("Player units present")
 	player_label.visible = player_present
 
-	_populate_planets(data.get("planets", []))
+	var bodies = data.get("planets", [])
+	var subtitle := Label.new()
+	subtitle.add_theme_font_size_override("font_size", 13)
+	subtitle.add_theme_color_override("font_color", Color(0.8, 0.9, 1.0))
+	subtitle.text = tr("Inhabited Objects: %d") % bodies.size()
+	details_container.add_child(subtitle)
+	_populate_planets(bodies)
 	show()
 
 func _populate_planets(planets: Array) -> void:
@@ -80,7 +90,7 @@ func _populate_planets(planets: Array) -> void:
 			if parts.size() > 0:
 				lines.append("USILR: " + ", ".join(parts))
 
-		info.text = tr("\n")
+		info.text = "\n".join(lines) if not lines.is_empty() else ""
 		info.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		section.add_child(info)
 
