@@ -4,6 +4,7 @@ var systems_positions: Array[Dictionary] = []
 var jump_routes: Array[Dictionary] = []
 var selected_system: Dictionary = {}
 var _faction_territory: Dictionary = {}
+var _placed_labels: Array[Rect2] = []
 
 var dragging: bool = false
 
@@ -251,6 +252,7 @@ func _calculate_jump_routes() -> void:
 				jump_routes.append({"from": a["pos"], "to": b["pos"]})
 
 func _draw() -> void:
+	_placed_labels.clear()
 	draw_rect(Rect2(-5000, -5000, 10000, 10000), Color(0.06, 0.06, 0.1, 1.0))
 
 	var cell_size = 12.0
@@ -275,7 +277,17 @@ func _draw() -> void:
 			var font = ThemeDB.fallback_font
 			var font_size = ThemeDB.fallback_font_size
 			var text_pos = pos + Vector2(SYSTEM_BASE_RADIUS + 3, -SYSTEM_BASE_RADIUS)
-			draw_string(font, text_pos, sys["name"], HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color(1, 1, 1, 0.85))
+			var label_width = sys["name"].length() * font_size * 0.5 / camera.zoom.x
+			var label_height = font_size * 1.2 / camera.zoom.x
+			var label_rect = Rect2(text_pos.x, text_pos.y - label_height, label_width, label_height)
+			var overlaps := false
+			for r in _placed_labels:
+				if label_rect.intersects(r):
+					overlaps = true
+					break
+			if not overlaps:
+				_placed_labels.append(label_rect)
+				draw_string(font, text_pos, sys["name"], HORIZONTAL_ALIGNMENT_LEFT, -1, font_size, Color(1, 1, 1, 0.85))
 
 	if not selected_system.is_empty():
 		var sel_pos = selected_system.get("pos", Vector2.ZERO)
