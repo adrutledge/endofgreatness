@@ -3,7 +3,7 @@ extends Node2D
 var systems_positions: Array[Dictionary] = []
 var jump_routes: Array[Dictionary] = []
 var selected_system: Dictionary = {}
-var _faction_hulls: Dictionary = {}
+var _faction_territory: Dictionary = {}
 
 var dragging: bool = false
 
@@ -43,7 +43,7 @@ func _ready() -> void:
 	logistics_ui.connect("closed", _on_logistics_closed)
 	Helpers.debug_print("StarMap", "signals connected, loading systems")
 	_load_systems()
-	_compute_faction_hulls()
+	_compute_faction_territory()
 	_calculate_jump_routes()
 	camera.zoom = Vector2(7.0, 7.0)
 	var home = GameState.player.current_planet if GameState.player and not GameState.player.current_planet.is_empty() else "Galatea"
@@ -179,7 +179,7 @@ func _load_systems() -> void:
 			"data": sys
 		})
 
-func _compute_faction_hulls() -> void:
+func _compute_faction_territory() -> void:
 	# Build influence map via nearest-system Voronoi on a coarse grid.
 	# Each faction's territory is the region closest to any of its systems.
 	var groups: Dictionary = {}
@@ -223,14 +223,23 @@ func _compute_faction_hulls() -> void:
 					grid[best_owner] = []
 				grid[best_owner].append(pt)
 
-	# Convert each faction's grid cells into a hull polygon via convex hull
+	# Only keep territory cells that are within 90 LY of their nearest owned system
+	# to prevent bleeding into empty deep space.
+	var max_influence = 90.0
+	var max_influence_sq = max_influence * max_influence
 	for owner in grid:
 		var pts = grid[owner]
-		if pts.size() < 3:
-			continue
-		var hull = Geometry2D.convex_hull(PackedVector2Array(pts))
-		if hull.size() >= 3:
-			_faction_hulls[owner] = hull
+		var filtered: Array[Vector2] = []
+		for pt in pts:
+			var min_dist_sq = INF
+			for sp in territory[owner]:
+				var d = pt.distance_squared_to(sp)
+				if d < min_dist_sq:
+					min_dist_sq = d
+			if min_dist_sq <= max_influence_sq:
+				filtered.append(pt)
+		if filtered.size() >= 3:
+			_faction_territory[owner] = filtered
 
 
 func _calculate_jump_routes() -> void:
@@ -247,11 +256,13 @@ func _draw() -> void:
 	for route in jump_routes:
 		draw_line(route["from"], route["to"], Color(0.35, 0.35, 0.55, 0.4), 1.0, true)
 
-	for owner in _faction_hulls:
-		var hull = _faction_hulls[owner]
+	var cell_size = 12.0
+	var half_cell = cell_size * 0.5
+	for owner in _faction_territory:
 		var color = _get_faction_color(owner)
-		color.a = 0.12
-		draw_colored_polygon(hull, color)
+		color.a = 0.15
+		for pt in _faction_territory[owner]:
+			draw_rect(Rect2(pt.x - half_cell, pt.y - half_cell, cell_size, cell_size), color)
 
 	var show_names = camera.zoom.x >= NAME_ZOOM_THRESHOLD
 	for sys in systems_positions:
