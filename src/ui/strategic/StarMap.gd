@@ -161,6 +161,8 @@ func _load_systems() -> void:
 		var owner = sys.get("owner_faction", "")
 		if owner == "A":
 			continue
+		if owner in ["I(H)", "CS(H)"]:
+			continue
 		var hidden_codes = ["C", "CBS", "CBR", "CCC", "CCY", "CDS", "CFM", "CGB", "CHH", "CI", "CIH", "CJF", "CNC", "CSA", "CSJ", "CSV", "CWF"]
 		if owner in hidden_codes:
 			continue
