@@ -262,7 +262,8 @@ func _compute_faction_territory() -> void:
 				total_nn += sqrt(closest)
 				count += 1
 		var avg_nn = total_nn / max(count, 1)
-		faction_radius[owner] = clampf(avg_nn * 2.0, 30.0, 90.0)
+		var min_r = 45.0 if owner in ["CC", "DC", "FS", "FWL", "LC"] else 30.0
+		faction_radius[owner] = clampf(avg_nn * 2.0, min_r, 90.0)
 
 	for owner in grid:
 		var pts = grid[owner]
