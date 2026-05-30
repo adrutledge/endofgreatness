@@ -249,6 +249,10 @@ Color blind friendly palette option for paper doll and HUD.
 
 Each event produces a `DiffPacket` (Dictionary of effects: `{"system_hide": [...], "rep_change": {...}}`). An `EventJournal` singleton queues packets in FIFO order and applies them sequentially per tick. If an event triggers a sub-event, its diff is pushed to the back of the queue for the next tick. Every journal entry stores tick number, source event ID, and the full diff — providing auditability, determinism, and a serialization-ready record for save/load. No multi-threading needed; ordering guarantees come from the queue discipline, not locks.
 
+**Journal downsizing**: on very long games the journal grows unbounded; when it exceeds a configurable entry count (default 10,000), the oldest entries are condensed into a single aggregated diff — the net state change over that period is computed (system X changed from faction A→B→C becomes A→C), all individual entries are replaced with one consolidated entry marked `"downsampled": true`; this preserves save integrity while preventing bloat; the downsample threshold is configurable in settings
+
+Each event produces a `DiffPacket` (Dictionary of effects: `{"system_hide": [...], "rep_change": {...}}`). An `EventJournal` singleton queues packets in FIFO order and applies them sequentially per tick. If an event triggers a sub-event, its diff is pushed to the back of the queue for the next tick. Every journal entry stores tick number, source event ID, and the full diff — providing auditability, determinism, and a serialization-ready record for save/load. No multi-threading needed; ordering guarantees come from the queue discipline, not locks.
+
 ### Save System Pattern (future)
 
 Autosaves default to the last day of each month (configurable interval). Multiple rotating slots with metadata (date, contract, location).
