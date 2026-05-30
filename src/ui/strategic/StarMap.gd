@@ -253,9 +253,6 @@ func _calculate_jump_routes() -> void:
 func _draw() -> void:
 	draw_rect(Rect2(-5000, -5000, 10000, 10000), Color(0.06, 0.06, 0.1, 1.0))
 
-	for route in jump_routes:
-		draw_line(route["from"], route["to"], Color(0.35, 0.35, 0.55, 0.4), 1.0, true)
-
 	var cell_size = 12.0
 	var half_cell = cell_size * 0.5
 	for owner in _faction_territory:
