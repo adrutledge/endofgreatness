@@ -217,6 +217,7 @@ Form a unit → take a contract → deploy to the contract planet → explore th
 - When TimeManager date advances, systems whose current date falls within a `hidden_dates` range are filtered out of the starmap display (same as abandoned/unmapped)
 - This enables systems that are founded later (e.g., Periphery colonies established after 3025) or abandoned temporarily (e.g., during Succession Wars) to appear/disappear dynamically
 - Parser updates: `hidden_dates` can be derived from SUCKIT ownership data — if a system has `U` (uninhabited) in a year range, that range becomes a `hidden_dates` entry
+- **Edge case — stranded forces**: if a player has forces (tactical units, personnel) deployed on a system that becomes hidden due to a `hidden_dates` range, those forces are not lost; they remain on the system (which still exists in data, just hidden from the map) and the player must extract them via contract or transit before the system becomes accessible again; the system should still appear on the map in a faded/dimmed state while the player has forces present, with a warning tooltip explaining the situation; alternatively, an evacuation event is generated giving the player a limited window to withdraw before the system enters its hidden period
 
 ---
 
