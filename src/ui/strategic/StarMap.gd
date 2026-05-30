@@ -3,6 +3,7 @@ extends Node2D
 var systems_positions: Array[Dictionary] = []
 var jump_routes: Array[Dictionary] = []
 var selected_system: Dictionary = {}
+var _faction_hulls: Dictionary = {}
 
 var dragging: bool = false
 
@@ -42,6 +43,7 @@ func _ready() -> void:
 	logistics_ui.connect("closed", _on_logistics_closed)
 	Helpers.debug_print("StarMap", "signals connected, loading systems")
 	_load_systems()
+	_compute_faction_hulls()
 	_calculate_jump_routes()
 	camera.zoom = Vector2(7.0, 7.0)
 	var home = GameState.player.current_planet if GameState.player and not GameState.player.current_planet.is_empty() else "Galatea"
@@ -175,6 +177,28 @@ func _load_systems() -> void:
 			"data": sys
 		})
 
+func _compute_faction_hulls() -> void:
+	var groups: Dictionary = {}
+	for sys in systems_positions:
+		var owner = sys["data"].get("owner_faction", "")
+		if owner.is_empty():
+			continue
+		# Skip minor factions with too few systems for a meaningful border
+		if owner in ["I", "X", "U"]:
+			continue
+		if not groups.has(owner):
+			groups[owner] = []
+		groups[owner].append(sys["pos"])
+
+	for owner in groups:
+		var points = groups[owner]
+		if points.size() < 4:
+			continue
+		var hull = Geometry2D.convex_hull(PackedVector2Array(points))
+		if hull.size() >= 3:
+			_faction_hulls[owner] = hull
+
+
 func _calculate_jump_routes() -> void:
 	for i in range(systems_positions.size()):
 		for j in range(i + 1, systems_positions.size()):
@@ -188,6 +212,12 @@ func _draw() -> void:
 
 	for route in jump_routes:
 		draw_line(route["from"], route["to"], Color(0.35, 0.35, 0.55, 0.4), 1.0, true)
+
+	for owner in _faction_hulls:
+		var hull = _faction_hulls[owner]
+		var color = _get_faction_color(owner)
+		color.a = 0.12
+		draw_colored_polygon(hull, color)
 
 	var show_names = camera.zoom.x >= NAME_ZOOM_THRESHOLD
 	for sys in systems_positions:
