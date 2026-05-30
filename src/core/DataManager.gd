@@ -53,6 +53,7 @@ func load_factions() -> void:
 					faction.is_rebel = data.get("is_rebel", false)
 					faction.is_pirate = data.get("is_pirate", false)
 					faction.is_civilian = data.get("is_civilian", false)
+				faction.is_periphery = data.get("is_periphery", false)
 					factions[faction.short_code] = faction
 					var snake_key = file_name.replace(".json", "")
 					factions[snake_key] = faction

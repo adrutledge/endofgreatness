@@ -14,3 +14,4 @@ extends Resource
 @export var is_rebel: bool = false
 @export var is_pirate: bool = false
 @export var is_civilian: bool = false
+@export var is_periphery: bool = false
