@@ -213,6 +213,7 @@ Form a unit → take a contract → deploy to the contract planet → explore th
 - TM construction fields on component JSONs
 
 ### Timeline System Data
+- Replace monolithic `timeline_events.json` with a directory `data/events/YYYY/` — one JSON file per year, each a small array of events for that year; DataManager loads and merges all files at startup; keeps diffs readable and allows per-year manual additions
 - Add `hidden_dates` array to each system in starmap data: list of `[start_year, end_year]` ranges during which the system is uninhabited, undiscovered, or otherwise hidden from the map
 - When TimeManager date advances, systems whose current date falls within a `hidden_dates` range are filtered out of the starmap display (same as abandoned/unmapped)
 - This enables systems that are founded later (e.g., Periphery colonies established after 3025) or abandoned temporarily (e.g., during Succession Wars) to appear/disappear dynamically
