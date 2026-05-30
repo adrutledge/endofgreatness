@@ -31,9 +31,8 @@ Form a unit → take a contract → deploy to the contract planet → explore th
 ## Phase 1: Core Systems
 
 ### P1.1 — Time System
-
 - Calendar starting 3025-01-01, day/month/year, pause/resume, tactical mode
-- Timeline event checking
+- Timeline event checking (MVP: date advances but timeline events — ownership changes, lore events — are not processed; Inner Sphere remains static at 3025)
 - `month_started` signal for monthly refresh triggers
 
 ### P1.2 — Economy System
