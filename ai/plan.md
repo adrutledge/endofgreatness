@@ -158,6 +158,7 @@ Form a unit → take a contract → deploy to the contract planet → explore th
 - Contract chains with branching, NPC persistence, major lore events
 - Organic narrative cluster: bounty board, bounties on player, pirate interference, LosTech rumor tracking
 - Mech gladiatorial games (Solaris VII): non-contract mech duels and team battles with prize money, reputation gains, and unique NPC rivals; separate career tracking from mercenary contracts
+- Star League Survey Corps (SLSC) discovery: SLSC systems are hidden from the starmap (prefix filtering) but can be discovered through lostech rumor tracking; each SLSC system contains a Star League-era research outpost, cache, or facility with rare components, unique units, or lore data; discovery requires rumors, navigation data (coordinates decoded from SLSC designation), and a deep-periphery expedition outside normal jump routes
 
 ### Advanced Contracting
 
