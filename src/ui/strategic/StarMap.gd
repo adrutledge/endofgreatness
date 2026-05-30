@@ -201,7 +201,7 @@ func _compute_faction_territory() -> void:
 			territory[owner] = groups[owner]
 
 	# Sample grid step in world units — balance performance vs resolution
-	var step = 12.0
+	var step = 8.0
 	var extent = 800.0
 	var grid: Dictionary = {}
 	var x_start = -int(extent)
@@ -225,12 +225,29 @@ func _compute_faction_territory() -> void:
 					grid[best_owner] = []
 				grid[best_owner].append(pt)
 
-	# Only keep territory cells that are within 90 LY of their nearest owned system
-	# to prevent bleeding into empty deep space.
-	var max_influence = 90.0
-	var max_influence_sq = max_influence * max_influence
+	# Compute density-aware influence radius per faction: tighter for dense clusters,
+	# wider for sparse ones, but never exceed 90 LY or go below 30 LY.
+	var faction_radius: Dictionary = {}
+	for owner in territory:
+		var pts = territory[owner]
+		var total_nn := 0.0
+		var count := 0
+		for p in pts:
+			var closest = INF
+			for q in pts:
+				if q == p: continue
+				var d = p.distance_squared_to(q)
+				if d < closest: closest = d
+			if closest < INF:
+				total_nn += sqrt(closest)
+				count += 1
+		var avg_nn = total_nn / max(count, 1)
+		faction_radius[owner] = clampf(avg_nn * 2.0, 30.0, 90.0)
+
 	for owner in grid:
 		var pts = grid[owner]
+		var max_r = faction_radius.get(owner, 90.0)
+		var max_r_sq = max_r * max_r
 		var filtered: Array[Vector2] = []
 		for pt in pts:
 			var min_dist_sq = INF
@@ -238,7 +255,7 @@ func _compute_faction_territory() -> void:
 				var d = pt.distance_squared_to(sp)
 				if d < min_dist_sq:
 					min_dist_sq = d
-			if min_dist_sq <= max_influence_sq:
+			if min_dist_sq <= max_r_sq:
 				filtered.append(pt)
 		if filtered.size() >= 3:
 			_faction_territory[owner] = filtered
