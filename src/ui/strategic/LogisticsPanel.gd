@@ -596,7 +596,6 @@ func _load_config() -> void:
 
 func populate() -> void:
 	Helpers.debug_print("LogisticsPanel", "populate — current_tab=%d" % tabs.current_tab if tabs else -1)
-	print("populate: tabs.current_tab=", tabs.current_tab if tabs else -1)
 	balance_label.text = tr("Balance: ") + Helpers.fmt_money(EconomySystem.get_balance())
 	refresh_current_tab()
 
