@@ -15,7 +15,7 @@ var dragging: bool = false
 
 const JUMP_DISTANCE: float = 30.0
 const SYSTEM_BASE_RADIUS: float = 3.0
-const NAME_ZOOM_THRESHOLD: float = 3.0
+const NAME_ZOOM_THRESHOLD: float = 2.5
 
 @onready var camera: Camera2D = $Camera2D
 @onready var info_panel = $CanvasLayer/StrategicActions/MarginContainer/VBox/SystemInfoPanel
@@ -51,7 +51,7 @@ func _ready() -> void:
 	_load_systems()
 	_compute_faction_territory()
 	_calculate_jump_routes()
-	camera.zoom = Vector2(7.0, 7.0)
+		camera.zoom = Vector2(4.0, 4.0)
 	var home = GameState.player.current_planet if GameState.player and not GameState.player.current_planet.is_empty() else "Galatea"
 	var home_data = DataManager.systems_data.get(home, {})
 	var home_coords = home_data.get("coordinates", {})
@@ -481,12 +481,12 @@ func _unhandled_input(event: InputEvent) -> void:
 
 		elif btn == MOUSE_BUTTON_WHEEL_UP and event.pressed:
 			var z = camera.zoom * 1.15
-			camera.zoom = Vector2(clampf(z.x, 0.1, 10.0), clampf(z.y, 0.1, 10.0))
+			camera.zoom = Vector2(clampf(z.x, 0.3, 5.0), clampf(z.y, 0.3, 5.0))
 			queue_redraw()
 
 		elif btn == MOUSE_BUTTON_WHEEL_DOWN and event.pressed:
 			var z = camera.zoom / 1.15
-			camera.zoom = Vector2(clampf(z.x, 0.1, 10.0), clampf(z.y, 0.1, 10.0))
+			camera.zoom = Vector2(clampf(z.x, 0.3, 5.0), clampf(z.y, 0.3, 5.0))
 			queue_redraw()
 
 	if event is InputEventMouseMotion and dragging:
