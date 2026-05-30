@@ -164,7 +164,7 @@ Form a unit → take a contract → deploy to the contract planet → explore th
 
 - Breach system (employer + employee, severity levels, MRB sanctions)
 - Contract types expanded with emergency/duration variance
-- **Disputed systems** (future — depends on Advanced Market & Logistics): planets with contested ownership (D(DC/LC), etc.) have reduced market supplies (sporadic trade, no reliable faction supply lines) and generate mostly assault and raid contracts with restrictive command rights (House/Integrated) or urgent/emergency contracts with Independent rights but higher risk
+- **Disputed and contested systems** (future — depends on Advanced Market & Logistics): planets with contested ownership (D(DC/LC), etc.) or those in the process of changing hands (per timeline events) have reduced market supplies (sporadic trade, no reliable faction supply lines) and skewed contract generation favoring assault, raid, defense, and garrison duties with restrictive command rights (House/Integrated) or urgent/emergency contracts with Independent rights but higher risk; different timeline eras have different disputed systems; if there are too few hardcoded D(...) systems in a given era, systems near a recent ownership change (within ~5 years of a timeline event) are treated as contested, ensuring a minimum number of active conflict zones at any date
 
 ### Advanced Market & Logistics
 
