@@ -27,7 +27,7 @@ static func debug_print(tag: String, msg: String) -> void:
 	_ensure_debug()
 	if not DEBUG:
 		return
-	print("[DBG][%s] %s" % [tag, msg])
+	printerr("[DBG][%s] %s" % [tag, msg])
 
 
 static func debug_warn(tag: String, msg: String) -> void:
