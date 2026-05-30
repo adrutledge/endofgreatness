@@ -1,7 +1,7 @@
 {
   "name": "Federated Suns",
   "short_code": "FS",
-  "color": "#eab308",
+  "color": "#facc15",
   "home_worlds": ["New Avalon", "Robinson", "Katherine"],
   "unique_units": ["Rifleman", "Marauder", "Warhammer", "Enforcer"],
   "unique_components": ["Suns Targeting Computer", "Valiant Armor"],

@@ -193,15 +193,15 @@ func _compute_faction_territory() -> void:
 			groups[owner] = []
 		groups[owner].append(sys["pos"])
 
-	# Only compute for factions with enough systems to form meaningful territory
+	# Only compute territory for major factions (exclude disputed, hidden, very minor)
 	var territory: Dictionary = {}
-	var minor_cutoff = 3
+	var major_codes = ["CC", "DC", "FS", "FWL", "LC", "TC", "MOC", "OA", "I", "AuC", "MH", "OC", "CF", "LL", "TD", "MV", "EF", "IP", "NCR", "CDP", "RC", "FrR", "IE", "MC"]
 	for owner in groups:
-		if groups[owner].size() >= minor_cutoff:
+		if owner in major_codes and groups[owner].size() >= 3:
 			territory[owner] = groups[owner]
 
 	# Sample grid step in world units — balance performance vs resolution
-	var step = 8.0
+	var step = 4.0
 	var extent = 800.0
 	var grid: Dictionary = {}
 	var x_start = -int(extent)
@@ -213,13 +213,17 @@ func _compute_faction_territory() -> void:
 			var pt = Vector2(x, y)
 			var best_owner = ""
 			var best_dist = INF
-			for owner in territory:
-				var pts = territory[owner]
-				for sp in pts:
+			# Find nearest system from ANY faction (including minor/disputed),
+			# but only claim the cell for a major faction.
+			for owner in groups:
+				for sp in groups[owner]:
 					var d = pt.distance_squared_to(sp)
 					if d < best_dist:
 						best_dist = d
-						best_owner = owner
+						if owner in major_codes:
+							best_owner = owner
+						elif best_owner.is_empty():
+							best_owner = ""
 			if not best_owner.is_empty():
 				if not grid.has(best_owner):
 					grid[best_owner] = []
@@ -319,7 +323,7 @@ func _draw() -> void:
 	var half_cell = cell_size * 0.5
 	for owner in _faction_territory:
 		var color = _get_faction_color(owner)
-		color.a = 0.15
+		color.a = 0.07
 		for pt in _faction_territory[owner]:
 			draw_rect(Rect2(pt.x - half_cell, pt.y - half_cell, cell_size, cell_size), color)
 
@@ -329,9 +333,26 @@ func _draw() -> void:
 		var data = sys["data"]
 		var owner = data.get("owner_faction", "")
 		var color = _get_faction_color(owner)
+		var r = SYSTEM_BASE_RADIUS
 
-		draw_circle(pos, SYSTEM_BASE_RADIUS, color)
-		draw_circle(pos, SYSTEM_BASE_RADIUS + 1, Color(1, 1, 1, 0.25), false, 1.0)
+		if owner.begins_with("D("):
+			var inner = owner.substr(2, owner.length() - 3)
+			var parts = inner.split("/")
+			if parts.size() == 2:
+				var c1 = _get_faction_color(parts[0])
+				var c2 = _get_faction_color(parts[1])
+				draw_circle(pos, r, c1)
+				draw_circle(pos, r + 1, Color(1, 1, 1, 0.25), false, 1.0)
+				var stripe_count = 3
+				for s in range(stripe_count):
+					var offset = (s - 1) * r * 0.8
+					var from = Vector2(pos.x - r * 0.7 + offset, pos.y - r * 1.1)
+					var to = Vector2(pos.x + r * 0.7 + offset, pos.y + r * 1.1)
+					draw_line(from, to, c2, 1.0, true)
+				continue
+
+		draw_circle(pos, r, color)
+		draw_circle(pos, r + 1, Color(1, 1, 1, 0.25), false, 1.0)
 
 		if show_names:
 			var font = ThemeDB.fallback_font
