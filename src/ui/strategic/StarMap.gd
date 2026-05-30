@@ -8,6 +8,7 @@ var jump_path: Array = []
 var _faction_territory: Dictionary = {}
 var _placed_labels: Array[Rect2] = []
 var _adjacency: Dictionary = {}
+var _waypoints: Array[Dictionary] = []
 
 var dragging: bool = false
 
@@ -160,15 +161,13 @@ func _load_systems() -> void:
 	var data = DataManager.systems_data
 	if data.is_empty():
 		return
+	var pathfind_exclude = ["I(H)", "CS(H)"]
+	pathfind_exclude.append_array(["C", "CBS", "CBR", "CCC", "CCY", "CDS", "CFM", "CGB", "CHH", "CI", "CIH", "CJF", "CNC", "CSA", "CSJ", "CSV", "CWF"])
+	var display_exclude = ["A", "UNM"]
 	for name in data:
 		var sys = data[name]
 		var owner = sys.get("owner_faction", "")
-		if owner == "A" or owner == "UNM" or name.begins_with("SLSC"):
-			continue
-		if owner in ["I(H)", "CS(H)"]:
-			continue
-		var hidden_codes = ["C", "CBS", "CBR", "CCC", "CCY", "CDS", "CFM", "CGB", "CHH", "CI", "CIH", "CJF", "CNC", "CSA", "CSJ", "CSV", "CWF"]
-		if owner in hidden_codes:
+		if owner in pathfind_exclude or name.begins_with("SLSC"):
 			continue
 		var coords = sys.get("coordinates", {})
 		var cx = coords.get("x", 0.0)
@@ -177,11 +176,10 @@ func _load_systems() -> void:
 		if dist > 720.0:
 			continue
 		var pos = Vector2(cx, -cy)
-		systems_positions.append({
-			"name": name,
-			"pos": pos,
-			"data": sys
-		})
+		var entry = {"name": name, "pos": pos, "data": sys}
+		_waypoints.append(entry)
+		if owner not in display_exclude:
+			systems_positions.append(entry)
 
 func _compute_faction_territory() -> void:
 	# Build influence map via nearest-system Voronoi on a coarse grid.
@@ -248,13 +246,14 @@ func _compute_faction_territory() -> void:
 
 func _calculate_jump_routes() -> void:
 	_adjacency.clear()
-	for i in range(systems_positions.size()):
-		var a = systems_positions[i]
+	jump_routes.clear()
+	for i in range(_waypoints.size()):
+		var a = _waypoints[i]
 		var key = a["pos"]
 		if not _adjacency.has(key):
 			_adjacency[key] = []
-		for j in range(i + 1, systems_positions.size()):
-			var b = systems_positions[j]
+		for j in range(i + 1, _waypoints.size()):
+			var b = _waypoints[j]
 			if a["pos"].distance_to(b["pos"]) <= JUMP_DISTANCE:
 				jump_routes.append({"from": a["pos"], "to": b["pos"]})
 				_adjacency[key].append({"pos": b["pos"], "sys": b})
