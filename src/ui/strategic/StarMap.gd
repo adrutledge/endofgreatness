@@ -159,7 +159,7 @@ func _load_systems() -> void:
 	for name in data:
 		var sys = data[name]
 		var owner = sys.get("owner_faction", "")
-		if owner == "A" or name.begins_with("SLSC"):
+		if owner == "A" or owner == "UNM" or name.begins_with("SLSC"):
 			continue
 		if owner in ["I(H)", "CS(H)"]:
 			continue
