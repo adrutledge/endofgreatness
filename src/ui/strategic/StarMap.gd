@@ -180,23 +180,55 @@ func _load_systems() -> void:
 		})
 
 func _compute_faction_hulls() -> void:
+	# Build influence map via nearest-system Voronoi on a coarse grid.
+	# Each faction's territory is the region closest to any of its systems.
 	var groups: Dictionary = {}
 	for sys in systems_positions:
 		var owner = sys["data"].get("owner_faction", "")
-		if owner.is_empty():
-			continue
-		# Skip minor factions with too few systems for a meaningful border
-		if owner in ["I", "X", "U"]:
+		if owner.is_empty() or owner in ["I", "X", "U"]:
 			continue
 		if not groups.has(owner):
 			groups[owner] = []
 		groups[owner].append(sys["pos"])
 
+	# Only compute for factions with enough systems to form meaningful territory
+	var territory: Dictionary = {}
+	var minor_cutoff = 3
 	for owner in groups:
-		var points = groups[owner]
-		if points.size() < 4:
+		if groups[owner].size() >= minor_cutoff:
+			territory[owner] = groups[owner]
+
+	# Sample grid step in world units — balance performance vs resolution
+	var step = 12.0
+	var extent = 800.0
+	var grid: Dictionary = {}
+	var x_start = -int(extent)
+	var x_end = int(extent)
+	var y_start = -int(extent)
+	var y_end = int(extent)
+	for x in range(x_start, x_end + 1, int(step)):
+		for y in range(y_start, y_end + 1, int(step)):
+			var pt = Vector2(x, y)
+			var best_owner = ""
+			var best_dist = INF
+			for owner in territory:
+				var pts = territory[owner]
+				for sp in pts:
+					var d = pt.distance_squared_to(sp)
+					if d < best_dist:
+						best_dist = d
+						best_owner = owner
+			if not best_owner.is_empty():
+				if not grid.has(best_owner):
+					grid[best_owner] = []
+				grid[best_owner].append(pt)
+
+	# Convert each faction's grid cells into a hull polygon via convex hull
+	for owner in grid:
+		var pts = grid[owner]
+		if pts.size() < 3:
 			continue
-		var hull = Geometry2D.convex_hull(PackedVector2Array(points))
+		var hull = Geometry2D.convex_hull(PackedVector2Array(pts))
 		if hull.size() >= 3:
 			_faction_hulls[owner] = hull
 
