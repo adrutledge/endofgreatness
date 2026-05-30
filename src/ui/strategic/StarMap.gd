@@ -51,7 +51,7 @@ func _ready() -> void:
 	_load_systems()
 	_compute_faction_territory()
 	_calculate_jump_routes()
-		camera.zoom = Vector2(4.0, 4.0)
+	camera.zoom = Vector2(4.0, 4.0)
 	var home = GameState.player.current_planet if GameState.player and not GameState.player.current_planet.is_empty() else "Galatea"
 	var home_data = DataManager.systems_data.get(home, {})
 	var home_coords = home_data.get("coordinates", {})
