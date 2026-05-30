@@ -213,7 +213,7 @@ Form a unit → take a contract → deploy to the contract planet → explore th
 - TM construction fields on component JSONs
 
 ### Timeline System Data
-- Replace monolithic `timeline_events.json` with a directory `data/events/YYYY/` — one JSON file per year, each a small array of events for that year; DataManager loads and merges all files at startup; keeps diffs readable and allows per-year manual additions
+- Replace monolithic `timeline_events.json` with scriptable event files in `data/events/` — one file per event chain (e.g., `4th_succession_war.json`, `war_of_3039.json`); each file contains rules for what date(s) to fire on (single date, date range, or `{"start": "3028", "end": "3030", "check": "monthly"}`), the events themselves (ownership changes, system renames, faction alignments, etc.), and optional data overrides for situations that cannot be derived organically from the SUCKIT data (custom event text, faction breakouts, special mercenary contracts, lore-specific force compositions); DataManager loads and merges all files at startup; keeps diffs readable, allows modders to add event chains without touching auto-generated data
 - Add `hidden_dates` array to each system in starmap data: list of `[start_year, end_year]` ranges during which the system is uninhabited, undiscovered, or otherwise hidden from the map
 - When TimeManager date advances, systems whose current date falls within a `hidden_dates` range are filtered out of the starmap display (same as abandoned/unmapped)
 - This enables systems that are founded later (e.g., Periphery colonies established after 3025) or abandoned temporarily (e.g., during Succession Wars) to appear/disappear dynamically
