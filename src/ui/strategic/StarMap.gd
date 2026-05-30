@@ -6,6 +6,7 @@ var selected_system: Dictionary = {}
 var path_start: Dictionary = {}
 var jump_path: Array = []
 var _faction_territory: Dictionary = {}
+var _disputed_territory: Dictionary = {}
 var _placed_labels: Array[Rect2] = []
 var _adjacency: Dictionary = {}
 var _waypoints: Array[Dictionary] = []
@@ -213,18 +214,28 @@ func _compute_faction_territory() -> void:
 			var pt = Vector2(x, y)
 			var best_owner = ""
 			var best_dist = INF
-			# Find nearest system from ANY faction (including minor/disputed),
-			# but only claim the cell for a major faction.
+			var disputed_pair = ""
 			for owner in groups:
 				for sp in groups[owner]:
 					var d = pt.distance_squared_to(sp)
 					if d < best_dist:
 						best_dist = d
-						if owner in major_codes:
+						if owner.begins_with("D("):
+							var inner = owner.substr(2, owner.length() - 3)
+							if "/" in inner:
+								var parts = inner.split("/")
+								if parts.size() == 2 and parts[0] in major_codes and parts[1] in major_codes:
+									disputed_pair = inner
+						elif owner in major_codes:
 							best_owner = owner
-						elif best_owner.is_empty():
-							best_owner = ""
-			if not best_owner.is_empty():
+							disputed_pair = ""
+						else:
+							disputed_pair = ""
+			if not disputed_pair.is_empty():
+				if not _disputed_territory.has(disputed_pair):
+					_disputed_territory[disputed_pair] = []
+				_disputed_territory[disputed_pair].append(pt)
+			elif not best_owner.is_empty():
 				if not grid.has(best_owner):
 					grid[best_owner] = []
 				grid[best_owner].append(pt)
@@ -327,6 +338,20 @@ func _draw() -> void:
 		for pt in _faction_territory[owner]:
 			draw_rect(Rect2(pt.x - half_cell, pt.y - half_cell, cell_size, cell_size), color)
 
+	for pair in _disputed_territory:
+		var parts = pair.split("/")
+		if parts.size() != 2: continue
+		var bg_color = _get_faction_color(parts[0])
+		var stripe_color = _get_faction_color(parts[1])
+		bg_color.a = 0.07
+		stripe_color.a = 0.15
+		for pt in _disputed_territory[pair]:
+			draw_rect(Rect2(pt.x - half_cell, pt.y - half_cell, cell_size, cell_size), bg_color)
+			var s = half_cell * 0.7
+			var from = Vector2(pt.x - s, pt.y - s)
+			var to = Vector2(pt.x + s, pt.y + s)
+			draw_line(from, to, stripe_color, 1.5, true)
+
 	var show_names = camera.zoom.x >= NAME_ZOOM_THRESHOLD
 	for sys in systems_positions:
 		var pos = sys["pos"]
@@ -362,8 +387,8 @@ func _draw() -> void:
 			var label_height = font_size * 1.2 / camera.zoom.x
 			var label_rect = Rect2(text_pos.x, text_pos.y - label_height, label_width, label_height)
 			var overlaps := false
-			for r in _placed_labels:
-				if label_rect.intersects(r):
+			for placed in _placed_labels:
+				if label_rect.intersects(placed):
 					overlaps = true
 					break
 			if not overlaps:
