@@ -214,23 +214,28 @@ func _compute_faction_territory() -> void:
 			var pt = Vector2(x, y)
 			var best_owner = ""
 			var best_dist = INF
+			# Check major territory factions first (fast path — only ~20 factions)
+			for owner in territory:
+				for sp in territory[owner]:
+					var d = pt.distance_squared_to(sp)
+					if d < best_dist:
+						best_dist = d
+						best_owner = owner
+			# Check disputed systems separately (only a handful of them)
 			var disputed_pair = ""
 			for owner in groups:
+				if not owner.begins_with("D("):
+					continue
 				for sp in groups[owner]:
 					var d = pt.distance_squared_to(sp)
 					if d < best_dist:
 						best_dist = d
-						if owner.begins_with("D("):
-							var inner = owner.substr(2, owner.length() - 3)
-							if "/" in inner:
-								var parts = inner.split("/")
-								if parts.size() == 2 and parts[0] in major_codes and parts[1] in major_codes:
-									disputed_pair = inner
-						elif owner in major_codes:
-							best_owner = owner
-							disputed_pair = ""
-						else:
-							disputed_pair = ""
+						var inner = owner.substr(2, owner.length() - 3)
+						if "/" in inner:
+							var parts = inner.split("/")
+							if parts.size() == 2 and parts[0] in major_codes and parts[1] in major_codes:
+								disputed_pair = inner
+								best_owner = ""
 			if not disputed_pair.is_empty():
 				if not _disputed_territory.has(disputed_pair):
 					_disputed_territory[disputed_pair] = []
