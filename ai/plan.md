@@ -187,6 +187,7 @@ Form a unit → take a contract → deploy to the contract planet → explore th
 - Pilot abilities (terrain, mech affinity, weapon spec)
 - Passive XP gain from assigned roles
 - Preferred gender flag, external lovers, children, education
+- Medals and decorations (fruit salad): personnel earn medals for notable accomplishments — X kills in a single mission, surviving Y damage in one engagement, participating in a major lore conflict (Fourth Succession War, etc.), serving as an instructor (Training skill for their lance over Z months), extracting from a losing battle, or disabling a superior foe without destroying it; each medal grants a permanent buff (stat/skill bonus, trait, or ability unlock) and is displayed as a ribbon/medal icon on the personnel sheet; thresholds are mission-level (e.g., "3+ kills in one mission") not aggregate, rewarding exceptional moments; MRB may issue standard medals, while faction-specific decorations unlock with reputation; a character's medal rack ("fruit salad") is visible in their detail view, providing at-a-glance history
 
 ### Advanced Politics
 
