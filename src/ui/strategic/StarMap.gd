@@ -3,8 +3,11 @@ extends Node2D
 var systems_positions: Array[Dictionary] = []
 var jump_routes: Array[Dictionary] = []
 var selected_system: Dictionary = {}
+var path_start: Dictionary = {}
+var jump_path: Array = []
 var _faction_territory: Dictionary = {}
 var _placed_labels: Array[Rect2] = []
+var _adjacency: Dictionary = {}
 
 var dragging: bool = false
 
@@ -244,12 +247,53 @@ func _compute_faction_territory() -> void:
 
 
 func _calculate_jump_routes() -> void:
+	_adjacency.clear()
 	for i in range(systems_positions.size()):
+		var a = systems_positions[i]
+		var key = a["pos"]
+		if not _adjacency.has(key):
+			_adjacency[key] = []
 		for j in range(i + 1, systems_positions.size()):
-			var a = systems_positions[i]
 			var b = systems_positions[j]
 			if a["pos"].distance_to(b["pos"]) <= JUMP_DISTANCE:
 				jump_routes.append({"from": a["pos"], "to": b["pos"]})
+				_adjacency[key].append({"pos": b["pos"], "sys": b})
+				var bkey = b["pos"]
+				if not _adjacency.has(bkey):
+					_adjacency[bkey] = []
+				_adjacency[bkey].append({"pos": a["pos"], "sys": a})
+
+
+func _a_star_jump_path(from_pos: Vector2, to_pos: Vector2) -> Array:
+	if from_pos == to_pos or not _adjacency.has(from_pos) or not _adjacency.has(to_pos):
+		return []
+	var came_from: Dictionary = {}
+	var g_score: Dictionary = {}
+	var f_score: Dictionary = {}
+	var open_set: Array[Vector2] = [from_pos]
+	g_score[from_pos] = 0.0
+	f_score[from_pos] = from_pos.distance_to(to_pos) / JUMP_DISTANCE
+	while not open_set.is_empty():
+		open_set.sort_custom(func(a, b): return f_score.get(a, INF) < f_score.get(b, INF))
+		var current = open_set.pop_front()
+		if current == to_pos:
+			var path: Array[Vector2] = []
+			var node = current
+			while node != from_pos:
+				path.push_front(node)
+				node = came_from[node]
+			path.push_front(from_pos)
+			return path
+		for neighbor in _adjacency.get(current, []):
+			var npos = neighbor["pos"]
+			var tentative_g = g_score.get(current, INF) + 1.0 + neighbor["pos"].distance_to(current) / 10000.0
+			if tentative_g < g_score.get(npos, INF):
+				came_from[npos] = current
+				g_score[npos] = tentative_g
+				f_score[npos] = tentative_g + npos.distance_to(to_pos) / JUMP_DISTANCE
+				if not npos in open_set:
+					open_set.append(npos)
+	return []
 
 func _draw() -> void:
 	_placed_labels.clear()
@@ -299,6 +343,14 @@ func _draw() -> void:
 			var dist = sel_pos.distance_to(sys["pos"])
 			if dist <= JUMP_DISTANCE:
 				draw_line(sel_pos, sys["pos"], Color(0.5, 1.0, 0.5, 0.5), 2.0, true)
+
+		# Draw A* jump path
+		if jump_path.size() >= 2:
+			var path_color = Color(0.2, 0.8, 1.0, 0.9)
+			for i in range(jump_path.size() - 1):
+				draw_line(jump_path[i], jump_path[i + 1], path_color, 3.0, true)
+				draw_circle(jump_path[i], 3.0, path_color)
+			draw_circle(jump_path[jump_path.size() - 1], 3.0, path_color)
 
 func _get_faction_color(owner: String) -> Color:
 	if owner.is_empty():
@@ -387,10 +439,22 @@ func _check_system_click(world_pos: Vector2) -> void:
 			closest = sys
 
 	if closest:
-		selected_system = closest
-		info_panel.show_system(closest["data"])
+		if selected_system == closest:
+			selected_system = {}
+			path_start = {}
+			jump_path = []
+			info_panel.hide_panel()
+		else:
+			if not selected_system.is_empty() and selected_system != closest:
+				path_start = selected_system
+				var from_pos = path_start["pos"]
+				var to_pos = closest["pos"]
+				jump_path = _a_star_jump_path(from_pos, to_pos)
+			selected_system = closest
+			info_panel.show_system(closest["data"])
 	else:
 		selected_system = {}
+		path_start = {}
+		jump_path = []
 		info_panel.hide_panel()
-
 	queue_redraw()
