@@ -42,13 +42,13 @@ rune:
 	OPENCODE_DEBUG=true $(GODOT) --path . $(GODOT_FLAGS)
 
 $(MTF_STAMP): $(MTF_SRC) $(MTF_DEPS) $(MTF_TEST)
-	@echo "[MTF Parser]"
-	@$(GODOT) --headless --script $(MTF_TEST) 2>&1 | grep -E "^(PASS|FAIL|Results)"
+	@r=$$($(GODOT) --headless --script $(MTF_TEST) 2>&1 | grep "Results"); \
+	echo "[MTF Parser] $$r"
 	@touch $(MTF_STAMP)
 
 $(MARKET_STAMP): $(MARKET_TEST)
-	@echo "[Market Population]"
-	@$(GODOT) --headless --script $(MARKET_TEST) 2>&1 | grep -E "^(PASS|FAIL|Results)"
+	@r=$$($(GODOT) --headless --script $(MARKET_TEST) 2>&1 | grep "Results"); \
+	echo "[Market Population] $$r"
 	@touch $(MARKET_STAMP)
 
 # Regenerate starmap + timeline from SUCKIT CSVs. Only triggers on explicit `make suckit`
@@ -76,8 +76,8 @@ suckit:
 	python3 $(SUCKIT_SRC) 2>&1 | grep -v "^  Skipping"
 
 $(STRAT_GEN_STAMP): $(STRAT_GEN_SRC) $(STRAT_GEN_DEPS) $(STRAT_GEN_DATA) $(STRAT_GEN_TEST)
-	@echo "[Strat Unit Generator]"
-	@$(GODOT) --headless --script $(STRAT_GEN_TEST) 2>&1 | grep -E "^(PASS|FAIL|Results)"
+	@r=$$($(GODOT) --headless --script $(STRAT_GEN_TEST) 2>&1 | grep "Results"); \
+	echo "[Strat Unit Generator] $$r"
 	@touch $(STRAT_GEN_STAMP)
 
 test: data/starmap.json data/timeline_events.json $(MTF_STAMP) $(MARKET_STAMP) $(STRAT_GEN_STAMP)
