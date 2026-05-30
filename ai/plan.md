@@ -208,10 +208,15 @@ Form a unit → take a contract → deploy to the contract planet → explore th
 - Autosave rotation, manual saves, save metadata
 
 ### Data Gaps
-
 - USILR/HPG gameplay effects
 - faction_destroyed timeline events
 - TM construction fields on component JSONs
+
+### Timeline System Data
+- Add `hidden_dates` array to each system in starmap data: list of `[start_year, end_year]` ranges during which the system is uninhabited, undiscovered, or otherwise hidden from the map
+- When TimeManager date advances, systems whose current date falls within a `hidden_dates` range are filtered out of the starmap display (same as abandoned/unmapped)
+- This enables systems that are founded later (e.g., Periphery colonies established after 3025) or abandoned temporarily (e.g., during Succession Wars) to appear/disappear dynamically
+- Parser updates: `hidden_dates` can be derived from SUCKIT ownership data — if a system has `U` (uninhabited) in a year range, that range becomes a `hidden_dates` entry
 
 ---
 
