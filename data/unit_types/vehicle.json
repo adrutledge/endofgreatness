@@ -2,9 +2,45 @@
   "name": "Vehicle",
   "code": "VEHICLE",
   "hit_locations": {
-    "front": ["Front:crit", "Front", "Front", "Front", "Front", "Front", "Front", "Front", "Front", "Front", "Turret"],
-    "side": ["Side:crit", "Side", "Side", "Side", "Side", "Side", "Side", "Side", "Side", "Side", "Turret"],
-    "rear": ["Rear:crit", "Rear", "Rear", "Rear", "Rear", "Rear", "Rear", "Rear", "Rear", "Rear", "Turret"]
+    "front": [
+      {"location": "Front"},
+      {"location": "Front"},
+      {"location": "Front"},
+      {"location": "Front"},
+      {"location": "Front"},
+      {"location": "Front"},
+      {"location": "Front"},
+      {"location": "Front"},
+      {"location": "Front"},
+      {"location": "Front"},
+      {"location": "Turret"}
+    ],
+    "side": [
+      {"location": "Side", "motive": true},
+      {"location": "Side", "motive": true},
+      {"location": "Side", "motive": true},
+      {"location": "Side"},
+      {"location": "Side"},
+      {"location": "Side"},
+      {"location": "Side"},
+      {"location": "Side"},
+      {"location": "Side"},
+      {"location": "Side"},
+      {"location": "Turret"}
+    ],
+    "rear": [
+      {"location": "Rear"},
+      {"location": "Rear"},
+      {"location": "Rear"},
+      {"location": "Rear"},
+      {"location": "Rear"},
+      {"location": "Rear"},
+      {"location": "Rear"},
+      {"location": "Rear"},
+      {"location": "Rear"},
+      {"location": "Rear"},
+      {"location": "Turret"}
+    ]
   },
   "crit": {
     "confirmation_target": 10,
@@ -24,40 +60,19 @@
     }
   },
   "motive_damage": {
-    "enabled": true,
-    "threshold": 10,
-    "hover": {
-      "2": "motive_hover_crippled",
-      "3": "motive_hover_crippled",
-      "4": "motive_hover_crippled",
-      "5": "motive_hover_damaged",
-      "6": "motive_hover_damaged",
-      "7": "motive_damaged",
-      "8": "motive_damaged",
-      "9": "motive_damaged",
-      "10": "motive_damaged",
-      "11": "no_effect",
-      "12": "no_effect"
+    "confirmation_target": 8,
+    "mobility_bonus": {
+      "hover": -2,
+      "wheeled": 0,
+      "tracked": 2,
+      "vtol": -2
     },
-    "wheeled": {
+    "effects_table": {
       "2": "motive_crippled",
       "3": "motive_crippled",
       "4": "motive_crippled",
       "5": "motive_damaged",
       "6": "motive_damaged",
-      "7": "motive_damaged",
-      "8": "motive_damaged",
-      "9": "no_effect",
-      "10": "no_effect",
-      "11": "no_effect",
-      "12": "no_effect"
-    },
-    "tracked": {
-      "2": "motive_tracked_crippled",
-      "3": "motive_tracked_crippled",
-      "4": "motive_tracked_crippled",
-      "5": "motive_tracked_damaged",
-      "6": "motive_tracked_damaged",
       "7": "motive_damaged",
       "8": "motive_damaged",
       "9": "no_effect",

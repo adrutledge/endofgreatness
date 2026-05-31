@@ -158,10 +158,9 @@ func _apply_damage(target: TacticalUnit, damage: int, source_weapon: String, con
 	var direction = "front"
 	var locations = hit_table.get(direction, [])
 	var loc_roll = _rng.randi_range(2, 12)
-	var loc_result = locations[loc_roll - 2] if loc_roll - 2 < locations.size() else "Center Torso"
-	var parts = loc_result.split(":")
-	var loc_name = parts[0]
-	var can_crit = parts.size() > 1 and parts[1] == "crit"
+	var loc_entry = locations[loc_roll - 2] if loc_roll - 2 < locations.size() else {"location": "Center Torso"}
+	var loc_name = loc_entry.get("location", "Center Torso")
+	var can_tac = loc_entry.get("tac", false)
 
 	var comp = _find_component_in_location(target, loc_name)
 	if not comp:
@@ -171,7 +170,7 @@ func _apply_damage(target: TacticalUnit, damage: int, source_weapon: String, con
 
 	var crit_def = type_def.get("crit", {})
 	var confirm_target = crit_def.get("confirmation_target", 8)
-	var tac_float = crit_def.get("through_armor_floating", true)
+	var tac_float = crit_def.get("through_armor_floating", false)
 	var destroy_chance = _config.get("component_destroy_chance", 0.3)
 
 	if _rng.randf() < destroy_chance:
@@ -183,13 +182,16 @@ func _apply_damage(target: TacticalUnit, damage: int, source_weapon: String, con
 			EconomySystem.track_enemy_loss(contract, comp.component_name, value, target.tonnage, 1, Enums.Quality.D, false, source_weapon, false)
 			salvage_value = value
 
-		var crit_roll = _rng.randi_range(2, 12)
-		if crit_roll >= confirm_target:
-			var effects_table = crit_def.get("effects_table", {})
-			var result = effects_table.get(str(crit_roll), "component_damaged")
-			_apply_crit_effect(target, result)
+		var effects_table = crit_def.get("effects_table", {})
+		if not effects_table.is_empty():
+			var crit_roll = _rng.randi_range(2, 12)
+			if crit_roll >= confirm_target:
+				var result = effects_table.get(str(crit_roll), "component_damaged")
+				_apply_crit_effect(target, result)
 	else:
 		comp.status = Enums.ComponentStatus.DAMAGED
+
+	_check_motive_damage(target, target_type, type_def, loc_entry)
 
 	return salvage_value
 
@@ -221,6 +223,26 @@ func _find_component_in_location(unit: TacticalUnit, location_name: String) -> C
 		if c.location and c.location.location_name == location_name:
 			return c
 	return null if unit.components.is_empty() else unit.components[_rng.randi_range(0, unit.components.size() - 1)]
+
+
+func _check_motive_damage(unit: TacticalUnit, type_code: String, type_def: Dictionary, loc_entry: Dictionary) -> void:
+	if not loc_entry.get("motive", false):
+		return
+	var motive_def = type_def.get("motive_damage", {})
+	if not motive_def.get("enabled", true):
+		return
+	var target_num = motive_def.get("confirmation_target", 8)
+	var mot_bonus = motive_def.get("mobility_bonus", {})
+	var bonus = mot_bonus.get(unit.motion_type.to_lower(), 0)
+	var roll = _rng.randi_range(2, 12)
+	if roll + bonus >= target_num:
+		var effects = motive_def.get("effects_table", {})
+		var result = effects.get(str(roll), "motive_damaged")
+		match result:
+			"motive_crippled":
+				unit.movement_mp = max(0, unit.movement_mp - 3)
+			"motive_damaged":
+				unit.movement_mp = max(0, unit.movement_mp - 1)
 
 
 func _apply_crit_effect(unit: TacticalUnit, effect: String) -> void:

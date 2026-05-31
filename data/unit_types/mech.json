@@ -2,24 +2,35 @@
   "name": "Mech",
   "code": "MECH",
   "hit_locations": {
-    "front": ["Center Torso:crit", "Right Leg", "Right Leg", "Right Arm", "Right Arm", "Left Torso", "Left Arm", "Left Arm", "Left Leg", "Left Leg", "Head"],
-    "rear": ["Center Torso:crit", "Right Leg:crit", "Right Leg", "Right Arm", "Right Arm", "Left Torso", "Left Arm", "Left Arm", "Left Leg:crit", "Left Leg", "Head"]
+    "front": [
+      {"location": "Center Torso", "tac": true},
+      {"location": "Right Leg"},
+      {"location": "Right Leg"},
+      {"location": "Right Arm"},
+      {"location": "Right Arm"},
+      {"location": "Left Torso"},
+      {"location": "Left Arm"},
+      {"location": "Left Arm"},
+      {"location": "Left Leg"},
+      {"location": "Left Leg"},
+      {"location": "Head", "tac": true}
+    ],
+    "rear": [
+      {"location": "Center Torso", "tac": true},
+      {"location": "Right Leg"},
+      {"location": "Right Leg"},
+      {"location": "Right Arm"},
+      {"location": "Right Arm"},
+      {"location": "Left Torso"},
+      {"location": "Left Arm"},
+      {"location": "Left Arm"},
+      {"location": "Left Leg"},
+      {"location": "Left Leg"},
+      {"location": "Head", "tac": true}
+    ]
   },
   "crit": {
     "confirmation_target": 8,
-    "through_armor_floating": true,
-    "effects_table": {
-      "2": "ammo_explosion",
-      "3": "weapon_destroyed",
-      "4": "weapon_destroyed",
-      "5": "weapon_damaged",
-      "6": "component_destroyed",
-      "7": "component_damaged",
-      "8": "component_damaged",
-      "9": "weapon_damaged",
-      "10": "weapon_destroyed",
-      "11": "weapon_destroyed",
-      "12": "ammo_explosion"
-    }
+    "through_armor_floating": false
   }
 }
