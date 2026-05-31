@@ -333,3 +333,7 @@ EventDialog (Panel, ~600×400)
 ```
 
 The event system constructs the dialog, wires each option to its `EventEffects` method (rep change, fund adjustment, contract force-complete, etc.), then calls `CampaignView.show_modal(dialog)`. When an option is clicked, the effect runs and `CampaignView.dismiss_modal()` is called to advance the FIFO queue. Options can also push additional modals (for branching chains). Without an explicit event system, scripts can call `CampaignView.show_modal(AcceptDialog.new(...))` directly for one-off notifications.
+
+### UI Polish — Loading Feedback
+
+During game launch, `DataManager.load_all_data()` runs synchronously in `_ready()` and can take several seconds (loading 3171 systems, parsing hundreds of MTF unit files, loading 260+ component JSONs, 12+ faction files, timeline events). The main menu appears frozen during this period. Future improvement: add a loading screen or progress bar using `call_deferred` or a separate `LoadingScreen` scene that renders immediately while data loads in chunks. Each loading phase should print a status line (parsing mechs..., loading components..., building starmap...). The `StarmapCacheGenerator` autoload also runs deferred territory computation in the background — a subtle indicator during the main menu would communicate that startup caching is still active.
