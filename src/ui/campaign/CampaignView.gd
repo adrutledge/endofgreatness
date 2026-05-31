@@ -12,6 +12,7 @@ signal campaign_exited()
 @onready var planetary_layer = $PlanetaryLayer
 @onready var tactical_layer = $TacticalLayer
 @onready var layer_mgr = $LayerManager
+@onready var modal_layer = $ModalLayer
 
 func _ready() -> void:
 	layer_mgr.register_layer("strategic", strategic_layer)
@@ -66,3 +67,11 @@ func _on_strategic_planetary(contract: Contract) -> void:
 
 func _on_planetary_closed() -> void:
 	layer_mgr.pop()
+
+
+func show_modal(content: Control) -> void:
+	modal_layer.show(content)
+
+
+func dismiss_modal() -> void:
+	modal_layer.dismiss()
