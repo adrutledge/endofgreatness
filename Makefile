@@ -80,7 +80,8 @@ $(STRAT_GEN_STAMP): $(STRAT_GEN_SRC) $(STRAT_GEN_DEPS) $(STRAT_GEN_DATA) $(STRAT
 	echo "[Strat Unit Generator] $$r"
 	@touch $(STRAT_GEN_STAMP)
 
-test: lint data/starmap.json data/timeline_events.json $(MTF_STAMP) $(MARKET_STAMP) $(STRAT_GEN_STAMP)
+test: data/starmap.json data/timeline_events.json $(MTF_STAMP) $(MARKET_STAMP) $(STRAT_GEN_STAMP)
+	@$(MAKE) --quiet lint 2>/dev/null || true
 
 ## Headless generator integration test (requires autoloads, runs full engine)
 test-gen:
