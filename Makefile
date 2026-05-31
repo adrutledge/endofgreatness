@@ -20,6 +20,11 @@ STRAT_GEN_TEST := tests/test_strategic_unit_generator.gd
 STRAT_GEN_TEST2 := tests/test_generate_company.gd
 STRAT_GEN_STAMP := .tested_strat_gen
 
+STARMAP_CACHE_SRC := src/core/StarmapCacheGenerator.gd
+STARMAP_CACHE_DATA := data/systems_index.json
+STARMAP_CACHE_TEST := tests/test_starmap_cache.gd
+STARMAP_CACHE_STAMP := .tested_starmap_cache
+
 SUCKIT_SRC := tools/suckit/parse_suckit.py
 
 
@@ -79,7 +84,12 @@ $(STRAT_GEN_STAMP): $(STRAT_GEN_SRC) $(STRAT_GEN_DEPS) $(STRAT_GEN_DATA) $(STRAT
 	echo "[Strat Unit Generator] $$r"
 	@touch $(STRAT_GEN_STAMP)
 
-test: data/systems_index.json data/timeline_events.json $(MTF_STAMP) $(MARKET_STAMP) $(STRAT_GEN_STAMP)
+$(STARMAP_CACHE_STAMP): $(STARMAP_CACHE_SRC) $(STARMAP_CACHE_DATA) $(STARMAP_CACHE_TEST)
+	@r=$$($(GODOT) --headless --script $(STARMAP_CACHE_TEST) 2>&1 | grep "Results"); \
+	echo "[Starmap Cache] $$r"
+	@touch $(STARMAP_CACHE_STAMP)
+
+test: data/systems_index.json data/timeline_events.json $(MTF_STAMP) $(MARKET_STAMP) $(STRAT_GEN_STAMP) $(STARMAP_CACHE_STAMP)
 	@$(MAKE) --quiet lint 2>/dev/null || true
 
 ## Headless generator integration test (requires autoloads, runs full engine)

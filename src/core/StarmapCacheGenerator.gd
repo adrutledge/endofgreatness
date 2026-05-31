@@ -129,6 +129,8 @@ func _generate() -> void:
 
 func _build_groups() -> Dictionary:
 	var groups: Dictionary = {}
+	if not DataManager or DataManager.systems_data.is_empty():
+		return groups
 	for name in DataManager.systems_data:
 		var sys = DataManager.systems_data[name]
 		var owner = sys.get("owner_faction", "")
