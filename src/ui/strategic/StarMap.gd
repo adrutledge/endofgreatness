@@ -43,6 +43,7 @@ func _on_planetary_map_requested(contract: Contract) -> void:
 
 func _load_systems() -> void:
 	var data = DataManager.systems_data
+	Helpers.debug_print("StarMap", "_load_systems data.size=%d is_empty=%s" % [data.size(), data.is_empty()])
 	if data.is_empty():
 		return
 
