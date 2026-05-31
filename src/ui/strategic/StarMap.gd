@@ -19,35 +19,29 @@ const NAME_ZOOM_THRESHOLD: float = 2.5
 
 @onready var camera: Camera2D = $Camera2D
 @onready var info_panel = $CanvasLayer/StrategicActions/MarginContainer/VBox/SystemInfoPanel
-@onready var org_mgmt = $CanvasLayer/OrganizationManagement
-@onready var contract_board = $CanvasLayer/ContractBoard
-@onready var personnel_mgmt = $CanvasLayer/PersonnelManagement
 @onready var sidebar = $CanvasLayer/StrategicActions
-@onready var event_log_ui = $CanvasLayer/EventLog
-@onready var mech_lab_ui = $CanvasLayer/MechLab
-@onready var logistics_ui = $CanvasLayer/LogisticsPanel
-@onready var planetary_map = $CanvasLayer/PlanetaryMap
+@onready var panel_mgr: PanelManager = $PanelManager
 
 func _ready() -> void:
 	Helpers.debug_print("StarMap", "_ready start")
-	Helpers.debug_print("StarMap", "sidebar=%s org=%s contract=%s personnel=%s event=%s mech=%s log=%s" % [
-		sidebar, org_mgmt, contract_board, personnel_mgmt,
-		event_log_ui, mech_lab_ui, logistics_ui])
-	sidebar.organization_tree_requested.connect(_on_organization_tree)
-	sidebar.contract_board_requested.connect(_on_contract_board)
-	sidebar.personnel_management_requested.connect(_on_personnel_management)
-	sidebar.mech_lab_requested.connect(_on_mech_lab)
-	sidebar.logistics_requested.connect(_on_logistics)
-	sidebar.event_log_requested.connect(_on_event_log)
-	org_mgmt.closed.connect(_on_org_mgmt_closed)
-	contract_board.closed.connect(_on_contract_board_closed)
-	contract_board.view_map_requested.connect(_open_planetary_map)
-	personnel_mgmt.closed.connect(_on_personnel_mgmt_closed)
-	event_log_ui.connect("closed", _on_event_log_closed)
-	mech_lab_ui.connect("closed", _on_mech_lab_closed)
-	logistics_ui.connect("closed", _on_logistics_closed)
-	planetary_map.connect("closed", _on_planetary_map_closed)
-	Helpers.debug_print("StarMap", "signals connected, loading systems")
+
+	panel_mgr.set_sidebar(sidebar)
+	panel_mgr.register_panel("mech_lab", $CanvasLayer/MechLab, func(): $CanvasLayer/MechLab.populate())
+	panel_mgr.register_panel("logistics", $CanvasLayer/LogisticsPanel, func(): $CanvasLayer/LogisticsPanel.populate())
+	panel_mgr.register_panel("contract_board", $CanvasLayer/ContractBoard, func(): $CanvasLayer/ContractBoard.populate())
+	panel_mgr.register_panel("org_mgmt", $CanvasLayer/OrganizationManagement, func(): $CanvasLayer/OrganizationManagement.populate_tree())
+	panel_mgr.register_panel("personnel", $CanvasLayer/PersonnelManagement, func(): $CanvasLayer/PersonnelManagement.populate_roster())
+	panel_mgr.register_panel("event_log", $CanvasLayer/EventLog, func(): $CanvasLayer/EventLog.populate())
+
+	sidebar.organization_tree_requested.connect(func(): panel_mgr.open_panel("org_mgmt"))
+	sidebar.contract_board_requested.connect(func(): panel_mgr.open_panel("contract_board"))
+	sidebar.personnel_management_requested.connect(func(): panel_mgr.open_panel("personnel"))
+	sidebar.mech_lab_requested.connect(func(): panel_mgr.open_panel("mech_lab"))
+	sidebar.logistics_requested.connect(func(): panel_mgr.open_panel("logistics"))
+	sidebar.event_log_requested.connect(func(): panel_mgr.open_panel("event_log"))
+	$CanvasLayer/ContractBoard.view_map_requested.connect(_open_planetary_map)
+
+	Helpers.debug_print("StarMap", "panel manager ready, loading systems")
 	_load_systems()
 	_compute_faction_territory()
 	_calculate_jump_routes()
@@ -61,103 +55,22 @@ func _ready() -> void:
 	queue_redraw()
 	Helpers.debug_print("StarMap", "_ready done, systems=%d routes=%d" % [systems_positions.size(), jump_routes.size()])
 
-func _on_contract_board() -> void:
-	if not contract_board:
-		Helpers.debug_warn("StarMap", "_on_contract_board — contract_board is null")
-		return
-	Helpers.debug_print("StarMap", "opening contract board")
-	sidebar.hide_sidebar()
-	contract_board.populate()
-	contract_board.show()
-
-func _on_contract_board_closed() -> void:
-	contract_board.hide()
-	sidebar.show_sidebar()
-
-func _on_organization_tree() -> void:
-	if not org_mgmt:
-		Helpers.debug_warn("StarMap", "_on_organization_tree — org_mgmt is null")
-		return
-	Helpers.debug_print("StarMap", "opening org tree")
-	sidebar.hide_sidebar()
-	org_mgmt.populate_tree()
-	org_mgmt.show()
-
-func _on_org_mgmt_closed() -> void:
-	Helpers.debug_print("StarMap", "closing org tree")
-	org_mgmt.hide()
-	sidebar.show_sidebar()
-
-func _on_personnel_management() -> void:
-	if not personnel_mgmt:
-		Helpers.debug_warn("StarMap", "_on_personnel_management — personnel_mgmt is null")
-		return
-	Helpers.debug_print("StarMap", "opening personnel mgmt")
-	sidebar.hide_sidebar()
-	personnel_mgmt.populate_roster()
-	personnel_mgmt.show()
-
-func _on_mech_lab() -> void:
-	if not mech_lab_ui:
-		Helpers.debug_warn("StarMap", "_on_mech_lab — mech_lab_ui is null")
-		return
-	Helpers.debug_print("StarMap", "opening mech lab")
-	sidebar.hide_sidebar()
-	mech_lab_ui.populate()
-	mech_lab_ui.show()
-
-func _on_mech_lab_closed() -> void:
-	Helpers.debug_print("StarMap", "closing mech lab")
-	mech_lab_ui.hide()
-	sidebar.show_sidebar()
-
-func _on_event_log() -> void:
-	if not event_log_ui:
-		Helpers.debug_warn("StarMap", "_on_event_log — event_log_ui is null")
-		return
-	Helpers.debug_print("StarMap", "opening event log")
-	sidebar.hide_sidebar()
-	event_log_ui.populate()
-	event_log_ui.show()
-
-func _on_logistics() -> void:
-	if not logistics_ui:
-		Helpers.debug_warn("StarMap", "_on_logistics — logistics_ui is null")
-		return
-	Helpers.debug_print("StarMap", "opening logistics")
-	sidebar.hide_sidebar()
-	logistics_ui.populate()
-	logistics_ui.show()
-
-func _on_logistics_closed() -> void:
-	Helpers.debug_print("StarMap", "closing logistics")
-	logistics_ui.hide()
-	sidebar.show_sidebar()
-
-func _on_event_log_closed() -> void:
-	Helpers.debug_print("StarMap", "closing event log")
-	event_log_ui.hide()
-	sidebar.show_sidebar()
-
-func _on_personnel_mgmt_closed() -> void:
-	Helpers.debug_print("StarMap", "closing personnel mgmt")
-	personnel_mgmt.hide()
-	sidebar.show_sidebar()
-
 
 func _open_planetary_map(contract: Contract) -> void:
-	if not planetary_map:
-		return
 	Helpers.debug_print("StarMap", "opening planetary map")
 	sidebar.hide_sidebar()
-	planetary_map.load_contract(contract)
-	planetary_map.show()
+	var map_node = $CanvasLayer/PlanetaryMap
+	map_node.load_contract(contract)
+	map_node.show()
+	if not map_node.closed.is_connected(_on_planetary_map_closed):
+		map_node.closed.connect(_on_planetary_map_closed)
 
 
 func _on_planetary_map_closed() -> void:
 	Helpers.debug_print("StarMap", "closing planetary map")
-	planetary_map.hide()
-	sidebar.show_sidebar()
+	$CanvasLayer/PlanetaryMap.hide()
+	if not panel_mgr.has_open_panels():
+		sidebar.show_sidebar()
 
 func _load_systems() -> void:
 	var data = DataManager.systems_data
@@ -447,27 +360,9 @@ func _get_spectral_radius(spectral: String) -> float:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
-		if mech_lab_ui.visible:
-			_on_mech_lab_closed()
+		if panel_mgr.close_top_panel():
 			get_viewport().set_input_as_handled()
-		elif logistics_ui.visible:
-			_on_logistics_closed()
-			get_viewport().set_input_as_handled()
-		elif contract_board.visible:
-			contract_board.hide()
-			sidebar.show_sidebar()
-			get_viewport().set_input_as_handled()
-		elif org_mgmt.visible:
-			org_mgmt.hide()
-			sidebar.show_sidebar()
-			get_viewport().set_input_as_handled()
-		elif event_log_ui.visible:
-			_on_event_log_closed()
-			get_viewport().set_input_as_handled()
-		elif personnel_mgmt.visible:
-			_on_personnel_mgmt_closed()
-			get_viewport().set_input_as_handled()
-		elif planetary_map.visible:
+		elif $CanvasLayer/PlanetaryMap.visible:
 			_on_planetary_map_closed()
 			get_viewport().set_input_as_handled()
 		elif info_panel.visible:
