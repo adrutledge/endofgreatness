@@ -160,6 +160,12 @@ func _setup_tabs() -> void:
 	tab_container.add_child(customize_tab)
 	_build_customize_ui()
 
+	var repair_tab = VBoxContainer.new()
+	repair_tab.name = "Repair"
+	repair_tab.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	tab_container.add_child(repair_tab)
+	_build_repair_tab(repair_tab)
+
 	tab_container.tab_selected.connect(_on_tab_changed)
 
 func _build_paper_doll_tab() -> void:
@@ -591,6 +597,158 @@ func _on_tab_changed(tab_index: int) -> void:
 		3:
 			if selected_unit:
 				_show_customize_view()
+		4:
+			if selected_unit:
+				_refresh_repair_view()
+
+
+var repair_label: RichTextLabel
+var repair_assign_btn: Button
+var repair_unassign_btn: Button
+
+func _build_repair_tab(tab: VBoxContainer) -> void:
+	var header = Label.new()
+	header.text = tr("Repair Bay")
+	header.add_theme_font_size_override("font_size", 14)
+	header.add_theme_color_override("font_color", Color(1.0, 0.9, 0.6))
+	tab.add_child(header)
+
+	repair_label = RichTextLabel.new()
+	repair_label.bbcode_enabled = true
+	repair_label.fit_content = true
+	repair_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	tab.add_child(repair_label)
+
+	var btn_bar = HBoxContainer.new()
+	btn_bar.alignment = BoxContainer.ALIGNMENT_CENTER
+	tab.add_child(btn_bar)
+
+	repair_assign_btn = Button.new()
+	repair_assign_btn.text = tr("Assign Technician")
+	repair_assign_btn.pressed.connect(_on_repair_assign)
+	btn_bar.add_child(repair_assign_btn)
+
+	repair_unassign_btn = Button.new()
+	repair_unassign_btn.text = tr("Unassign Technician")
+	repair_unassign_btn.pressed.connect(_on_repair_unassign)
+	repair_unassign_btn.disabled = true
+	btn_bar.add_child(repair_unassign_btn)
+
+
+func _refresh_repair_view() -> void:
+	if not selected_unit:
+		repair_label.text = tr("Select a unit to view repair status")
+		repair_assign_btn.disabled = true
+		repair_unassign_btn.disabled = true
+		return
+
+	var damaged = selected_unit.get_damaged_components()
+	var destroyed = selected_unit.get_destroyed_components()
+	var undamaged_count = selected_unit.components.size() - damaged.size()
+
+	var lines = RichTextHelper.new()
+	lines.add("[b]Unit:[/b] " + selected_unit.unit_name)
+	lines.add("Total components: " + str(selected_unit.components.size()))
+	lines.add("[color=#88cc88]Undamaged: %d[/color]" % undamaged_count)
+	lines.add("[color=#ffaa44]Damaged: %d[/color]" % damaged.size())
+	lines.add("[color=#ff4444]Destroyed: %d[/color]" % destroyed.size())
+	lines.add("")
+	lines.add("Repair budget: " + str(PersonnelManager.get_unit_repair_budget(selected_unit)) + " hours/day")
+	lines.add("")
+	lines.add("[b]Damaged Components:[/b]")
+	if damaged.is_empty():
+		lines.add("  None")
+	else:
+		for c in damaged:
+			var loc = c.location.location_name if c.location else "?"
+			lines.add("  [color=#ffaa44]" + c.component_name + "[/color] [" + loc + "]")
+	lines.add("")
+	lines.add("[b]Destroyed Components:[/b]")
+	if destroyed.is_empty():
+		lines.add("  None")
+	else:
+		for c in destroyed:
+			var loc = c.location.location_name if c.location else "?"
+			lines.add("  [color=#ff4444]" + c.component_name + "[/color] [" + loc + "]")
+	lines.add("")
+	lines.add("[b]Assigned Technicians:[/b]")
+	if selected_unit.assigned_technicians.is_empty():
+		lines.add("  None")
+	else:
+		for t in selected_unit.assigned_technicians:
+			lines.add("  " + t.personnel_name + " (" + t.specialization + ")")
+	repair_label.text = lines.get_text()
+	repair_assign_btn.disabled = false
+	repair_unassign_btn.disabled = selected_unit.assigned_technicians.is_empty()
+
+
+func _on_repair_assign() -> void:
+	if not selected_unit:
+		return
+	var available: Array[Personnel] = []
+	for p in PersonnelManager.personnel_roster:
+		if p.role == Enums.PersonnelRole.TECHNICIAN and p.is_available() and p.matches_specialization(selected_unit.unit_type):
+			if not selected_unit.assigned_technicians.has(p):
+				available.append(p)
+
+	if available.is_empty():
+		repair_label.text = tr("No available technicians with matching specialization")
+		return
+
+	var dialog = AcceptDialog.new()
+	dialog.title = tr("Assign Technician")
+	dialog.min_size = Vector2i(500, 400)
+
+	var vbox = VBoxContainer.new()
+	var scroll = ScrollContainer.new()
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+
+	var list = VBoxContainer.new()
+	list.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	for p in available:
+		var btn = Button.new()
+		btn.text = p.personnel_name + " — " + p.specialization + " (Skill: " + str(p.skills.get("tech_" + p.specialization.to_lower(), 0)) + ")"
+		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var tech_ref = p
+		btn.pressed.connect(func():
+			PersonnelManager.assign_technician(tech_ref, selected_unit)
+			dialog.queue_free()
+			_refresh_repair_view()
+		)
+		list.add_child(btn)
+
+	scroll.add_child(list)
+	vbox.add_child(scroll)
+	dialog.add_child(vbox)
+	add_child(dialog)
+	dialog.popup_centered()
+
+
+func _on_repair_unassign() -> void:
+	if not selected_unit or selected_unit.assigned_technicians.is_empty():
+		return
+	var dialog = AcceptDialog.new()
+	dialog.title = tr("Unassign Technician")
+	dialog.min_size = Vector2i(400, 300)
+
+	var vbox = VBoxContainer.new()
+	var list = VBoxContainer.new()
+	for t in selected_unit.assigned_technicians:
+		var btn = Button.new()
+		btn.text = t.personnel_name + " (" + t.specialization + ")"
+		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var tech_ref = t
+		btn.pressed.connect(func():
+			PersonnelManager.unassign_technician(tech_ref, selected_unit)
+			dialog.queue_free()
+			_refresh_repair_view()
+		)
+		list.add_child(btn)
+
+	vbox.add_child(list)
+	dialog.add_child(vbox)
+	add_child(dialog)
+	dialog.popup_centered()
 
 func populate() -> void:
 	player_mechs.clear()

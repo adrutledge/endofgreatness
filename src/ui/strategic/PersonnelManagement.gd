@@ -27,6 +27,13 @@ var _assign_targets: Array[TacticalUnit] = []
 @onready var candidate_detail: Label = %CandidateDetail
 @onready var hire_selected_button: Button = %HireSelectedButton
 
+var xp_label: RichTextLabel
+var xp_skill_list: VBoxContainer
+var xp_btn_bar: HBoxContainer
+var xp_apply_btn: Button
+var edu_label: RichTextLabel
+var edu_upgrade_btn: Button
+
 func _ready() -> void:
 	Helpers.debug_print("PersonnelManagement", "_ready start")
 	var bg = StyleBoxFlat.new()
@@ -52,10 +59,25 @@ func _ready() -> void:
 	medbay_tab.size_flags_vertical = SIZE_EXPAND_FILL
 	tab_container.add_child(personnel_tab)
 	tab_container.add_child(medbay_tab)
+
+	var xp_tab = VBoxContainer.new()
+	xp_tab.name = "XPTab"
+	xp_tab.size_flags_vertical = SIZE_EXPAND_FILL
+	tab_container.add_child(xp_tab)
+
+	var edu_tab = VBoxContainer.new()
+	edu_tab.name = "EducationTab"
+	edu_tab.size_flags_vertical = SIZE_EXPAND_FILL
+	tab_container.add_child(edu_tab)
+
 	tab_container.set_tab_title(0, tr("Personnel"))
 	tab_container.set_tab_title(1, tr("Medbay"))
+	tab_container.set_tab_title(2, tr("XP Spending"))
+	tab_container.set_tab_title(3, tr("Education"))
 
 	_build_medbay_tab(medbay_tab)
+	_build_xp_tab(xp_tab)
+	_build_education_tab(edu_tab)
 
 	title_ref.add_theme_color_override("font_color", Color(1.0, 0.9, 0.6))
 	detail_name.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0))
@@ -160,6 +182,8 @@ func _on_roster_selected(index: int) -> void:
 		return
 	selected_personnel = source[index]
 	_update_detail_view(selected_personnel)
+	_refresh_xp_view()
+	_refresh_education_view()
 
 func _update_detail_view(p: Personnel) -> void:
 	detail_name.text = p.personnel_name
@@ -439,6 +463,210 @@ func _build_medbay_tab(tab: VBoxContainer) -> void:
 
 	refresh.call()
 	EventBus.month_started.connect(func(d): refresh.call())
+
+
+func _build_xp_tab(tab: VBoxContainer) -> void:
+	xp_tab_container = tab
+
+	var header := Label.new()
+	header.text = tr("Experience Spending")
+	header.add_theme_font_size_override("font_size", 14)
+	header.add_theme_color_override("font_color", Color(1.0, 0.9, 0.6))
+	tab.add_child(header)
+
+	xp_label = RichTextLabel.new()
+	xp_label.bbcode_enabled = true
+	xp_label.fit_content = true
+	xp_label.size_flags_vertical = SIZE_EXPAND_FILL
+	tab.add_child(xp_label)
+
+	var sep = HSeparator.new()
+	tab.add_child(sep)
+
+	var skill_header := Label.new()
+	skill_header.text = tr("Skills (click + to spend XP)")
+	skill_header.add_theme_font_size_override("font_size", 12)
+	tab.add_child(skill_header)
+
+	var scroll = ScrollContainer.new()
+	scroll.size_flags_vertical = SIZE_EXPAND_FILL
+	tab.add_child(scroll)
+
+	xp_skill_list = VBoxContainer.new()
+	xp_skill_list.size_flags_horizontal = SIZE_EXPAND_FILL
+	scroll.add_child(xp_skill_list)
+
+	xp_btn_bar = HBoxContainer.new()
+	xp_btn_bar.alignment = BoxContainer.ALIGNMENT_CENTER
+	tab.add_child(xp_btn_bar)
+
+	xp_apply_btn = Button.new()
+	xp_apply_btn.text = tr("Apply Changes")
+	xp_apply_btn.disabled = true
+	xp_apply_btn.pressed.connect(_on_xp_apply)
+	xp_btn_bar.add_child(xp_apply_btn)
+
+
+var _xp_changes: Dictionary = {}
+
+func _refresh_xp_view() -> void:
+	if not selected_personnel:
+		xp_label.text = tr("Select a personnel to view XP")
+		return
+
+	var p = selected_personnel
+	xp_label.text = "[b]%s[/b]\nExperience: [color=#44ff66]%d XP[/color]\n\nSelect skills below to spend XP on improvement." % [p.personnel_name, p.experience]
+
+	for c in xp_skill_list.get_children():
+		c.queue_free()
+
+	_xp_changes.clear()
+	xp_apply_btn.disabled = true
+
+	var skills = _get_non_zero_skills(p)
+	if skills.is_empty():
+		var lbl = Label.new()
+		lbl.text = tr("  No skills to improve")
+		xp_skill_list.add_child(lbl)
+		return
+
+	for entry in skills:
+		var skill_name = entry[0]
+		var skill_val = entry[1]
+		if skill_val >= 10:
+			continue
+
+		var hb = HBoxContainer.new()
+		hb.size_flags_horizontal = SIZE_EXPAND_FILL
+
+		var lbl = Label.new()
+		var cost = (skill_val + 1) * 100
+		lbl.text = "  %s: %d  (next: %d XP)" % [skill_name, skill_val, cost]
+		lbl.size_flags_horizontal = SIZE_EXPAND_FILL
+		hb.add_child(lbl)
+
+		var plus_btn = Button.new()
+		plus_btn.text = "+"
+		var sn = skill_name
+		plus_btn.pressed.connect(func():
+			_xp_changes[sn] = _xp_changes.get(sn, 0) + 1
+			xp_apply_btn.disabled = false
+			_refresh_xp_changes_display()
+		)
+		hb.add_child(plus_btn)
+
+		xp_skill_list.add_child(hb)
+
+
+func _refresh_xp_changes_display() -> void:
+	var total_cost := 0
+	var parts: Array[String] = []
+	parts.push_back("[b]Pending XP Spending:[/b]")
+	for sn in _xp_changes:
+		var count = _xp_changes[sn]
+		var current_val = selected_personnel.skills.get(sn, 0)
+		var cost := 0
+		for i in range(count):
+			cost += (current_val + i + 1) * 100
+		total_cost += cost
+		parts.push_back("  %s: +%d levels (%d XP)" % [sn, count, cost])
+	parts.push_back("")
+	parts.push_back("[color=#ffaa44]Total cost: %d XP (available: %d XP)[/color]" % [total_cost, selected_personnel.experience])
+	if total_cost > selected_personnel.experience:
+		parts.push_back("[color=#ff4444]Not enough XP![/color]")
+		xp_apply_btn.disabled = true
+	else:
+		xp_apply_btn.disabled = false
+	xp_label.text = "[b]%s[/b]\nExperience: [color=#44ff66]%d XP[/color]\n\n" % [selected_personnel.personnel_name, selected_personnel.experience] + "\n".join(parts)
+
+
+func _on_xp_apply() -> void:
+	if not selected_personnel or _xp_changes.is_empty():
+		return
+	var p = selected_personnel
+	var total_cost := 0
+	for sn in _xp_changes:
+		var count = _xp_changes[sn]
+		var current_val = p.skills.get(sn, 0)
+		for i in range(count):
+			total_cost += (current_val + i + 1) * 100
+		p.skills[sn] = current_val + count
+	if total_cost <= p.experience:
+		p.experience -= total_cost
+		_xp_changes.clear()
+		xp_apply_btn.disabled = true
+		_refresh_xp_view()
+		_update_detail_view(p)
+
+
+func _build_education_tab(tab: VBoxContainer) -> void:
+	edu_tab_container = tab
+
+	var header := Label.new()
+	header.text = tr("Education")
+	header.add_theme_font_size_override("font_size", 14)
+	header.add_theme_color_override("font_color", Color(1.0, 0.9, 0.6))
+	tab.add_child(header)
+
+	edu_label = RichTextLabel.new()
+	edu_label.bbcode_enabled = true
+	edu_label.fit_content = true
+	edu_label.size_flags_vertical = SIZE_EXPAND_FILL
+	tab.add_child(edu_label)
+
+	var btn_bar = HBoxContainer.new()
+	btn_bar.alignment = BoxContainer.ALIGNMENT_CENTER
+	tab.add_child(btn_bar)
+
+	edu_upgrade_btn = Button.new()
+	edu_upgrade_btn.text = tr("Advance Education")
+	edu_upgrade_btn.pressed.connect(_on_edu_upgrade)
+	btn_bar.add_child(edu_upgrade_btn)
+
+
+func _refresh_education_view() -> void:
+	if not selected_personnel:
+		edu_label.text = tr("Select a personnel to view education")
+		edu_upgrade_btn.disabled = true
+		return
+
+	var p = selected_personnel
+	var edu_names = Enums.EducationLevel.keys()
+	var current_idx = p.highest_education
+	var current_name = edu_names[current_idx].replace("_", " ").capitalize()
+	var next_name = edu_names[current_idx + 1].replace("_", " ").capitalize() if current_idx + 1 < edu_names.size() else "MAX"
+
+	var text = "[b]" + p.personnel_name + "[/b]\n"
+	text += "Current Education: " + current_name + "\n"
+	if current_idx + 1 < edu_names.size():
+		text += "Next Level: " + next_name + "\n"
+		text += "Cost: 1000 XP + 5000 C-Bills"
+		edu_upgrade_btn.disabled = false
+	else:
+		text += "Maximum education level reached."
+		edu_upgrade_btn.disabled = true
+	edu_label.text = text
+
+
+func _on_edu_upgrade() -> void:
+	if not selected_personnel:
+		return
+	var p = selected_personnel
+	var edu_names = Enums.EducationLevel.keys()
+	var current_idx = p.highest_education
+	if current_idx + 1 >= edu_names.size():
+		return
+	if p.experience < 1000:
+		edu_label.text = tr("Not enough XP! Need 1000 XP.")
+		return
+	if GameState.player.current_balance < 5000:
+		edu_label.text = tr("Not enough C-Bills! Need 5000 C-Bills.")
+		return
+	p.experience -= 1000
+	GameState.player.current_balance -= 5000
+	p.highest_education = current_idx + 1
+	_refresh_education_view()
+	_update_detail_view(p)
 
 
 func _on_close() -> void:

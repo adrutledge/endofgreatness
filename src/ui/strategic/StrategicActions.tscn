@@ -47,11 +47,6 @@ unique_name_in_owner = true
 text = "Personnel Management"
 size_flags_horizontal = 4
 
-[node name="UnitRosterButton" type="Button" parent="MarginContainer/VBox"]
-unique_name_in_owner = true
-text = "Unit Roster / Repair Bay"
-clip_text = true
-
 [node name="ContractBoardButton" type="Button" parent="MarginContainer/VBox"]
 unique_name_in_owner = true
 text = "Contract Board"

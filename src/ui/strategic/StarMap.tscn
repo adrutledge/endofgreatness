@@ -6,7 +6,6 @@
 [ext_resource type="PackedScene" path="res://src/ui/strategic/ContractBoard.tscn" id="4"]
 [ext_resource type="PackedScene" path="res://src/ui/strategic/PersonnelManagement.tscn" id="5"]
 [ext_resource type="PackedScene" path="res://src/ui/strategic/EventLog.tscn" id="6"]
-[ext_resource type="PackedScene" path="res://src/ui/strategic/UnitRoster.tscn" id="8"]
 [ext_resource type="PackedScene" path="res://src/ui/strategic/MechLab.tscn" id="9"]
 [ext_resource type="PackedScene" path="res://src/ui/strategic/LogisticsPanel.tscn" id="10"]
 
@@ -30,8 +29,6 @@ layer = 1
 [node name="PersonnelManagement" parent="CanvasLayer" instance=ExtResource("5")]
 
 [node name="EventLog" parent="CanvasLayer" instance=ExtResource("6")]
-
-[node name="UnitRoster" parent="CanvasLayer" instance=ExtResource("8")]
 
 [node name="MechLab" parent="CanvasLayer" instance=ExtResource("9")]
 
