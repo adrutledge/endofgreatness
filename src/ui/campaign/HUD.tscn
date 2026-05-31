@@ -14,7 +14,7 @@ margin_bottom = 28.0
 theme_override_constants/margin_left = 4
 theme_override_constants/margin_right = 4
 
-[node name="MenuButton" type="MenuButton" parent="TopBar"]
+[node name="MenuButton" type="Button" parent="TopBar"]
 text = "☰"
 theme_override_font_sizes/font_size = 14
 flat = true

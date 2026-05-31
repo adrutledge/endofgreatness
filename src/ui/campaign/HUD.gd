@@ -17,8 +17,9 @@ func _ready() -> void:
 	popup.add_item(tr("Quit to Main Menu"))
 	popup.id_pressed.connect(_on_menu_selected)
 	menu_btn.pressed.connect(func():
-		popup.reset_size()
-		popup.popup(Rect2i(0, 0, 200, 200))
+		printerr("HUD: menu button pressed")
+		var btn_rect = Rect2i(menu_btn.global_position.x, menu_btn.global_position.y + menu_btn.size.y, 200, 0)
+		popup.popup(btn_rect)
 	)
 
 	topbar.get_node("Finances/BalanceLabel")
