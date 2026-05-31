@@ -74,7 +74,7 @@ func _on_start() -> void:
 	gen = null
 
 	if result.get("success", false):
-		get_tree().change_scene_to_file("res://src/ui/strategic/StarMap.tscn")
+		get_tree().change_scene_to_file("res://src/ui/campaign/CampaignView.tscn")
 	else:
 		status_label.text = tr("Error: ") + result.get("error", "Unknown error")
 		start_button.disabled = false

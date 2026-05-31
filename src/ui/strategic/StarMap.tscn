@@ -1,4 +1,4 @@
-[gd_scene load_steps=6 format=3 uid="uid://star_map"]
+[gd_scene load_steps=5 format=3 uid="uid://star_map"]
 
 [ext_resource type="Script" path="res://src/ui/strategic/StarMap.gd" id="1"]
 [ext_resource type="PackedScene" path="res://src/ui/strategic/StrategicActions.tscn" id="2"]
@@ -8,7 +8,6 @@
 [ext_resource type="PackedScene" path="res://src/ui/strategic/EventLog.tscn" id="6"]
 [ext_resource type="PackedScene" path="res://src/ui/strategic/MechLab.tscn" id="9"]
 [ext_resource type="PackedScene" path="res://src/ui/strategic/LogisticsPanel.tscn" id="10"]
-[ext_resource type="PackedScene" path="res://src/ui/operational/PlanetaryMap.tscn" id="11"]
 [ext_resource type="Script" path="res://src/ui/strategic/PanelManager.gd" id="12"]
 
 [node name="StarMap" type="Node2D"]
@@ -35,8 +34,6 @@ layer = 1
 [node name="MechLab" parent="CanvasLayer" instance=ExtResource("9")]
 
 [node name="LogisticsPanel" parent="CanvasLayer" instance=ExtResource("10")]
-
-[node name="PlanetaryMap" parent="CanvasLayer" instance=ExtResource("11")]
 
 [node name="PanelManager" type="Node" parent="."]
 script = ExtResource("12")

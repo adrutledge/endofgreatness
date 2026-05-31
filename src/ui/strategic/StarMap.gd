@@ -1,5 +1,7 @@
 extends Node2D
 
+signal planetary_map_requested(contract: Contract)
+
 var systems_positions: Array[Dictionary] = []
 var jump_routes: Array[Dictionary] = []
 var selected_system: Dictionary = {}
@@ -39,7 +41,7 @@ func _ready() -> void:
 	sidebar.mech_lab_requested.connect(func(): panel_mgr.open_panel("mech_lab"))
 	sidebar.logistics_requested.connect(func(): panel_mgr.open_panel("logistics"))
 	sidebar.event_log_requested.connect(func(): panel_mgr.open_panel("event_log"))
-	$CanvasLayer/ContractBoard.view_map_requested.connect(_open_planetary_map)
+	$CanvasLayer/ContractBoard.view_map_requested.connect(_on_planetary_map_requested)
 
 	Helpers.debug_print("StarMap", "panel manager ready, loading systems")
 	_load_systems()
@@ -56,21 +58,8 @@ func _ready() -> void:
 	Helpers.debug_print("StarMap", "_ready done, systems=%d routes=%d" % [systems_positions.size(), jump_routes.size()])
 
 
-func _open_planetary_map(contract: Contract) -> void:
-	Helpers.debug_print("StarMap", "opening planetary map")
-	sidebar.hide_sidebar()
-	var map_node = $CanvasLayer/PlanetaryMap
-	map_node.load_contract(contract)
-	map_node.show()
-	if not map_node.closed.is_connected(_on_planetary_map_closed):
-		map_node.closed.connect(_on_planetary_map_closed)
-
-
-func _on_planetary_map_closed() -> void:
-	Helpers.debug_print("StarMap", "closing planetary map")
-	$CanvasLayer/PlanetaryMap.hide()
-	if not panel_mgr.has_open_panels():
-		sidebar.show_sidebar()
+func _on_planetary_map_requested(contract: Contract) -> void:
+	planetary_map_requested.emit(contract)
 
 func _load_systems() -> void:
 	var data = DataManager.systems_data
@@ -361,9 +350,6 @@ func _get_spectral_radius(spectral: String) -> float:
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
 		if panel_mgr.close_top_panel():
-			get_viewport().set_input_as_handled()
-		elif $CanvasLayer/PlanetaryMap.visible:
-			_on_planetary_map_closed()
 			get_viewport().set_input_as_handled()
 		elif info_panel.visible:
 			selected_system = {}
