@@ -2,12 +2,12 @@ extends CanvasLayer
 
 ## Handles modal dialogs above all other content (layer 4).
 ## Background dim overlay blocks clicks to everything underneath.
-## Content control is centered on screen. Caller connects to the
-## content's signals (e.g., confirmed/cancelled) to know when to dismiss.
+## Dialogs are queued FIFO — if multiple trigger simultaneously, each
+## is shown in arrival order. Dismissing one advances to the next.
 
 var _bg: ColorRect
 var _container: CenterContainer
-var _current: Control
+var _queue: Array[Control] = []
 
 
 func _ready() -> void:
@@ -32,25 +32,34 @@ func _resize_bg() -> void:
 	_bg.size = get_viewport_rect().size
 
 
-## Shows a modal dialog. The given Control is centered on screen
-## above a dimmed background. Replaces any existing modal.
+## Queues a modal dialog. If no dialog is currently shown, displays it
+## immediately. Otherwise it waits in FIFO order.
 func show(content: Control) -> void:
-	_dismiss_current()
-	_current = content
-	_container.add_child(content)
+	_queue.append(content)
+	if _queue.size() == 1:
+		_show_current()
+
+
+## Dismisses the current dialog and shows the next in queue, if any.
+func dismiss() -> void:
+	if _queue.is_empty():
+		return
+	_hide_current()
+	var dismissed = _queue.pop_front()
+	_container.remove_child(dismissed)
+	dismissed.queue_free()
+	if not _queue.is_empty():
+		_show_current()
+
+
+func _show_current() -> void:
+	if _queue.is_empty():
+		return
+	_container.add_child(_queue[0])
 	_bg.show()
 	_container.show()
 
 
-## Hides and removes the current modal.
-func dismiss() -> void:
-	_dismiss_current()
-
-
-func _dismiss_current() -> void:
+func _hide_current() -> void:
 	_bg.hide()
 	_container.hide()
-	if _current:
-		_container.remove_child(_current)
-		_current.queue_free()
-		_current = null
