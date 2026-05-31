@@ -341,3 +341,6 @@ During game launch, `DataManager.load_all_data()` runs synchronously in `_ready(
 ### UI Polish — Badge Display
 
 Status badges (funds low, injured personnel, reorder suspended, etc.) should be icons rather than text labels, displayed either as a strip below the HUD top bar or stacked along the right edge of the screen. If the number of active badges exceeds the available display area, use a scrollable drawer (toggle-able) or collapse into a count badge ("3 issues") that expands on hover/click. Badge icons should be color-coded by severity (red=critical, amber=warning, blue=info). This is visual-only polish — the badge data model and signal triggers are already in place.
+
+### Deferred Bugs
+- **HUD `BillsLabel` not found**: `$TopBar/Finances/BillsLabel` fails despite the node existing in the scene tree as a sibling of `BalanceLabel` (which resolves fine). Two-step `get_node("Finances").get_node("BillsLabel")` also fails. Likely a Godot scene cache or node naming issue — revisit after a full editor restart or .tscn rebuild.
