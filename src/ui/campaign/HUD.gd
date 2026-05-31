@@ -1,21 +1,35 @@
 extends CanvasLayer
 
-@onready var balance_label = $Margin/TopBar/Finances/BalanceLabel
-@onready var bills_label = $Margin/TopBar/Finances/BillsLabel
-@onready var contracts_label = $Margin/TopBar/Contracts/ContractsLabel
-@onready var date_label = $Margin/TopBar/DateLabel
-@onready var badges_container = $Margin/TopBar/BadgesContainer
-@onready var funds_badge = $Margin/TopBar/BadgesContainer/FundsBadge
-@onready var injured_badge = $Margin/TopBar/BadgesContainer/InjuredBadge
-@onready var reorder_badge = $Margin/TopBar/BadgesContainer/ReorderBadge
+var balance_label: Label
+var bills_label: Label
+var contracts_label: Label
+var date_label: Label
+var badges_container: HBoxContainer
+var funds_badge: Label
+var injured_badge: Label
+var reorder_badge: Label
+var org_mgmt_btn: Button
+var personnel_btn: Button
+var logistics_btn: Button
+var contract_board_btn: Button
+var event_log_btn: Button
 
-@onready var org_mgmt_btn = $Margin/TopBar/QuickAccess/OrgMgmtButton
-@onready var personnel_btn = $Margin/TopBar/QuickAccess/PersonnelButton
-@onready var logistics_btn = $Margin/TopBar/QuickAccess/LogisticsButton
-@onready var contract_board_btn = $Margin/TopBar/QuickAccess/ContractBoardButton
-@onready var event_log_btn = $Margin/TopBar/QuickAccess/EventLogButton
 
 func _ready() -> void:
+	balance_label = get_node("Margin/TopBar/Finances/BalanceLabel")
+	bills_label = get_node("Margin/TopBar/Finances/BillsLabel")
+	contracts_label = get_node("Margin/TopBar/Contracts/ContractsLabel")
+	date_label = get_node("Margin/TopBar/DateLabel")
+	badges_container = get_node("Margin/TopBar/BadgesContainer")
+	funds_badge = get_node("Margin/TopBar/BadgesContainer/FundsBadge")
+	injured_badge = get_node("Margin/TopBar/BadgesContainer/InjuredBadge")
+	reorder_badge = get_node("Margin/TopBar/BadgesContainer/ReorderBadge")
+	org_mgmt_btn = get_node("Margin/TopBar/QuickAccess/OrgMgmtButton")
+	personnel_btn = get_node("Margin/TopBar/QuickAccess/PersonnelButton")
+	logistics_btn = get_node("Margin/TopBar/QuickAccess/LogisticsButton")
+	contract_board_btn = get_node("Margin/TopBar/QuickAccess/ContractBoardButton")
+	event_log_btn = get_node("Margin/TopBar/QuickAccess/EventLogButton")
+
 	org_mgmt_btn.pressed.connect(_on_org_mgmt)
 	personnel_btn.pressed.connect(_on_personnel)
 	logistics_btn.pressed.connect(_on_logistics)

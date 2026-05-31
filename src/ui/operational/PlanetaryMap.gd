@@ -12,24 +12,8 @@ var hex_size: float = 30.0
 var selected_hex: Dictionary = {}
 var generated: bool = false
 
-const TERRAIN_COLORS: Dictionary = {
-	HexMap.Terrain.PLAINS: Color(0.5, 0.7, 0.3),
-	HexMap.Terrain.FOREST: Color(0.2, 0.5, 0.15),
-	HexMap.Terrain.MOUNTAIN: Color(0.5, 0.4, 0.25),
-	HexMap.Terrain.WATER: Color(0.2, 0.4, 0.7),
-	HexMap.Terrain.URBAN: Color(0.6, 0.6, 0.6),
-	HexMap.Terrain.DESERT: Color(0.8, 0.7, 0.3),
-	HexMap.Terrain.ROUGH: Color(0.45, 0.35, 0.2),
-}
-
-const OBJECTIVE_LABELS: Dictionary = {
-	HexMap.ObjectiveType.NONE: "",
-	HexMap.ObjectiveType.PRIMARY: "★ " + tr("Primary"),
-	HexMap.ObjectiveType.SECONDARY: "● " + tr("Secondary"),
-	HexMap.ObjectiveType.ASSETS: "⚙ " + tr("Assets"),
-	HexMap.ObjectiveType.ENEMY: "⚔ " + tr("Enemy"),
-	HexMap.ObjectiveType.EVENT: "! " + tr("Event"),
-}
+var TERRAIN_COLORS: Dictionary = {}
+var OBJECTIVE_LABELS: Dictionary = {}
 
 var camera_offset: Vector2 = Vector2(200, 100)
 var camera_zoom: float = 1.0
@@ -47,6 +31,24 @@ var reveal_queue: Array[Vector2i] = []
 
 
 func _ready() -> void:
+	TERRAIN_COLORS = {
+		HexMap.Terrain.PLAINS: Color(0.5, 0.7, 0.3),
+		HexMap.Terrain.FOREST: Color(0.2, 0.5, 0.15),
+		HexMap.Terrain.MOUNTAIN: Color(0.5, 0.4, 0.25),
+		HexMap.Terrain.WATER: Color(0.2, 0.4, 0.7),
+		HexMap.Terrain.URBAN: Color(0.6, 0.6, 0.6),
+		HexMap.Terrain.DESERT: Color(0.8, 0.7, 0.3),
+		HexMap.Terrain.ROUGH: Color(0.45, 0.35, 0.2),
+	}
+	OBJECTIVE_LABELS = {
+		HexMap.ObjectiveType.NONE: "",
+		HexMap.ObjectiveType.PRIMARY: "★ " + tr("Primary"),
+		HexMap.ObjectiveType.SECONDARY: "● " + tr("Secondary"),
+		HexMap.ObjectiveType.ASSETS: "⚙ " + tr("Assets"),
+		HexMap.ObjectiveType.ENEMY: "⚔ " + tr("Enemy"),
+		HexMap.ObjectiveType.EVENT: "! " + tr("Event"),
+	}
+
 	var bg = StyleBoxFlat.new()
 	bg.bg_color = Color(0.08, 0.08, 0.12, 0.95)
 	add_theme_stylebox_override("panel", bg)

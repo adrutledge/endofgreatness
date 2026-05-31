@@ -123,14 +123,12 @@ static func get_skill_attributes(skill: String) -> Array[String]:
 	_load_skill_attrs()
 	while skill.length() > 0:
 		if _skill_attrs_cache.has(skill):
-			var result: Array[String] = _skill_attrs_cache[skill]
-			return result
+			return _skill_attrs_cache[skill] as Array[String]
 		var idx = skill.rfind("_")
 		if idx == -1:
 			break
 		skill = skill.left(idx)
-	var empty: Array[String] = []
-	return empty
+	return []
 
 const TRAIT_DEFS: Array[Dictionary] = [
 	{ "id": "ambidextrous", "name": "Ambidextrous", "category": TraitCategory.POSITIVE, "desc": "No off-hand penalty", "effect": "off_hand_penalty", "value": 0 },

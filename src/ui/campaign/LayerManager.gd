@@ -11,7 +11,7 @@ var _layers: Dictionary = {}
 signal layer_changed(from_layer: String, to_layer: String)
 
 
-func register_layer(name: String, node: Control) -> void:
+func register_layer(name: String, node: Node) -> void:
 	_layers[name] = node
 	node.hide()
 
