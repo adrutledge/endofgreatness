@@ -113,11 +113,17 @@ func _on_menu_selected(id: int) -> void:
 	get_viewport().set_input_as_handled()
 	match id:
 		0:
-			pass
+			printerr("HUD: Save Game not implemented")
 		1:
-			pass
+			printerr("HUD: Load Game not implemented")
 		2:
-			get_tree().change_scene_to_file("res://src/ui/menus/MainMenu.tscn")
+			_quit_to_main_menu()
+
+
+func _quit_to_main_menu() -> void:
+	var err = get_tree().change_scene_to_file("res://src/ui/menus/MainMenu.tscn")
+	if err != OK:
+		printerr("HUD: change_scene_to_file failed with error %d" % err)
 
 
 func _on_personnel() -> void:
