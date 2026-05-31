@@ -1,9 +1,15 @@
-[gd_scene load_steps=4 format=3 uid="uid://campaign_view"]
+[gd_scene load_steps=10 format=3 uid="uid://campaign_view"]
 
 [ext_resource type="Script" path="res://src/ui/campaign/CampaignView.gd" id="1"]
 [ext_resource type="PackedScene" path="res://src/ui/strategic/StarMap.tscn" id="2"]
 [ext_resource type="PackedScene" path="res://src/ui/operational/PlanetaryMap.tscn" id="3"]
 [ext_resource type="Script" path="res://src/ui/campaign/LayerManager.gd" id="4"]
+[ext_resource type="PackedScene" path="res://src/ui/strategic/OrganizationManagement.tscn" id="5"]
+[ext_resource type="PackedScene" path="res://src/ui/strategic/ContractBoard.tscn" id="6"]
+[ext_resource type="PackedScene" path="res://src/ui/strategic/PersonnelManagement.tscn" id="7"]
+[ext_resource type="PackedScene" path="res://src/ui/strategic/EventLog.tscn" id="8"]
+[ext_resource type="PackedScene" path="res://src/ui/strategic/MechLab.tscn" id="9"]
+[ext_resource type="PackedScene" path="res://src/ui/strategic/LogisticsPanel.tscn" id="10"]
 
 [node name="CampaignView" type="Node2D"]
 script = ExtResource("1")
@@ -28,6 +34,21 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 horizontal_alignment = 1
 vertical_alignment = 1
+
+[node name="PanelOverlay" type="CanvasLayer" parent="."]
+layer = 2
+
+[node name="OrganizationManagement" parent="PanelOverlay" instance=ExtResource("5")]
+
+[node name="ContractBoard" parent="PanelOverlay" instance=ExtResource("6")]
+
+[node name="PersonnelManagement" parent="PanelOverlay" instance=ExtResource("7")]
+
+[node name="EventLog" parent="PanelOverlay" instance=ExtResource("8")]
+
+[node name="MechLab" parent="PanelOverlay" instance=ExtResource("9")]
+
+[node name="LogisticsPanel" parent="PanelOverlay" instance=ExtResource("10")]
 
 [node name="LayerManager" type="Node" parent="."]
 script = ExtResource("4")

@@ -1,20 +1,14 @@
-class_name PanelManager
 extends Node
 
-## Manages panel lifecycle (open/close/ESC stack) for the StarMap.
+## Manages sub-panel lifecycle (open/close/stack) for overlay panels.
 ## Panels register with a name, node reference, and optional populate callable.
-## The sidebar is hidden when any panel opens and restored when all panels close.
+## Registered panels must be children of this node or otherwise in the scene tree.
 
-var _sidebar: Control
 var _panel_stack: Array[String] = []
 var _panels: Dictionary = {}
 
 signal panel_opened(panel_name: String)
 signal panel_closed(panel_name: String)
-
-
-func set_sidebar(node: Control) -> void:
-	_sidebar = node
 
 
 func register_panel(name: String, node: Control, populate: Callable = Callable()) -> void:
@@ -31,8 +25,6 @@ func open_panel(name: String) -> void:
 		return
 	if panel.node.visible:
 		return
-	if _sidebar:
-		_sidebar.hide_sidebar()
 	if panel.populate.is_valid():
 		panel.populate.call()
 	panel.node.show()
@@ -48,12 +40,9 @@ func close_panel(name: String) -> void:
 		return
 	panel.node.hide()
 	_panel_stack.erase(name)
-	if _panel_stack.is_empty() and _sidebar:
-		_sidebar.show_sidebar()
 	panel_closed.emit(name)
 
 
-## Closes the topmost panel in the stack. Returns true if a panel was closed.
 func close_top_panel() -> bool:
 	if _panel_stack.is_empty():
 		return false

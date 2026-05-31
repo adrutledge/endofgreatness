@@ -33,6 +33,7 @@ PersonnelManager="*res://src/systems/PersonnelManager.gd"
 RefitManager="*res://src/systems/RefitManager.gd"
 UnitTransportManager="*res://src/systems/UnitTransportManager.gd"
 InventoryManager="*res://src/systems/InventoryManager.gd"
+PanelManager="*res://src/ui/strategic/PanelManager.gd"
 
 [rendering]
 

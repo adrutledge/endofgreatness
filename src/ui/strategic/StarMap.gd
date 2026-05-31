@@ -22,40 +22,20 @@ const NAME_ZOOM_THRESHOLD: float = 2.5
 @onready var camera: Camera2D = $Camera2D
 @onready var info_panel = $CanvasLayer/StrategicActions/MarginContainer/VBox/SystemInfoPanel
 @onready var sidebar = $CanvasLayer/StrategicActions
-@onready var panel_mgr: PanelManager = $PanelManager
 
 func _ready() -> void:
 	Helpers.debug_print("StarMap", "_ready start")
 
-	panel_mgr.set_sidebar(sidebar)
-	panel_mgr.register_panel("mech_lab", $CanvasLayer/MechLab, func(): $CanvasLayer/MechLab.populate())
-	panel_mgr.register_panel("logistics", $CanvasLayer/LogisticsPanel, func(): $CanvasLayer/LogisticsPanel.populate())
-	panel_mgr.register_panel("contract_board", $CanvasLayer/ContractBoard, func(): $CanvasLayer/ContractBoard.populate())
-	panel_mgr.register_panel("org_mgmt", $CanvasLayer/OrganizationManagement, func(): $CanvasLayer/OrganizationManagement.populate_tree())
-	panel_mgr.register_panel("personnel", $CanvasLayer/PersonnelManagement, func(): $CanvasLayer/PersonnelManagement.populate_roster())
-	panel_mgr.register_panel("event_log", $CanvasLayer/EventLog, func(): $CanvasLayer/EventLog.populate())
-
-	sidebar.organization_tree_requested.connect(func(): panel_mgr.open_panel("org_mgmt"))
-	sidebar.contract_board_requested.connect(func(): panel_mgr.open_panel("contract_board"))
-	sidebar.personnel_management_requested.connect(func(): panel_mgr.open_panel("personnel"))
-	sidebar.mech_lab_requested.connect(func(): panel_mgr.open_panel("mech_lab"))
-	sidebar.logistics_requested.connect(func(): panel_mgr.open_panel("logistics"))
-	sidebar.event_log_requested.connect(func(): panel_mgr.open_panel("event_log"))
-	$CanvasLayer/ContractBoard.view_map_requested.connect(_on_planetary_map_requested)
-
-	Helpers.debug_print("StarMap", "panel manager ready, loading systems")
-	_load_systems()
-	_compute_faction_territory()
-	_calculate_jump_routes()
-	camera.zoom = Vector2(4.0, 4.0)
-	var home = GameState.player.current_planet if GameState.player and not GameState.player.current_planet.is_empty() else "Galatea"
-	var home_data = DataManager.systems_data.get(home, {})
-	var home_coords = home_data.get("coordinates", {})
-	var cx = home_coords.get("x", 0.0)
-	var cy = home_coords.get("y", 0.0)
-	camera.position = Vector2(cx, -cy)
-	queue_redraw()
+	sidebar.organization_tree_requested.connect(func(): PanelManager.open_panel("org_mgmt"))
+	sidebar.contract_board_requested.connect(func(): PanelManager.open_panel("contract_board"))
+	sidebar.personnel_management_requested.connect(func(): PanelManager.open_panel("personnel"))
+	sidebar.mech_lab_requested.connect(func(): PanelManager.open_panel("mech_lab"))
+	sidebar.logistics_requested.connect(func(): PanelManager.open_panel("logistics"))
+	sidebar.event_log_requested.connect(func(): PanelManager.open_panel("event_log"))
+	$CanvasLayer/StrategicActions/%ContractBoardButton.pressed.connect(func(): PanelManager.open_panel("contract_board"))
+	$CanvasLayer/StrategicActions/%OrganizationTreeButton.pressed.connect(func(): PanelManager.open_panel("org_mgmt"))
 	Helpers.debug_print("StarMap", "_ready done, systems=%d routes=%d" % [systems_positions.size(), jump_routes.size()])
+
 
 
 func _on_planetary_map_requested(contract: Contract) -> void:
@@ -349,7 +329,7 @@ func _get_spectral_radius(spectral: String) -> float:
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
-		if panel_mgr.close_top_panel():
+		if PanelManager.close_top_panel():
 			get_viewport().set_input_as_handled()
 		elif info_panel.visible:
 			selected_system = {}

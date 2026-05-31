@@ -1,14 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://star_map"]
+[gd_scene load_steps=3 format=3 uid="uid://star_map"]
 
 [ext_resource type="Script" path="res://src/ui/strategic/StarMap.gd" id="1"]
 [ext_resource type="PackedScene" path="res://src/ui/strategic/StrategicActions.tscn" id="2"]
-[ext_resource type="PackedScene" path="res://src/ui/strategic/OrganizationManagement.tscn" id="3"]
-[ext_resource type="PackedScene" path="res://src/ui/strategic/ContractBoard.tscn" id="4"]
-[ext_resource type="PackedScene" path="res://src/ui/strategic/PersonnelManagement.tscn" id="5"]
-[ext_resource type="PackedScene" path="res://src/ui/strategic/EventLog.tscn" id="6"]
-[ext_resource type="PackedScene" path="res://src/ui/strategic/MechLab.tscn" id="9"]
-[ext_resource type="PackedScene" path="res://src/ui/strategic/LogisticsPanel.tscn" id="10"]
-[ext_resource type="Script" path="res://src/ui/strategic/PanelManager.gd" id="12"]
 
 [node name="StarMap" type="Node2D"]
 script = ExtResource("1")
@@ -22,18 +15,3 @@ enabled = true
 layer = 1
 
 [node name="StrategicActions" parent="CanvasLayer" instance=ExtResource("2")]
-
-[node name="OrganizationManagement" parent="CanvasLayer" instance=ExtResource("3")]
-
-[node name="ContractBoard" parent="CanvasLayer" instance=ExtResource("4")]
-
-[node name="PersonnelManagement" parent="CanvasLayer" instance=ExtResource("5")]
-
-[node name="EventLog" parent="CanvasLayer" instance=ExtResource("6")]
-
-[node name="MechLab" parent="CanvasLayer" instance=ExtResource("9")]
-
-[node name="LogisticsPanel" parent="CanvasLayer" instance=ExtResource("10")]
-
-[node name="PanelManager" type="Node" parent="."]
-script = ExtResource("12")
