@@ -114,7 +114,7 @@ func _place_objectives(hex_map: HexMap, contract: Contract) -> void:
 		all_hexes[idx].objective = HexMap.ObjectiveType.ASSETS
 		var asset_types = [
 			{"type": "battlefield_remnants", "description": "Scattered wreckage of old military vehicles and equipment.", "value": rng.randi_range(2000, 15000)},
-			{"type": "artifact", "description": "A valuable piece of historical significance — artwork, antique weaponry, or a pre-spaceflight relic preserved in remarkable condition.", "value": rng.randi_range(5000, 50000)},
+			{"type": "artifact", "description": "A valuable piece of historical significance — artwork, antique weaponry, or a relic from an earlier era of spaceflight, preserved in remarkable condition.", "value": rng.randi_range(5000, 50000)},
 			{"type": "civilian_equipment", "description": "A cache of industrial machinery and construction vehicles.", "value": rng.randi_range(3000, 20000)},
 			{"type": "salvageable_mech", "description": "A downed BattleMech, heavily damaged but with recoverable components.", "value": rng.randi_range(10000, 80000)},
 			{"type": "military_supplies", "description": "Abandoned crates of ammunition, armor plating, and spare parts.", "value": rng.randi_range(4000, 25000)},
