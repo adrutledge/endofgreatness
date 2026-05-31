@@ -1,39 +1,23 @@
 extends CanvasLayer
 
-var balance_label: Label
-var bills_label: Label
-var contracts_label: Label
-var date_label: Label
-var time_label: Label
-var badges_container: HBoxContainer
-var funds_badge: Label
-var injured_badge: Label
-var reorder_badge: Label
-var org_mgmt_btn: Button
-var personnel_btn: Button
-var logistics_btn: Button
-var contract_board_btn: Button
-var event_log_btn: Button
-var menu_btn: MenuButton
+@onready var balance_label: Label = $TopBar/Finances/BalanceLabel
+@onready var bills_label: Label = $TopBar/Finances/BillsLabel
+@onready var contracts_label: Label = $TopBar/Contracts/ContractsLabel
+@onready var date_label: Label = $TopBar/DateTime/DateLabel
+@onready var time_label: Label = $TopBar/DateTime/TimeLabel
+@onready var badges_container: HBoxContainer = $TopBar/BadgesContainer
+@onready var funds_badge: Label = $TopBar/BadgesContainer/FundsBadge
+@onready var injured_badge: Label = $TopBar/BadgesContainer/InjuredBadge
+@onready var reorder_badge: Label = $TopBar/BadgesContainer/ReorderBadge
+@onready var org_mgmt_btn: Button = $TopBar/QuickAccess/OrgMgmtButton
+@onready var personnel_btn: Button = $TopBar/QuickAccess/PersonnelButton
+@onready var logistics_btn: Button = $TopBar/QuickAccess/LogisticsButton
+@onready var contract_board_btn: Button = $TopBar/QuickAccess/ContractBoardButton
+@onready var event_log_btn: Button = $TopBar/QuickAccess/EventLogButton
+@onready var menu_btn: MenuButton = $TopBar/MenuButton
 
 
 func _ready() -> void:
-	balance_label = $TopBar/Finances/BalanceLabel
-	bills_label = $TopBar/Finances/BillsLabel
-	contracts_label = $TopBar/Contracts/ContractsLabel
-	date_label = $TopBar/DateTime/DateLabel
-	time_label = $TopBar/DateTime/TimeLabel
-	badges_container = $TopBar/BadgesContainer
-	funds_badge = $TopBar/BadgesContainer/FundsBadge
-	injured_badge = $TopBar/BadgesContainer/InjuredBadge
-	reorder_badge = $TopBar/BadgesContainer/ReorderBadge
-	org_mgmt_btn = $TopBar/QuickAccess/OrgMgmtButton
-	personnel_btn = $TopBar/QuickAccess/PersonnelButton
-	logistics_btn = $TopBar/QuickAccess/LogisticsButton
-	contract_board_btn = $TopBar/QuickAccess/ContractBoardButton
-	event_log_btn = $TopBar/QuickAccess/EventLogButton
-	menu_btn = $TopBar/MenuButton
-
 	org_mgmt_btn.pressed.connect(_on_org_mgmt)
 	personnel_btn.pressed.connect(_on_personnel)
 	logistics_btn.pressed.connect(_on_logistics)
@@ -119,6 +103,8 @@ func _refresh_date() -> void:
 
 
 func _refresh_time() -> void:
+	if not time_label:
+		return
 	var t = Time.get_time_dict_from_system()
 	time_label.text = "%02d:%02d" % [t.hour, t.minute]
 
