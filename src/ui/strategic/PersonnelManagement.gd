@@ -63,6 +63,13 @@ func _ready() -> void:
 	candidate_detail.add_theme_color_override("font_color", Color(0.8, 0.9, 1.0))
 
 	Helpers.validate_nodes("PersonnelManagement", [
+		["roster_list", roster_list], ["search_bar", search_bar], ["role_filter", role_filter],
+		["detail_name", detail_name], ["detail_role", detail_role], ["detail_info", detail_info],
+		["hire_button", hire_button], ["fire_button", fire_button], ["promote_button", promote_button],
+		["close_button", close_button], ["assign_button", assign_button], ["unassign_button", unassign_button],
+		["hire_candidates", hire_candidates], ["hire_panel", hire_panel], ["candidate_detail", candidate_detail],
+		["hire_selected_button", hire_selected_button],
+	])
 
 	close_button.pressed.connect(_on_close)
 	hire_button.pressed.connect(_on_hire)

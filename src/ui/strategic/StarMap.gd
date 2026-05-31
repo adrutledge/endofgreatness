@@ -435,8 +435,20 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif logistics_ui.visible:
 			_on_logistics_closed()
 			get_viewport().set_input_as_handled()
+		elif contract_board.visible:
+			contract_board.hide()
+			sidebar.show_sidebar()
+			get_viewport().set_input_as_handled()
+		elif org_mgmt.visible:
+			org_mgmt.hide()
+			sidebar.show_sidebar()
+			get_viewport().set_input_as_handled()
+		elif event_log_ui.visible:
+			_on_event_log_closed()
+			get_viewport().set_input_as_handled()
 		elif personnel_mgmt.visible:
 			_on_personnel_mgmt_closed()
+			get_viewport().set_input_as_handled()
 		elif info_panel.visible:
 			selected_system = {}
 			info_panel.hide_panel()
