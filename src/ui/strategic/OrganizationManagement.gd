@@ -104,7 +104,7 @@ func _on_tree_selected() -> void:
 		SelectionType.STRATEGIC:
 			detail_name.text = GameState.player.unit_name
 			detail_type.text = tr("Strategic Unit (Player)")
-			detail_info.text = tr("Organizational Units: ") + str(GameState.player.organizational_units.size()) + "\nBalance: " + str(GameState.player.current_balance) + " C-Bills\nLocation: " + (GameState.player.current_planet if GameState.player.current_planet else "Unknown")
+			detail_info.text = tr("Organizational Units: ") + str(GameState.player.organizational_units.size()) + "\n" + tr("Balance: ") + Helpers.fmt_money(GameState.player.current_balance) + "\n" + tr("Location: ") + (GameState.player.current_planet if GameState.player.current_planet else tr("Unknown"))
 			deploy_button.disabled = true
 			remove_button.disabled = true
 			create_button.disabled = false

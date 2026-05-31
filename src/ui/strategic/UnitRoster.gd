@@ -117,7 +117,7 @@ func _on_tree_selected() -> void:
 			var lines = []
 			lines.append("Organizational Units: " + str(GameState.player.organizational_units.size()))
 			lines.append("Total Tactical Units: " + str(total_tus))
-			lines.append("Balance: " + str(GameState.player.current_balance) + " C-Bills")
+			lines.append(tr("Balance: ") + Helpers.fmt_money(GameState.player.current_balance))
 			lines.append("Location: " + (GameState.player.current_planet if GameState.player.current_planet else "Unknown"))
 			_detail_set_text("\n".join(lines))
 
