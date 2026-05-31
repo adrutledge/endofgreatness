@@ -14,5 +14,6 @@ func get_all_personnel() -> Array[Personnel]:
 		for pu in ou.get_all_tactical_units():
 			result.append_array(pu.crew)
 		for su in ou.sub_units:
-			result.append(su.commander)
+			if su.commander:
+				result.append(su.commander)
 	return result

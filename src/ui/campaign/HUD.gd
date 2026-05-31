@@ -1,21 +1,26 @@
-class_name HUD
 extends CanvasLayer
 
-@onready var balance_label: Label = %BalanceLabel
-@onready var bills_label: Label = %BillsLabel
-@onready var contracts_label: Label = %ContractsLabel
-@onready var date_label: Label = %DateLabel
-@onready var badges_container: HBoxContainer = %BadgesContainer
-@onready var funds_badge: Label = %FundsBadge
-@onready var injured_badge: Label = %InjuredBadge
-@onready var reorder_badge: Label = %ReorderBadge
+@onready var balance_label = $Margin/TopBar/Finances/BalanceLabel
+@onready var bills_label = $Margin/TopBar/Finances/BillsLabel
+@onready var contracts_label = $Margin/TopBar/Contracts/ContractsLabel
+@onready var date_label = $Margin/TopBar/DateLabel
+@onready var badges_container = $Margin/TopBar/BadgesContainer
+@onready var funds_badge = $Margin/TopBar/BadgesContainer/FundsBadge
+@onready var injured_badge = $Margin/TopBar/BadgesContainer/InjuredBadge
+@onready var reorder_badge = $Margin/TopBar/BadgesContainer/ReorderBadge
+
+@onready var org_mgmt_btn = $Margin/TopBar/QuickAccess/OrgMgmtButton
+@onready var personnel_btn = $Margin/TopBar/QuickAccess/PersonnelButton
+@onready var logistics_btn = $Margin/TopBar/QuickAccess/LogisticsButton
+@onready var contract_board_btn = $Margin/TopBar/QuickAccess/ContractBoardButton
+@onready var event_log_btn = $Margin/TopBar/QuickAccess/EventLogButton
 
 func _ready() -> void:
-	%OrgMgmtButton.pressed.connect(_on_org_mgmt)
-	%PersonnelButton.pressed.connect(_on_personnel)
-	%LogisticsButton.pressed.connect(_on_logistics)
-	%ContractBoardButton.pressed.connect(_on_contract_board)
-	%EventLogButton.pressed.connect(_on_event_log)
+	org_mgmt_btn.pressed.connect(_on_org_mgmt)
+	personnel_btn.pressed.connect(_on_personnel)
+	logistics_btn.pressed.connect(_on_logistics)
+	contract_board_btn.pressed.connect(_on_contract_board)
+	event_log_btn.pressed.connect(_on_event_log)
 
 	EventBus.month_started.connect(_refresh)
 	EventBus.contract_accepted.connect(_refresh)

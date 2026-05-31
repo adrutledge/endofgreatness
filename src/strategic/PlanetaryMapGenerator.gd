@@ -2,6 +2,8 @@ extends Node
 
 ## Generates a HexMap for a planetary operation based on contract and planet data.
 
+const HexMap = preload("res://src/data/HexMap.gd")
+
 const MAP_SIZES: Dictionary = {
 	"Garrison": Vector2i(12, 10),
 	"Cadre": Vector2i(10, 8),

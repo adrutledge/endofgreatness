@@ -9,7 +9,7 @@ signal campaign_exited()
 @onready var strategic_layer = $StrategicLayer
 @onready var planetary_layer = $PlanetaryLayer
 @onready var tactical_layer = $TacticalLayer
-@onready var layer_mgr: LayerManager = $LayerManager
+@onready var layer_mgr = $LayerManager
 
 func _ready() -> void:
 	layer_mgr.register_layer("strategic", strategic_layer)

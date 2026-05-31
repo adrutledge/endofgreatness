@@ -3,6 +3,9 @@ extends Panel
 
 signal closed()
 
+const HexMap = preload("res://src/data/HexMap.gd")
+const PlanetaryMapGenerator = preload("res://src/strategic/PlanetaryMapGenerator.gd")
+
 var contract: Contract
 var hex_map: HexMap
 var hex_size: float = 30.0

@@ -31,8 +31,10 @@ var xp_label: RichTextLabel
 var xp_skill_list: VBoxContainer
 var xp_btn_bar: HBoxContainer
 var xp_apply_btn: Button
+var xp_tab_container: VBoxContainer
 var edu_label: RichTextLabel
 var edu_upgrade_btn: Button
+var edu_tab_container: VBoxContainer
 
 func _ready() -> void:
 	Helpers.debug_print("PersonnelManagement", "_ready start")

@@ -106,6 +106,8 @@ func get_daily_burn_rate() -> Dictionary:
 		"transport": 0
 	}
 	for personnel in GameState.player.get_all_personnel():
+		if not personnel:
+			continue
 		match personnel.role:
 			Enums.PersonnelRole.HR:
 				breakdown.salaries += 70

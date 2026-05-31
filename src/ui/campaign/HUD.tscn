@@ -7,13 +7,14 @@ script = ExtResource("1")
 layer = 3
 
 [node name="Margin" type="MarginContainer" parent="."]
-anchors_preset = 0
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = 2
+anchor_top = 0.0
+anchor_bottom = 0.0
+margin_bottom = 28.0
 theme_override_constants/margin_left = 6
-theme_override_constants/margin_top = 6
+theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 6
-theme_override_constants/margin_bottom = 6
+theme_override_constants/margin_bottom = 4
 mouse_filter = 2
 
 [node name="TopBar" type="HBoxContainer" parent="Margin"]

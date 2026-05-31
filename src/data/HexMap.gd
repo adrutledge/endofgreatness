@@ -1,4 +1,3 @@
-class_name HexMap
 extends Resource
 
 enum Terrain {
