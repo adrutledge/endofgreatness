@@ -47,7 +47,7 @@ static func validate_nodes(tag: String, pairs) -> void:
 			push_warning("[DBG][%s] NODE NULL: %s" % [tag, name])
 
 
-static func fmt_number(amount: float, decimals: int = 0) -> String:
+static func fmt_number(amount: float) -> String:
 	var n = int(round(amount))
 	var s = str(n)
 	var result = ""
