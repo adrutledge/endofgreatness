@@ -100,6 +100,10 @@ func _on_personnel() -> void:
 	PanelManager.open_panel("personnel")
 
 
+func _on_event_log() -> void:
+	PanelManager.open_panel("event_log")
+
+
 func _on_logistics() -> void:
 	PanelManager.open_panel("logistics")
 
