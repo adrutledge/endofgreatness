@@ -113,6 +113,7 @@ const PERSONNEL_ROLE_NAMES: Dictionary = {
 }
 
 const RANK_TITLES: Dictionary = {
+	Enums.PersonnelRole.MECHWARRIOR: ["Cadet", "Lieutenant", "Captain", "Major"],
 	Enums.PersonnelRole.CREW: ["Private", "Lance Corporal", "Corporal", "Sergeant"],
 	Enums.PersonnelRole.TECHNICIAN: ["Tech Apprentice", "Tech", "Senior Tech", "Master Tech"],
 	Enums.PersonnelRole.DOCTOR: ["Intern", "Physician", "Senior Physician", "Chief Surgeon"],
@@ -372,8 +373,8 @@ func _generate_pilots(mechs: Array[TacticalUnit]) -> Array[Personnel]:
 	var pilots: Array[Personnel] = []
 
 	for i in range(count):
-		var p = _base_personnel(Enums.PersonnelRole.CREW)
-		p.rank = RANK_TITLES[Enums.PersonnelRole.CREW][randi() % RANK_TITLES[Enums.PersonnelRole.CREW].size()]
+		var p = _base_personnel(Enums.PersonnelRole.MECHWARRIOR)
+		p.rank = RANK_TITLES[Enums.PersonnelRole.MECHWARRIOR][randi() % RANK_TITLES[Enums.PersonnelRole.MECHWARRIOR].size()]
 
 		var gunnery = clampi(randi() % 5 + 1, 1, 10)
 		var piloting = clampi(randi() % 5 + 1, 1, 10)
@@ -411,7 +412,8 @@ func _pilot_skill_correlation(pilots: Array[Personnel]) -> void:
 		var gunnery_boost = target_combat - (combat_sum / 2)
 		if gunnery_boost > 0:
 			p.skills["gunnery_mech"] = clampi(p.skills.get("gunnery_mech", 5) + gunnery_boost, 1, 10)
-			p.skills["gunnery_ground_vehicle"] = clampi(p.skills.get("gunnery_ground_vehicle", 5) + gunnery_boost, 1, 10)
+			if p.role == Enums.PersonnelRole.CREW:
+				p.skills["gunnery_ground_vehicle"] = clampi(p.skills.get("gunnery_ground_vehicle", 5) + gunnery_boost, 1, 10)
 
 		var train_skill = p.skills.get("training", 3)
 		var training_boost = max(0, int(cmd_score / 6) - 1)

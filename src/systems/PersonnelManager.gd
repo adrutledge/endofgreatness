@@ -181,7 +181,7 @@ func generate_random_personnel(planet_data: Dictionary) -> Personnel:
 	var first_names = ["Alex", "Jordan", "Sam", "Casey", "Taylor", "Morgan", "Riley", "Quinn", "Avery", "Dakota"]
 	var last_names = ["Smith", "Jones", "Lee", "Chen", "Patel", "Khan", "Mueller", "Garcia", "Kim", "Singh"]
 	p.personnel_name = first_names[randi() % first_names.size()] + " " + last_names[randi() % last_names.size()]
-	var roles = [Enums.PersonnelRole.CREW, Enums.PersonnelRole.TECHNICIAN, Enums.PersonnelRole.ASTECH, Enums.PersonnelRole.MEDIC, Enums.PersonnelRole.DOCTOR, Enums.PersonnelRole.HR, Enums.PersonnelRole.LOGISTICAL, Enums.PersonnelRole.TRANSPORT, Enums.PersonnelRole.COMMAND, Enums.PersonnelRole.CIVILIAN]
+	var roles = [Enums.PersonnelRole.MECHWARRIOR, Enums.PersonnelRole.CREW, Enums.PersonnelRole.TECHNICIAN, Enums.PersonnelRole.ASTECH, Enums.PersonnelRole.MEDIC, Enums.PersonnelRole.DOCTOR, Enums.PersonnelRole.HR, Enums.PersonnelRole.LOGISTICAL, Enums.PersonnelRole.TRANSPORT, Enums.PersonnelRole.COMMAND, Enums.PersonnelRole.CIVILIAN]
 	p.role = roles[randi() % roles.size()]
 	p.body = _rand_atow_attr()
 	p.dexterity = _rand_atow_attr()
@@ -285,6 +285,10 @@ func generate_random_personnel(planet_data: Dictionary) -> Personnel:
 					p.skills["tech_aerospace"] = randi() % 6 + 1
 		Enums.PersonnelRole.ASTECH:
 			p.skills["astech"] = randi() % 6 + 1
+		Enums.PersonnelRole.MECHWARRIOR:
+			p.skills["gunnery_mech"] = randi() % 6 + 1
+			p.skills["piloting_mech"] = randi() % 4 + 1
+			p.skills["small_arms"] = randi() % 4 + 1
 		Enums.PersonnelRole.CREW:
 			p.skills["gunnery_mech"] = randi() % 6 + 1
 			p.skills["gunnery_ground_vehicle"] = randi() % 6 + 1

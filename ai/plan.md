@@ -189,6 +189,8 @@ Form a unit → take a contract → deploy to the contract planet → explore th
 - Pilot abilities (terrain, mech affinity, weapon spec)
 - Passive XP gain from assigned roles
 - Preferred gender flag, external lovers, children, education
+- Rank systems: each faction defines its own rank structure in its JSON file (enlisted and officer tracks, with internal codes like E1–E9, O1–O10, WO1–WO5) and display names per rank; players can define custom rank systems mapped over the internal codes; a personnel's rank is stored as a code (e.g., "O3") and displayed using the active rank system's name for that code
+- Crew roles separated by vehicle type: MECHWARRIOR, VEHICLE_CREW, AEROSPACE_PILOT, VTOL_PILOT, AIRCRAFT_PILOT, INFANTRY — each with distinct skill progressions and rank tracks; current version generates only MECHWARRIOR (mechs only until vehicles/infantry enabled)
 - Medals and decorations (fruit salad): personnel earn medals for notable accomplishments — X kills in a single mission, surviving Y damage in one engagement, participating in a major lore conflict (Fourth Succession War, etc.), serving as an instructor (Training skill for their lance over Z months), extracting from a losing battle, or disabling a superior foe without destroying it; each medal grants a permanent buff (stat/skill bonus, trait, or ability unlock) and is displayed as a ribbon/medal icon on the personnel sheet; thresholds are mission-level (e.g., "3+ kills in one mission") not aggregate, rewarding exceptional moments; MRB may issue standard medals, while faction-specific decorations unlock with reputation; a character's medal rack ("fruit salad") is visible in their detail view, providing at-a-glance history
 
 ### Advanced Politics
