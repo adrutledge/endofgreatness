@@ -1428,9 +1428,8 @@ func _populate_current_components_list() -> void:
 	if current_location_filter.selected >= 0:
 		filter_loc_meta = current_location_filter.get_item_metadata(current_location_filter.selected)
 
-	for name in current_components:
-		var c = current_components[name]
-		if selected_info.comp_name == c.component_name:
+	for c in selected_unit.components:
+		if c.component_name.is_empty():
 			continue
 		var loc_name = c.location.location_name if c.location else "Unknown"
 		if filter_loc_meta and filter_loc_meta != "All Locations" and loc_name != filter_loc_meta:

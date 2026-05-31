@@ -229,6 +229,9 @@ Form a unit → take a contract → deploy to the contract planet → explore th
 
 ## Design Notes & Architectural Patterns
 
+### Data-Driven First
+Prefer data-driven systems over hardcoded logic wherever feasible. Configuration files (personnel types, faction data, contract generation weights, skill correlation rules) should define behavior that would otherwise require code changes. This enables modding, reduces compilation errors from misplaced indentation, and keeps the engine code focused on interpretation rather than domain logic.
+
 ### Signal Down, Call Up
 
 Systems emit signals downward (to listeners); UI/reactors call methods upward on systems.
