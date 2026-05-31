@@ -439,18 +439,15 @@ func _on_contract_accepted(contract: Contract) -> void:
 	contract_cumulative_loss_value[key] = 0
 	contract_cumulative_reimbursement[key] = 0
 
-func track_battle_loss(unit: TacticalUnit, component: Component, c_bill_value: int) -> void:
-	for c in GameState.active_contracts:
-		if not c.is_active:
-			continue
-		var key = c.get_instance_id()
-		if not contract_battle_losses.has(key):
-			contract_battle_losses[key] = []
-		contract_battle_losses[key].append({
-			"unit": unit.unit_name,
-			"component": component.component_name,
-			"value": c_bill_value
-		})
+func track_battle_loss(contract: Contract, unit: TacticalUnit, component: Component, c_bill_value: int) -> void:
+	var key = contract.get_instance_id()
+	if not contract_battle_losses.has(key):
+		contract_battle_losses[key] = []
+	contract_battle_losses[key].append({
+		"unit": unit.unit_name,
+		"component": component.component_name,
+		"value": c_bill_value
+	})
 
 func _on_contract_completed(contract: Contract) -> void:
 	settle_contract(contract)
@@ -466,15 +463,12 @@ func _on_contract_completed(contract: Contract) -> void:
 	contract_cumulative_loss_value.erase(key)
 	contract_cumulative_reimbursement.erase(key)
 
-func track_ammo_expended(ammo_component: Component, shots_fired: int, c_bill_per_shot: int) -> void:
+func track_ammo_expended(contract: Contract, ammo_component: Component, shots_fired: int, c_bill_per_shot: int) -> void:
 	## Legacy per-shot tracking. Prefer record_ammo_expended() which is
 	## called at end of engagement with net ammo usage to avoid double-charging.
 	var cost = shots_fired * c_bill_per_shot
-	for c in GameState.active_contracts:
-		if not c.is_active:
-			continue
-		var key = c.get_instance_id()
-		contract_ammo_costs[key] = contract_ammo_costs.get(key, 0) + cost
+	var key = contract.get_instance_id()
+	contract_ammo_costs[key] = contract_ammo_costs.get(key, 0) + cost
 
 
 ## Called at end of engagement with net ammo expended per ammo type.
@@ -486,7 +480,7 @@ func record_ammo_expended(contract_id: String, ammo_type: String, shots_fired: i
 	contract_ammo_costs[key] = contract_ammo_costs.get(key, 0) + cost
 
 
-func track_enemy_loss(component_name: String, c_bill_value: int, tonnage: float,
+func track_enemy_loss(contract: Contract, component_name: String, c_bill_value: int, tonnage: float,
 		difficulty: int, quality: Enums.Quality = Enums.Quality.D,
 		is_destroyed: bool = false, source_unit: String = "",
 		location_blown_off: bool = false) -> void:
@@ -496,43 +490,40 @@ func track_enemy_loss(component_name: String, c_bill_value: int, tonnage: float,
 	if is_destroyed and not location_blown_off:
 		return
 
-	for c in GameState.active_contracts:
-		if not c.is_active:
-			continue
-		var key = c.get_instance_id()
-		if not contract_salvage_pool.has(key):
-			contract_salvage_pool[key] = []
+	var key = contract.get_instance_id()
+	if not contract_salvage_pool.has(key):
+		contract_salvage_pool[key] = []
 
-		var condition = Enums.ComponentStatus.DAMAGED if randi() % 3 < 2 else Enums.ComponentStatus.UNDAMAGED
-		var recovery_hours = _calculate_recovery_hours(tonnage, difficulty, condition)
-		var recovery_chance = _calculate_recovery_chance(difficulty, quality, condition)
+	var condition = Enums.ComponentStatus.DAMAGED if randi() % 3 < 2 else Enums.ComponentStatus.UNDAMAGED
+	var recovery_hours = _calculate_recovery_hours(tonnage, difficulty, condition)
+	var recovery_chance = _calculate_recovery_chance(difficulty, quality, condition)
 
-		var merged := false
-		for entry in contract_salvage_pool[key]:
-			if entry.component_name == component_name and entry.source_unit == source_unit \
-					and entry.condition == condition:
-				entry.quantity += 1
-				entry.c_bill_value += c_bill_value
-				entry.recovery_hours += recovery_hours
-				entry.recovery_chance = min(1.0, entry.recovery_chance + 0.05)
-				merged = true
-				break
+	var merged := false
+	for entry in contract_salvage_pool[key]:
+		if entry.component_name == component_name and entry.source_unit == source_unit \
+				and entry.condition == condition:
+			entry.quantity += 1
+			entry.c_bill_value += c_bill_value
+			entry.recovery_hours += recovery_hours
+			entry.recovery_chance = min(1.0, entry.recovery_chance + 0.05)
+			merged = true
+			break
 
-		if not merged:
-			contract_salvage_pool[key].append({
-				"component_name": component_name,
-				"c_bill_value": c_bill_value,
-				"recovery_hours": recovery_hours,
-				"quantity": 1,
-				"source_unit": source_unit,
-				"quality": quality,
-				"condition": condition,
-				"recovery_chance": recovery_chance,
-				"tonnage": tonnage,
-				"difficulty": difficulty,
-			})
+	if not merged:
+		contract_salvage_pool[key].append({
+			"component_name": component_name,
+			"c_bill_value": c_bill_value,
+			"recovery_hours": recovery_hours,
+			"quantity": 1,
+			"source_unit": source_unit,
+			"quality": quality,
+			"condition": condition,
+			"recovery_chance": recovery_chance,
+			"tonnage": tonnage,
+			"difficulty": difficulty,
+		})
 
-		c.salvage_pool = contract_salvage_pool[key].duplicate()
+	contract.salvage_pool = contract_salvage_pool[key].duplicate()
 
 
 static func _calculate_recovery_hours(tonnage: float, difficulty: int,
