@@ -34,6 +34,7 @@ func _ready() -> void:
 	add_theme_stylebox_override("panel", bg)
 
 	var vbox = $MarginContainer/VBox
+	var title_ref = $MarginContainer/VBox/Title
 	var tab_container = TabContainer.new()
 	tab_container.name = "MainTabs"
 	tab_container.size_flags_vertical = SIZE_EXPAND_FILL
@@ -56,19 +57,12 @@ func _ready() -> void:
 
 	_build_medbay_tab(medbay_tab)
 
-	Helpers.validate_nodes("PersonnelManagement", [
-		["roster_list", roster_list], ["search_bar", search_bar], ["role_filter", role_filter],
-		["detail_name", detail_name], ["detail_role", detail_role], ["detail_info", detail_info],
-		["hire_button", hire_button], ["fire_button", fire_button], ["promote_button", promote_button],
-		["close_button", close_button], ["assign_button", assign_button], ["unassign_button", unassign_button],
-		["hire_candidates", hire_candidates], ["hire_panel", hire_panel], ["candidate_detail", candidate_detail],
-		["hire_selected_button", hire_selected_button],
-	])
-
-	%Title.add_theme_color_override("font_color", Color(1.0, 0.9, 0.6))
+	title_ref.add_theme_color_override("font_color", Color(1.0, 0.9, 0.6))
 	detail_name.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0))
 	detail_role.add_theme_color_override("font_color", Color(0.6, 0.8, 1.0))
 	candidate_detail.add_theme_color_override("font_color", Color(0.8, 0.9, 1.0))
+
+	Helpers.validate_nodes("PersonnelManagement", [
 
 	close_button.pressed.connect(_on_close)
 	hire_button.pressed.connect(_on_hire)

@@ -93,7 +93,6 @@ func _slide_out(animate: bool = true) -> void:
 
 func _connect_signals() -> void:
 	%PersonnelButton.pressed.connect(_on_personnel)
-	%PersonnelButton.pressed.connect(_on_personnel)
 	%EventLogButton.pressed.connect(_on_event_log)
 	%MechLabButton.pressed.connect(_on_mech_lab)
 	%LogisticsButton.pressed.connect(_on_logistics)

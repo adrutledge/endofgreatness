@@ -29,7 +29,7 @@ const NAME_ZOOM_THRESHOLD: float = 2.5
 
 func _ready() -> void:
 	Helpers.debug_print("StarMap", "_ready start")
-	Helpers.debug_print("StarMap", "sidebar=%s org=%s contract=%s personnel=%s event=%s roster=%s mech=%s log=%s" % [
+	Helpers.debug_print("StarMap", "sidebar=%s org=%s contract=%s personnel=%s event=%s mech=%s log=%s" % [
 		sidebar, org_mgmt, contract_board, personnel_mgmt,
 		event_log_ui, mech_lab_ui, logistics_ui])
 	sidebar.organization_tree_requested.connect(_on_organization_tree)
