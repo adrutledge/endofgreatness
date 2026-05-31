@@ -2,8 +2,9 @@ extends CanvasLayer
 
 func _ready() -> void:
 	var topbar = $TopBar
-	topbar.get_node("Finances/BalanceLabel")
-	topbar.get_node("Finances/BillsLabel")
+	var finances = topbar.get_node("Finances")
+	var bills_label = finances.get_node("BillsLabel")
+	bills_label.text = tr("Daily Burn: %s/day") % Helpers.fmt_money(0)
 	topbar.get_node("Contracts/ContractsLabel")
 	topbar.get_node("DateTime/DateLabel")
 	topbar.get_node("DateTime/TimeLabel")
@@ -52,8 +53,9 @@ func _refresh(_dummy = null) -> void:
 
 
 func _refresh_finances() -> void:
-	var balance_label = $TopBar/Finances/BalanceLabel
-	var bills_label = $TopBar/Finances/BillsLabel
+	var topbar = $TopBar
+	var balance_label = topbar.get_node("Finances/BalanceLabel")
+	var bills_label = topbar.get_node("Finances").get_node("BillsLabel")
 	var balance = EconomySystem.get_balance() if EconomySystem else 0
 	balance_label.text = tr("C-Bills: %s") % Helpers.fmt_money(balance)
 	var burn = EconomySystem.get_daily_burn_rate() if EconomySystem else {}
@@ -72,9 +74,10 @@ func _refresh_contracts() -> void:
 
 
 func _refresh_badges() -> void:
-	var funds_badge = $TopBar/BadgesContainer/FundsBadge
-	var injured_badge = $TopBar/BadgesContainer/InjuredBadge
-	var reorder_badge = $TopBar/BadgesContainer/ReorderBadge
+	var topbar = $TopBar
+	var funds_badge = topbar.get_node("BadgesContainer/FundsBadge")
+	var injured_badge = topbar.get_node("BadgesContainer/InjuredBadge")
+	var reorder_badge = topbar.get_node("BadgesContainer/ReorderBadge")
 	var balance = EconomySystem.get_balance() if EconomySystem else 0
 	var next_bills = EconomySystem.accumulated_expenses if EconomySystem else 0
 	if balance < 0:
