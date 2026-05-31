@@ -69,8 +69,8 @@ func _on_planetary_closed() -> void:
 	layer_mgr.pop()
 
 
-func show_modal(content: Control) -> void:
-	modal_layer.queue_modal(content)
+func show_modal(content: Control, pauses_game: bool = false) -> void:
+	modal_layer.queue_modal(content, pauses_game)
 
 
 func dismiss_modal() -> void:

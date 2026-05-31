@@ -11,6 +11,14 @@ func _ready() -> void:
 	var menu_btn = topbar.get_node("MenuButton")
 	menu_btn.pressed.connect(_on_menu_button)
 
+	EventBus.month_started.connect(_refresh)
+	EventBus.contract_accepted.connect(_refresh)
+	EventBus.contract_completed.connect(_refresh)
+	EventBus.bills_paid.connect(_refresh)
+	EventBus.funds_depleted.connect(_refresh)
+	TimeManager.date_changed.connect(_refresh)
+	_refresh()
+
 
 func _on_menu_button() -> void:
 	var cv = get_tree().current_scene
@@ -20,24 +28,6 @@ func _on_menu_button() -> void:
 	var menu = preload("res://src/ui/campaign/GameMenu.tscn").instantiate()
 	menu.dismissed.connect(cv.dismiss_modal)
 	cv.show_modal(menu)
-
-	topbar.get_node("Finances/BalanceLabel")
-	topbar.get_node("Contracts/ContractsLabel")
-	topbar.get_node("DateTime/DateLabel")
-	topbar.get_node("DateTime/TimeLabel")
-	topbar.get_node("BadgesContainer")
-	topbar.get_node("BadgesContainer/FundsBadge")
-	topbar.get_node("BadgesContainer/InjuredBadge")
-	topbar.get_node("BadgesContainer/ReorderBadge")
-
-	EventBus.month_started.connect(_refresh)
-	EventBus.contract_accepted.connect(_refresh)
-	EventBus.contract_completed.connect(_refresh)
-	EventBus.bills_paid.connect(_refresh)
-	EventBus.funds_depleted.connect(_refresh)
-	TimeManager.date_changed.connect(_refresh)
-
-	_refresh()
 
 
 func _refresh(_dummy = null) -> void:
@@ -106,18 +96,8 @@ func _refresh_time() -> void:
 	time_label.text = "%02d:%02d" % [t.hour, t.minute]
 
 
-func _on_menu_button() -> void:
-	var cv = get_tree().current_scene
-	if not cv or not cv.has_method("show_modal"):
-		printerr("HUD: CampaignView not found")
-		return
-	var menu = preload("res://src/ui/campaign/GameMenu.tscn").instantiate()
-	menu.dismissed.connect(cv.dismiss_modal)
-	cv.show_modal(menu)
-
-
 func _on_personnel() -> void:
-	PanelManager.open_panel("event_log")
+	PanelManager.open_panel("personnel")
 
 
 func _on_logistics() -> void:

@@ -4,10 +4,14 @@ extends CanvasLayer
 ## Background dim overlay blocks clicks to everything underneath.
 ## Dialogs are queued FIFO — if multiple trigger simultaneously, each
 ## is shown in arrival order. Dismissing one advances to the next.
+##
+## Each modal has a `pauses_game` flag. When a pausing modal reaches the
+## top of the queue, TimeManager pauses. Time stays paused until no
+## pausing modals remain in the queue.
 
 var _bg: ColorRect
 var _container: CenterContainer
-var _queue: Array[Control] = []
+var _queue: Array[Dictionary] = []
 
 
 func _ready() -> void:
@@ -33,8 +37,9 @@ func _resize_bg() -> void:
 
 ## Queues a modal dialog. If no dialog is currently shown, displays it
 ## immediately. Otherwise it waits in FIFO order.
-func queue_modal(content: Control) -> void:
-	_queue.append(content)
+## If pauses_game is true, TimeManager pauses while this modal is visible.
+func queue_modal(content: Control, pauses_game: bool = false) -> void:
+	_queue.append({"content": content, "pauses": pauses_game})
 	if _queue.size() == 1:
 		_show_current()
 
@@ -43,18 +48,27 @@ func queue_modal(content: Control) -> void:
 func dismiss() -> void:
 	if _queue.is_empty():
 		return
+	var entry = _queue[0]
+	var was_pausing = entry.get("pauses", false)
 	_hide_current()
-	var dismissed = _queue.pop_front()
+	var dismissed = entry.get("content")
 	_container.remove_child(dismissed)
 	dismissed.queue_free()
+	_queue.pop_front()
+
 	if not _queue.is_empty():
 		_show_current()
+	elif was_pausing:
+		TimeManager.unpause()
 
 
 func _show_current() -> void:
 	if _queue.is_empty():
 		return
-	_container.add_child(_queue[0])
+	var entry = _queue[0]
+	_container.add_child(entry.content)
+	if entry.pauses:
+		TimeManager.pause()
 	_bg.show()
 	_container.show()
 
