@@ -12,12 +12,11 @@ var _queue: Array[Control] = []
 
 func _ready() -> void:
 	layer = 4
-	mouse_filter = Control.MOUSE_FILTER_STOP
 
 	_bg = ColorRect.new()
 	_bg.color = Color(0, 0, 0, 0.55)
 	_bg.mouse_filter = Control.MOUSE_FILTER_STOP
-	_bg.size = get_viewport_rect().size
+	_bg.size = get_viewport().get_visible_rect().size
 	get_viewport().size_changed.connect(_resize_bg)
 	add_child(_bg)
 	_bg.hide()
@@ -29,12 +28,12 @@ func _ready() -> void:
 
 
 func _resize_bg() -> void:
-	_bg.size = get_viewport_rect().size
+	_bg.size = get_viewport().get_visible_rect().size
 
 
 ## Queues a modal dialog. If no dialog is currently shown, displays it
 ## immediately. Otherwise it waits in FIFO order.
-func show(content: Control) -> void:
+func queue_modal(content: Control) -> void:
 	_queue.append(content)
 	if _queue.size() == 1:
 		_show_current()

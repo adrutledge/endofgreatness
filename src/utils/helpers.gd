@@ -15,30 +15,30 @@ static func _ensure_debug() -> void:
 		return
 	for arg in OS.get_cmdline_user_args():
 		if arg == "--opencode-debug" or arg == "-d":
-			DEBUG = true
+			debug = true
 			break
-	if not DEBUG:
-		var env = OS.get_environment("OPENCODE_DEBUG")
+	if not debug:
+		var env = OS.get_environment("OPENCODE_debug")
 		if env and env.to_lower() in ["1", "true", "yes"]:
-			DEBUG = true
+			debug = true
 
 
 static func debug_print(tag: String, msg: String) -> void:
 	_ensure_debug()
-	if not DEBUG:
+	if not debug:
 		return
 	printerr("[DBG][%s] %s" % [tag, msg])
 
 
 static func debug_warn(tag: String, msg: String) -> void:
 	_ensure_debug()
-	if not DEBUG:
+	if not debug:
 		return
 	push_warning("[DBG][%s] %s" % [tag, msg])
 
 
 static func validate_nodes(tag: String, pairs) -> void:
-	if not DEBUG:
+	if not debug:
 		return
 	for pair in pairs:
 		var name = pair[0]

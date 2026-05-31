@@ -70,7 +70,7 @@ func _on_planetary_closed() -> void:
 
 
 func show_modal(content: Control) -> void:
-	modal_layer.show(content)
+	modal_layer.queue_modal(content)
 
 
 func dismiss_modal() -> void:
