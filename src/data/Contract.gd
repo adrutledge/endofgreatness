@@ -1,9 +1,11 @@
 class_name Contract
 extends Resource
 
-## Salvage pool: items recoverable from destroyed enemy units during this contract.
-## Array of Dictionary: { component_name, c_bill_value, recovery_hours, quantity, source_unit }
 var salvage_pool: Array[Dictionary] = []
+
+## Cached tactical engagement data per hex position.
+## Key = "q,r" string, value = Dictionary with generated enemy units.
+var tactical_cache: Dictionary = {}
 
 @export var issuer: String
 @export var target: String

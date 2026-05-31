@@ -9,5 +9,11 @@
     "max": 5
   },
   "repair_difficulty": 4,
-  "component_type": "weapon"
+  "component_type": "weapon",
+  "damage": 10,
+  "heat": 3,
+  "min_range": 0,
+  "short_range": 5,
+  "medium_range": 10,
+  "long_range": 15
 }

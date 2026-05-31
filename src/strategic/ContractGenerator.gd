@@ -145,7 +145,7 @@ func generate_single_contract(issuer: Faction, target: Faction, date: Dictionary
 	contract.c_bill_payment = int(base_pay * rep_mul)
 
 	contract.salvage_rate = _pick_salvage_rate(rep_factor)
-	contract.salvage_type = "items" if randi() % 3 == 0 else "exchange"
+	contract.salvage_type = "exchange"
 
 	contract.command_rights = _determine_command_rights(issuer, rep_factor, low_rep)
 

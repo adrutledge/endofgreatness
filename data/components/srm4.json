@@ -9,5 +9,13 @@
     "max": 5
   },
   "repair_difficulty": 2,
-  "component_type": "weapon"
+  "component_type": "weapon",
+  "damage": 2,
+  "heat": 3,
+  "min_range": 0,
+  "short_range": 3,
+  "medium_range": 6,
+  "long_range": 9,
+  "shots_per_volley": 4,
+  "cluster_weapon": true
 }

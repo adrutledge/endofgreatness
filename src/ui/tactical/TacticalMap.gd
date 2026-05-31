@@ -7,6 +7,7 @@ var contract: Contract
 var player_units: Array[TacticalUnit] = []
 var enemy_units: Array[TacticalUnit] = []
 var deployment: Array[OperationalUnit] = []
+var _hex_data: Dictionary = {}
 
 var _resolved: bool = false
 var _result: Dictionary = {}
@@ -34,16 +35,83 @@ func _ready() -> void:
 
 func load_engagement(c: Contract, hex_data: Dictionary, deployed: Array[OperationalUnit]) -> void:
 	contract = c
+	_hex_data = hex_data
 	deployment = deployed
 	player_units = []
 	for opu in deployed:
 		player_units.append_array(opu.get_all_tactical_units())
 
-	var strength = hex_data.get("objective_data", {}).get("strength", 1)
-	enemy_units = _generate_opfor(strength)
+	var q = hex_data.get("q", 0)
+	var r = hex_data.get("r", 0)
+	var cache_key = "%d,%d" % [q, r]
+
+	if contract.tactical_cache.has(cache_key):
+		enemy_units = _deserialize_units(contract.tactical_cache[cache_key])
+		Helpers.debug_print("TacticalMap", "loaded cached opfor for " + cache_key)
+	else:
+		var strength = hex_data.get("objective_data", {}).get("strength", 1)
+		enemy_units = _generate_opfor(strength)
+		contract.tactical_cache[cache_key] = _serialize_units(enemy_units)
+		Helpers.debug_print("TacticalMap", "generated and cached opfor for " + cache_key)
 
 	title_label.text = tr("Tactical Engagement — %s") % contract.activity_type
 	_refresh_display()
+
+
+func _serialize_units(units: Array[TacticalUnit]) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for u in units:
+		var comps: Array[Dictionary] = []
+		for c in u.components:
+			comps.append({
+				"name": c.component_name,
+				"type": c.component_type,
+				"tonnage": c.tonnage,
+				"slots": c.critical_slots,
+				"status": c.status,
+			})
+		result.append({
+			"name": u.unit_name,
+			"chassis": u.chassis_name,
+			"tonnage": u.tonnage,
+			"move": u.movement_mp,
+			"run": u.run_mp,
+			"armor": u.total_armor_points,
+			"components": comps,
+		})
+	return result
+
+
+func _deserialize_units(data: Array[Dictionary]) -> Array[TacticalUnit]:
+	var result: Array[TacticalUnit] = []
+	for entry in data:
+		var unit = TacticalUnit.new()
+		unit.unit_name = entry.get("name", "Enemy")
+		unit.chassis_name = entry.get("chassis", "")
+		unit.unit_type = Enums.UnitType.MECH
+		unit.tonnage = entry.get("tonnage", 20)
+		unit.movement_mp = entry.get("move", 4)
+		unit.run_mp = entry.get("run", 6)
+		unit.total_armor_points = entry.get("armor", 50)
+		unit.quality = Enums.Quality.D
+
+		var loc = ComponentLocation.new()
+		loc.location_name = "Center Torso"
+		loc.armor = unit.total_armor_points
+		loc.structure = int(unit.tonnage / 5)
+
+		for cd in entry.get("components", []):
+			var comp = Component.new()
+			comp.component_name = cd.get("name", "")
+			comp.component_type = cd.get("type", "other")
+			comp.tonnage = cd.get("tonnage", 1.0)
+			comp.critical_slots = cd.get("slots", 1)
+			comp.location = loc
+			comp.status = cd.get("status", Enums.ComponentStatus.UNDAMAGED)
+			unit.components.append(comp)
+
+		result.append(unit)
+	return result
 
 
 func _generate_opfor(strength: int) -> Array[TacticalUnit]:

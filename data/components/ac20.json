@@ -10,5 +10,11 @@
   },
   "repair_difficulty": 5,
   "component_type": "weapon",
-  "splittable": true
+  "splittable": true,
+  "damage": 20,
+  "heat": 7,
+  "min_range": 0,
+  "short_range": 3,
+  "medium_range": 6,
+  "long_range": 9
 }
