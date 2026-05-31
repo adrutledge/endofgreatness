@@ -344,3 +344,15 @@ Status badges (funds low, injured personnel, reorder suspended, etc.) should be 
 
 ### Deferred Bugs
 - **HUD `BillsLabel` not found**: `$TopBar/Finances/BillsLabel` fails despite the node existing in the scene tree as a sibling of `BalanceLabel` (which resolves fine). Two-step `get_node("Finances").get_node("BillsLabel")` also fails. Likely a Godot scene cache or node naming issue — revisit after a full editor restart or .tscn rebuild.
+
+### Future — Terrain & Movement System
+
+Each unit type has different terrain interaction rules, defined in its `data/unit_types/*.json`:
+
+- **Mechs**: no terrain restrictions. Movement cost varies by terrain type (clear=1, forest=2, rough=2, water=MP/hex). Certain terrain or maneuvers (entering water, taking 20+ damage in a turn) trigger a Piloting Skill Roll (PSR) — 2d6 >= piloting skill or the mech falls.
+- **Ground vehicles** (tracked, wheeled, hover, vtol, wi ge): restricted by motive type — hover needs water/flat, wheeled needs roads/flat/light forest, tracked handles most terrain but has higher costs in rough. Each motive type's forbidden terrain and cost multipliers stored in `data/rules/terrain_movement.json`.
+- **Aerospace**: no ground terrain restrictions; ignores terrain for movement and line of sight.
+
+Pilot Skill Rolls use the unit's pilot skill as the target number with modifiers from terrain/velocity/damage. Aerospace uses `gunnery_air`/`piloting_air` skills; vehicles use `gunnery_ground_vehicle`/`piloting_ground_vehicle`; mechs use `gunnery_mech`/`piloting_mech`.
+
+The `movement_mp` field on `TacticalUnit` stores base MP; terrain cost multipliers reduce effective MP per hex entered. Motive damage from vehicle crits reduces effective MP directly (already implemented in CombatResolver).
