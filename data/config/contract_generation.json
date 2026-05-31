@@ -2,13 +2,17 @@
   "min_contracts": 5,
   "low_rep_threshold": -30,
   "low_rep_contract_chance": 0.3,
-  "range_raid": 250.0,
-  "range_assault": 120.0,
-  "range_defense": 90.0,
-  "range_recon": 120.0,
-  "range_cadre": 60.0,
-  "range_garrison": 30.0,
-  "range_riot": 40.0,
-  "range_pirate_hunt": 180.0,
-  "periphery_pirate_hunt_chance": 0.35
+  "periphery_pirate_hunt_chance": 0.35,
+  "contract_types": [
+    {"name": "Garrison", "max_range": 30, "rival_only": false, "periphery_bonus": false, "weight": 1.0},
+    {"name": "Cadre", "max_range": 60, "rival_only": false, "periphery_bonus": false, "weight": 1.0},
+    {"name": "Riot", "max_range": 40, "rival_only": false, "periphery_bonus": false, "weight": 0.5},
+    {"name": "Defense", "max_range": 90, "rival_only": false, "periphery_bonus": false, "weight": 1.0},
+    {"name": "Assault", "max_range": 120, "rival_only": false, "periphery_bonus": false, "weight": 1.0},
+    {"name": "Recon", "max_range": 120, "rival_only": false, "periphery_bonus": false, "weight": 1.0},
+    {"name": "Pirate Hunting", "max_range": 180, "rival_only": false, "periphery_bonus": true, "weight": 1.0},
+    {"name": "Raid", "max_range": 250, "rival_only": false, "periphery_bonus": false, "weight": 1.0}
+  ],
+  "low_rep_types": ["Raid", "Assault", "Recon"],
+  "pirate_types": ["Raid", "Assault", "Recon"]
 }

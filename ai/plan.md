@@ -100,6 +100,7 @@ Form a unit → take a contract → deploy to the contract planet → explore th
 
 - 6 activity types, duration scaling, payment, command rights, min unit counts
 - Contract duration by type (garrison/cadre ~year, assault/pirate hunting 1-6mo, raids vary, emergency days-weeks)
+- **Data-driven contract definitions** (future expansion): contract types defined in JSON with per-type range weights, likely opposing force strength (min/max percentage, quality tiers), tactical engagement types generated during the contract (breakthrough, head hunter, etc.), and on-planet facilities each side may have (fortified positions, ammo dumps, comms towers, landing zones); all configurable without code changes; interpreter loop evaluates ranges/weights and delegates scenario generation to tactical layer
 - Contract chains (future — advanced narrative): multi-part story arcs with branching, NPC persistence, major lore event participation (4th Succession War, etc.)
 
 ### P3.4 — Organization Management
