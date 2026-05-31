@@ -289,6 +289,13 @@ func generate_random_personnel(planet_data: Dictionary) -> Personnel:
 			p.skills["gunnery_mech"] = randi() % 6 + 1
 			p.skills["piloting_mech"] = randi() % 4 + 1
 			p.skills["small_arms"] = randi() % 4 + 1
+			if randi() % 100 < 2:
+				p.skills["gunnery_ground_vehicle"] = max(1, randi() % 4)
+				p.skills["piloting_ground_vehicle"] = max(1, randi() % 3)
+			# Rare LAM pilot: trained in both mech and aerospace
+			if randi() % 100 < 1:
+				p.skills["gunnery_aerospace"] = max(1, randi() % 4)
+				p.skills["piloting_aerospace"] = max(1, randi() % 3)
 		Enums.PersonnelRole.CREW:
 			p.skills["gunnery_mech"] = randi() % 6 + 1
 			p.skills["gunnery_ground_vehicle"] = randi() % 6 + 1
