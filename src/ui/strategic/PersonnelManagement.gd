@@ -33,6 +33,29 @@ func _ready() -> void:
 	bg.bg_color = Color(0.1, 0.1, 0.15, 0.95)
 	add_theme_stylebox_override("panel", bg)
 
+	var vbox = $MarginContainer/VBox
+	var tab_container = TabContainer.new()
+	tab_container.name = "MainTabs"
+	tab_container.size_flags_vertical = SIZE_EXPAND_FILL
+
+	var personnel_tab = VBoxContainer.new()
+	personnel_tab.name = "PersonnelTab"
+	personnel_tab.size_flags_vertical = SIZE_EXPAND_FILL
+	for c in vbox.get_children():
+		vbox.remove_child(c)
+		personnel_tab.add_child(c)
+	vbox.add_child(tab_container)
+
+	var medbay_tab = VBoxContainer.new()
+	medbay_tab.name = "MedbayTab"
+	medbay_tab.size_flags_vertical = SIZE_EXPAND_FILL
+	tab_container.add_child(personnel_tab)
+	tab_container.add_child(medbay_tab)
+	tab_container.set_tab_title(0, tr("Personnel"))
+	tab_container.set_tab_title(1, tr("Medbay"))
+
+	_build_medbay_tab(medbay_tab)
+
 	Helpers.validate_nodes("PersonnelManagement", [
 		["roster_list", roster_list], ["search_bar", search_bar], ["role_filter", role_filter],
 		["detail_name", detail_name], ["detail_role", detail_role], ["detail_info", detail_info],
@@ -392,6 +415,30 @@ func _on_unassign() -> void:
 		selected_personnel.assigned_unit_id = ""
 	populate_roster()
 	_update_detail_view(selected_personnel)
+
+func _build_medbay_tab(tab: VBoxContainer) -> void:
+	var header := Label.new()
+	header.text = tr("Medbay")
+	header.add_theme_font_size_override("font_size", 14)
+	header.add_theme_color_override("font_color", Color(1.0, 0.9, 0.6))
+	tab.add_child(header)
+
+	var injured_list := ItemList.new()
+	injured_list.name = "MedbayList"
+	injured_list.size_flags_vertical = SIZE_EXPAND_FILL
+	injured_list.add_theme_color_override("font_color", Color(1, 1, 1))
+	tab.add_child(injured_list)
+
+	var refresh := func():
+		injured_list.clear()
+		for p in PersonnelManager.personnel_roster:
+			if p.is_injured:
+				var days = p.healing_days_remaining
+				injured_list.add_item("%s — %s (severity %d, %d days)" % [p.personnel_name, Enums.PersonnelRole.keys()[p.role], p.injury_severity, days])
+
+	refresh.call()
+	EventBus.month_started.connect(func(d): refresh.call())
+
 
 func _on_close() -> void:
 	closed.emit()
