@@ -94,6 +94,11 @@ text = "Event Log"
 theme_override_font_sizes/font_size = 11
 unique_name_in_owner = true
 
+[node name="LogisticsButton" type="Button" parent="Margin/TopBar/QuickAccess"]
+text = "Logistics"
+theme_override_font_sizes/font_size = 11
+unique_name_in_owner = true
+
 [node name="DateLabel" type="Label" parent="Margin/TopBar"]
 unique_name_in_owner = true
 text = ""

@@ -13,6 +13,7 @@ extends CanvasLayer
 func _ready() -> void:
 	%PersonnelButton.pressed.connect(_on_personnel)
 	%EventLogButton.pressed.connect(_on_event_log)
+	%LogisticsButton.pressed.connect(_on_logistics)
 
 	EventBus.month_started.connect(_refresh)
 	EventBus.contract_accepted.connect(_refresh)
@@ -83,3 +84,7 @@ func _on_personnel() -> void:
 
 func _on_event_log() -> void:
 	PanelManager.open_panel("event_log")
+
+
+func _on_logistics() -> void:
+	PanelManager.open_panel("logistics")
