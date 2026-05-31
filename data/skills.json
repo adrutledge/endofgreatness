@@ -1,0 +1,1094 @@
+{
+  "skills": [
+    {
+      "name": "acrobatics",
+      "links": [
+        "reflexes"
+      ]
+    },
+    {
+      "name": "acrobatics_free_fall",
+      "links": [
+        "reflexes"
+      ]
+    },
+    {
+      "name": "acrobatics_gymnastics",
+      "links": [
+        "reflexes"
+      ]
+    },
+    {
+      "name": "acting",
+      "links": [
+        "charisma"
+      ]
+    },
+    {
+      "name": "administration",
+      "links": [
+        "intelligence",
+        "willpower"
+      ]
+    },
+    {
+      "name": "animal_handling",
+      "links": [
+        "willpower"
+      ]
+    },
+    {
+      "name": "animal_handling_herding",
+      "links": []
+    },
+    {
+      "name": "animal_handling_riding",
+      "links": []
+    },
+    {
+      "name": "animal_handling_training",
+      "links": []
+    },
+    {
+      "name": "appraisal",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "archery",
+      "links": [
+        "dexterity"
+      ]
+    },
+    {
+      "name": "art",
+      "links": [
+        "dexterity",
+        "intelligence"
+      ]
+    },
+    {
+      "name": "art_acting",
+      "links": [
+        "dexterity",
+        "intelligence"
+      ]
+    },
+    {
+      "name": "art_calligraphy",
+      "links": [
+        "dexterity",
+        "intelligence"
+      ]
+    },
+    {
+      "name": "art_cooking",
+      "links": [
+        "dexterity",
+        "intelligence"
+      ]
+    },
+    {
+      "name": "art_dance",
+      "links": [
+        "dexterity",
+        "intelligence"
+      ]
+    },
+    {
+      "name": "art_drawing",
+      "links": [
+        "dexterity",
+        "intelligence"
+      ]
+    },
+    {
+      "name": "art_instrument",
+      "links": [
+        "dexterity",
+        "intelligence"
+      ]
+    },
+    {
+      "name": "art_painting",
+      "links": [
+        "dexterity",
+        "intelligence"
+      ]
+    },
+    {
+      "name": "art_poetry",
+      "links": [
+        "dexterity",
+        "intelligence"
+      ]
+    },
+    {
+      "name": "art_sculpture",
+      "links": [
+        "dexterity",
+        "intelligence"
+      ]
+    },
+    {
+      "name": "art_singing",
+      "links": [
+        "dexterity",
+        "intelligence"
+      ]
+    },
+    {
+      "name": "art_writing",
+      "links": [
+        "dexterity",
+        "intelligence"
+      ]
+    },
+    {
+      "name": "artillery",
+      "links": [
+        "intelligence",
+        "willpower"
+      ]
+    },
+    {
+      "name": "astech",
+      "links": [
+        "intelligence",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "career",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "career_civilian",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "career_law_enforcement",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "career_military",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "climbing",
+      "links": [
+        "strength"
+      ]
+    },
+    {
+      "name": "communications",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "communications_black_box",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "communications_conventional",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "communications_hpg",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "computers",
+      "links": [
+        "dexterity",
+        "intelligence"
+      ]
+    },
+    {
+      "name": "cryptography",
+      "links": [
+        "intelligence",
+        "willpower"
+      ]
+    },
+    {
+      "name": "demolitions",
+      "links": [
+        "dexterity",
+        "intelligence"
+      ]
+    },
+    {
+      "name": "disguise",
+      "links": [
+        "charisma"
+      ]
+    },
+    {
+      "name": "driving",
+      "links": [
+        "reflexes",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "driving_ground",
+      "links": [
+        "reflexes",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "driving_rail",
+      "links": [
+        "reflexes",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "driving_sea",
+      "links": [
+        "reflexes",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "escape_artist",
+      "links": [
+        "dexterity"
+      ]
+    },
+    {
+      "name": "forgery",
+      "links": [
+        "dexterity",
+        "intelligence"
+      ]
+    },
+    {
+      "name": "gunnery",
+      "links": [
+        "reflexes",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "gunnery_aerospace",
+      "links": [
+        "reflexes",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "gunnery_air_vehicle",
+      "links": [
+        "reflexes",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "gunnery_battlesuit",
+      "links": [
+        "reflexes",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "gunnery_ground_vehicle",
+      "links": [
+        "reflexes",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "gunnery_mech",
+      "links": [
+        "reflexes",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "gunnery_protomech",
+      "links": [
+        "reflexes",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "gunnery_sea_vehicle",
+      "links": [
+        "reflexes",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "gunnery_spacecraft",
+      "links": [
+        "reflexes",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "gunnery_turret",
+      "links": [
+        "reflexes",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "interest",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "interest_antiques",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "interest_exotic_animals",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "interest_fashion",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "interest_fishing",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "interest_gambling",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "interest_history",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "interest_holo_games",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "interest_law",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "interest_pharmacology",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "interest_sports",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "interest_theology",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "interrogation",
+      "links": [
+        "charisma",
+        "willpower"
+      ]
+    },
+    {
+      "name": "investigation",
+      "links": [
+        "intelligence",
+        "willpower"
+      ]
+    },
+    {
+      "name": "language",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "language_arabic",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "language_chinese",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "language_dutch",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "language_english",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "language_french",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "language_german",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "language_greek",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "language_hebrew",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "language_hindi",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "language_italian",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "language_japanese",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "language_korean",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "language_polish",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "language_portuguese",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "language_russian",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "language_spanish",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "language_swedenese",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "language_swedish",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "language_turkish",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "leadership",
+      "links": [
+        "charisma",
+        "willpower"
+      ]
+    },
+    {
+      "name": "martial_arts",
+      "links": [
+        "strength",
+        "reflexes"
+      ]
+    },
+    {
+      "name": "medic",
+      "links": [
+        "intelligence",
+        "willpower"
+      ]
+    },
+    {
+      "name": "melee_weapons",
+      "links": [
+        "strength",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "navigation",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "navigation_air",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "navigation_ground",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "navigation_kf_jump",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "navigation_sea",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "navigation_space",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "negotiation",
+      "links": [
+        "charisma",
+        "willpower"
+      ]
+    },
+    {
+      "name": "perception",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "piloting",
+      "links": [
+        "reflexes",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "piloting_aerospace",
+      "links": [
+        "reflexes",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "piloting_air_vehicle",
+      "links": [
+        "reflexes",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "piloting_battlesuit",
+      "links": [
+        "reflexes",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "piloting_ground_vehicle",
+      "links": [
+        "reflexes",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "piloting_mech",
+      "links": [
+        "reflexes",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "piloting_protomech",
+      "links": [
+        "reflexes",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "piloting_rail_vehicle",
+      "links": [
+        "reflexes",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "piloting_sea_vehicle",
+      "links": [
+        "reflexes",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "piloting_spacecraft",
+      "links": [
+        "reflexes",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "prestidigitation",
+      "links": [
+        "reflexes",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "prestidigitation_pickpocket",
+      "links": [
+        "reflexes",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "prestidigitation_quickdraw",
+      "links": [
+        "reflexes",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "prestidigitation_sleight_of_hand",
+      "links": [
+        "reflexes",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "running",
+      "links": [
+        "reflexes"
+      ]
+    },
+    {
+      "name": "science",
+      "links": [
+        "intelligence",
+        "willpower"
+      ]
+    },
+    {
+      "name": "science_biology",
+      "links": [
+        "intelligence",
+        "willpower"
+      ]
+    },
+    {
+      "name": "science_chemistry",
+      "links": [
+        "intelligence",
+        "willpower"
+      ]
+    },
+    {
+      "name": "science_genetics",
+      "links": [
+        "intelligence",
+        "willpower"
+      ]
+    },
+    {
+      "name": "science_geology",
+      "links": [
+        "intelligence",
+        "willpower"
+      ]
+    },
+    {
+      "name": "science_mathematics",
+      "links": [
+        "intelligence",
+        "willpower"
+      ]
+    },
+    {
+      "name": "science_physics",
+      "links": [
+        "intelligence",
+        "willpower"
+      ]
+    },
+    {
+      "name": "science_psychology",
+      "links": [
+        "intelligence",
+        "willpower"
+      ]
+    },
+    {
+      "name": "science_xenobiology",
+      "links": [
+        "intelligence",
+        "willpower"
+      ]
+    },
+    {
+      "name": "security_systems_electronic",
+      "links": []
+    },
+    {
+      "name": "security_systems_mechanical",
+      "links": []
+    },
+    {
+      "name": "sensor_operations",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "small_arms",
+      "links": [
+        "dexterity"
+      ]
+    },
+    {
+      "name": "stealth",
+      "links": [
+        "reflexes",
+        "intelligence"
+      ]
+    },
+    {
+      "name": "strategy",
+      "links": [
+        "intelligence",
+        "willpower"
+      ]
+    },
+    {
+      "name": "streetwise",
+      "links": [
+        "charisma",
+        "willpower"
+      ]
+    },
+    {
+      "name": "subterfuge",
+      "links": [
+        "charisma",
+        "intelligence"
+      ]
+    },
+    {
+      "name": "support_weapons",
+      "links": [
+        "strength",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "surgery_general",
+      "links": [
+        "intelligence",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "surgery_veterinarian",
+      "links": [
+        "intelligence",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "survival",
+      "links": [
+        "willpower"
+      ]
+    },
+    {
+      "name": "survival_arctic",
+      "links": [
+        "willpower"
+      ]
+    },
+    {
+      "name": "survival_desert",
+      "links": [
+        "willpower"
+      ]
+    },
+    {
+      "name": "survival_forest",
+      "links": [
+        "willpower"
+      ]
+    },
+    {
+      "name": "survival_jungle",
+      "links": [
+        "willpower"
+      ]
+    },
+    {
+      "name": "survival_mountain",
+      "links": [
+        "willpower"
+      ]
+    },
+    {
+      "name": "survival_plains",
+      "links": [
+        "willpower"
+      ]
+    },
+    {
+      "name": "survival_urban",
+      "links": [
+        "willpower"
+      ]
+    },
+    {
+      "name": "swimming",
+      "links": [
+        "strength"
+      ]
+    },
+    {
+      "name": "tactics",
+      "links": [
+        "intelligence",
+        "willpower"
+      ]
+    },
+    {
+      "name": "tactics_air",
+      "links": [
+        "intelligence",
+        "willpower"
+      ]
+    },
+    {
+      "name": "tactics_infantry",
+      "links": [
+        "intelligence",
+        "willpower"
+      ]
+    },
+    {
+      "name": "tactics_land",
+      "links": [
+        "intelligence",
+        "willpower"
+      ]
+    },
+    {
+      "name": "tactics_sea",
+      "links": [
+        "intelligence",
+        "willpower"
+      ]
+    },
+    {
+      "name": "tactics_space",
+      "links": [
+        "intelligence",
+        "willpower"
+      ]
+    },
+    {
+      "name": "teaching",
+      "links": [
+        "charisma",
+        "willpower"
+      ]
+    },
+    {
+      "name": "tech",
+      "links": [
+        "intelligence",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "tech_aerospace",
+      "links": [
+        "intelligence",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "tech_cybernetics",
+      "links": [
+        "intelligence",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "tech_electronic",
+      "links": [
+        "intelligence",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "tech_jets",
+      "links": [
+        "intelligence",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "tech_mech",
+      "links": [
+        "intelligence",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "tech_mechanic",
+      "links": [
+        "intelligence",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "tech_myomer",
+      "links": [
+        "intelligence",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "tech_nuclear",
+      "links": [
+        "intelligence",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "tech_weapons",
+      "links": [
+        "intelligence",
+        "dexterity"
+      ]
+    },
+    {
+      "name": "thrown_weapons",
+      "links": [
+        "dexterity",
+        "strength"
+      ]
+    },
+    {
+      "name": "thrown_weapons_blades",
+      "links": []
+    },
+    {
+      "name": "thrown_weapons_blunt",
+      "links": []
+    },
+    {
+      "name": "tracking",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "tracking_urban",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "tracking_wilderness",
+      "links": [
+        "intelligence"
+      ]
+    },
+    {
+      "name": "training",
+      "links": [
+        "charisma",
+        "willpower"
+      ]
+    },
+    {
+      "name": "zero_g_operations",
+      "links": [
+        "reflexes",
+        "dexterity"
+      ]
+    }
+  ]
+}

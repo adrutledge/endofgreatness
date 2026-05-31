@@ -26,7 +26,15 @@ enum RelationshipType {
 
 static func get_all_skills() -> Array[String]:
 	var skills: Array[String] = []
-	skills.append_array(ATOW_SKILLS)
+	var file = FileAccess.open("res://data/skills.json", FileAccess.READ)
+	if file:
+		var j = JSON.new()
+		if j.parse(file.get_as_text()) == OK:
+			var data = j.data
+			for entry in data.get("skills", []):
+				skills.append(entry.get("name", ""))
+	if skills.is_empty():
+		return skills
 	if not GameState:
 		return skills
 	for code in GameState.factions:
@@ -36,178 +44,6 @@ static func get_all_skills() -> Array[String]:
 		if not f.is_rebel and not f.is_pirate and not f.is_civilian:
 			skills.append("protocol_" + code.to_lower())
 	return skills
-
-const ATOW_SKILLS: Array[String] = [
-	"acrobatics",
-	"acrobatics_free_fall",
-	"acrobatics_gymnastics",
-	"acting",
-	"administration",
-	"animal_handling",
-	"animal_handling_herding",
-	"animal_handling_riding",
-	"animal_handling_training",
-	"appraisal",
-	"archery",
-	"art",
-	"art_acting",
-	"art_calligraphy",
-	"art_cooking",
-	"art_dance",
-	"art_drawing",
-	"art_instrument",
-	"art_painting",
-	"art_poetry",
-	"art_sculpture",
-	"art_singing",
-	"art_writing",
-	"artillery",
-	"astech",
-	"career",
-	"career_civilian",
-	"career_law_enforcement",
-	"career_military",
-	"climbing",
-	"communications",
-	"communications_black_box",
-	"communications_conventional",
-	"communications_hpg",
-	"computers",
-	"cryptography",
-	"demolitions",
-	"disguise",
-	"driving",
-	"driving_ground",
-	"driving_rail",
-	"driving_sea",
-	"escape_artist",
-	"forgery",
-	"gunnery",
-	"gunnery_aerospace",
-	"gunnery_air_vehicle",
-	"gunnery_battlesuit",
-	"gunnery_ground_vehicle",
-	"gunnery_mech",
-	"gunnery_protomech",
-	"gunnery_sea_vehicle",
-	"gunnery_spacecraft",
-	"gunnery_turret",
-	"interest",
-	"interest_antiques",
-	"interest_exotic_animals",
-	"interest_fashion",
-	"interest_fishing",
-	"interest_gambling",
-	"interest_history",
-	"interest_holo_games",
-	"interest_law",
-	"interest_pharmacology",
-	"interest_sports",
-	"interest_theology",
-	"interrogation",
-	"investigation",
-	"language",
-	"language_arabic",
-	"language_chinese",
-	"language_dutch",
-	"language_english",
-	"language_french",
-	"language_german",
-	"language_greek",
-	"language_hebrew",
-	"language_hindi",
-	"language_italian",
-	"language_japanese",
-	"language_korean",
-	"language_polish",
-	"language_portuguese",
-	"language_russian",
-	"language_spanish",
-	"language_swedenese",
-	"language_swedish",
-	"language_turkish",
-	"leadership",
-	"martial_arts",
-	"medic",
-	"melee_weapons",
-	"navigation",
-	"navigation_air",
-	"navigation_ground",
-	"navigation_kf_jump",
-	"navigation_sea",
-	"navigation_space",
-	"negotiation",
-	"perception",
-	"piloting",
-	"piloting_aerospace",
-	"piloting_air_vehicle",
-	"piloting_battlesuit",
-	"piloting_ground_vehicle",
-	"piloting_mech",
-	"piloting_protomech",
-	"piloting_rail_vehicle",
-	"piloting_sea_vehicle",
-	"piloting_spacecraft",
-	"prestidigitation",
-	"prestidigitation_pickpocket",
-	"prestidigitation_quickdraw",
-	"prestidigitation_sleight_of_hand",
-	"running",
-	"science",
-	"science_biology",
-	"science_chemistry",
-	"science_genetics",
-	"science_geology",
-	"science_mathematics",
-	"science_physics",
-	"science_psychology",
-	"science_xenobiology",
-	"security_systems_electronic",
-	"security_systems_mechanical",
-	"sensor_operations",
-	"small_arms",
-	"stealth",
-	"strategy",
-	"streetwise",
-	"subterfuge",
-	"support_weapons",
-	"surgery_general",
-	"surgery_veterinarian",
-	"survival",
-	"survival_arctic",
-	"survival_desert",
-	"survival_forest",
-	"survival_jungle",
-	"survival_mountain",
-	"survival_plains",
-	"survival_urban",
-	"swimming",
-	"tactics",
-	"tactics_air",
-	"tactics_infantry",
-	"tactics_land",
-	"tactics_sea",
-	"tactics_space",
-	"teaching",
-	"tech",
-	"tech_aerospace",
-	"tech_cybernetics",
-	"tech_electronic",
-	"tech_jets",
-	"tech_mech",
-	"tech_mechanic",
-	"tech_myomer",
-	"tech_nuclear",
-	"tech_weapons",
-	"thrown_weapons",
-	"thrown_weapons_blades",
-	"thrown_weapons_blunt",
-	"tracking",
-	"tracking_urban",
-	"tracking_wilderness",
-	"training",
-	"zero_g_operations"
-]
 
 const SKILL_ATTRIBUTE_LINKS: Dictionary = {
 	"acrobatics": ["reflexes"],
@@ -260,16 +96,34 @@ const SKILL_ATTRIBUTE_LINKS: Dictionary = {
 	"tactics": ["intelligence", "willpower"],
 	"teaching": ["charisma", "willpower"],
 	"tech": ["intelligence", "dexterity"],
-	"thrown_weapons": ["dexterity", "strength"],
-	"tracking": ["intelligence"],
-	"training": ["charisma", "willpower"],
 	"zero_g_operations": ["reflexes", "dexterity"],
 }
 
-static func get_skill_attributes(skill: String):
+
+static var _skill_attrs_cache: Dictionary = {}
+
+
+static func _load_skill_attrs() -> void:
+	if not _skill_attrs_cache.is_empty():
+		return
+	var file = FileAccess.open("res://data/skills.json", FileAccess.READ)
+	if not file:
+		return
+	var j = JSON.new()
+	if j.parse(file.get_as_text()) != OK:
+		return
+	for entry in j.data.get("skills", []):
+		var name = entry.get("name", "")
+		var links = entry.get("links", [])
+		if not name.is_empty() and not links.is_empty():
+			_skill_attrs_cache[name] = links
+
+
+static func get_skill_attributes(skill: String) -> Array[String]:
+	_load_skill_attrs()
 	while skill.length() > 0:
-		if SKILL_ATTRIBUTE_LINKS.has(skill):
-			return SKILL_ATTRIBUTE_LINKS[skill]
+		if _skill_attrs_cache.has(skill):
+			return _skill_attrs_cache[skill]
 		var idx = skill.rfind("_")
 		if idx == -1:
 			break
