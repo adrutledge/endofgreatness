@@ -17,5 +17,7 @@
   "medium_range": 14,
   "long_range": 21,
   "shots_per_volley": 10,
-  "cluster_weapon": true
+  "cluster_weapon": true,
+  "damage_per_shot": 1,
+  "cluster_size": 5
 }

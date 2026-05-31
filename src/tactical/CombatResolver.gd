@@ -94,9 +94,14 @@ func _resolve_unit_attack(attacker: TacticalUnit, target: TacticalUnit, contract
 		var shots = def.get("shots_per_volley", 1)
 
 		if is_cluster:
+			var dmg_per_shot = def.get("damage_per_shot", dmg_per_hit)
+			var cluster_size = def.get("cluster_size", 1)
 			var hits = _roll_cluster_hits(shots)
-			for i in range(hits):
-				total_salvage_value += _apply_damage(target, dmg_per_hit, c.component_name, contract)
+			var remaining = hits
+			while remaining > 0:
+				var cluster = mini(cluster_size, remaining)
+				total_salvage_value += _apply_damage(target, dmg_per_shot * cluster, c.component_name, contract)
+				remaining -= cluster
 		else:
 			total_salvage_value += _apply_damage(target, dmg_per_hit, c.component_name, contract)
 
