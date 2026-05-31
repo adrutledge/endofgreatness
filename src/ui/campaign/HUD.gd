@@ -9,11 +9,17 @@ func _ready() -> void:
 	topbar.get_node("QuickAccess/EventLogButton").pressed.connect(_on_event_log)
 
 	var menu_btn = topbar.get_node("MenuButton")
-	menu_btn.get_popup().add_item(tr("Save Game"))
-	menu_btn.get_popup().add_item(tr("Load Game"))
-	menu_btn.get_popup().add_separator()
-	menu_btn.get_popup().add_item(tr("Quit to Main Menu"))
-	menu_btn.get_popup().id_pressed.connect(_on_menu_selected)
+	var popup = PopupMenu.new()
+	menu_btn.add_child(popup)
+	popup.add_item(tr("Save Game"))
+	popup.add_item(tr("Load Game"))
+	popup.add_separator()
+	popup.add_item(tr("Quit to Main Menu"))
+	popup.id_pressed.connect(_on_menu_selected)
+	menu_btn.pressed.connect(func():
+		popup.reset_size()
+		popup.popup(Rect2i(0, 0, 200, 200))
+	)
 
 	topbar.get_node("Finances/BalanceLabel")
 	topbar.get_node("Contracts/ContractsLabel")
