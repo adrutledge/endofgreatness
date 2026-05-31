@@ -4,6 +4,7 @@ var balance_label: Label
 var bills_label: Label
 var contracts_label: Label
 var date_label: Label
+var time_label: Label
 var badges_container: HBoxContainer
 var funds_badge: Label
 var injured_badge: Label
@@ -13,6 +14,7 @@ var personnel_btn: Button
 var logistics_btn: Button
 var contract_board_btn: Button
 var event_log_btn: Button
+var menu_btn: MenuButton
 
 
 func _ready() -> void:
@@ -20,6 +22,7 @@ func _ready() -> void:
 	bills_label = find_child("BillsLabel", true, false)
 	contracts_label = find_child("ContractsLabel", true, false)
 	date_label = find_child("DateLabel", true, false)
+	time_label = find_child("TimeLabel", true, false)
 	badges_container = find_child("BadgesContainer", true, false)
 	funds_badge = find_child("FundsBadge", true, false)
 	injured_badge = find_child("InjuredBadge", true, false)
@@ -29,12 +32,19 @@ func _ready() -> void:
 	logistics_btn = find_child("LogisticsButton", true, false)
 	contract_board_btn = find_child("ContractBoardButton", true, false)
 	event_log_btn = find_child("EventLogButton", true, false)
+	menu_btn = find_child("MenuButton", true, false)
 
 	org_mgmt_btn.pressed.connect(_on_org_mgmt)
 	personnel_btn.pressed.connect(_on_personnel)
 	logistics_btn.pressed.connect(_on_logistics)
 	contract_board_btn.pressed.connect(_on_contract_board)
 	event_log_btn.pressed.connect(_on_event_log)
+
+	menu_btn.get_popup().add_item(tr("Save Game"))
+	menu_btn.get_popup().add_item(tr("Load Game"))
+	menu_btn.get_popup().add_separator()
+	menu_btn.get_popup().add_item(tr("Quit to Main Menu"))
+	menu_btn.get_popup().id_pressed.connect(_on_menu_selected)
 
 	EventBus.month_started.connect(_refresh)
 	EventBus.contract_accepted.connect(_refresh)
@@ -50,6 +60,7 @@ func _refresh(_dummy = null) -> void:
 	_refresh_contracts()
 	_refresh_badges()
 	_refresh_date()
+	_refresh_time()
 
 
 func _refresh_finances() -> void:
@@ -97,6 +108,21 @@ func _refresh_badges() -> void:
 func _refresh_date() -> void:
 	if TimeManager:
 		date_label.text = TimeManager.get_date_string()
+
+
+func _refresh_time() -> void:
+	var t = Time.get_time_dict_from_system()
+	time_label.text = "%02d:%02d" % [t.hour, t.minute]
+
+
+func _on_menu_selected(id: int) -> void:
+	match id:
+		0:
+			pass
+		1:
+			pass
+		2:
+			get_tree().change_scene_to_file("res://src/ui/menus/MainMenu.tscn")
 
 
 func _on_personnel() -> void:

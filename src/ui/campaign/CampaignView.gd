@@ -4,6 +4,8 @@ extends Node2D
 ## manages transitions between them via LayerManager.
 ## Also owns the HUD and overlay panels accessible from any layer.
 
+const HUD_HEIGHT: float = 28.0
+
 signal campaign_exited()
 
 @onready var strategic_layer = $StrategicLayer
@@ -19,6 +21,12 @@ func _ready() -> void:
 
 	_setup_panels()
 	_setup_hud()
+
+	for child in $PanelOverlay.get_children():
+		if child is Control:
+			child.offset_top = HUD_HEIGHT
+	planetary_layer.offset_top = HUD_HEIGHT
+	tactical_layer.offset_top = HUD_HEIGHT
 
 	strategic_layer.planetary_map_requested.connect(_on_strategic_planetary)
 	planetary_layer.closed.connect(_on_planetary_closed)
