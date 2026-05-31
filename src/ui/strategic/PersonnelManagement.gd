@@ -174,6 +174,7 @@ func _update_detail_view(p: Personnel) -> void:
 	info += "\nAssigned: " + (p.assigned_unit_id if not p.assigned_unit_id.is_empty() else "None")
 	if p.is_injured:
 		info += "\nInjured (severity " + str(p.injury_severity) + ")"
+		info += "\nHealing: " + str(p.healing_days_remaining) + " days remaining"
 
 	var non_zero_skills = _get_non_zero_skills(p)
 	if not non_zero_skills.is_empty():

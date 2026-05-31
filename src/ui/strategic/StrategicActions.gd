@@ -2,7 +2,7 @@ class_name StrategicActions
 extends Panel
 
 signal personnel_management_requested()
-signal unit_roster_requested()
+
 signal contract_board_requested()
 signal organization_tree_requested()
 signal event_log_requested()
@@ -93,18 +93,13 @@ func _slide_out(animate: bool = true) -> void:
 
 func _connect_signals() -> void:
 	%PersonnelButton.pressed.connect(_on_personnel)
-	%UnitRosterButton.pressed.connect(_on_unit_roster)
-	%ContractBoardButton.pressed.connect(_on_contract_board)
-	%OrganizationTreeButton.pressed.connect(_on_organization_tree)
+	%PersonnelButton.pressed.connect(_on_personnel)
 	%EventLogButton.pressed.connect(_on_event_log)
 	%MechLabButton.pressed.connect(_on_mech_lab)
 	%LogisticsButton.pressed.connect(_on_logistics)
 
 func _on_personnel() -> void:
 	personnel_management_requested.emit()
-
-func _on_unit_roster() -> void:
-	unit_roster_requested.emit()
 
 func _on_market() -> void:
 	market_requested.emit()

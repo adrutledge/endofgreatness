@@ -24,7 +24,6 @@ const NAME_ZOOM_THRESHOLD: float = 2.5
 @onready var personnel_mgmt = $CanvasLayer/PersonnelManagement
 @onready var sidebar = $CanvasLayer/StrategicActions
 @onready var event_log_ui = $CanvasLayer/EventLog
-@onready var unit_roster_ui = $CanvasLayer/UnitRoster
 @onready var mech_lab_ui = $CanvasLayer/MechLab
 @onready var logistics_ui = $CanvasLayer/LogisticsPanel
 
@@ -32,11 +31,10 @@ func _ready() -> void:
 	Helpers.debug_print("StarMap", "_ready start")
 	Helpers.debug_print("StarMap", "sidebar=%s org=%s contract=%s personnel=%s event=%s roster=%s mech=%s log=%s" % [
 		sidebar, org_mgmt, contract_board, personnel_mgmt,
-		event_log_ui, unit_roster_ui, mech_lab_ui, logistics_ui])
+		event_log_ui, mech_lab_ui, logistics_ui])
 	sidebar.organization_tree_requested.connect(_on_organization_tree)
 	sidebar.contract_board_requested.connect(_on_contract_board)
 	sidebar.personnel_management_requested.connect(_on_personnel_management)
-	sidebar.unit_roster_requested.connect(_on_unit_roster)
 	sidebar.mech_lab_requested.connect(_on_mech_lab)
 	sidebar.logistics_requested.connect(_on_logistics)
 	sidebar.event_log_requested.connect(_on_event_log)
@@ -44,7 +42,6 @@ func _ready() -> void:
 	contract_board.closed.connect(_on_contract_board_closed)
 	personnel_mgmt.closed.connect(_on_personnel_mgmt_closed)
 	event_log_ui.connect("closed", _on_event_log_closed)
-	unit_roster_ui.connect("closed", _on_unit_roster_closed)
 	mech_lab_ui.connect("closed", _on_mech_lab_closed)
 	logistics_ui.connect("closed", _on_logistics_closed)
 	Helpers.debug_print("StarMap", "signals connected, loading systems")
@@ -97,15 +94,6 @@ func _on_personnel_management() -> void:
 	personnel_mgmt.populate_roster()
 	personnel_mgmt.show()
 
-func _on_unit_roster() -> void:
-	if not unit_roster_ui:
-		Helpers.debug_warn("StarMap", "_on_unit_roster — unit_roster_ui is null")
-		return
-	Helpers.debug_print("StarMap", "opening unit roster")
-	sidebar.hide_sidebar()
-	unit_roster_ui.populate_tree()
-	unit_roster_ui.show()
-
 func _on_mech_lab() -> void:
 	if not mech_lab_ui:
 		Helpers.debug_warn("StarMap", "_on_mech_lab — mech_lab_ui is null")
@@ -118,11 +106,6 @@ func _on_mech_lab() -> void:
 func _on_mech_lab_closed() -> void:
 	Helpers.debug_print("StarMap", "closing mech lab")
 	mech_lab_ui.hide()
-	sidebar.show_sidebar()
-
-func _on_unit_roster_closed() -> void:
-	Helpers.debug_print("StarMap", "closing unit roster")
-	unit_roster_ui.hide()
 	sidebar.show_sidebar()
 
 func _on_event_log() -> void:
@@ -448,18 +431,6 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
 		if mech_lab_ui.visible:
 			_on_mech_lab_closed()
-			get_viewport().set_input_as_handled()
-		elif unit_roster_ui.visible:
-			_on_unit_roster_closed()
-			get_viewport().set_input_as_handled()
-		elif event_log_ui.visible:
-			_on_event_log_closed()
-			get_viewport().set_input_as_handled()
-		elif org_mgmt.visible:
-			_on_org_mgmt_closed()
-			get_viewport().set_input_as_handled()
-		elif contract_board.visible:
-			_on_contract_board_closed()
 			get_viewport().set_input_as_handled()
 		elif logistics_ui.visible:
 			_on_logistics_closed()
