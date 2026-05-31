@@ -1,0 +1,29 @@
+{
+  "name": "Undra",
+  "coordinates": {
+    "x": 113.556,
+    "y": -116.101
+  },
+  "spectral_class": "G",
+  "owner_faction": "A",
+  "planets": [
+    {
+      "name": "Undra III",
+      "gravity": 1.0,
+      "atmosphere": "breathable",
+      "temperature": 22,
+      "population": 1000000,
+      "industry_type": "multi",
+      "usilr_code": {
+        "tech_sophistication": "C",
+        "industrial_development": "C",
+        "raw_material_dependence": "C",
+        "industrial_output": "C",
+        "agricultural_dependence": "C"
+      },
+      "hpg_class": "C",
+      "relay_station": false,
+      "land_percent": 40
+    }
+  ]
+}

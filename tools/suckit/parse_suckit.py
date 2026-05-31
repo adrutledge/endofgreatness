@@ -121,8 +121,11 @@ with open(SYSTEMS_CSV, newline="", encoding="utf-8") as f:
                 })
             prev_faction = fac
 
-# ---- Write starmap.json (list format, matching existing loader) ----
-starmap = []
+# ---- Write systems_index.json and per-system files ----
+systems_dir = os.path.join(OUT_DIR, "systems")
+os.makedirs(systems_dir, exist_ok=True)
+systems_index = []
+
 for sid, s in systems.items():
     planets = [{
         "name": s["name"] + " III",
@@ -138,7 +141,9 @@ for sid, s in systems.items():
         "relay_station": False,
         "land_percent": 40,
     }]
-    entry = {
+    
+    # Per-system detail file
+    sys_entry = {
         "name": s["name"],
         "coordinates": {"x": s["x"], "y": s["y"]},
         "spectral_class": "G",
@@ -146,15 +151,29 @@ for sid, s in systems.items():
         "planets": planets,
     }
     if s.get("hide"):
-        entry["hide"] = True
+        sys_entry["hide"] = True
     if s.get("pathfinding_exclude"):
-        entry["pathfinding_exclude"] = True
-    starmap.append(entry)
+        sys_entry["pathfinding_exclude"] = True
+    
+    safe = "%s_%d" % (s["name"].replace("/", "_").replace(" ", "_"), sid)
+    sys_path = os.path.join(systems_dir, safe + ".json")
+    with open(sys_path, "w", encoding="utf-8") as f:
+        json.dump(sys_entry, f, indent=2)
+    
+    # Lightweight index entry
+    systems_index.append({
+        "name": s["name"],
+        "x": s["x"],
+        "y": s["y"],
+        "owner_faction": s["owner_faction"],
+        "spectral_class": "G",
+        "file": "res://data/systems/" + safe + ".json",
+    })
 
-starmap_path = os.path.join(OUT_DIR, "starmap.json")
-with open(starmap_path, "w", encoding="utf-8") as f:
-    json.dump(starmap, f, indent=2)
-print(f"Wrote {len(starmap)} systems to {starmap_path}")
+index_path = os.path.join(OUT_DIR, "systems_index.json")
+with open(index_path, "w", encoding="utf-8") as f:
+    json.dump(systems_index, f, indent=2)
+print(f"Wrote {len(systems_index)} systems to index + per-system files")
 
 # ---- Write timeline_events.json ----
 # Deduplicate: keep only events where the owner actually changed

@@ -1,0 +1,29 @@
+{
+  "name": "Cajamarca",
+  "coordinates": {
+    "x": -243.235,
+    "y": -162.892
+  },
+  "spectral_class": "G",
+  "owner_faction": "FWL",
+  "planets": [
+    {
+      "name": "Cajamarca III",
+      "gravity": 1.0,
+      "atmosphere": "breathable",
+      "temperature": 22,
+      "population": 1000000,
+      "industry_type": "multi",
+      "usilr_code": {
+        "tech_sophistication": "C",
+        "industrial_development": "C",
+        "raw_material_dependence": "C",
+        "industrial_output": "C",
+        "agricultural_dependence": "C"
+      },
+      "hpg_class": "C",
+      "relay_station": false,
+      "land_percent": 40
+    }
+  ]
+}

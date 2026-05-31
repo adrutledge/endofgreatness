@@ -1,0 +1,29 @@
+{
+  "name": "Farhome",
+  "coordinates": {
+    "x": 516.91,
+    "y": -613.715
+  },
+  "spectral_class": "G",
+  "owner_faction": "I",
+  "planets": [
+    {
+      "name": "Farhome III",
+      "gravity": 1.0,
+      "atmosphere": "breathable",
+      "temperature": 22,
+      "population": 1000000,
+      "industry_type": "multi",
+      "usilr_code": {
+        "tech_sophistication": "C",
+        "industrial_development": "C",
+        "raw_material_dependence": "C",
+        "industrial_output": "C",
+        "agricultural_dependence": "C"
+      },
+      "hpg_class": "C",
+      "relay_station": false,
+      "land_percent": 40
+    }
+  ]
+}

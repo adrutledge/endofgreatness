@@ -1,0 +1,29 @@
+{
+  "name": "Katinka",
+  "coordinates": {
+    "x": 151.694,
+    "y": -451.193
+  },
+  "spectral_class": "G",
+  "owner_faction": "AuC",
+  "planets": [
+    {
+      "name": "Katinka III",
+      "gravity": 1.0,
+      "atmosphere": "breathable",
+      "temperature": 22,
+      "population": 1000000,
+      "industry_type": "multi",
+      "usilr_code": {
+        "tech_sophistication": "C",
+        "industrial_development": "C",
+        "raw_material_dependence": "C",
+        "industrial_output": "C",
+        "agricultural_dependence": "C"
+      },
+      "hpg_class": "C",
+      "relay_station": false,
+      "land_percent": 40
+    }
+  ]
+}

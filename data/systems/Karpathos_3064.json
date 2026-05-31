@@ -1,0 +1,29 @@
+{
+  "name": "Karpathos",
+  "coordinates": {
+    "x": 964.972,
+    "y": 194.704
+  },
+  "spectral_class": "G",
+  "owner_faction": "NDC",
+  "planets": [
+    {
+      "name": "Karpathos III",
+      "gravity": 1.0,
+      "atmosphere": "breathable",
+      "temperature": 22,
+      "population": 1000000,
+      "industry_type": "multi",
+      "usilr_code": {
+        "tech_sophistication": "C",
+        "industrial_development": "C",
+        "raw_material_dependence": "C",
+        "industrial_output": "C",
+        "agricultural_dependence": "C"
+      },
+      "hpg_class": "C",
+      "relay_station": false,
+      "land_percent": 40
+    }
+  ]
+}

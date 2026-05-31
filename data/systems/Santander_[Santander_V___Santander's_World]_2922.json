@@ -1,0 +1,29 @@
+{
+  "name": "Santander [Santander V / Santander's World]",
+  "coordinates": {
+    "x": 77.793,
+    "y": 481.025
+  },
+  "spectral_class": "G",
+  "owner_faction": "I",
+  "planets": [
+    {
+      "name": "Santander [Santander V / Santander's World] III",
+      "gravity": 1.0,
+      "atmosphere": "breathable",
+      "temperature": 22,
+      "population": 1000000,
+      "industry_type": "multi",
+      "usilr_code": {
+        "tech_sophistication": "C",
+        "industrial_development": "C",
+        "raw_material_dependence": "C",
+        "industrial_output": "C",
+        "agricultural_dependence": "C"
+      },
+      "hpg_class": "C",
+      "relay_station": false,
+      "land_percent": 40
+    }
+  ]
+}

@@ -106,17 +106,44 @@ func _scan_unit_dir(path: String) -> void:
 			_scan_unit_dir(file_path)
 		file_name = dir.get_next()
 
-func load_starmap() -> void:
-	var file = FileAccess.open("res://data/starmap.json", FileAccess.READ)
+var _system_cache: Dictionary = {}
+
+
+func get_system_detail(name: String) -> Dictionary:
+	if _system_cache.has(name):
+		return _system_cache[name]
+	var entry = systems_data.get(name)
+	if not entry or not entry.get("_file"):
+		return {}
+	var file = FileAccess.open(entry["_file"], FileAccess.READ)
 	if not file:
-		push_warning("starmap.json not found")
+		return {}
+	var j = JSON.new()
+	if j.parse(file.get_as_text()) != OK:
+		return {}
+	var detail = j.data
+	_system_cache[name] = detail
+	return detail
+
+
+func load_starmap() -> void:
+	var file = FileAccess.open("res://data/systems_index.json", FileAccess.READ)
+	if not file:
+		push_warning("systems_index.json not found")
 		return
 	var json_str = file.get_as_text()
 	var json = JSON.new()
 	if json.parse(json_str) == OK:
 		var data = json.data
-		for system in data:
-			systems_data[system.get("name", "")] = system
+		for entry in data:
+			var sys = {
+				"name": entry.get("name", ""),
+				"coordinates": {"x": entry.get("x", 0.0), "y": entry.get("y", 0.0)},
+				"owner_faction": entry.get("owner_faction", ""),
+				"spectral_class": entry.get("spectral_class", "G"),
+				"_file": entry.get("file", ""),
+			}
+			systems_data[sys["name"]] = sys
 
 func load_timeline() -> void:
 	var file = FileAccess.open("res://data/timeline_events.json", FileAccess.READ)

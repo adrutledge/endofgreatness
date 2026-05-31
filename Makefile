@@ -51,28 +51,27 @@ $(MARKET_STAMP): $(MARKET_TEST)
 	echo "[Market Population] $$r"
 	@touch $(MARKET_STAMP)
 
-# Regenerate starmap + timeline from SUCKIT CSVs. Only triggers on explicit `make suckit`
-# or when generated files don't exist (e.g., fresh checkout). CSVs have spaces in filenames
-# so Make can't track them as dependencies — check timestamps in shell instead.
-data/starmap.json: $(SUCKIT_SRC)
+# Regenerate systems + timeline from SUCKIT CSVs. Only triggers on explicit `make suckit`
+# or when generated files don't exist. CSVs have spaces in filenames so check timestamps via shell.
+data/systems_index.json: $(SUCKIT_SRC)
 	@csv="$$(ls tools/suckit/*.csv 2>/dev/null | head -1)"; \
 	if [ -z "$$csv" ]; then \
-		echo "SUCKIT CSVs not found — starmap/timeline unchanged"; \
+		echo "SUCKIT CSVs not found — systems/timeline unchanged"; \
 		touch "$@"; \
-	elif [ -f "data/starmap.json" ] && [ "$$csv" -ot "data/starmap.json" ]; then \
+	elif [ -f "data/systems_index.json" ] && [ "$$csv" -ot "data/systems_index.json" ]; then \
 		:; \
 	else \
-		echo "Generating starmap + timeline from SUCKIT CSV data..."; \
+		echo "Generating systems + timeline from SUCKIT CSV data..."; \
 		python3 $(SUCKIT_SRC) 2>&1 | grep -v "^  Skipping"; \
 	fi
 
-data/timeline_events.json: data/starmap.json
+data/timeline_events.json: data/systems_index.json
 	@:
 
 suckit:
 	@csv="$$(ls tools/suckit/*.csv 2>/dev/null | head -1)"; \
 	if [ -z "$$csv" ]; then echo "No SUCKIT CSVs found"; exit 1; fi; \
-	echo "Regenerating starmap + timeline..."; \
+	echo "Regenerating systems + timeline..."; \
 	python3 $(SUCKIT_SRC) 2>&1 | grep -v "^  Skipping"
 
 $(STRAT_GEN_STAMP): $(STRAT_GEN_SRC) $(STRAT_GEN_DEPS) $(STRAT_GEN_DATA) $(STRAT_GEN_TEST)
@@ -80,7 +79,7 @@ $(STRAT_GEN_STAMP): $(STRAT_GEN_SRC) $(STRAT_GEN_DEPS) $(STRAT_GEN_DATA) $(STRAT
 	echo "[Strat Unit Generator] $$r"
 	@touch $(STRAT_GEN_STAMP)
 
-test: data/starmap.json data/timeline_events.json $(MTF_STAMP) $(MARKET_STAMP) $(STRAT_GEN_STAMP)
+test: data/systems_index.json data/timeline_events.json $(MTF_STAMP) $(MARKET_STAMP) $(STRAT_GEN_STAMP)
 	@$(MAKE) --quiet lint 2>/dev/null || true
 
 ## Headless generator integration test (requires autoloads, runs full engine)

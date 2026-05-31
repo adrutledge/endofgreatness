@@ -495,7 +495,13 @@ func _check_system_click(world_pos: Vector2) -> void:
 				var to_pos = closest["pos"]
 				jump_path = _a_star_jump_path(from_pos, to_pos)
 			selected_system = closest
-			info_panel.show_system(closest["data"])
+			var sys_name = closest["data"].get("name", "")
+			var detail = DataManager.get_system_detail(sys_name)
+			var display_data = closest["data"].duplicate()
+			for key in detail:
+				if key != "_file":
+					display_data[key] = detail[key]
+			info_panel.show_system(display_data)
 	else:
 		selected_system = {}
 		path_start = {}

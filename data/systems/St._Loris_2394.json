@@ -1,0 +1,29 @@
+{
+  "name": "St. Loris",
+  "coordinates": {
+    "x": 89.951,
+    "y": -241.987
+  },
+  "spectral_class": "G",
+  "owner_faction": "CC",
+  "planets": [
+    {
+      "name": "St. Loris III",
+      "gravity": 1.0,
+      "atmosphere": "breathable",
+      "temperature": 22,
+      "population": 1000000,
+      "industry_type": "multi",
+      "usilr_code": {
+        "tech_sophistication": "C",
+        "industrial_development": "C",
+        "raw_material_dependence": "C",
+        "industrial_output": "C",
+        "agricultural_dependence": "C"
+      },
+      "hpg_class": "C",
+      "relay_station": false,
+      "land_percent": 40
+    }
+  ]
+}

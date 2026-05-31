@@ -1,0 +1,29 @@
+{
+  "name": "Buchlau",
+  "coordinates": {
+    "x": 70.048,
+    "y": -68.804
+  },
+  "spectral_class": "G",
+  "owner_faction": "CC",
+  "planets": [
+    {
+      "name": "Buchlau III",
+      "gravity": 1.0,
+      "atmosphere": "breathable",
+      "temperature": 22,
+      "population": 1000000,
+      "industry_type": "multi",
+      "usilr_code": {
+        "tech_sophistication": "C",
+        "industrial_development": "C",
+        "raw_material_dependence": "C",
+        "industrial_output": "C",
+        "agricultural_dependence": "C"
+      },
+      "hpg_class": "C",
+      "relay_station": false,
+      "land_percent": 40
+    }
+  ]
+}
