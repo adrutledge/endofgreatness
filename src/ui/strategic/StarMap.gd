@@ -34,6 +34,17 @@ func _ready() -> void:
 	sidebar.event_log_requested.connect(func(): PanelManager.open_panel("event_log"))
 	$CanvasLayer/StrategicActions/%ContractBoardButton.pressed.connect(func(): PanelManager.open_panel("contract_board"))
 	$CanvasLayer/StrategicActions/%OrganizationTreeButton.pressed.connect(func(): PanelManager.open_panel("org_mgmt"))
+	_load_systems()
+	_compute_faction_territory()
+	_calculate_jump_routes()
+	camera.zoom = Vector2(4.0, 4.0)
+	var home = GameState.player.current_planet if GameState.player and not GameState.player.current_planet.is_empty() else "Galatea"
+	var home_data = DataManager.systems_data.get(home, {})
+	var home_coords = home_data.get("coordinates", {})
+	var cx = home_coords.get("x", 0.0)
+	var cy = home_coords.get("y", 0.0)
+	camera.position = Vector2(cx, -cy)
+	queue_redraw()
 	Helpers.debug_print("StarMap", "_ready done, systems=%d routes=%d" % [systems_positions.size(), jump_routes.size()])
 
 
