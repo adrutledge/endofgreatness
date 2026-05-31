@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" path="res://src/ui/strategic/LogisticsPanel.tscn" id="10"]
 [ext_resource type="PackedScene" path="res://src/ui/campaign/HUD.tscn" id="11"]
 [ext_resource type="Script" path="res://src/ui/campaign/ModalLayer.gd" id="12"]
+[ext_resource type="PackedScene" path="res://src/ui/tactical/TacticalMap.tscn" id="13"]
 
 [node name="CampaignView" type="Node2D"]
 script = ExtResource("1")
@@ -22,20 +23,8 @@ visible = false
 [node name="PlanetaryLayer" parent="." instance=ExtResource("3")]
 visible = false
 
-[node name="TacticalLayer" type="Control" parent="."]
+[node name="TacticalLayer" parent="." instance=ExtResource("13")]
 visible = false
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-mouse_filter = 2
-
-[node name="Placeholder" type="Label" parent="TacticalLayer"]
-text = "Tactical Layer — not yet implemented"
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-horizontal_alignment = 1
-vertical_alignment = 1
 
 [node name="PanelOverlay" type="CanvasLayer" parent="."]
 layer = 2

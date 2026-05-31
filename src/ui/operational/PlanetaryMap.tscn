@@ -86,6 +86,12 @@ text = "Explore Hex"
 disabled = true
 size_flags_horizontal = 4
 
+[node name="EngageButton" type="Button" parent="MarginContainer/VBox/HSplit/SidePanel"]
+unique_name_in_owner = true
+text = "Engage Enemy"
+visible = false
+size_flags_horizontal = 4
+
 [node name="DetailLabel" type="RichTextLabel" parent="MarginContainer/VBox/HSplit/SidePanel"]
 unique_name_in_owner = true
 text = ""

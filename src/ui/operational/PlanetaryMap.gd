@@ -2,6 +2,7 @@ class_name PlanetaryMap
 extends Panel
 
 signal closed()
+signal tactical_requested(contract: Contract, hex_data: Dictionary)
 
 const HexMap = preload("res://src/data/HexMap.gd")
 const PlanetaryMapGenerator = preload("res://src/strategic/PlanetaryMapGenerator.gd")
@@ -26,6 +27,7 @@ var reveal_queue: Array[Vector2i] = []
 @onready var detail_label: RichTextLabel = %DetailLabel
 @onready var hex_info_label: Label = %HexInfoLabel
 @onready var explore_button: Button = %ExploreButton
+@onready var engage_button: Button = %EngageButton
 @onready var close_button: Button = %CloseButton
 @onready var contract_label: Label = %ContractLabel
 
@@ -61,6 +63,7 @@ func _ready() -> void:
 
 	close_button.pressed.connect(_on_close)
 	explore_button.pressed.connect(_on_explore)
+	engage_button.pressed.connect(_on_engage)
 	map_draw.gui_input.connect(_on_map_input)
 	map_draw.draw.connect(_on_map_draw)
 
@@ -204,6 +207,7 @@ func _update_hex_info() -> void:
 	if selected_hex.is_empty():
 		hex_info_label.text = ""
 		explore_button.disabled = true
+		engage_button.hide()
 		return
 
 	var q = selected_hex.get("q", 0)
@@ -217,9 +221,14 @@ func _update_hex_info() -> void:
 		var obj = selected_hex.get("objective", HexMap.ObjectiveType.NONE)
 		if obj != HexMap.ObjectiveType.NONE:
 			info += "\n" + objective_labels.get(obj, "")
+		if obj == HexMap.ObjectiveType.ENEMY:
+			engage_button.show()
+		else:
+			engage_button.hide()
 	else:
 		info += "\n" + tr("Unexplored")
 		explore_button.disabled = false
+		engage_button.hide()
 		return
 
 	hex_info_label.text = info
@@ -255,6 +264,12 @@ func _on_explore() -> void:
 		detail_label.text = "[b]" + tr("Exploration Result:") + "[/b]\n" + tr("Nothing of interest in this hex.")
 
 	map_draw.queue_redraw()
+
+
+func _on_engage() -> void:
+	if selected_hex.is_empty() or not contract:
+		return
+	tactical_requested.emit(contract, selected_hex)
 
 
 func _show_asset_dialog(hex_data: Dictionary) -> void:

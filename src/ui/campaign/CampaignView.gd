@@ -31,6 +31,8 @@ func _ready() -> void:
 
 	strategic_layer.planetary_map_requested.connect(_on_strategic_planetary)
 	planetary_layer.closed.connect(_on_planetary_closed)
+	planetary_layer.tactical_requested.connect(_on_planetary_tactical)
+	tactical_layer.closed.connect(_on_tactical_closed)
 	$PanelOverlay/ContractBoard.view_map_requested.connect(_on_strategic_planetary)
 
 	layer_mgr.push("strategic")
@@ -67,6 +69,24 @@ func _on_strategic_planetary(contract: Contract) -> void:
 
 func _on_planetary_closed() -> void:
 	layer_mgr.pop()
+
+
+func _on_planetary_tactical(contract: Contract, hex_data: Dictionary) -> void:
+	tactical_layer.load_engagement(contract, hex_data, _get_deployed_units())
+	layer_mgr.push("tactical")
+
+
+func _on_tactical_closed() -> void:
+	layer_mgr.pop()
+
+
+func _get_deployed_units() -> Array[OperationalUnit]:
+	var result: Array[OperationalUnit] = []
+	for ou in GameState.player.organizational_units:
+		for su in ou.sub_units:
+			if su.is_deployed:
+				result.append(su)
+	return result
 
 
 func show_modal(content: Control, pauses_game: bool = false) -> void:
