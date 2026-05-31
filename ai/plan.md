@@ -239,6 +239,9 @@ Form a unit → take a contract → deploy to the contract planet → explore th
 ### Data-Driven First
 Prefer data-driven systems over hardcoded logic wherever feasible. Configuration files (personnel types, faction data, contract generation weights, skill correlation rules) should define behavior that would otherwise require code changes. This enables modding, reduces compilation errors from misplaced indentation, and keeps the engine code focused on interpretation rather than domain logic.
 
+### Event-Driven Unique Content
+Unique contracts (event-only types), special personnel (canon NPCs, ephemeral characters), custom injuries, system state changes, and other bespoke content should be event-driven rather than hardcoded. The event system has full access to: generating event-only contracts with exact opfor/map/victory conditions, spawning NPCs (with minimal ephemeral data — name, archetype seed, faction, relationship flags — not full Personnel resources), toggling system ownership and visibility, modifying faction reputation, and patching any data-driven system. This avoids special-case code for every unique piece of content and keeps the event pipeline as the single path for all non-procedural state changes. Canonical characters (Victor Steiner-Davion, Hanse Davion, etc.) are generated as ephemeral NPCs by events at their lore-correct dates with only the data needed for their narrative role, not full character sheets.
+
 ### Signal Down, Call Up
 
 Systems emit signals downward (to listeners); UI/reactors call methods upward on systems.
