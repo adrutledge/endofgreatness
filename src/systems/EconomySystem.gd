@@ -13,6 +13,11 @@ var contract_ammo_costs: Dictionary = {}
 ## Each entry: { component_name, c_bill_value, recovery_hours, quantity, source_unit }
 var contract_salvage_pool: Dictionary = {}
 
+## Cumulative tracking per contract for settlement summary.
+## Keyed by contract instance_id, values are int totals.
+var contract_cumulative_loss_value: Dictionary = {}
+var contract_cumulative_reimbursement: Dictionary = {}
+
 var current_market: PlanetaryMarket
 var current_planet_factions: Array[String] = []
 var interstellar_order_manager: InterstellarOrderManager
@@ -253,7 +258,19 @@ func _process_monthly_bills() -> void:
 	accumulated_expenses = 0
 	accumulated_breakdown = {}
 
-## Called after each tactical engagement to salvage destroyed enemy units.
+## Called after each tactical engagement.
+## Processes salvage recovery and reimburses battle losses immediately.
+## Returns a Dictionary with salvage + reimbursement results.
+func process_engagement(contract: Contract) -> Dictionary:
+	var salvage = process_salvage_after_engagement(contract)
+	var reimbursement = reimburse_engagement_losses(contract)
+	var result = salvage.duplicate()
+	result.reimbursement = reimbursement
+	result.total = salvage.get("salvage_bonus", 0) + reimbursement
+	return result
+
+
+## Processes salvage recovery from the engagement's salvage pool.
 ## Returns a Dictionary describing what was recovered.
 func process_salvage_after_engagement(contract: Contract) -> Dictionary:
 	var key = contract.get_instance_id()
@@ -358,7 +375,7 @@ func process_salvage_after_engagement(contract: Contract) -> Dictionary:
 	return result
 
 
-func settle_contract(contract: Contract) -> Dictionary:
+func reimburse_engagement_losses(contract: Contract) -> int:
 	var key = contract.get_instance_id()
 	var total_loss: int = 0
 	var losses: Array = contract_battle_losses.get(key, [])
@@ -370,11 +387,25 @@ func settle_contract(contract: Contract) -> Dictionary:
 	if reimbursement > 0:
 		add_funds(reimbursement, "Battle loss reimbursement: " + contract.issuer)
 
+	contract_cumulative_loss_value[key] = contract_cumulative_loss_value.get(key, 0) + total_loss
+	contract_cumulative_reimbursement[key] = contract_cumulative_reimbursement.get(key, 0) + reimbursement
+
+	contract_battle_losses[key] = []
+	contract_ammo_costs[key] = 0
+
+	return reimbursement
+
+
+func settle_contract(contract: Contract) -> Dictionary:
+	var key = contract.get_instance_id()
+
+	var total_loss = contract_cumulative_loss_value.get(key, 0)
+	var total_reimbursement = contract_cumulative_reimbursement.get(key, 0)
+
 	# Any remaining salvage pool at contract end — convert exchange salvage,
 	# for items salvage these were processed per engagement already
 	var leftover_conversion := 0
-	var key2 = contract.get_instance_id()
-	var leftover: Array = contract_salvage_pool.get(key2, [])
+	var leftover: Array = contract_salvage_pool.get(key, [])
 	if not leftover.is_empty() and contract.salvage_type == "exchange":
 		var leftover_value := 0
 		for entry in leftover:
@@ -385,9 +416,9 @@ func settle_contract(contract: Contract) -> Dictionary:
 
 	var result = {
 		"battle_loss_value": total_loss,
-		"reimbursement": reimbursement,
+		"reimbursement": total_reimbursement,
 		"leftover_salvage_conversion": leftover_conversion,
-		"total": reimbursement + leftover_conversion,
+		"total": total_reimbursement + leftover_conversion,
 	}
 	EventBus.emit_contract_settled(contract, result)
 	return result
@@ -405,6 +436,8 @@ func _on_contract_accepted(contract: Contract) -> void:
 	contract_ammo_costs[key] = 0
 	contract_salvage_pool[key] = []
 	contract.salvage_pool = []
+	contract_cumulative_loss_value[key] = 0
+	contract_cumulative_reimbursement[key] = 0
 
 func track_battle_loss(unit: TacticalUnit, component: Component, c_bill_value: int) -> void:
 	for c in GameState.active_contracts:
@@ -427,8 +460,11 @@ func _on_contract_completed(contract: Contract) -> void:
 		ReputationSystem.modify_reputation(contract.target, -5, "Opposed contract: " + contract.activity_type)
 	ReputationSystem.modify_reputation("MRB", 5, "Contract completed: " + contract.activity_type)
 
-	contract_battle_losses.erase(contract.get_instance_id())
-	contract_ammo_costs.erase(contract.get_instance_id())
+	var key = contract.get_instance_id()
+	contract_battle_losses.erase(key)
+	contract_ammo_costs.erase(key)
+	contract_cumulative_loss_value.erase(key)
+	contract_cumulative_reimbursement.erase(key)
 
 func track_ammo_expended(ammo_component: Component, shots_fired: int, c_bill_per_shot: int) -> void:
 	## Legacy per-shot tracking. Prefer record_ammo_expended() which is
