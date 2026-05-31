@@ -84,13 +84,13 @@ mouse_filter = 2
 [node name="QuickAccess" type="HBoxContainer" parent="Margin/TopBar"]
 mouse_filter = 1
 
-[node name="PersonnelButton" type="Button" parent="Margin/TopBar/QuickAccess"]
-text = "Personnel"
+[node name="OrgMgmtButton" type="Button" parent="Margin/TopBar/QuickAccess"]
+text = "Organization"
 theme_override_font_sizes/font_size = 11
 unique_name_in_owner = true
 
-[node name="EventLogButton" type="Button" parent="Margin/TopBar/QuickAccess"]
-text = "Event Log"
+[node name="PersonnelButton" type="Button" parent="Margin/TopBar/QuickAccess"]
+text = "Personnel"
 theme_override_font_sizes/font_size = 11
 unique_name_in_owner = true
 
@@ -104,8 +104,8 @@ text = "Contract Board"
 theme_override_font_sizes/font_size = 11
 unique_name_in_owner = true
 
-[node name="OrgMgmtButton" type="Button" parent="Margin/TopBar/QuickAccess"]
-text = "Organization"
+[node name="EventLogButton" type="Button" parent="Margin/TopBar/QuickAccess"]
+text = "Event Log"
 theme_override_font_sizes/font_size = 11
 unique_name_in_owner = true
 

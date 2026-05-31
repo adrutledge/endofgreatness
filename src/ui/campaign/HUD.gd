@@ -11,11 +11,11 @@ extends CanvasLayer
 @onready var reorder_badge: Label = %ReorderBadge
 
 func _ready() -> void:
+	%OrgMgmtButton.pressed.connect(_on_org_mgmt)
 	%PersonnelButton.pressed.connect(_on_personnel)
-	%EventLogButton.pressed.connect(_on_event_log)
 	%LogisticsButton.pressed.connect(_on_logistics)
 	%ContractBoardButton.pressed.connect(_on_contract_board)
-	%OrgMgmtButton.pressed.connect(_on_org_mgmt)
+	%EventLogButton.pressed.connect(_on_event_log)
 
 	EventBus.month_started.connect(_refresh)
 	EventBus.contract_accepted.connect(_refresh)
