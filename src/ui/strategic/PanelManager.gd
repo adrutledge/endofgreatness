@@ -25,6 +25,10 @@ func open_panel(name: String) -> void:
 		return
 	if panel.node.visible:
 		return
+	if not _panel_stack.is_empty():
+		var prev = _panel_stack.back()
+		if prev != name:
+			close_panel(prev)
 	if panel.populate.is_valid():
 		panel.populate.call()
 	panel.node.show()
