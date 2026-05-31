@@ -315,3 +315,21 @@ Save files from older versions load on newer versions via sequential migration f
 ### Save File Self-Containment (constraint)
 
 A save file must restore all player campaign state on a fresh install (balance, inventory, units, personnel, contract chain progress). Invariant game data shipped with every install (component defs, faction data, RAT tables, timeline events, NPC archetypes) is assumed identical and does NOT need to be duplicated in the save. NPC persistence uses archetype reference + seed + limited flags (relationship, alive/dead, hostility), keeping saves lightweight while remaining self-contained for campaign state.
+
+### Modal Event Dialog Pattern
+
+Events show dialogs via `CampaignView.show_modal(dialog)`. The dialog is any `Control` — the ModalLayer (layer 4) queues it FIFO and centers it above a dimmed background. The standard event dialog layout:
+
+```
+EventDialog (Panel, ~600×400)
+├── TextureRect (optional image, left column)
+├── VBox (right column / below image)
+│   ├── Title (Label)
+│   ├── Description (RichTextLabel, BBCode)
+│   ├── CustomContent (Control — empty placeholder, for future expansion)
+│   └── Options (HBoxContainer)
+│       ├── OptionButton 1 → effect callbacks
+│       └── OptionButton 2 → effect callbacks
+```
+
+The event system constructs the dialog, wires each option to its `EventEffects` method (rep change, fund adjustment, contract force-complete, etc.), then calls `CampaignView.show_modal(dialog)`. When an option is clicked, the effect runs and `CampaignView.dismiss_modal()` is called to advance the FIFO queue. Options can also push additional modals (for branching chains). Without an explicit event system, scripts can call `CampaignView.show_modal(AcceptDialog.new(...))` directly for one-off notifications.
