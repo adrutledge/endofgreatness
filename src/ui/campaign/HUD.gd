@@ -18,21 +18,21 @@ var menu_btn: MenuButton
 
 
 func _ready() -> void:
-	balance_label = find_child("BalanceLabel", true, false)
-	bills_label = find_child("BillsLabel", true, false)
-	contracts_label = find_child("ContractsLabel", true, false)
-	date_label = find_child("DateLabel", true, false)
-	time_label = find_child("TimeLabel", true, false)
-	badges_container = find_child("BadgesContainer", true, false)
-	funds_badge = find_child("FundsBadge", true, false)
-	injured_badge = find_child("InjuredBadge", true, false)
-	reorder_badge = find_child("ReorderBadge", true, false)
-	org_mgmt_btn = find_child("OrgMgmtButton", true, false)
-	personnel_btn = find_child("PersonnelButton", true, false)
-	logistics_btn = find_child("LogisticsButton", true, false)
-	contract_board_btn = find_child("ContractBoardButton", true, false)
-	event_log_btn = find_child("EventLogButton", true, false)
-	menu_btn = find_child("MenuButton", true, false)
+	balance_label = $TopBar/Finances/BalanceLabel
+	bills_label = $TopBar/Finances/BillsLabel
+	contracts_label = $TopBar/Contracts/ContractsLabel
+	date_label = $TopBar/DateTime/DateLabel
+	time_label = $TopBar/DateTime/TimeLabel
+	badges_container = $TopBar/BadgesContainer
+	funds_badge = $TopBar/BadgesContainer/FundsBadge
+	injured_badge = $TopBar/BadgesContainer/InjuredBadge
+	reorder_badge = $TopBar/BadgesContainer/ReorderBadge
+	org_mgmt_btn = $TopBar/QuickAccess/OrgMgmtButton
+	personnel_btn = $TopBar/QuickAccess/PersonnelButton
+	logistics_btn = $TopBar/QuickAccess/LogisticsButton
+	contract_board_btn = $TopBar/QuickAccess/ContractBoardButton
+	event_log_btn = $TopBar/QuickAccess/EventLogButton
+	menu_btn = $TopBar/MenuButton
 
 	org_mgmt_btn.pressed.connect(_on_org_mgmt)
 	personnel_btn.pressed.connect(_on_personnel)
@@ -64,6 +64,8 @@ func _refresh(_dummy = null) -> void:
 
 
 func _refresh_finances() -> void:
+	if not balance_label or not bills_label:
+		return
 	var balance = EconomySystem.get_balance() if EconomySystem else 0
 	balance_label.text = tr("C-Bills: %s") % Helpers.fmt_money(balance)
 
@@ -73,6 +75,8 @@ func _refresh_finances() -> void:
 
 
 func _refresh_contracts() -> void:
+	if not contracts_label:
+		return
 	var active = GameState.active_contracts.size() if GameState else 0
 	if active > 0:
 		contracts_label.text = tr("%d contract(s) active") % active
@@ -82,6 +86,8 @@ func _refresh_contracts() -> void:
 
 
 func _refresh_badges() -> void:
+	if not funds_badge or not injured_badge or not reorder_badge:
+		return
 	var balance = EconomySystem.get_balance() if EconomySystem else 0
 	var next_bills = EconomySystem.accumulated_expenses if EconomySystem else 0
 
@@ -106,6 +112,8 @@ func _refresh_badges() -> void:
 
 
 func _refresh_date() -> void:
+	if not date_label:
+		return
 	if TimeManager:
 		date_label.text = TimeManager.get_date_string()
 
