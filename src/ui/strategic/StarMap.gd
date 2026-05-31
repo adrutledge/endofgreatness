@@ -83,6 +83,11 @@ func _load_systems() -> void:
 			systems_positions.append(entry)
 
 func _compute_faction_territory() -> void:
+	if _load_territory_cache():
+		Helpers.debug_print("StarMap", "territory loaded from cache")
+		return
+	Helpers.debug_print("StarMap", "computing territory from scratch")
+
 	# Build influence map via nearest-system Voronoi on a coarse grid.
 	# Each faction's territory is the region closest to any of its systems.
 	var groups: Dictionary = {}
@@ -180,6 +185,8 @@ func _compute_faction_territory() -> void:
 				filtered.append(pt)
 		if filtered.size() >= 3:
 			_faction_territory[owner] = filtered
+
+	_save_territory_cache()
 
 
 func _calculate_jump_routes() -> void:
@@ -414,3 +421,57 @@ func _check_system_click(world_pos: Vector2) -> void:
 		jump_path = []
 		info_panel.hide_panel()
 	queue_redraw()
+
+
+const TERRITORY_CACHE_PATH = "user://cache/starmap_territory.json"
+
+
+func _load_territory_cache() -> bool:
+	var source_mtime = FileAccess.get_modified_time("res://data/systems_index.json")
+	if source_mtime < 0:
+		return false
+	var cache_file = FileAccess.open(TERRITORY_CACHE_PATH, FileAccess.READ)
+	if not cache_file:
+		return false
+	var parser = JSON.new()
+	if parser.parse(cache_file.get_as_text()) != OK:
+		return false
+	var cache = parser.data
+	if cache.get("source_mtime", 0) != source_mtime:
+		return false
+	for owner in cache.get("faction_territory", {}):
+		var pts: Array[Vector2] = []
+		for pt in cache["faction_territory"][owner]:
+			pts.append(Vector2(pt.x, pt.y))
+		_faction_territory[owner] = pts
+	for pair in cache.get("disputed_territory", {}):
+		var pts: Array[Vector2] = []
+		for pt in cache["disputed_territory"][pair]:
+			pts.append(Vector2(pt.x, pt.y))
+		_disputed_territory[pair] = pts
+	return true
+
+
+func _save_territory_cache() -> void:
+	var cache = {
+		"source_mtime": FileAccess.get_modified_time("res://data/systems_index.json"),
+		"faction_territory": {},
+		"disputed_territory": {},
+	}
+	for owner in _faction_territory:
+		var pts: Array = []
+		for v in _faction_territory[owner]:
+			pts.append({"x": v.x, "y": v.y})
+		cache["faction_territory"][owner] = pts
+	for pair in _disputed_territory:
+		var pts: Array = []
+		for v in _disputed_territory[pair]:
+			pts.append({"x": v.x, "y": v.y})
+		cache["disputed_territory"][pair] = pts
+	var dir = DirAccess.open("user://")
+	if dir and not dir.dir_exists("user://cache"):
+		dir.make_dir("user://cache")
+	var file = FileAccess.open(TERRITORY_CACHE_PATH, FileAccess.WRITE)
+	if file:
+		file.store_string(JSON.new().stringify(cache))
+		Helpers.debug_print("StarMap", "territory cache saved")
