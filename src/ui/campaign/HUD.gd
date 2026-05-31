@@ -124,6 +124,7 @@ func _refresh_time() -> void:
 
 
 func _on_menu_selected(id: int) -> void:
+	get_viewport().set_input_as_handled()
 	match id:
 		0:
 			pass
