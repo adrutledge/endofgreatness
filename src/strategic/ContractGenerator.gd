@@ -21,10 +21,14 @@ func _c(key: String, default):
 
 
 func generate_contracts(date: Dictionary, location: String, player_reputation: int, faction_reputations: Dictionary) -> Array[Contract]:
+	_ensure_config()
 	var contracts: Array[Contract] = []
 	var mrb_rep = faction_reputations.get("MRB", faction_reputations.get("global", 0))
 	var low_rep_threshold = _c("low_rep_threshold", -30)
 	var low_rep = mrb_rep < low_rep_threshold
+	var max_range = _c("range_raid", 250.0)
+	var min_ct = _c("min_contracts", 5)
+	var low_chance = _c("low_rep_contract_chance", 0.3)
 
 	var issuers: Array[Faction] = []
 	for code in GameState.factions:
@@ -35,7 +39,7 @@ func generate_contracts(date: Dictionary, location: String, player_reputation: i
 		if location.is_empty():
 			continue
 		var dist = _nearest_faction_system(location, code)
-		if dist >= 0 and dist <= RANGE_RAID:
+		if dist >= 0 and dist <= max_range:
 			issuers.append(faction)
 
 	if issuers.is_empty():
@@ -43,9 +47,6 @@ func generate_contracts(date: Dictionary, location: String, player_reputation: i
 			issuers.append(GameState.factions[code])
 
 	issuers.shuffle()
-	_ensure_config()
-	var min_ct = _c("min_contracts", 5)
-	var low_chance = _c("low_rep_contract_chance", 0.3)
 	var target_count = maxi(min_ct, mini(issuers.size(), randi() % 4 + 3))
 
 	for i in range(target_count):
@@ -98,6 +99,7 @@ func _contract_type_for_distance(dist: float, is_pirate: bool, is_rebel: bool, l
 	var ph = _c("range_pirate_hunt", 180.0)
 	var rc = _c("range_recon", 120.0)
 	var ph_chance = _c("periphery_pirate_hunt_chance", 0.35)
+	var loc_faction = GameState.factions.get(location_owner) if not location_owner.is_empty() else null
 
 	if low_rep or is_pirate or is_rebel:
 		var pool = ["Raid", "Assault"]
