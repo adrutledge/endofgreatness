@@ -301,6 +301,10 @@ Each event produces a `DiffPacket` (Dictionary of effects: `{"system_hide": [...
 
 Autosaves default to the last day of each month (configurable interval). Multiple rotating slots with metadata (date, contract, location).
 
+### Save Forward Compatibility (constraint)
+
+Save files from older versions load on newer versions via sequential migration functions. Each save stores a `save_version: int`. On load, if the save version is behind the current game version, migration functions are applied in order — each a small transform (add field, rename key, recompute derived value) that upgrades the save dict from version N to N+1. Saves are always written at the current version, so loading only upgrades forward. This parallels rolling database migrations: each migration is self-contained, idempotent where possible, and indexed by version. A save from V1 remains loadable in V9 after all intervening migrations have run.
+
 ### Save File Self-Containment (constraint)
 
 A save file must restore all player campaign state on a fresh install (balance, inventory, units, personnel, contract chain progress). Invariant game data shipped with every install (component defs, faction data, RAT tables, timeline events, NPC archetypes) is assumed identical and does NOT need to be duplicated in the save. NPC persistence uses archetype reference + seed + limited flags (relationship, alive/dead, hostility), keeping saves lightweight while remaining self-contained for campaign state.
