@@ -238,6 +238,7 @@ Bounty board, bounties on player, pirate interference, LosTech rumor tracking, S
 - HUD status badges (funds low, auto-reorder suspended, injured unattended)
 - Color blind accessibility palette
 - Deploy-time allocation UI, auto-allocate defaults
+- Operation progress feedback: status labels and/or progress bars for long-running operations (unit generation, contract generation, map generation, data parsing) so the UI doesn't appear frozen; use `call_deferred` or threading where feasible to keep the interface responsive; each phase of generation prints a status line (e.g., "Generating mechs...", "Building personnel...", "Creating organization...") updated via the existing lazy refresh signal pattern
 
 ### Save/Load
 
