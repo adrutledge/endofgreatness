@@ -363,7 +363,7 @@ The `movement_mp` field on `TacticalUnit` stores base MP; terrain cost multiplie
 
 Tactical combat proceeds in phases. Each phase has declaration then resolution. The order is fixed; additional phases (artillery declaration) may be inserted as rules coverage expands.
 
-1. **Initiative**: both sides roll 2d6. Higher roll chooses go first or second for the turn. The initiative winner is guaranteed to always move at least one unit last.
+1. **Initiative**: both sides roll 2d6. Loser goes first, winner goes second, alternating. Winner is guaranteed to move/fire at least one unit last.
 2. **Movement**: alternating rounds between initiative loser and initiative winner. A side with significantly more units moves multiple per round. PSRs/control checks processed as they occur (skid ends movement; failing to stand does not if MP remains). Movement type must be specified before declaring movement.
 3a. **Declare fire**: alternating, same per-round rules as movement. Torso twists and turret direction declared here.
 3b. **Resolve fire**: back-and-forth resolution but all damage applied *simultaneously* — a component damaged during this phase still fires if it was declared.
