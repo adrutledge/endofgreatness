@@ -8,28 +8,25 @@ Form a unit → take a contract → deploy to the contract planet → explore th
 ### V1 — Basic Gameplay Loop
 Establish unit, take contract, deploy to planet, explore hex map, perform tactical engagements, complete contract, repeat. All systems data-driven where feasible. Lore-based planets, factions, components, units (3025 static).
 
-### V2 — Timeline Advancement
+### V2 — Event System + Timeline Advancement
+Both random and scripted events — basic set to be expanded over time. EventJournal with atomic diffs, rolling window, narrative anchors, configurable display modes (popup/toast/log/hide).
 Date advances trigger timeline events (ownership changes, system renames, faction shifts). Helm Memory Core discovered (3028) — lostech becomes available. Inner Sphere responds to technological recovery.
 
 ### V3 — Advanced Personnel
 Pilot abilities, passive XP, medals, data-driven personnel types with correlation rules, era-gated skills, rank systems, role-specific skill trees.
 
-### V4 — Event System (Foundation)
-Both random and scripted events — basic set to be expanded over time. EventJournal with atomic diffs, rolling window, narrative anchors, configurable display modes (popup/toast/log/hide).
+### V4 — Expanded Unit Types
 
-### V5 — Expanded Unit Types
-Additional ground unit types (vehicles, infantry). Continue expanding events, contract types, timeline data as opportunities arise.
-
-### V6 — Advanced Contracting
+### V5 — Advanced Contracting
 Breach system, disputed/contested systems, side-taking in conflicts, influence-range contract pool, emergency contracts as reputation recovery path, faction alignment enforcement.
 
-### V7 — Aerospace
+### V6 — Aerospace
 Aerospace assets (owned DropShips, fighters), supply line interdiction, opposed planetary landings, escort/convoy mechanics.
 
-### V8 — Scripted Content Push
+### V7 — Scripted Content Push
 Major push for authored content — event chains, lore-accurate missions, canon character appearances, timeline-specific scenarios across multiple eras.
 
-### V9 — Organic Narrative
+### V8 — Organic Narrative
 Bounty board, bounties on player, pirate interference, LosTech rumor tracking, SLSC discovery, Solaris VII gladiatorial games. Emergent storytelling driven by the event system and player actions.
 
 ## Phase 0: Foundation & Tooling
