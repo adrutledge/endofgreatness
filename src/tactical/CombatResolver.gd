@@ -4,7 +4,6 @@ extends Node
 ## All combat rules are data-driven from data/unit_types/ and data/rules/.
 
 var _rng: RandomNumberGenerator
-var _cluster_table: Dictionary = {}
 var _config: Dictionary = {}
 var _unit_types: Dictionary = {}
 
@@ -17,16 +16,6 @@ func _load_config() -> void:
 	if j.parse(file.get_as_text()) != OK:
 		return
 	_config = j.data
-
-
-func _load_cluster_table() -> void:
-	var file = FileAccess.open("res://data/rules/cluster_hits.json", FileAccess.READ)
-	if not file:
-		return
-	var j = JSON.new()
-	if j.parse(file.get_as_text()) != OK:
-		return
-	_cluster_table = j.data.get("table", {})
 
 
 func _load_unit_types() -> void:
@@ -60,7 +49,6 @@ func resolve(player_units: Array[TacticalUnit], enemy_units: Array[TacticalUnit]
 	_rng = RandomNumberGenerator.new()
 	_rng.randomize()
 	_load_config()
-	_load_cluster_table()
 	_load_unit_types()
 
 	var player_alive: Array[TacticalUnit] = player_units.duplicate()
@@ -138,7 +126,10 @@ func _resolve_unit_attack(attacker: TacticalUnit, target: TacticalUnit, contract
 		if is_cluster:
 			var dmg_per_shot = def.get("damage_per_shot", dmg_per_hit)
 			var cluster_size = def.get("cluster_size", 1)
-			var hits = _roll_cluster_hits(shots)
+			var cluster_resolver = ClusterHitsResolver.new()
+			add_child(cluster_resolver)
+			var hits = cluster_resolver.resolve(shots)
+			cluster_resolver.queue_free()
 			var remaining = hits
 			while remaining > 0:
 				var cluster = mini(cluster_size, remaining)
@@ -194,24 +185,6 @@ func _apply_damage(target: TacticalUnit, damage: int, source_weapon: String, con
 	_check_motive_damage(target, target_type, type_def, loc_entry)
 
 	return salvage_value
-
-
-func _roll_cluster_hits(shots: int) -> int:
-	var roll = _rng.randi_range(2, 12)
-	var key = str(shots)
-	if _cluster_table.has(key):
-		var row = _cluster_table[key]
-		var idx = roll - 2
-		if idx >= 0 and idx < row.size():
-			return row[idx]
-	for k in _cluster_table.keys():
-		if int(k) >= shots:
-			var row = _cluster_table[k]
-			var idx = roll - 2
-			if idx >= 0 and idx < row.size():
-				return mini(row[idx], shots)
-			break
-	return shots
 
 
 func _find_component_in_location(unit: TacticalUnit, location_name: String) -> Component:
