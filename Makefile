@@ -25,7 +25,7 @@ SUCKIT_SRC := tools/suckit/parse_suckit.py
 
 .PHONY: all build run test lint export clean test-gen suckit
 
-all: lint test build
+all: test build lint
 
 build:
 	$(GODOT) --headless --export-release "$(EXPORT_PRESET)" $(EXPORT_DIR)/
