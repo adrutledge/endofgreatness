@@ -1,23 +1,24 @@
 extends CanvasLayer
 
-@onready var balance_label: Label = $TopBar/Finances/BalanceLabel
-@onready var bills_label: Label = $TopBar/Finances/BillsLabel
-@onready var contracts_label: Label = $TopBar/Contracts/ContractsLabel
-@onready var date_label: Label = $TopBar/DateTime/DateLabel
-@onready var time_label: Label = $TopBar/DateTime/TimeLabel
-@onready var badges_container: HBoxContainer = $TopBar/BadgesContainer
-@onready var funds_badge: Label = $TopBar/BadgesContainer/FundsBadge
-@onready var injured_badge: Label = $TopBar/BadgesContainer/InjuredBadge
-@onready var reorder_badge: Label = $TopBar/BadgesContainer/ReorderBadge
-@onready var org_mgmt_btn: Button = $TopBar/QuickAccess/OrgMgmtButton
-@onready var personnel_btn: Button = $TopBar/QuickAccess/PersonnelButton
-@onready var logistics_btn: Button = $TopBar/QuickAccess/LogisticsButton
-@onready var contract_board_btn: Button = $TopBar/QuickAccess/ContractBoardButton
-@onready var event_log_btn: Button = $TopBar/QuickAccess/EventLogButton
-@onready var menu_btn: MenuButton = $TopBar/MenuButton
+var balance_label: Label
+var bills_label: Label
+var contracts_label: Label
+var date_label: Label
+var time_label: Label
+var badges_container: HBoxContainer
+var funds_badge: Label
+var injured_badge: Label
+var reorder_badge: Label
+var org_mgmt_btn: Button
+var personnel_btn: Button
+var logistics_btn: Button
+var contract_board_btn: Button
+var event_log_btn: Button
+var menu_btn: MenuButton
 
 
 func _ready() -> void:
+	_ensure_nodes()
 	org_mgmt_btn.pressed.connect(_on_org_mgmt)
 	personnel_btn.pressed.connect(_on_personnel)
 	logistics_btn.pressed.connect(_on_logistics)
@@ -39,108 +40,36 @@ func _ready() -> void:
 	_refresh()
 
 
-func _refresh(_dummy = null) -> void:
-	_refresh_finances()
-	_refresh_contracts()
-	_refresh_badges()
-	_refresh_date()
-	_refresh_time()
-
-
-func _refresh_finances() -> void:
-	if not balance_label or not bills_label:
+func _ensure_nodes() -> void:
+	if balance_label:
 		return
-	var balance = EconomySystem.get_balance() if EconomySystem else 0
-	balance_label.text = tr("C-Bills: %s") % Helpers.fmt_money(balance)
-
-	var burn = EconomySystem.get_daily_burn_rate() if EconomySystem else {}
-	var daily = burn.get("total", 0)
-	bills_label.text = tr("Daily Burn: %s/day") % Helpers.fmt_money(daily)
-
-
-func _refresh_contracts() -> void:
-	if not contracts_label:
+	var topbar = find_child("TopBar", true, false)
+	if not topbar:
+		printerr("HUD: TopBar not found")
 		return
-	var active = GameState.active_contracts.size() if GameState else 0
-	if active > 0:
-		contracts_label.text = tr("%d contract(s) active") % active
-		contracts_label.show()
-	else:
-		contracts_label.hide()
+	balance_label = _find_in(topbar, "Finances/BalanceLabel")
+	bills_label = _find_in(topbar, "Finances/BillsLabel")
+	contracts_label = _find_in(topbar, "Contracts/ContractsLabel")
+	date_label = _find_in(topbar, "DateTime/DateLabel")
+	time_label = _find_in(topbar, "DateTime/TimeLabel")
+	badges_container = _find_in(topbar, "BadgesContainer")
+	funds_badge = _find_in(topbar, "BadgesContainer/FundsBadge")
+	injured_badge = _find_in(topbar, "BadgesContainer/InjuredBadge")
+	reorder_badge = _find_in(topbar, "BadgesContainer/ReorderBadge")
+	org_mgmt_btn = _find_in(topbar, "QuickAccess/OrgMgmtButton")
+	personnel_btn = _find_in(topbar, "QuickAccess/PersonnelButton")
+	logistics_btn = _find_in(topbar, "QuickAccess/LogisticsButton")
+	contract_board_btn = _find_in(topbar, "QuickAccess/ContractBoardButton")
+	event_log_btn = _find_in(topbar, "QuickAccess/EventLogButton")
+	menu_btn = _find_in(topbar, "MenuButton")
 
 
-func _refresh_badges() -> void:
-	if not funds_badge or not injured_badge or not reorder_badge:
-		return
-	var balance = EconomySystem.get_balance() if EconomySystem else 0
-	var next_bills = EconomySystem.accumulated_expenses if EconomySystem else 0
-
-	if balance < 0:
-		funds_badge.text = " [color=#ff4444]" + tr("⚠ FUNDS LOW") + "[/color] "
-		funds_badge.visible = true
-	elif balance < next_bills:
-		funds_badge.text = " [color=#ffaa44]" + tr("⚠ FUNDS LOW") + "[/color] "
-		funds_badge.visible = true
-	else:
-		funds_badge.visible = false
-
-	var injured = false
-	if PersonnelManager:
-		for p in PersonnelManager.personnel_roster:
-			if p.is_injured:
-				injured = true
-				break
-	injured_badge.visible = injured
-
-	reorder_badge.visible = false
-
-
-func _refresh_date() -> void:
-	if not date_label:
-		return
-	if TimeManager:
-		date_label.text = TimeManager.get_date_string()
-
-
-func _refresh_time() -> void:
-	if not time_label:
-		return
-	var t = Time.get_time_dict_from_system()
-	time_label.text = "%02d:%02d" % [t.hour, t.minute]
-
-
-func _on_menu_selected(id: int) -> void:
-	get_viewport().set_input_as_handled()
-	match id:
-		0:
-			printerr("HUD: Save Game not implemented")
-		1:
-			printerr("HUD: Load Game not implemented")
-		2:
-			_quit_to_main_menu()
-
-
-func _quit_to_main_menu() -> void:
-	var err = get_tree().change_scene_to_file("res://src/ui/menus/MainMenu.tscn")
-	if err != OK:
-		printerr("HUD: change_scene_to_file failed with error %d" % err)
-
-
-func _on_personnel() -> void:
-	PanelManager.open_panel("personnel")
-
-
-func _on_event_log() -> void:
-	PanelManager.open_panel("event_log")
-
-
-func _on_logistics() -> void:
-	PanelManager.open_panel("logistics")
-
-
-func _on_contract_board() -> void:
-	PanelManager.open_panel("contract_board")
-
-
-func _on_org_mgmt() -> void:
-	PanelManager.open_panel("org_mgmt")
+func _find_in(parent: Node, path: String) -> Node:
+	var parts = path.split("/")
+	var current = parent
+	for part in parts:
+		current = current.get_node_or_null(part)
+		if not current:
+			printerr("HUD: node %s not found in %s" % [part, parent.name])
+			return null
+	return current
