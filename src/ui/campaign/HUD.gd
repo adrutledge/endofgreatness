@@ -50,7 +50,16 @@ func _refresh_contracts() -> void:
 
 func _refresh_badges() -> void:
 	var balance = EconomySystem.get_balance() if EconomySystem else 0
-	funds_badge.visible = balance < 0
+	var next_bills = EconomySystem.accumulated_expenses if EconomySystem else 0
+
+	if balance < 0:
+		funds_badge.text = " [color=#ff4444]" + tr("⚠ FUNDS LOW") + "[/color] "
+		funds_badge.visible = true
+	elif balance < next_bills:
+		funds_badge.text = " [color=#ffaa44]" + tr("⚠ FUNDS LOW") + "[/color] "
+		funds_badge.visible = true
+	else:
+		funds_badge.visible = false
 
 	var injured = false
 	if PersonnelManager:
