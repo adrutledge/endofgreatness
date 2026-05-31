@@ -100,9 +100,7 @@ Form a unit → take a contract → deploy to the contract planet → explore th
 
 - 6 activity types, duration scaling, payment, command rights, min unit counts
 - Contract duration by type (garrison/cadre ~year, assault/pirate hunting 1-6mo, raids vary, emergency days-weeks)
-- **Data-driven contract definitions** (future expansion): contract types defined in JSON with per-type range weights, likely opposing force strength (min/max percentage, quality tiers), tactical engagement types generated during the contract (breakthrough, head hunter, etc.), and on-planet facilities each side may have (fortified positions, ammo dumps, comms towers, landing zones); also specify per-type weights for contract terms — payment ranges (base C-Bill min/max with volatility curves), salvage rate tiers, command rights probability distribution, duration bounds, battle loss reimbursement rate ranges, and transport/base coverage ranges; the generator picks from the weighted distributions rather than using hardcoded constants, enabling each contract type to have distinct financial and operational profiles; all configurable without code changes; interpreter loop evaluates ranges/weights and delegates scenario generation to tactical layer
-- **Event-only contract types**: contract types with `"event_only": true` that never appear on the contract board — they are only generated in response to events from the event system; these contracts can specify exact opfor composition (unit types, counts, quality, pilot skills), planetary map layout (hex grid size, terrain types, facility positions, weather), deployment zones for both sides, victory conditions, and scripted event triggers during the tactical engagement; this enables fully authored narrative missions as part of event chains (e.g., a pivotal battle in the Fourth Succession War with lore-accurate forces and a custom map)
-- Contract chains (future — advanced narrative): multi-part story arcs with branching, NPC persistence, major lore event participation (4th Succession War, etc.)
+- Data-driven contract config (`data/config/contract_generation.json`) controls ranges, minimums, and weights per type
 
 ### P3.4 — Organization Management
 
@@ -157,6 +155,7 @@ Form a unit → take a contract → deploy to the contract planet → explore th
 ### Advanced Narrative (P3.3 expansion)
 
 - Contract chains with branching, NPC persistence, major lore events
+- Data-driven contract definitions (future expansion): contract types defined in JSON with per-type range weights, opposing force strength, tactical engagement types, facilities, weighted terms; event-only contracts with exact opfor/map/victory conditions
 - Organic narrative cluster: bounty board, bounties on player, pirate interference, LosTech rumor tracking
 - Mech gladiatorial games (Solaris VII): non-contract mech duels and team battles with prize money, reputation gains, and unique NPC rivals; separate career tracking from mercenary contracts
 - Star League Survey Corps (SLSC) discovery: SLSC systems are hidden from the starmap (prefix filtering) but can be discovered through lostech rumor tracking; each SLSC system contains a Star League-era research outpost, cache, or facility with rare components, unique units, or lore data; discovery requires rumors, navigation data (coordinates decoded from SLSC designation), and a deep-periphery expedition outside normal jump routes
