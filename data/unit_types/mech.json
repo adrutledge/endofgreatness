@@ -4,29 +4,29 @@
   "hit_locations": {
     "front": [
       {"location": "Center Torso", "tac": true},
-      {"location": "Right Leg"},
-      {"location": "Right Leg"},
       {"location": "Right Arm"},
       {"location": "Right Arm"},
+      {"location": "Right Leg"},
+      {"location": "Right Torso"},
+      {"location": "Center Torso"},
       {"location": "Left Torso"},
+      {"location": "Left Leg"},
       {"location": "Left Arm"},
       {"location": "Left Arm"},
-      {"location": "Left Leg"},
-      {"location": "Left Leg"},
-      {"location": "Head", "tac": true}
+      {"location": "Head"}
     ],
     "rear": [
       {"location": "Center Torso", "tac": true},
-      {"location": "Right Leg"},
-      {"location": "Right Leg"},
       {"location": "Right Arm"},
       {"location": "Right Arm"},
+      {"location": "Right Leg"},
+      {"location": "Right Torso"},
+      {"location": "Center Torso"},
       {"location": "Left Torso"},
+      {"location": "Left Leg"},
       {"location": "Left Arm"},
       {"location": "Left Arm"},
-      {"location": "Left Leg"},
-      {"location": "Left Leg"},
-      {"location": "Head", "tac": true}
+      {"location": "Head"}
     ]
   },
   "crit": {
