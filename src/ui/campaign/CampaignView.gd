@@ -39,13 +39,12 @@ func _unhandled_input(event: InputEvent) -> void:
 
 
 func _setup_panels() -> void:
-	var overlay = $PanelOverlay
-	PanelManager.register_panel("personnel", overlay.PersonnelManagement, func(): overlay.PersonnelManagement.populate_roster())
-	PanelManager.register_panel("event_log", overlay.EventLog, func(): overlay.EventLog.populate())
-	PanelManager.register_panel("mech_lab", overlay.MechLab, func(): overlay.MechLab.populate())
-	PanelManager.register_panel("logistics", overlay.LogisticsPanel, func(): overlay.LogisticsPanel.populate())
-	PanelManager.register_panel("contract_board", overlay.ContractBoard, func(): overlay.ContractBoard.populate())
-	PanelManager.register_panel("org_mgmt", overlay.OrganizationManagement, func(): overlay.OrganizationManagement.populate_tree())
+	PanelManager.register_panel("personnel", $PanelOverlay/PersonnelManagement, func(): $PanelOverlay/PersonnelManagement.populate_roster())
+	PanelManager.register_panel("event_log", $PanelOverlay/EventLog, func(): $PanelOverlay/EventLog.populate())
+	PanelManager.register_panel("mech_lab", $PanelOverlay/MechLab, func(): $PanelOverlay/MechLab.populate())
+	PanelManager.register_panel("logistics", $PanelOverlay/LogisticsPanel, func(): $PanelOverlay/LogisticsPanel.populate())
+	PanelManager.register_panel("contract_board", $PanelOverlay/ContractBoard, func(): $PanelOverlay/ContractBoard.populate())
+	PanelManager.register_panel("org_mgmt", $PanelOverlay/OrganizationManagement, func(): $PanelOverlay/OrganizationManagement.populate_tree())
 
 
 func _setup_hud() -> void:

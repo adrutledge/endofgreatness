@@ -116,14 +116,21 @@ static func _load_skill_attrs() -> void:
 		var name = entry.get("name", "")
 		var links = entry.get("links", [])
 		if not name.is_empty() and not links.is_empty():
-			_skill_attrs_cache[name] = links
+			var typed: Array[String] = []
+			for item in links:
+				typed.append(str(item))
+			_skill_attrs_cache[name] = typed
 
 
 static func get_skill_attributes(skill: String) -> Array[String]:
 	_load_skill_attrs()
 	while skill.length() > 0:
 		if _skill_attrs_cache.has(skill):
-			return _skill_attrs_cache[skill] as Array[String]
+			var raw = _skill_attrs_cache[skill]
+			var result: Array[String] = []
+			for item in raw:
+				result.append(str(item))
+			return result
 		var idx = skill.rfind("_")
 		if idx == -1:
 			break

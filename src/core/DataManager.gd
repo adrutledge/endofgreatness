@@ -135,15 +135,17 @@ func load_starmap() -> void:
 	var json = JSON.new()
 	if json.parse(json_str) == OK:
 		var data = json.data
-		for entry in data:
-			var sys = {
-				"name": entry.get("name", ""),
-				"coordinates": {"x": entry.get("x", 0.0), "y": entry.get("y", 0.0)},
-				"owner_faction": entry.get("owner_faction", ""),
-				"spectral_class": entry.get("spectral_class", "G"),
-				"_file": entry.get("file", ""),
-			}
-			systems_data[sys["name"]] = sys
+		if data is Array:
+			for entry in data:
+				var sys = {
+					"name": entry.get("name", ""),
+					"coordinates": {"x": entry.get("x", 0.0), "y": entry.get("y", 0.0)},
+					"owner_faction": entry.get("owner_faction", ""),
+					"spectral_class": entry.get("spectral_class", "G"),
+					"_file": entry.get("file", ""),
+				}
+				systems_data[sys["name"]] = sys
+	Helpers.debug_print("DataManager", "starmap loaded: %d systems" % systems_data.size())
 
 func load_timeline() -> void:
 	var file = FileAccess.open("res://data/timeline_events.json", FileAccess.READ)
