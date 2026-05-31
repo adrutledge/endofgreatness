@@ -44,6 +44,9 @@ func advance_day() -> void:
 	total_days += 1
 	date_changed.emit(current_date.duplicate())
 	EventBus.emit_time_tick(current_date.duplicate())
+	EventBus.emit_day_started(current_date.duplicate())
+	if total_days % 7 == 0:
+		EventBus.emit_week_started(current_date.duplicate())
 	if current_date.day == 1:
 		EventBus.emit_month_started(current_date.duplicate())
 	_check_timeline_events()
