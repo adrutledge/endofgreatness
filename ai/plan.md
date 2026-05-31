@@ -337,3 +337,7 @@ The event system constructs the dialog, wires each option to its `EventEffects` 
 ### UI Polish — Loading Feedback
 
 During game launch, `DataManager.load_all_data()` runs synchronously in `_ready()` and can take several seconds (loading 3171 systems, parsing hundreds of MTF unit files, loading 260+ component JSONs, 12+ faction files, timeline events). The main menu appears frozen during this period. Future improvement: add a loading screen or progress bar using `call_deferred` or a separate `LoadingScreen` scene that renders immediately while data loads in chunks. Each loading phase should print a status line (parsing mechs..., loading components..., building starmap...). The `StarmapCacheGenerator` autoload also runs deferred territory computation in the background — a subtle indicator during the main menu would communicate that startup caching is still active.
+
+### UI Polish — Badge Display
+
+Status badges (funds low, injured personnel, reorder suspended, etc.) should be icons rather than text labels, displayed either as a strip below the HUD top bar or stacked along the right edge of the screen. If the number of active badges exceeds the available display area, use a scrollable drawer (toggle-able) or collapse into a count badge ("3 issues") that expands on hover/click. Badge icons should be color-coded by severity (red=critical, amber=warning, blue=info). This is visual-only polish — the badge data model and signal triggers are already in place.
