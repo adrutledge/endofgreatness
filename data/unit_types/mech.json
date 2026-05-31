@@ -34,5 +34,11 @@
   "crit": {
     "confirmation_target": 8,
     "through_armor_floating": false
+  },
+  "facing_arcs": {
+    "front": [0, 1, 5],
+    "right_side": [2],
+    "left_side": [4],
+    "rear": [3]
   }
 }

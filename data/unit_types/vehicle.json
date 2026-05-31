@@ -80,5 +80,11 @@
       "11": "no_effect",
       "12": "no_effect"
     }
+  },
+  "facing_arcs": {
+    "front": [0, 1, 5],
+    "right_side": [2],
+    "left_side": [4],
+    "rear": [3]
   }
 }
