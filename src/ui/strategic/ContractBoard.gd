@@ -76,7 +76,7 @@ func populate() -> void:
 	for c in _available:
 		if not c:
 			continue
-		var label = "%s — %s on %s\n%d days, %d C-Bills" % [c.issuer, c.activity_type, c.planet, c.duration, c.c_bill_payment]
+		var label = "%s — %s on %s\n%d days, %s" % [c.issuer, c.activity_type, c.planet, c.duration, Helpers.fmt_money(c.c_bill_payment)]
 		available_list.add_item(label)
 
 	for c in GameState.active_contracts:
@@ -111,8 +111,8 @@ func _show_contract_details(c: Contract) -> void:
 	detail_type.text = tr("Location: %s  |  Duration: %d days") % [c.planet, c.duration]
 
 	var info = ""
-	info += tr("Payment: %d C-Bills") % c.c_bill_payment + "\n"
-	info += tr("Payout per month: %d C-Bills") % c.payout_per_month + "\n"
+	info += tr("Payment: %s") % Helpers.fmt_money(c.c_bill_payment) + "\n"
+	info += tr("Payout per month: %s") % Helpers.fmt_money(c.payout_per_month) + "\n"
 	info += tr("Salvage rate: %d%% (%s)") % [c.salvage_rate * 100, c.salvage_type] + "\n"
 	var rights_keys = Enums.CommandRights.keys()
 	var rights_name = rights_keys[c.command_rights] if c.command_rights >= 0 and c.command_rights < rights_keys.size() else tr("Unknown")

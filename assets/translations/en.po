@@ -210,8 +210,8 @@ msgstr "Outcome:"
 msgid "Paper Doll — Click a slot to select"
 msgstr "Paper Doll — Click a slot to select"
 
-msgid "Payment: %d C-Bills"
-msgstr "Payment: %d C-Bills"
+msgid "Payment: %s"
+msgstr "Payment: %s"
 
 msgid "Payout per tick: %d C-Bills"
 msgstr "Payout per tick: %d C-Bills"

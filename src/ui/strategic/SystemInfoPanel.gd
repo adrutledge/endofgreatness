@@ -75,7 +75,7 @@ func _populate_planets(planets: Array) -> void:
 			lines.append("Temperature: " + str(temp) + "C")
 		var pop = p.get("population")
 		if pop != null:
-			lines.append("Population: " + str(pop))
+			lines.append("Population: " + Helpers.fmt_number(pop))
 		var industry = p.get("industry_type")
 		if industry:
 			lines.append("Industry: " + industry)

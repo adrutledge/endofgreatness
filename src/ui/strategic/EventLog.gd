@@ -85,7 +85,7 @@ func _show_detail(entry: Dictionary) -> void:
 				lines.append(msg)
 			var funds = data.get("funds_delta", 0)
 			if funds != 0:
-				lines.append("Funds: " + ("+" if funds > 0 else "") + str(funds) + " C-Bills")
+				lines.append("Funds: " + ("+" if funds > 0 else "") + Helpers.fmt_money(funds))
 			var rep = data.get("reputation_delta", {})
 			if not rep.is_empty():
 				for k in rep:

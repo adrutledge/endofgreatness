@@ -47,13 +47,30 @@ static func validate_nodes(tag: String, pairs) -> void:
 			push_warning("[DBG][%s] NODE NULL: %s" % [tag, name])
 
 
+static func fmt_number(amount: float, decimals: int = 0) -> String:
+	var n = int(round(amount))
+	var s = str(n)
+	var result = ""
+	var count = 0
+	for i in range(s.length() - 1, -1, -1):
+		if count > 0 and count % 3 == 0:
+			result = "," + result
+		result = s[i] + result
+		count += 1
+	return result
+
+
 static func fmt_money(amount: int) -> String:
-	if amount >= 1000000:
-		var m = amount / 1000000
-		var frac = (amount % 1000000) / 100000
-		return str(m) + "." + str(frac) + "M CSB"
-	elif amount >= 1000:
-		var k = amount / 1000
-		var frac = (amount % 1000) / 100
-		return str(k) + "." + str(frac) + "K CSB"
-	return str(amount) + " CSB"
+	var abs_amt = abs(amount)
+	var prefix = "-" if amount < 0 else ""
+	if abs_amt >= 100000000:
+		return prefix + str(abs_amt / 1000000) + "M CSB"
+	elif abs_amt >= 1000000:
+		var m = abs_amt / 1000000
+		var frac = (abs_amt % 1000000) / 100000
+		return prefix + str(m) + "." + str(frac) + "M CSB"
+	elif abs_amt >= 1000:
+		var k = abs_amt / 1000
+		var frac = (abs_amt % 1000) / 100
+		return prefix + str(k) + "." + str(frac) + "K CSB"
+	return prefix + fmt_number(amount) + " CSB"
