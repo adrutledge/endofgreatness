@@ -1,11 +1,12 @@
 extends Node
 
 ## Auto-resolves a tactical engagement between player and enemy units.
-## Uses simplified Battletech-like to-hit and damage calculations.
+## All combat rules are data-driven from data/unit_types/ and data/rules/.
 
 var _rng: RandomNumberGenerator
 var _cluster_table: Dictionary = {}
 var _config: Dictionary = {}
+var _unit_types: Dictionary = {}
 
 
 func _load_config() -> void:
@@ -18,11 +19,49 @@ func _load_config() -> void:
 	_config = j.data
 
 
+func _load_cluster_table() -> void:
+	var file = FileAccess.open("res://data/rules/cluster_hits.json", FileAccess.READ)
+	if not file:
+		return
+	var j = JSON.new()
+	if j.parse(file.get_as_text()) != OK:
+		return
+	_cluster_table = j.data.get("table", {})
+
+
+func _load_unit_types() -> void:
+	var dir = DirAccess.open("res://data/unit_types")
+	if not dir:
+		return
+	dir.list_dir_begin()
+	var fn = dir.get_next()
+	while fn != "":
+		if fn.ends_with(".json"):
+			var file = FileAccess.open("res://data/unit_types/" + fn, FileAccess.READ)
+			if file:
+				var j = JSON.new()
+				if j.parse(file.get_as_text()) == OK:
+					var data = j.data
+					_unit_types[data.get("code", "")] = data
+		fn = dir.get_next()
+
+
+func _get_unit_type_code(unit: TacticalUnit) -> String:
+	match unit.unit_type:
+		Enums.UnitType.MECH:
+			return "MECH"
+		Enums.UnitType.VEHICLE:
+			return "VEHICLE"
+		_:
+			return "MECH"
+
+
 func resolve(player_units: Array[TacticalUnit], enemy_units: Array[TacticalUnit], contract: Contract) -> Dictionary:
 	_rng = RandomNumberGenerator.new()
 	_rng.randomize()
-	_load_cluster_table()
 	_load_config()
+	_load_cluster_table()
+	_load_unit_types()
 
 	var player_alive: Array[TacticalUnit] = player_units.duplicate()
 	var enemy_alive: Array[TacticalUnit] = enemy_units.duplicate()
@@ -69,16 +108,6 @@ func resolve(player_units: Array[TacticalUnit], enemy_units: Array[TacticalUnit]
 	}
 
 
-func _load_cluster_table() -> void:
-	var file = FileAccess.open("res://data/rules/cluster_hits.json", FileAccess.READ)
-	if not file:
-		return
-	var j = JSON.new()
-	if j.parse(file.get_as_text()) != OK:
-		return
-	_cluster_table = j.data.get("table", {})
-
-
 func _resolve_unit_attack(attacker: TacticalUnit, target: TacticalUnit, contract: Contract) -> int:
 	var total_salvage_value := 0
 	for c in attacker.components:
@@ -88,8 +117,6 @@ func _resolve_unit_attack(attacker: TacticalUnit, target: TacticalUnit, contract
 			continue
 		var def = DataManager.component_defs.get(c.component_name, {})
 		if def.is_empty() or def.get("underwater_only", false):
-			continue
-		if def.is_empty():
 			continue
 
 		var gunnery = _config.get("default_gunnery", 4)
@@ -123,6 +150,50 @@ func _resolve_unit_attack(attacker: TacticalUnit, target: TacticalUnit, contract
 	return total_salvage_value
 
 
+func _apply_damage(target: TacticalUnit, damage: int, source_weapon: String, contract: Contract) -> int:
+	var salvage_value := 0
+	var target_type = _get_unit_type_code(target)
+	var type_def = _unit_types.get(target_type, {})
+	var hit_table = type_def.get("hit_locations", {})
+	var direction = "front"
+	var locations = hit_table.get(direction, [])
+	var loc_roll = _rng.randi_range(2, 12)
+	var loc_result = locations[loc_roll - 2] if loc_roll - 2 < locations.size() else "Center Torso"
+	var parts = loc_result.split(":")
+	var loc_name = parts[0]
+	var can_crit = parts.size() > 1 and parts[1] == "crit"
+
+	var comp = _find_component_in_location(target, loc_name)
+	if not comp:
+		return 0
+	if comp.status == Enums.ComponentStatus.DESTROYED:
+		return 0
+
+	var crit_def = type_def.get("crit", {})
+	var confirm_target = crit_def.get("confirmation_target", 8)
+	var tac_float = crit_def.get("through_armor_floating", true)
+	var destroy_chance = _config.get("component_destroy_chance", 0.3)
+
+	if _rng.randf() < destroy_chance:
+		comp.status = Enums.ComponentStatus.DESTROYED
+		if comp.component_type == "weapon":
+			var def = DataManager.component_defs.get(comp.component_name, {})
+			var salvage_mult = _config.get("salvage_value_multiplier", 0.5)
+			var value = int(def.get("cost", 1000) * salvage_mult)
+			EconomySystem.track_enemy_loss(contract, comp.component_name, value, target.tonnage, 1, Enums.Quality.D, false, source_weapon, false)
+			salvage_value = value
+
+		var crit_roll = _rng.randi_range(2, 12)
+		if crit_roll >= confirm_target:
+			var effects_table = crit_def.get("effects_table", {})
+			var result = effects_table.get(str(crit_roll), "component_damaged")
+			_apply_crit_effect(target, result)
+	else:
+		comp.status = Enums.ComponentStatus.DAMAGED
+
+	return salvage_value
+
+
 func _roll_cluster_hits(shots: int) -> int:
 	var roll = _rng.randi_range(2, 12)
 	var key = str(shots)
@@ -131,51 +202,55 @@ func _roll_cluster_hits(shots: int) -> int:
 		var idx = roll - 2
 		if idx >= 0 and idx < row.size():
 			return row[idx]
-
-	var near_key = ""
 	for k in _cluster_table.keys():
 		if int(k) >= shots:
-			near_key = k
+			var row = _cluster_table[k]
+			var idx = roll - 2
+			if idx >= 0 and idx < row.size():
+				return mini(row[idx], shots)
 			break
-	if near_key.is_empty():
-		var max_k = ""
-		for k in _cluster_table.keys():
-			if max_k.is_empty() or int(k) > int(max_k):
-				max_k = k
-		near_key = max_k
-	if near_key.is_empty():
-		return shots
-	var row = _cluster_table[near_key]
-	var idx = roll - 2
-	if idx >= 0 and idx < row.size():
-		return mini(row[idx], shots)
 	return shots
 
 
-func _apply_damage(target: TacticalUnit, damage: int, source_weapon: String, contract: Contract) -> int:
-	var salvage_value := 0
-	if target.components.is_empty():
-		return 0
-	var idx = _rng.randi_range(0, target.components.size() - 1)
-	var comp = target.components[idx]
+func _find_component_in_location(unit: TacticalUnit, location_name: String) -> Component:
+	for c in unit.components:
+		if c.location and c.location.location_name == location_name:
+			if c.status != Enums.ComponentStatus.DESTROYED:
+				return c
+	for c in unit.components:
+		if c.location and c.location.location_name == location_name:
+			return c
+	return null if unit.components.is_empty() else unit.components[_rng.randi_range(0, unit.components.size() - 1)]
 
-	if comp.status == Enums.ComponentStatus.DESTROYED:
-		return 0
 
-	var destroy_chance = _config.get("component_destroy_chance", 0.3)
-	var salvage_mult = _config.get("salvage_value_multiplier", 0.5)
-
-	if _rng.randf() < destroy_chance:
-		comp.status = Enums.ComponentStatus.DESTROYED
-		if comp.component_type == "weapon":
-			var def = DataManager.component_defs.get(comp.component_name, {})
-			var value = int(def.get("cost", 1000) * salvage_mult)
-			EconomySystem.track_enemy_loss(contract, comp.component_name, value, target.tonnage, 1, Enums.Quality.D, false, source_weapon, false)
-			salvage_value = value
-	else:
-		comp.status = Enums.ComponentStatus.DAMAGED
-
-	return salvage_value
+func _apply_crit_effect(unit: TacticalUnit, effect: String) -> void:
+	match effect:
+		"weapon_destroyed":
+			for c in unit.components:
+				if c.component_type == "weapon" and c.status == Enums.ComponentStatus.UNDAMAGED:
+					c.status = Enums.ComponentStatus.DESTROYED
+					break
+		"weapon_damaged":
+			for c in unit.components:
+				if c.component_type == "weapon" and c.status == Enums.ComponentStatus.UNDAMAGED:
+					c.status = Enums.ComponentStatus.DAMAGED
+					break
+		"component_destroyed":
+			for c in unit.components:
+				if c.status == Enums.ComponentStatus.UNDAMAGED:
+					c.status = Enums.ComponentStatus.DESTROYED
+					break
+		"component_damaged":
+			for c in unit.components:
+				if c.status == Enums.ComponentStatus.UNDAMAGED:
+					c.status = Enums.ComponentStatus.DAMAGED
+					break
+		"ammo_explosion":
+			for c in unit.components:
+				c.status = Enums.ComponentStatus.DESTROYED
+		"vehicle_destroyed":
+			for c in unit.components:
+				c.status = Enums.ComponentStatus.DESTROYED
 
 
 func _filter_destroyed(units: Array[TacticalUnit]) -> Array[TacticalUnit]:

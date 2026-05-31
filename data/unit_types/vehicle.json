@@ -1,0 +1,69 @@
+{
+  "name": "Vehicle",
+  "code": "VEHICLE",
+  "hit_locations": {
+    "front": ["Front:crit", "Front", "Front", "Front", "Front", "Front", "Front", "Front", "Front", "Front", "Turret"],
+    "side": ["Side:crit", "Side", "Side", "Side", "Side", "Side", "Side", "Side", "Side", "Side", "Turret"],
+    "rear": ["Rear:crit", "Rear", "Rear", "Rear", "Rear", "Rear", "Rear", "Rear", "Rear", "Rear", "Turret"]
+  },
+  "crit": {
+    "confirmation_target": 10,
+    "through_armor_floating": false,
+    "effects_table": {
+      "2": "crew_stunned",
+      "3": "weapon_destroyed",
+      "4": "weapon_destroyed",
+      "5": "crew_stunned",
+      "6": "component_destroyed",
+      "7": "component_damaged",
+      "8": "weapon_damaged",
+      "9": "crew_stunned",
+      "10": "weapon_destroyed",
+      "11": "ammo_explosion",
+      "12": "vehicle_destroyed"
+    }
+  },
+  "motive_damage": {
+    "enabled": true,
+    "threshold": 10,
+    "hover": {
+      "2": "motive_hover_crippled",
+      "3": "motive_hover_crippled",
+      "4": "motive_hover_crippled",
+      "5": "motive_hover_damaged",
+      "6": "motive_hover_damaged",
+      "7": "motive_damaged",
+      "8": "motive_damaged",
+      "9": "motive_damaged",
+      "10": "motive_damaged",
+      "11": "no_effect",
+      "12": "no_effect"
+    },
+    "wheeled": {
+      "2": "motive_crippled",
+      "3": "motive_crippled",
+      "4": "motive_crippled",
+      "5": "motive_damaged",
+      "6": "motive_damaged",
+      "7": "motive_damaged",
+      "8": "motive_damaged",
+      "9": "no_effect",
+      "10": "no_effect",
+      "11": "no_effect",
+      "12": "no_effect"
+    },
+    "tracked": {
+      "2": "motive_tracked_crippled",
+      "3": "motive_tracked_crippled",
+      "4": "motive_tracked_crippled",
+      "5": "motive_tracked_damaged",
+      "6": "motive_tracked_damaged",
+      "7": "motive_damaged",
+      "8": "motive_damaged",
+      "9": "no_effect",
+      "10": "no_effect",
+      "11": "no_effect",
+      "12": "no_effect"
+    }
+  }
+}
