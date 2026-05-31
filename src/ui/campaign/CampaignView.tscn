@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://campaign_view"]
+[gd_scene load_steps=11 format=3 uid="uid://campaign_view"]
 
 [ext_resource type="Script" path="res://src/ui/campaign/CampaignView.gd" id="1"]
 [ext_resource type="PackedScene" path="res://src/ui/strategic/StarMap.tscn" id="2"]
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" path="res://src/ui/strategic/EventLog.tscn" id="8"]
 [ext_resource type="PackedScene" path="res://src/ui/strategic/MechLab.tscn" id="9"]
 [ext_resource type="PackedScene" path="res://src/ui/strategic/LogisticsPanel.tscn" id="10"]
+[ext_resource type="PackedScene" path="res://src/ui/campaign/HUD.tscn" id="11"]
 
 [node name="CampaignView" type="Node2D"]
 script = ExtResource("1")
@@ -52,3 +53,5 @@ layer = 2
 
 [node name="LayerManager" type="Node" parent="."]
 script = ExtResource("4")
+
+[node name="HUD" parent="." instance=ExtResource("11")]
