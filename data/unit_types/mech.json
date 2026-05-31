@@ -27,7 +27,9 @@
       {"location": "Left Arm"},
       {"location": "Left Arm"},
       {"location": "Head"}
-    ]
+    ],
+    "right_side": [],
+    "left_side": []
   },
   "crit": {
     "confirmation_target": 8,

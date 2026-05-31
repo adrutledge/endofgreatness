@@ -155,8 +155,8 @@ func _apply_damage(target: TacticalUnit, damage: int, source_weapon: String, con
 	var target_type = _get_unit_type_code(target)
 	var type_def = _unit_types.get(target_type, {})
 	var hit_table = type_def.get("hit_locations", {})
-	var direction = "front"
-	var locations = hit_table.get(direction, [])
+	var direction = _roll_hit_direction(target)
+	var locations = hit_table.get(direction, hit_table.get("front", []))
 	var loc_roll = _rng.randi_range(2, 12)
 	var loc_entry = locations[loc_roll - 2] if loc_roll - 2 < locations.size() else {"location": "Center Torso"}
 	var loc_name = loc_entry.get("location", "Center Torso")
@@ -223,6 +223,15 @@ func _find_component_in_location(unit: TacticalUnit, location_name: String) -> C
 		if c.location and c.location.location_name == location_name:
 			return c
 	return null if unit.components.is_empty() else unit.components[_rng.randi_range(0, unit.components.size() - 1)]
+
+
+func _roll_hit_direction(_unit: TacticalUnit) -> String:
+	var roll = _rng.randi_range(1, 10)
+	if roll <= 7:
+		return "front"
+	elif roll <= 9:
+		return "right_side" if _rng.randi_range(0, 1) == 0 else "left_side"
+	return "rear"
 
 
 func _check_motive_damage(unit: TacticalUnit, type_code: String, type_def: Dictionary, loc_entry: Dictionary) -> void:
