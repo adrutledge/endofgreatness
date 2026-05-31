@@ -1,0 +1,11 @@
+{
+  "max_turns": 20,
+  "default_gunnery": 4,
+  "range_modifiers": {
+    "short": 0,
+    "medium": 2,
+    "long": 4
+  },
+  "component_destroy_chance": 0.3,
+  "salvage_value_multiplier": 0.5
+}

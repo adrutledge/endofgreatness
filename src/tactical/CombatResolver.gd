@@ -5,19 +5,31 @@ extends Node
 
 var _rng: RandomNumberGenerator
 var _cluster_table: Dictionary = {}
+var _config: Dictionary = {}
+
+
+func _load_config() -> void:
+	var file = FileAccess.open("res://data/rules/combat_config.json", FileAccess.READ)
+	if not file:
+		return
+	var j = JSON.new()
+	if j.parse(file.get_as_text()) != OK:
+		return
+	_config = j.data
 
 
 func resolve(player_units: Array[TacticalUnit], enemy_units: Array[TacticalUnit], contract: Contract) -> Dictionary:
 	_rng = RandomNumberGenerator.new()
 	_rng.randomize()
 	_load_cluster_table()
+	_load_config()
 
 	var player_alive: Array[TacticalUnit] = player_units.duplicate()
 	var enemy_alive: Array[TacticalUnit] = enemy_units.duplicate()
 	var enemies_destroyed := 0
 	var player_lost := 0
 	var total_salvage_value := 0
-	var max_turns := 20
+	var max_turns = _config.get("max_turns", 20)
 
 	for turn in range(max_turns):
 		if enemy_alive.is_empty():
@@ -80,12 +92,13 @@ func _resolve_unit_attack(attacker: TacticalUnit, target: TacticalUnit, contract
 		if def.is_empty():
 			continue
 
-		var gunnery = 4
+		var gunnery = _config.get("default_gunnery", 4)
 		if not attacker.crew.is_empty():
 			var pilot = attacker.crew[0]
-			gunnery = pilot.skills.get("gunnery_mech", 4)
+			gunnery = pilot.skills.get("gunnery_mech", gunnery)
 
-		var range_mod = 2
+		var range_mods = _config.get("range_modifiers", {"medium": 2})
+		var range_mod = range_mods.get("medium", 2)
 		var to_hit = gunnery + range_mod
 		var roll = _rng.randi_range(2, 12)
 		if roll < to_hit:
@@ -149,11 +162,14 @@ func _apply_damage(target: TacticalUnit, damage: int, source_weapon: String, con
 	if comp.status == Enums.ComponentStatus.DESTROYED:
 		return 0
 
-	if _rng.randf() < 0.3:
+	var destroy_chance = _config.get("component_destroy_chance", 0.3)
+	var salvage_mult = _config.get("salvage_value_multiplier", 0.5)
+
+	if _rng.randf() < destroy_chance:
 		comp.status = Enums.ComponentStatus.DESTROYED
 		if comp.component_type == "weapon":
 			var def = DataManager.component_defs.get(comp.component_name, {})
-			var value = def.get("cost", 1000) / 2
+			var value = int(def.get("cost", 1000) * salvage_mult)
 			EconomySystem.track_enemy_loss(contract, comp.component_name, value, target.tonnage, 1, Enums.Quality.D, false, source_weapon, false)
 			salvage_value = value
 	else:
