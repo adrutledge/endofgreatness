@@ -114,11 +114,13 @@ func _place_objectives(hex_map: HexMap, contract: Contract) -> void:
 		all_hexes[idx].objective = HexMap.ObjectiveType.ASSETS
 		var asset_types = [
 			{"type": "battlefield_remnants", "description": "Scattered wreckage of old military vehicles and equipment.", "value": rng.randi_range(2000, 15000)},
-			{"type": "artifact", "description": "Ancient pre-spaceflight artifacts in remarkably good condition.", "value": rng.randi_range(5000, 50000)},
+			{"type": "artifact", "description": "A valuable piece of historical significance — artwork, antique weaponry, or a pre-spaceflight relic preserved in remarkable condition.", "value": rng.randi_range(5000, 50000)},
 			{"type": "civilian_equipment", "description": "A cache of industrial machinery and construction vehicles.", "value": rng.randi_range(3000, 20000)},
 			{"type": "salvageable_mech", "description": "A downed BattleMech, heavily damaged but with recoverable components.", "value": rng.randi_range(10000, 80000)},
 			{"type": "military_supplies", "description": "Abandoned crates of ammunition, armor plating, and spare parts.", "value": rng.randi_range(4000, 25000)},
 			{"type": "comms_equipment", "description": "A functional communications relay with encryption modules.", "value": rng.randi_range(6000, 30000)},
+			{"type": "precious_metals", "description": "A cache of refined germanium and other precious metals — highly valuable on the open market.", "value": rng.randi_range(15000, 100000)},
+			{"type": "currency_cache", "description": "A hidden stash of C-Bills, likely from a forgotten emergency fund or black-market transaction.", "value": rng.randi_range(10000, 75000)},
 		]
 		var asset = asset_types[rng.randi_range(0, asset_types.size() - 1)]
 		all_hexes[idx].objective_data = asset

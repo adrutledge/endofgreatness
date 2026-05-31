@@ -265,6 +265,8 @@ func _show_asset_dialog(hex_data: Dictionary) -> void:
 		"salvageable_mech": tr("Salvageable 'Mech"),
 		"military_supplies": tr("Military Supplies"),
 		"comms_equipment": tr("Communications Equipment"),
+		"precious_metals": tr("Precious Metals"),
+		"currency_cache": tr("Currency Cache"),
 	}
 
 	var title = asset_names.get(asset_type, tr("Unknown Asset"))
