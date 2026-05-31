@@ -1,0 +1,49 @@
+[gd_scene load_steps=2 format=3 uid="uid://game_menu"]
+
+[ext_resource type="Script" path="res://src/ui/campaign/GameMenu.gd" id="1"]
+
+[node name="GameMenu" type="Panel"]
+script = ExtResource("1")
+custom_minimum_size = Vector2i(260, 220)
+
+[node name="Margin" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="VBox" type="VBoxContainer" parent="Margin"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Title" type="Label" parent="Margin/VBox"]
+unique_name_in_owner = true
+text = "Menu"
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="Margin/VBox"]
+size_flags_vertical = 1
+
+[node name="SaveButton" type="Button" parent="Margin/VBox"]
+unique_name_in_owner = true
+text = "Save Game"
+size_flags_horizontal = 4
+
+[node name="LoadButton" type="Button" parent="Margin/VBox"]
+unique_name_in_owner = true
+text = "Load Game"
+size_flags_horizontal = 4
+
+[node name="QuitButton" type="Button" parent="Margin/VBox"]
+unique_name_in_owner = true
+text = "Quit to Main Menu"
+size_flags_horizontal = 4
+
+[node name="CancelButton" type="Button" parent="Margin/VBox"]
+unique_name_in_owner = true
+text = "Cancel"
+size_flags_horizontal = 4

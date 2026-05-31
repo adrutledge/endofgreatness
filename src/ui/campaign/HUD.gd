@@ -9,18 +9,17 @@ func _ready() -> void:
 	topbar.get_node("QuickAccess/EventLogButton").pressed.connect(_on_event_log)
 
 	var menu_btn = topbar.get_node("MenuButton")
-	var popup = PopupMenu.new()
-	menu_btn.add_child(popup)
-	popup.add_item(tr("Save Game"))
-	popup.add_item(tr("Load Game"))
-	popup.add_separator()
-	popup.add_item(tr("Quit to Main Menu"))
-	popup.id_pressed.connect(_on_menu_selected)
-	menu_btn.pressed.connect(func():
-		printerr("HUD: menu button pressed")
-		var btn_rect = Rect2i(menu_btn.global_position.x, menu_btn.global_position.y + menu_btn.size.y, 200, 0)
-		popup.popup(btn_rect)
-	)
+	menu_btn.pressed.connect(_on_menu_button)
+
+
+func _on_menu_button() -> void:
+	var cv = get_tree().current_scene
+	if not cv or not cv.has_method("show_modal"):
+		printerr("HUD: CampaignView not found")
+		return
+	var menu = preload("res://src/ui/campaign/GameMenu.tscn").instantiate()
+	menu.dismissed.connect(cv.dismiss_modal)
+	cv.show_modal(menu)
 
 	topbar.get_node("Finances/BalanceLabel")
 	topbar.get_node("Contracts/ContractsLabel")
@@ -107,28 +106,17 @@ func _refresh_time() -> void:
 	time_label.text = "%02d:%02d" % [t.hour, t.minute]
 
 
-func _on_menu_selected(id: int) -> void:
-	get_viewport().set_input_as_handled()
-	match id:
-		0:
-			printerr("HUD: Save Game not implemented")
-		1:
-			printerr("HUD: Load Game not implemented")
-		2:
-			_quit_to_main_menu()
-
-
-func _quit_to_main_menu() -> void:
-	var err = get_tree().change_scene_to_file("res://src/ui/menus/MainMenu.tscn")
-	if err != OK:
-		printerr("HUD: change_scene_to_file failed with error %d" % err)
+func _on_menu_button() -> void:
+	var cv = get_tree().current_scene
+	if not cv or not cv.has_method("show_modal"):
+		printerr("HUD: CampaignView not found")
+		return
+	var menu = preload("res://src/ui/campaign/GameMenu.tscn").instantiate()
+	menu.dismissed.connect(cv.dismiss_modal)
+	cv.show_modal(menu)
 
 
 func _on_personnel() -> void:
-	PanelManager.open_panel("personnel")
-
-
-func _on_event_log() -> void:
 	PanelManager.open_panel("event_log")
 
 
