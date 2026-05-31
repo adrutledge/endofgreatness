@@ -14,6 +14,8 @@ func _ready() -> void:
 	%PersonnelButton.pressed.connect(_on_personnel)
 	%EventLogButton.pressed.connect(_on_event_log)
 	%LogisticsButton.pressed.connect(_on_logistics)
+	%ContractBoardButton.pressed.connect(_on_contract_board)
+	%OrgMgmtButton.pressed.connect(_on_org_mgmt)
 
 	EventBus.month_started.connect(_refresh)
 	EventBus.contract_accepted.connect(_refresh)
@@ -88,3 +90,11 @@ func _on_event_log() -> void:
 
 func _on_logistics() -> void:
 	PanelManager.open_panel("logistics")
+
+
+func _on_contract_board() -> void:
+	PanelManager.open_panel("contract_board")
+
+
+func _on_org_mgmt() -> void:
+	PanelManager.open_panel("org_mgmt")

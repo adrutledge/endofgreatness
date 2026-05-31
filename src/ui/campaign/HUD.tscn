@@ -99,6 +99,16 @@ text = "Logistics"
 theme_override_font_sizes/font_size = 11
 unique_name_in_owner = true
 
+[node name="ContractBoardButton" type="Button" parent="Margin/TopBar/QuickAccess"]
+text = "Contract Board"
+theme_override_font_sizes/font_size = 11
+unique_name_in_owner = true
+
+[node name="OrgMgmtButton" type="Button" parent="Margin/TopBar/QuickAccess"]
+text = "Organization"
+theme_override_font_sizes/font_size = 11
+unique_name_in_owner = true
+
 [node name="DateLabel" type="Label" parent="Margin/TopBar"]
 unique_name_in_owner = true
 text = ""
