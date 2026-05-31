@@ -16,6 +16,7 @@ var _dirty: bool = true
 @onready var detail_info: Label = %DetailInfo
 @onready var detail_panel: Panel = %DetailPanel
 @onready var accept_button: Button = %AcceptButton
+@onready var complete_button: Button = %CompleteContractButton
 @onready var close_button: Button = %CloseButton
 
 
@@ -25,7 +26,8 @@ func _ready() -> void:
 		["available_list", available_list], ["active_list", active_list],
 		["detail_name", detail_name], ["detail_type", detail_type],
 		["detail_info", detail_info], ["detail_panel", detail_panel],
-		["accept_button", accept_button], ["close_button", close_button],
+		["accept_button", accept_button], ["complete_button", complete_button],
+		["close_button", close_button],
 	])
 	var bg = StyleBoxFlat.new()
 	bg.bg_color = Color(0.1, 0.1, 0.15, 0.95)
@@ -42,9 +44,11 @@ func _ready() -> void:
 	detail_type.add_theme_color_override("font_color", Color(0.6, 0.8, 1.0))
 
 	accept_button.pressed.connect(_on_accept)
+	complete_button.pressed.connect(_on_complete)
 	close_button.pressed.connect(_on_close)
 	available_list.item_selected.connect(_on_available_selected)
 	active_list.item_selected.connect(_on_active_selected)
+	EventBus.contract_settled.connect(_on_contract_settled)
 
 	_generator = ContractGenerator.new()
 	add_child(_generator)
@@ -92,7 +96,7 @@ func _on_available_selected(index: int) -> void:
 	_selected_contract = _available[index]
 	_selected_is_active = false
 	accept_button.disabled = false
-	accept_button.text = tr("Accept Contract")
+	complete_button.hide()
 	_show_contract_details(_selected_contract)
 
 
@@ -103,6 +107,7 @@ func _on_active_selected(index: int) -> void:
 	_selected_contract = active[index]
 	_selected_is_active = true
 	accept_button.disabled = true
+	complete_button.show()
 	_show_contract_details(_selected_contract)
 
 
@@ -144,6 +149,32 @@ func _on_accept() -> void:
 	_selected_contract = null
 	_selected_is_active = false
 	populate()
+
+
+func _on_complete() -> void:
+	if not _selected_contract or not _selected_is_active:
+		return
+	var contract = _selected_contract
+	GameState.complete_contract(contract)
+	_selected_contract = null
+	_selected_is_active = false
+	populate()
+
+
+func _on_contract_settled(contract: Contract, settlement: Dictionary) -> void:
+	var msg = ""
+	msg += Helpers.fmt_money(settlement.battle_loss_value) + " battle losses\n"
+	msg += Helpers.fmt_money(settlement.reimbursement) + " reimbursed\n"
+	msg += Helpers.fmt_money(settlement.leftover_salvage_conversion) + " salvage conversion\n"
+	msg += tr("Total: %s") % Helpers.fmt_money(settlement.total)
+
+	var dialog = AcceptDialog.new()
+	dialog.title = tr("Contract Complete — %s") % [contract.activity_type]
+	dialog.dialog_text = msg
+	dialog.min_size = Vector2i(400, 200)
+	add_child(dialog)
+	dialog.popup_centered()
+	dialog.tree_exited.connect(func(): remove_child(dialog))
 
 
 func _clear_details() -> void:

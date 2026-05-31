@@ -205,6 +205,11 @@ func _on_month_started(date: Dictionary) -> void:
 	var month = date.get("month", 1)
 	var year = date.get("year", 3025)
 	_process_monthly_bills()
+
+	for contract in GameState.active_contracts:
+		if contract.is_active and contract.payout_per_month > 0:
+			add_funds(contract.payout_per_month, "Contract payout: " + contract.issuer + "/" + contract.activity_type)
+
 	last_bill_month = month
 	last_bill_year = year
 	if GameState.player.current_planet == "Galatea":
@@ -416,6 +421,12 @@ func track_battle_loss(unit: TacticalUnit, component: Component, c_bill_value: i
 
 func _on_contract_completed(contract: Contract) -> void:
 	settle_contract(contract)
+
+	ReputationSystem.modify_reputation(contract.issuer, 10, "Contract completed: " + contract.activity_type)
+	if contract.target:
+		ReputationSystem.modify_reputation(contract.target, -5, "Opposed contract: " + contract.activity_type)
+	ReputationSystem.modify_reputation("MRB", 5, "Contract completed: " + contract.activity_type)
+
 	contract_battle_losses.erase(contract.get_instance_id())
 	contract_ammo_costs.erase(contract.get_instance_id())
 
