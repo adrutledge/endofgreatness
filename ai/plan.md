@@ -245,7 +245,7 @@ Bounty board, bounties on player, pirate interference, LosTech rumor tracking, S
 - USILR/HPG gameplay effects
 - faction_destroyed timeline events
 - TM construction fields on component JSONs
-- Per-system data files: split monolithic `starmap.json` into `data/systems/<name>.json` — one file per system, loaded on demand rather than all at startup
+- Starmap index: lightweight `data/systems_index.json` with `name`, `x`, `y`, `owner_faction`, `spectral_class`, `file` — loaded at startup for map display (~190 KB for 3,174 systems); per-system detail files (`data/systems/<name>.json`) loaded on click or when game logic queries the system; split via parser update
 - Canonical map layouts: systems and their settled bodies (planets, moons, stations) can store a `canonical_map` reference — the filename of a pre-authored tactical/planetary map layout (stored in `data/maps/canonical/<system>_<body>.json`); when a tactical engagement occurs on a body with a canonical map, that map is used instead of procedural generation; enables lore-accurate battlefields (e.g., a specific canyon on Hesperus II)
 
 ### Timeline System Data
