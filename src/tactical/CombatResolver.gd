@@ -74,10 +74,9 @@ func _resolve_unit_attack(attacker: TacticalUnit, target: TacticalUnit, contract
 			continue
 		if c.status != Enums.ComponentStatus.UNDAMAGED:
 			continue
-		var wname = c.component_name
-		if wname.begins_with("SRT") or wname.begins_with("LRT"):
+		var def = DataManager.component_defs.get(c.component_name, {})
+		if def.is_empty() or def.get("underwater_only", false):
 			continue
-		var def = DataManager.component_defs.get(wname, {})
 		if def.is_empty():
 			continue
 

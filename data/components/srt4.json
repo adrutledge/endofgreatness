@@ -19,5 +19,6 @@
   "shots_per_volley": 4,
   "cluster_weapon": true,
   "damage_per_shot": 2,
-  "cluster_size": 1
+  "cluster_size": 1,
+  "underwater_only": true
 }
