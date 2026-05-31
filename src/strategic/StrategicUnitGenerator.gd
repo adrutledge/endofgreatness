@@ -6,15 +6,15 @@ const DICE_COUNT: int = 20
 const FLOOR_CSB: int = 10_000_000
 const MECH_COUNT: int = 12
 
-var _RATParser = null
-var _GameState = null
-var _DataManager = null
-var _PersonnelManager = null
+var _rat_parser = null
+var _game_state = null
+var _data_manager = null
+var _personnel_manager = null
 
 func _get_rat_parser():
-	if _RATParser == null:
-		_RATParser = load("res://src/strategic/RATParser.gd")
-	return _RATParser
+	if _rat_parser == null:
+		_rat_parser = load("res://src/strategic/RATParser.gd")
+	return _rat_parser
 
 func _get_gs():
 	return GameState
@@ -25,11 +25,11 @@ func _get_dm():
 
 
 func _get_pm():
-	if _PersonnelManager == null:
+	if _personnel_manager == null:
 		var ml = Engine.get_main_loop() as SceneTree
 		if ml and ml.root:
-			_PersonnelManager = ml.root.get_node_or_null("/root/PersonnelManager") as Node
-	return _PersonnelManager
+			_personnel_manager = ml.root.get_node_or_null("/root/PersonnelManager") as Node
+	return _personnel_manager
 
 const FIRST_NAMES: Array[String] = [
 	"Aaron", "Adelaide", "Alejandro", "Alexei", "Amara", "Andrei", "Anya", "Aria",

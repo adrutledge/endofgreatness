@@ -5,13 +5,13 @@ var unit_templates: Dictionary = {}
 var canon_units: Dictionary = {}
 var component_defs: Dictionary = {}
 var systems_data: Dictionary = {}
-var _Parser = null
+var _parser = null
 
 
 func _get_parser():
-	if _Parser == null:
-		_Parser = load("res://src/tactical/MegaMekParser.gd")
-	return _Parser
+	if _parser == null:
+		_parser = load("res://src/tactical/MegaMekParser.gd")
+	return _parser
 
 func _ready() -> void:
 	load_all_data()

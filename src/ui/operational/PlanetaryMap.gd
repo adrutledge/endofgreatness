@@ -12,8 +12,8 @@ var hex_size: float = 30.0
 var selected_hex: Dictionary = {}
 var generated: bool = false
 
-var TERRAIN_COLORS: Dictionary = {}
-var OBJECTIVE_LABELS: Dictionary = {}
+var terrain_colors: Dictionary = {}
+var objective_labels: Dictionary = {}
 
 var camera_offset: Vector2 = Vector2(200, 100)
 var camera_zoom: float = 1.0
@@ -31,7 +31,7 @@ var reveal_queue: Array[Vector2i] = []
 
 
 func _ready() -> void:
-	TERRAIN_COLORS = {
+	terrain_colors = {
 		HexMap.Terrain.PLAINS: Color(0.5, 0.7, 0.3),
 		HexMap.Terrain.FOREST: Color(0.2, 0.5, 0.15),
 		HexMap.Terrain.MOUNTAIN: Color(0.5, 0.4, 0.25),
@@ -40,7 +40,7 @@ func _ready() -> void:
 		HexMap.Terrain.DESERT: Color(0.8, 0.7, 0.3),
 		HexMap.Terrain.ROUGH: Color(0.45, 0.35, 0.2),
 	}
-	OBJECTIVE_LABELS = {
+	objective_labels = {
 		HexMap.ObjectiveType.NONE: "",
 		HexMap.ObjectiveType.PRIMARY: "★ " + tr("Primary"),
 		HexMap.ObjectiveType.SECONDARY: "● " + tr("Secondary"),
@@ -107,7 +107,7 @@ func _on_map_draw() -> void:
 				continue
 
 			var corners = HexMap.hex_corners(pixel, hex_size * camera_zoom)
-			var color = TERRAIN_COLORS.get(h.terrain, Color(0.3, 0.3, 0.3))
+			var color = terrain_colors.get(h.terrain, Color(0.3, 0.3, 0.3))
 
 			if not h.revealed:
 				color = color * 0.4
@@ -216,7 +216,7 @@ func _update_hex_info() -> void:
 	if selected_hex.get("revealed", false):
 		var obj = selected_hex.get("objective", HexMap.ObjectiveType.NONE)
 		if obj != HexMap.ObjectiveType.NONE:
-			info += "\n" + OBJECTIVE_LABELS.get(obj, "")
+			info += "\n" + objective_labels.get(obj, "")
 	else:
 		info += "\n" + tr("Unexplored")
 		explore_button.disabled = false

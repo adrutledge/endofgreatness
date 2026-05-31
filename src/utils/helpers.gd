@@ -1,7 +1,7 @@
 class_name Helpers
 extends RefCounted
 
-static var DEBUG: bool = false
+static var debug: bool = false
 
 
 static var _debug_checked: bool = false

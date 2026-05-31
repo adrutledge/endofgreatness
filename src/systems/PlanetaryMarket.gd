@@ -9,7 +9,7 @@ var refresh_counter: int = 0
 var refresh_interval: int = 7
 var _needs_rebuild: bool = false
 var _test_defs: Dictionary = {}
-var _DataManager = null
+var _data_manager = null
 
 func setup(factions_on_planet: Array[String], exclude_faction: String = "") -> void:
 	faction_codes = factions_on_planet.duplicate()
@@ -18,9 +18,9 @@ func setup(factions_on_planet: Array[String], exclude_faction: String = "") -> v
 	rebuild_inventory()
 
 func _dm() -> Node:
-	if _DataManager == null:
-		_DataManager = Engine.get_main_loop().root.get_node_or_null("DataManager") if Engine.get_main_loop() else null
-	return _DataManager
+	if _data_manager == null:
+		_data_manager = Engine.get_main_loop().root.get_node_or_null("DataManager") if Engine.get_main_loop() else null
+	return _data_manager
 
 
 func _get_defs_source() -> Dictionary:

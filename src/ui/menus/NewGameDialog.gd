@@ -6,11 +6,11 @@ extends Control
 @onready var status_label = $VBoxContainer/StatusLabel
 @onready var company_name_edit = $VBoxContainer/CompanyName
 
-var _Generator = null
+var _generator = null
 
 
 func _ready() -> void:
-	_Generator = load("res://src/strategic/StrategicUnitGenerator.gd")
+	_generator = load("res://src/strategic/StrategicUnitGenerator.gd")
 	setup_faction_list()
 	start_button.pressed.connect(_on_start)
 	back_button.pressed.connect(_on_back)
@@ -69,7 +69,7 @@ func _on_start() -> void:
 	start_button.disabled = true
 	back_button.disabled = true
 
-	var gen = _Generator.new()
+	var gen = _generator.new()
 	var result = gen.generate(faction_key, company_name)
 	gen = null
 
