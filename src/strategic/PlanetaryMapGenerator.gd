@@ -90,7 +90,7 @@ func _place_objectives(hex_map: HexMap, contract: Contract) -> void:
 
 	var primary_count := 1
 	var secondary_count := rng.randi_range(1, 2)
-	var salvage_count := rng.randi_range(0, 3)
+	var assets_count := rng.randi_range(1, 4)
 	var enemy_count := rng.randi_range(1, 3)
 
 	var idx := 0
@@ -108,11 +108,20 @@ func _place_objectives(hex_map: HexMap, contract: Contract) -> void:
 		all_hexes[idx].objective_data = {"type": "supply_cache"}
 		idx += 1
 
-	for i in range(salvage_count):
+	for i in range(assets_count):
 		if idx >= all_hexes.size():
 			break
-		all_hexes[idx].objective = HexMap.ObjectiveType.SALVAGE
-		all_hexes[idx].objective_data = {"value": rng.randi_range(1000, 50000)}
+		all_hexes[idx].objective = HexMap.ObjectiveType.ASSETS
+		var asset_types = [
+			{"type": "battlefield_remnants", "description": "Scattered wreckage of old military vehicles and equipment.", "value": rng.randi_range(2000, 15000)},
+			{"type": "artifact", "description": "Ancient pre-spaceflight artifacts in remarkably good condition.", "value": rng.randi_range(5000, 50000)},
+			{"type": "civilian_equipment", "description": "A cache of industrial machinery and construction vehicles.", "value": rng.randi_range(3000, 20000)},
+			{"type": "salvageable_mech", "description": "A downed BattleMech, heavily damaged but with recoverable components.", "value": rng.randi_range(10000, 80000)},
+			{"type": "military_supplies", "description": "Abandoned crates of ammunition, armor plating, and spare parts.", "value": rng.randi_range(4000, 25000)},
+			{"type": "comms_equipment", "description": "A functional communications relay with encryption modules.", "value": rng.randi_range(6000, 30000)},
+		]
+		var asset = asset_types[rng.randi_range(0, asset_types.size() - 1)]
+		all_hexes[idx].objective_data = asset
 		idx += 1
 
 	for i in range(enemy_count):

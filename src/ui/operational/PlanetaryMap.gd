@@ -23,7 +23,7 @@ const OBJECTIVE_LABELS: Dictionary = {
 	HexMap.ObjectiveType.NONE: "",
 	HexMap.ObjectiveType.PRIMARY: "★ " + tr("Primary"),
 	HexMap.ObjectiveType.SECONDARY: "● " + tr("Secondary"),
-	HexMap.ObjectiveType.SALVAGE: "$ " + tr("Salvage"),
+	HexMap.ObjectiveType.ASSETS: "⚙ " + tr("Assets"),
 	HexMap.ObjectiveType.ENEMY: "⚔ " + tr("Enemy"),
 	HexMap.ObjectiveType.EVENT: "! " + tr("Event"),
 }
@@ -121,7 +121,7 @@ func _on_map_draw() -> void:
 				match h.objective:
 					HexMap.ObjectiveType.PRIMARY: marker = "★"
 					HexMap.ObjectiveType.ENEMY: marker = "⚔"
-					HexMap.ObjectiveType.SALVAGE: marker = "$"
+					HexMap.ObjectiveType.ASSETS: marker = "⚙"
 					HexMap.ObjectiveType.SECONDARY: marker = "●"
 				draw.draw_string(ThemeDB.fallback_font, label_pos, marker, HORIZONTAL_ALIGNMENT_CENTER, -1, 16, Color(1, 1, 0.6))
 
@@ -236,20 +236,59 @@ func _on_explore() -> void:
 		match obj:
 			HexMap.ObjectiveType.PRIMARY:
 				found_text = tr("Primary objective found! Engage the target.")
+				detail_label.text = "[b]" + tr("Exploration Result:") + "[/b]\n" + found_text
 			HexMap.ObjectiveType.SECONDARY:
 				found_text = tr("Secondary objective discovered: %s") % obj_data.get("type", tr("unknown"))
-			HexMap.ObjectiveType.SALVAGE:
-				var val = obj_data.get("value", 0)
-				found_text = tr("Salvage found! Recovered items worth %s") % Helpers.fmt_money(val)
-				EconomySystem.add_funds(val, "Salvage recovered")
+				detail_label.text = "[b]" + tr("Exploration Result:") + "[/b]\n" + found_text
+			HexMap.ObjectiveType.ASSETS:
+				_show_asset_dialog(selected_hex)
 			HexMap.ObjectiveType.ENEMY:
 				var strength = obj_data.get("strength", 1)
 				found_text = tr("Enemy force detected! Strength level: %d") % strength
-		detail_label.text = "[b]" + tr("Exploration Result:") + "[/b]\n" + found_text
+				detail_label.text = "[b]" + tr("Exploration Result:") + "[/b]\n" + found_text
 	else:
 		detail_label.text = "[b]" + tr("Exploration Result:") + "[/b]\n" + tr("Nothing of interest in this hex.")
 
 	map_draw.queue_redraw()
+
+
+func _show_asset_dialog(hex_data: Dictionary) -> void:
+	var data = hex_data.get("objective_data", {})
+	var asset_type = data.get("type", "unknown")
+	var description = data.get("description", "")
+	var value = data.get("value", 0)
+
+	var asset_names = {
+		"battlefield_remnants": tr("Battlefield Remnants"),
+		"artifact": tr("Artifact"),
+		"civilian_equipment": tr("Civilian Equipment"),
+		"salvageable_mech": tr("Salvageable 'Mech"),
+		"military_supplies": tr("Military Supplies"),
+		"comms_equipment": tr("Communications Equipment"),
+	}
+
+	var title = asset_names.get(asset_type, tr("Unknown Asset"))
+	var msg = "%s\n\n%s\n\n" % [title, description]
+	msg += tr("Estimated value: %s") % Helpers.fmt_money(value) + "\n\n"
+	msg += tr("Take these assets?")
+
+	var dialog = AcceptDialog.new()
+	dialog.title = tr("Assets Found")
+	dialog.dialog_text = msg
+	dialog.min_size = Vector2i(450, 250)
+	dialog.confirmed.connect(func():
+		EconomySystem.add_funds(value, "Assets recovered: " + title)
+		detail_label.text = "[b]" + tr("Assets Recovered:") + "[/b]\n" + title + "\n" + tr("Value: %s") % Helpers.fmt_money(value)
+	)
+	dialog.canceled.connect(func():
+		detail_label.text = "[b]" + tr("Assets Left Behind") + "[/b]\n" + title
+	)
+	var cancel_btn = dialog.get_cancel_button()
+	if cancel_btn:
+		cancel_btn.text = tr("Leave Them")
+	dialog.ok_button_text = tr("Take Assets")
+	add_child(dialog)
+	dialog.popup_centered()
 
 
 func _on_close() -> void:

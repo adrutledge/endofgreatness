@@ -15,7 +15,7 @@ enum ObjectiveType {
 	NONE,
 	PRIMARY,
 	SECONDARY,
-	SALVAGE,
+	ASSETS,
 	ENEMY,
 	EVENT,
 }
