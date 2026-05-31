@@ -335,12 +335,12 @@ func _build_components_tab() -> void:
 
 	browser_tech_filter = OptionButton.new()
 	browser_tech_filter.name = "BrowserTechFilter"
-	browser_tech_filter.add_item("All")
-	browser_tech_filter.add_item("1")
-	browser_tech_filter.add_item("2")
-	browser_tech_filter.add_item("3")
-	browser_tech_filter.add_item("4")
-	browser_tech_filter.add_item("5")
+	browser_tech_filter.add_item(tr("All"))
+	browser_tech_filter.add_item(str(1))
+	browser_tech_filter.add_item(str(2))
+	browser_tech_filter.add_item(str(3))
+	browser_tech_filter.add_item(str(4))
+	browser_tech_filter.add_item(str(5))
 	browser_tech_filter.selected = 0
 	browser_tech_filter.item_selected.connect(_on_browser_filter_changed)
 	filter_hb.add_child(browser_tech_filter)
@@ -379,7 +379,8 @@ func _build_components_tab() -> void:
 	loc_filter_hb.add_child(loc_lbl)
 	current_location_filter = OptionButton.new()
 	current_location_filter.name = "CurrentLocationFilter"
-	current_location_filter.add_item("All Locations")
+	current_location_filter.add_item(tr("All Locations"))
+	current_location_filter.set_item_metadata(0, "All Locations")
 	for loc in location_names:
 		current_location_filter.add_item(loc)
 	current_location_filter.selected = 0
@@ -804,14 +805,8 @@ func _show_customize_view() -> void:
 		component_check_list.add_child(cb)
 
 	current_comp_option.clear()
-	current_comp_option.add_item("(select current)")
-	for c in selected_unit.components:
-		var loc_name = c.location.location_name if c.location else "?"
-		current_comp_option.add_item(c.component_name + " [" + loc_name + "]")
-	current_comp_option.selected = 0
-
-	new_comp_option.clear()
-	new_comp_option.add_item("(select new)")
+	current_comp_option.add_item(tr("(select current)"))
+	new_comp_option.add_item(tr("(select new)"))
 	for name in component_names:
 		new_comp_option.add_item(name)
 	new_comp_option.selected = 0
@@ -1429,15 +1424,16 @@ func _populate_current_components_list() -> void:
 		components_remove_btn.disabled = true
 		return
 
-	var filter_loc = "All Locations"
-	if current_location_filter:
-		filter_loc = current_location_filter.get_item_text(current_location_filter.selected)
+	var filter_loc_meta = ""
+	if current_location_filter.selected >= 0:
+		filter_loc_meta = current_location_filter.get_item_metadata(current_location_filter.selected)
 
-	for c in selected_unit.components:
-		if _is_protected_component(c.component_name):
+	for name in current_components:
+		var c = current_components[name]
+		if selected_info.comp_name == c.component_name:
 			continue
 		var loc_name = c.location.location_name if c.location else "Unknown"
-		if filter_loc != "All Locations" and loc_name != filter_loc:
+		if filter_loc_meta and filter_loc_meta != "All Locations" and loc_name != filter_loc_meta:
 			continue
 		var label = c.component_name + " [" + loc_name + "]"
 		var idx = current_components_list.add_item(label)

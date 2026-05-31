@@ -70,7 +70,7 @@ func _ready() -> void:
 
 func _populate_role_filter() -> void:
 	role_filter.clear()
-	role_filter.add_item("All Roles", -1)
+	role_filter.add_item(tr("All Roles"), -1)
 	for i in Enums.PersonnelRole.size():
 		role_filter.add_item(Enums.PersonnelRole.keys()[i], i)
 	role_filter.select(0)

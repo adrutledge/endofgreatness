@@ -686,7 +686,7 @@ func _refresh_deliveries() -> void:
 
 	var deliveries: Array = GameState.pending_deliveries
 	if deliveries.is_empty():
-		delivery_list.add_item("No pending deliveries")
+		delivery_list.add_item(tr("No pending deliveries"))
 		return
 
 	for d in deliveries:
@@ -971,7 +971,7 @@ func _update_dispatch_ui(comp_name: String) -> void:
 				idx += 1
 
 	if idx == 0:
-		dispatch_unit_dropdown.add_item("No deployed units")
+		dispatch_unit_dropdown.add_item(tr("No deployed units"))
 		dispatch_button.disabled = true
 	else:
 		dispatch_button.disabled = false
@@ -1130,7 +1130,7 @@ func _on_reorder_to_min() -> void:
 	if orders_placed > 0:
 		parts.append("%d remote orders" % orders_placed)
 	if parts.is_empty():
-		parts.append("nothing needed")
+		parts.append(tr("nothing needed"))
 	inv_detail_name.text = ", ".join(parts) + tr(" for %s") % Helpers.fmt_money(total_cost)
 	_refresh_inventory()
 
