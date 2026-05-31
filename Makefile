@@ -25,7 +25,7 @@ SUCKIT_SRC := tools/suckit/parse_suckit.py
 
 .PHONY: all build run test lint export clean test-gen suckit
 
-all: test build lint
+all: lint test build
 
 build:
 	$(GODOT) --headless --export-release "$(EXPORT_PRESET)" $(EXPORT_DIR)/
@@ -80,7 +80,7 @@ $(STRAT_GEN_STAMP): $(STRAT_GEN_SRC) $(STRAT_GEN_DEPS) $(STRAT_GEN_DATA) $(STRAT
 	echo "[Strat Unit Generator] $$r"
 	@touch $(STRAT_GEN_STAMP)
 
-test: data/starmap.json data/timeline_events.json $(MTF_STAMP) $(MARKET_STAMP) $(STRAT_GEN_STAMP)
+test: lint data/starmap.json data/timeline_events.json $(MTF_STAMP) $(MARKET_STAMP) $(STRAT_GEN_STAMP)
 
 ## Headless generator integration test (requires autoloads, runs full engine)
 test-gen:
