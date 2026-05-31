@@ -26,6 +26,7 @@ const NAME_ZOOM_THRESHOLD: float = 2.5
 @onready var event_log_ui = $CanvasLayer/EventLog
 @onready var mech_lab_ui = $CanvasLayer/MechLab
 @onready var logistics_ui = $CanvasLayer/LogisticsPanel
+@onready var planetary_map = $CanvasLayer/PlanetaryMap
 
 func _ready() -> void:
 	Helpers.debug_print("StarMap", "_ready start")
@@ -40,10 +41,12 @@ func _ready() -> void:
 	sidebar.event_log_requested.connect(_on_event_log)
 	org_mgmt.closed.connect(_on_org_mgmt_closed)
 	contract_board.closed.connect(_on_contract_board_closed)
+	contract_board.view_map_requested.connect(_open_planetary_map)
 	personnel_mgmt.closed.connect(_on_personnel_mgmt_closed)
 	event_log_ui.connect("closed", _on_event_log_closed)
 	mech_lab_ui.connect("closed", _on_mech_lab_closed)
 	logistics_ui.connect("closed", _on_logistics_closed)
+	planetary_map.connect("closed", _on_planetary_map_closed)
 	Helpers.debug_print("StarMap", "signals connected, loading systems")
 	_load_systems()
 	_compute_faction_territory()
@@ -139,6 +142,21 @@ func _on_event_log_closed() -> void:
 func _on_personnel_mgmt_closed() -> void:
 	Helpers.debug_print("StarMap", "closing personnel mgmt")
 	personnel_mgmt.hide()
+	sidebar.show_sidebar()
+
+
+func _open_planetary_map(contract: Contract) -> void:
+	if not planetary_map:
+		return
+	Helpers.debug_print("StarMap", "opening planetary map")
+	sidebar.hide_sidebar()
+	planetary_map.load_contract(contract)
+	planetary_map.show()
+
+
+func _on_planetary_map_closed() -> void:
+	Helpers.debug_print("StarMap", "closing planetary map")
+	planetary_map.hide()
 	sidebar.show_sidebar()
 
 func _load_systems() -> void:
@@ -448,6 +466,9 @@ func _unhandled_input(event: InputEvent) -> void:
 			get_viewport().set_input_as_handled()
 		elif personnel_mgmt.visible:
 			_on_personnel_mgmt_closed()
+			get_viewport().set_input_as_handled()
+		elif planetary_map.visible:
+			_on_planetary_map_closed()
 			get_viewport().set_input_as_handled()
 		elif info_panel.visible:
 			selected_system = {}

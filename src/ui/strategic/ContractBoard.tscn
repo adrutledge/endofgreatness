@@ -132,6 +132,12 @@ text = "Complete Contract"
 visible = false
 size_flags_vertical = 0
 
+[node name="ViewMapButton" type="Button" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin/DetailVBox"]
+unique_name_in_owner = true
+text = "View Planetary Map"
+visible = false
+size_flags_vertical = 0
+
 [node name="BottomBar" type="HBoxContainer" parent="MarginContainer/VBox"]
 size_flags_vertical = 0
 

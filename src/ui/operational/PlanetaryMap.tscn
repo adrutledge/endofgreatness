@@ -1,0 +1,102 @@
+[gd_scene load_steps=2 format=3 uid="uid://planetary_map"]
+
+[ext_resource type="Script" path="res://src/ui/operational/PlanetaryMap.gd" id="1"]
+
+[node name="PlanetaryMap" type="Panel"]
+script = ExtResource("1")
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="VBox" type="VBoxContainer" parent="MarginContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="MarginContainer/VBox"]
+unique_name_in_owner = true
+text = "Planetary Map"
+theme_override_font_sizes/font_size = 20
+size_flags_horizontal = 4
+horizontal_alignment = 1
+
+[node name="ContractLabel" type="Label" parent="MarginContainer/VBox"]
+unique_name_in_owner = true
+text = ""
+theme_override_font_sizes/font_size = 14
+horizontal_alignment = 1
+
+[node name="HSeparator" type="HSeparator" parent="MarginContainer/VBox"]
+
+[node name="HSplit" type="HSplitContainer" parent="MarginContainer/VBox"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+
+[node name="MapPanel" type="Panel" parent="MarginContainer/VBox/HSplit"]
+size_flags_horizontal = 3
+
+[node name="MapMargin" type="MarginContainer" parent="MarginContainer/VBox/HSplit/MapPanel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="MapDraw" type="Control" parent="MarginContainer/VBox/HSplit/MapPanel/MapMargin"]
+unique_name_in_owner = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 0
+
+[node name="SidePanel" type="VBoxContainer" parent="MarginContainer/VBox/HSplit"]
+size_flags_horizontal = 1
+
+[node name="HexInfoLabel" type="Label" parent="MarginContainer/VBox/HSplit/SidePanel"]
+unique_name_in_owner = true
+text = ""
+theme_override_font_sizes/font_size = 14
+autowrap_mode = 1
+
+[node name="ExploreButton" type="Button" parent="MarginContainer/VBox/HSplit/SidePanel"]
+unique_name_in_owner = true
+text = "Explore Hex"
+disabled = true
+size_flags_horizontal = 4
+
+[node name="DetailLabel" type="RichTextLabel" parent="MarginContainer/VBox/HSplit/SidePanel"]
+unique_name_in_owner = true
+text = ""
+bbcode_enabled = true
+fit_content = true
+size_flags_vertical = 3
+
+[node name="BottomBar" type="HBoxContainer" parent="MarginContainer/VBox"]
+size_flags_vertical = 0
+
+[node name="CloseButton" type="Button" parent="MarginContainer/VBox/BottomBar"]
+unique_name_in_owner = true
+text = "Return to StarMap"
+size_flags_horizontal = 0

@@ -2,6 +2,7 @@ class_name ContractBoard
 extends Panel
 
 signal closed()
+signal view_map_requested(contract: Contract)
 
 var _generator: ContractGenerator
 var _available: Array[Contract] = []
@@ -17,6 +18,7 @@ var _dirty: bool = true
 @onready var detail_panel: Panel = %DetailPanel
 @onready var accept_button: Button = %AcceptButton
 @onready var complete_button: Button = %CompleteContractButton
+@onready var view_map_button: Button = %ViewMapButton
 @onready var close_button: Button = %CloseButton
 
 
@@ -27,7 +29,7 @@ func _ready() -> void:
 		["detail_name", detail_name], ["detail_type", detail_type],
 		["detail_info", detail_info], ["detail_panel", detail_panel],
 		["accept_button", accept_button], ["complete_button", complete_button],
-		["close_button", close_button],
+		["view_map_button", view_map_button], ["close_button", close_button],
 	])
 	var bg = StyleBoxFlat.new()
 	bg.bg_color = Color(0.1, 0.1, 0.15, 0.95)
@@ -45,6 +47,7 @@ func _ready() -> void:
 
 	accept_button.pressed.connect(_on_accept)
 	complete_button.pressed.connect(_on_complete)
+	view_map_button.pressed.connect(_on_view_map)
 	close_button.pressed.connect(_on_close)
 	available_list.item_selected.connect(_on_available_selected)
 	active_list.item_selected.connect(_on_active_selected)
@@ -97,6 +100,7 @@ func _on_available_selected(index: int) -> void:
 	_selected_is_active = false
 	accept_button.disabled = false
 	complete_button.hide()
+	view_map_button.hide()
 	_show_contract_details(_selected_contract)
 
 
@@ -108,6 +112,7 @@ func _on_active_selected(index: int) -> void:
 	_selected_is_active = true
 	accept_button.disabled = true
 	complete_button.show()
+	view_map_button.show()
 	_show_contract_details(_selected_contract)
 
 
@@ -159,6 +164,12 @@ func _on_complete() -> void:
 	_selected_contract = null
 	_selected_is_active = false
 	populate()
+
+
+func _on_view_map() -> void:
+	if not _selected_contract or not _selected_is_active:
+		return
+	view_map_requested.emit(_selected_contract)
 
 
 func _on_contract_settled(contract: Contract, settlement: Dictionary) -> void:
