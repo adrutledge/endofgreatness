@@ -162,13 +162,17 @@ func _load_systems() -> void:
 	var data = DataManager.systems_data
 	if data.is_empty():
 		return
-	var pathfind_exclude = ["I(H)", "CS(H)"]
-	pathfind_exclude.append_array(["C", "CBS", "CBR", "CCC", "CCY", "CDS", "CFM", "CGB", "CHH", "CI", "CIH", "CJF", "CNC", "CSA", "CSJ", "CSV", "CWF"])
+
 	var display_exclude = ["A", "UNM"]
+	var clan_codes = ["C", "CBS", "CBR", "CCC", "CCY", "CDS", "CFM", "CGB", "CHH", "CI", "CIH", "CJF", "CNC", "CSA", "CSJ", "CSV", "CWF"]
 	for name in data:
 		var sys = data[name]
 		var owner = sys.get("owner_faction", "")
-		if owner in pathfind_exclude or name.begins_with("SLSC"):
+		if name.begins_with("SLSC"):
+			continue
+		if owner in clan_codes:
+			continue
+		if sys.get("hide", false):
 			continue
 		var coords = sys.get("coordinates", {})
 		var cx = coords.get("x", 0.0)
@@ -178,7 +182,8 @@ func _load_systems() -> void:
 			continue
 		var pos = Vector2(cx, -cy)
 		var entry = {"name": name, "pos": pos, "data": sys}
-		_waypoints.append(entry)
+		if not sys.get("pathfinding_exclude", false):
+			_waypoints.append(entry)
 		if owner not in display_exclude:
 			systems_positions.append(entry)
 

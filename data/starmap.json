@@ -35850,7 +35850,7 @@
       "y": -91.199
     },
     "spectral_class": "G",
-    "owner_faction": "CS(H)",
+    "owner_faction": "CS",
     "planets": [
       {
         "name": "Herakleion III",
@@ -35870,7 +35870,9 @@
         "relay_station": false,
         "land_percent": 40
       }
-    ]
+    ],
+    "hide": true,
+    "pathfinding_exclude": true
   },
   {
     "name": "Jarett",
@@ -84657,7 +84659,7 @@
       "y": -442.138
     },
     "spectral_class": "G",
-    "owner_faction": "I(H)",
+    "owner_faction": "I",
     "planets": [
       {
         "name": "Regis Roost III",
@@ -84677,7 +84679,9 @@
         "relay_station": false,
         "land_percent": 40
       }
-    ]
+    ],
+    "hide": true,
+    "pathfinding_exclude": true
   },
   {
     "name": "Rezak's Hole",
@@ -92042,120 +92046,6 @@
         "hpg_class": "C",
         "relay_station": false,
         "land_percent": 40
-      }
-    ]
-  },
-  {
-    "name": "UNM WP MOC-1",
-    "coordinates": {
-      "x": -187.3,
-      "y": -447.5
-    },
-    "owner_faction": "UNM",
-    "spectral_class": "M",
-    "planets": [
-      {
-        "name": "Unmapped",
-        "gravity": 1.0,
-        "atmosphere": "trace",
-        "temperature": -100,
-        "population": 0,
-        "industry_type": "none"
-      }
-    ]
-  },
-  {
-    "name": "UNM WP MOC-2",
-    "coordinates": {
-      "x": -154.9,
-      "y": -515.1
-    },
-    "owner_faction": "UNM",
-    "spectral_class": "M",
-    "planets": [
-      {
-        "name": "Unmapped",
-        "gravity": 1.0,
-        "atmosphere": "trace",
-        "temperature": -100,
-        "population": 0,
-        "industry_type": "none"
-      }
-    ]
-  },
-  {
-    "name": "UNM WP MH-1",
-    "coordinates": {
-      "x": -439.5,
-      "y": -351.1
-    },
-    "owner_faction": "UNM",
-    "spectral_class": "M",
-    "planets": [
-      {
-        "name": "Unmapped",
-        "gravity": 1.0,
-        "atmosphere": "trace",
-        "temperature": -100,
-        "population": 0,
-        "industry_type": "none"
-      }
-    ]
-  },
-  {
-    "name": "UNM WP MH-2",
-    "coordinates": {
-      "x": -443.4,
-      "y": -345.3
-    },
-    "owner_faction": "UNM",
-    "spectral_class": "M",
-    "planets": [
-      {
-        "name": "Unmapped",
-        "gravity": 1.0,
-        "atmosphere": "trace",
-        "temperature": -100,
-        "population": 0,
-        "industry_type": "none"
-      }
-    ]
-  },
-  {
-    "name": "UNM WP TC-1",
-    "coordinates": {
-      "x": 420.9,
-      "y": -437.9
-    },
-    "owner_faction": "UNM",
-    "spectral_class": "M",
-    "planets": [
-      {
-        "name": "Unmapped",
-        "gravity": 1.0,
-        "atmosphere": "trace",
-        "temperature": -100,
-        "population": 0,
-        "industry_type": "none"
-      }
-    ]
-  },
-  {
-    "name": "UNM WP TC-2",
-    "coordinates": {
-      "x": 413.7,
-      "y": -473.4
-    },
-    "owner_faction": "UNM",
-    "spectral_class": "M",
-    "planets": [
-      {
-        "name": "Unmapped",
-        "gravity": 1.0,
-        "atmosphere": "trace",
-        "temperature": -100,
-        "population": 0,
-        "industry_type": "none"
       }
     ]
   }

@@ -1,21 +1,30 @@
 class_name ContractGenerator
 extends Node
 
-const MIN_CONTRACTS: int = 5
-const RANGE_RAID: float = 250.0
-const RANGE_ASSAULT: float = 120.0
-const RANGE_DEFENSE: float = 90.0
-const RANGE_RECON: float = 120.0
-const RANGE_CADRE: float = 60.0
-const RANGE_GARRISON: float = 30.0
-const RANGE_RIOT: float = 40.0
-const RANGE_PIRATE_HUNT: float = 180.0
+var _config: Dictionary = {}
+var _loaded := false
+
+
+func _ensure_config() -> void:
+	if _loaded:
+		return
+	_loaded = true
+	var file = FileAccess.open("res://data/config/contract_generation.json", FileAccess.READ)
+	if file:
+		var j = JSON.new()
+		if j.parse(file.get_as_text()) == OK:
+			_config = j.data
+
+
+func _c(key: String, default):
+	return _config.get(key, default)
 
 
 func generate_contracts(date: Dictionary, location: String, player_reputation: int, faction_reputations: Dictionary) -> Array[Contract]:
 	var contracts: Array[Contract] = []
 	var mrb_rep = faction_reputations.get("MRB", faction_reputations.get("global", 0))
-	var low_rep = mrb_rep < -30
+	var low_rep_threshold = _c("low_rep_threshold", -30)
+	var low_rep = mrb_rep < low_rep_threshold
 
 	var issuers: Array[Faction] = []
 	for code in GameState.factions:
@@ -34,19 +43,22 @@ func generate_contracts(date: Dictionary, location: String, player_reputation: i
 			issuers.append(GameState.factions[code])
 
 	issuers.shuffle()
-	var target_count = maxi(MIN_CONTRACTS, mini(issuers.size(), randi() % 4 + 3))
+	_ensure_config()
+	var min_ct = _c("min_contracts", 5)
+	var low_chance = _c("low_rep_contract_chance", 0.3)
+	var target_count = maxi(min_ct, mini(issuers.size(), randi() % 4 + 3))
 
 	for i in range(target_count):
 		var issuer = issuers[i % issuers.size()]
 		if low_rep and not (issuer.is_pirate or issuer.is_rebel):
-			if randi() % 100 >= 30:
+			if randf() >= low_chance:
 				continue
 		var target = _pick_target(issuer)
 		var contract = generate_single_contract(issuer, target, date, player_reputation, location, low_rep)
 		if contract:
 			contracts.append(contract)
 
-	if contracts.size() < MIN_CONTRACTS:
+	if contracts.size() < min_ct:
 		for code in GameState.factions:
 			var f = GameState.factions[code]
 			if not (f.is_pirate or f.is_rebel):
@@ -54,7 +66,7 @@ func generate_contracts(date: Dictionary, location: String, player_reputation: i
 			var c = generate_single_contract(f, _pick_target(f), date, player_reputation, location, true)
 			if c:
 				contracts.append(c)
-				if contracts.size() >= MIN_CONTRACTS:
+				if contracts.size() >= min_ct:
 					break
 
 	return contracts
@@ -80,25 +92,30 @@ func _nearest_faction_system(location: String, faction_code: String) -> float:
 
 
 func _contract_type_for_distance(dist: float, is_pirate: bool, is_rebel: bool, low_rep: bool, location_owner: String = "") -> String:
+	var g = _c("range_garrison", 30.0)
+	var c = _c("range_cadre", 60.0)
+	var d = _c("range_defense", 90.0)
+	var ph = _c("range_pirate_hunt", 180.0)
+	var rc = _c("range_recon", 120.0)
+	var ph_chance = _c("periphery_pirate_hunt_chance", 0.35)
+
 	if low_rep or is_pirate or is_rebel:
 		var pool = ["Raid", "Assault"]
 		if randi() % 3 == 0:
 			return "Recon"
 		return pool[randi() % pool.size()]
-	if dist <= RANGE_GARRISON:
+	if dist <= g:
 		return "Garrison" if randi() % 2 == 0 else "Defense"
-	if dist <= RANGE_CADRE:
+	if dist <= c:
 		return "Cadre" if randi() % 2 == 0 else "Defense"
-	if dist <= RANGE_DEFENSE:
+	if dist <= d:
 		return "Defense" if randi() % 2 == 0 else "Assault"
-	if dist <= RANGE_PIRATE_HUNT:
-		var loc_faction = GameState.factions.get(location_owner) if not location_owner.is_empty() else null
-		var is_periphery = loc_faction and loc_faction.is_periphery
-		if is_periphery or randi() % 100 < 35:
+	if dist <= ph:
+		if (loc_faction and loc_faction.is_periphery) or randf() < ph_chance:
 			var pool = ["Pirate Hunting", "Raid", "Assault"]
 			return pool[randi() % pool.size()]
 		return "Assault" if randi() % 2 == 0 else "Raid"
-	if dist <= RANGE_RECON:
+	if dist <= rc:
 		return "Recon" if randi() % 2 == 0 else "Raid"
 	return "Raid"
 

@@ -45,13 +45,13 @@ with open(SYSTEMS_CSV, newline="", encoding="utf-8") as f:
             year2 = int(m.group(5))
             chosen = new_name2 if year2 <= current_year else (new_name1 if year1 <= current_year else old_name)
             if year1 <= current_year:
-                events.append({"date": str(year1), "type": "system_rename", "data": {"system": old_name, "new_name": new_name1}})
-            if year2 <= current_year:
-                events.append({"date": str(year2), "type": "system_rename", "data": {"system": new_name1, "new_name": new_name2}})
+                events.append({"date": "%d-01-01" % year1, "type": "system_rename", "data": {"system": old_name, "new_name": new_name1}})
+                if year2 <= current_year:
+                    events.append({"date": "%d-01-01" % year2, "type": "system_rename", "data": {"system": new_name1, "new_name": new_name2}})
         else:
             chosen = new_name1 if year1 <= current_year else old_name
             if year1 <= current_year:
-                events.append({"date": str(year1), "type": "system_rename", "data": {"system": old_name, "new_name": new_name1}})
+                events.append({"date": "%d-01-01" % year1, "type": "system_rename", "data": {"system": old_name, "new_name": new_name1}})
         return chosen, events
 
     for row in reader:
@@ -87,13 +87,22 @@ with open(SYSTEMS_CSV, newline="", encoding="utf-8") as f:
                 nearest = min(years_avail, key=lambda y: abs(int(y.rstrip("abcd")) - 3025))
                 current_owner = first_faction(ownership.get(nearest, ""))
 
-        systems[sid] = {
+        # Resolve (H) hidden suffix: strip it and mark system as hidden/excluded
+        is_hidden = "(H)" in current_owner
+        if is_hidden:
+            current_owner = current_owner.replace("(H)", "").strip()
+
+        entry = {
             "name": name,
             "x": x,
             "y": y,
             "owner_faction": current_owner,
             "faction_history": ownership,
         }
+        if is_hidden:
+            entry["hide"] = True
+            entry["pathfinding_exclude"] = True
+        systems[sid] = entry
 
         # Generate timeline events for ownership changes
         sorted_years = sorted(ownership.keys(), key=lambda y: (int(y.rstrip("abcd")), y))
@@ -102,7 +111,7 @@ with open(SYSTEMS_CSV, newline="", encoding="utf-8") as f:
             fac = first_faction(ownership[yr])
             if fac != prev_faction and prev_faction is not None:
                 timeline_events.append({
-                    "date": str(yr),
+                    "date": "%s-01-01" % yr,
                     "type": "ownership_change",
                     "data": {
                         "system": name,
@@ -129,13 +138,18 @@ for sid, s in systems.items():
         "relay_station": False,
         "land_percent": 40,
     }]
-    starmap.append({
+    entry = {
         "name": s["name"],
         "coordinates": {"x": s["x"], "y": s["y"]},
         "spectral_class": "G",
         "owner_faction": s["owner_faction"],
         "planets": planets,
-    })
+    }
+    if s.get("hide"):
+        entry["hide"] = True
+    if s.get("pathfinding_exclude"):
+        entry["pathfinding_exclude"] = True
+    starmap.append(entry)
 
 starmap_path = os.path.join(OUT_DIR, "starmap.json")
 with open(starmap_path, "w", encoding="utf-8") as f:

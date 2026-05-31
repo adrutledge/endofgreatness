@@ -1,0 +1,14 @@
+{
+  "min_contracts": 5,
+  "low_rep_threshold": -30,
+  "low_rep_contract_chance": 0.3,
+  "range_raid": 250.0,
+  "range_assault": 120.0,
+  "range_defense": 90.0,
+  "range_recon": 120.0,
+  "range_cadre": 60.0,
+  "range_garrison": 30.0,
+  "range_riot": 40.0,
+  "range_pirate_hunt": 180.0,
+  "periphery_pirate_hunt_chance": 0.35
+}
