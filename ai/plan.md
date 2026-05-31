@@ -245,6 +245,8 @@ Bounty board, bounties on player, pirate interference, LosTech rumor tracking, S
 - USILR/HPG gameplay effects
 - faction_destroyed timeline events
 - TM construction fields on component JSONs
+- Per-system data files: split monolithic `starmap.json` into `data/systems/<name>.json` — one file per system, loaded on demand rather than all at startup
+- Canonical map layouts: systems and their settled bodies (planets, moons, stations) can store a `canonical_map` reference — the filename of a pre-authored tactical/planetary map layout (stored in `data/maps/canonical/<system>_<body>.json`); when a tactical engagement occurs on a body with a canonical map, that map is used instead of procedural generation; enables lore-accurate battlefields (e.g., a specific canyon on Hesperus II)
 
 ### Timeline System Data
 - Replace monolithic `timeline_events.json` with scriptable event files in `data/events/` — one file per event chain (e.g., `4th_succession_war.json`, `war_of_3039.json`); each file contains rules for what date(s) to fire on (single date, date range, or `{"start": "3028", "end": "3030", "check": "monthly"}`), the events themselves (ownership changes, system renames, faction alignments, etc.), and optional data overrides for situations that cannot be derived organically from the SUCKIT data (custom event text, faction breakouts, special mercenary contracts, lore-specific force compositions); DataManager loads and merges all files at startup; keeps diffs readable, allows modders to add event chains without touching auto-generated data
