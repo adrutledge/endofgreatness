@@ -11,7 +11,7 @@ func _ready() -> void:
 
 	var bg = StyleBoxFlat.new()
 	bg.bg_color = Color(0.1, 0.1, 0.15, 0.95)
-	bg.border_width_all = 1
+	bg.set_border_width_all(1)
 	bg.border_color = Color(0.3, 0.3, 0.4)
 	add_theme_stylebox_override("panel", bg)
 

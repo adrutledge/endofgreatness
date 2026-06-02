@@ -605,6 +605,12 @@ func _on_tab_changed(tab_index: int) -> void:
 var repair_label: RichTextLabel
 var repair_assign_btn: Button
 var repair_unassign_btn: Button
+var repair_component_list: ItemList
+var repair_estimate_label: RichTextLabel
+var repair_repair_btn: Button
+var repair_cancel_list: ItemList
+var repair_cancel_btn: Button
+var repair_active_label: RichTextLabel
 
 func _build_repair_tab(tab: VBoxContainer) -> void:
 	var header = Label.new()
@@ -619,20 +625,83 @@ func _build_repair_tab(tab: VBoxContainer) -> void:
 	repair_label.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	tab.add_child(repair_label)
 
-	var btn_bar = HBoxContainer.new()
-	btn_bar.alignment = BoxContainer.ALIGNMENT_CENTER
-	tab.add_child(btn_bar)
+	var tech_bar = HBoxContainer.new()
+	tech_bar.alignment = BoxContainer.ALIGNMENT_CENTER
+	tab.add_child(tech_bar)
 
 	repair_assign_btn = Button.new()
 	repair_assign_btn.text = tr("Assign Technician")
 	repair_assign_btn.pressed.connect(_on_repair_assign)
-	btn_bar.add_child(repair_assign_btn)
+	tech_bar.add_child(repair_assign_btn)
 
 	repair_unassign_btn = Button.new()
 	repair_unassign_btn.text = tr("Unassign Technician")
 	repair_unassign_btn.pressed.connect(_on_repair_unassign)
 	repair_unassign_btn.disabled = true
-	btn_bar.add_child(repair_unassign_btn)
+	tech_bar.add_child(repair_unassign_btn)
+
+	var sep = HSeparator.new()
+	tab.add_child(sep)
+
+	var comp_header = Label.new()
+	comp_header.text = tr("Damaged / Destroyed Components")
+	comp_header.add_theme_font_size_override("font_size", 13)
+	comp_header.add_theme_color_override("font_color", Color(1.0, 0.9, 0.6))
+	tab.add_child(comp_header)
+
+	repair_component_list = ItemList.new()
+	repair_component_list.name = "RepairComponentList"
+	repair_component_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	repair_component_list.select_mode = ItemList.SELECT_SINGLE
+	repair_component_list.item_selected.connect(_on_repair_component_selected)
+	tab.add_child(repair_component_list)
+
+	repair_estimate_label = RichTextLabel.new()
+	repair_estimate_label.bbcode_enabled = true
+	repair_estimate_label.fit_content = true
+	repair_estimate_label.custom_minimum_size = Vector2(0, 60)
+	tab.add_child(repair_estimate_label)
+
+	var action_bar = HBoxContainer.new()
+	action_bar.alignment = BoxContainer.ALIGNMENT_CENTER
+	tab.add_child(action_bar)
+
+	repair_repair_btn = Button.new()
+	repair_repair_btn.text = tr("Repair Selected")
+	repair_repair_btn.disabled = true
+	repair_repair_btn.pressed.connect(_on_repair_selected)
+	action_bar.add_child(repair_repair_btn)
+
+	var sep2 = HSeparator.new()
+	tab.add_child(sep2)
+
+	var active_header = Label.new()
+	active_header.text = tr("Active Repairs")
+	active_header.add_theme_font_size_override("font_size", 13)
+	active_header.add_theme_color_override("font_color", Color(1.0, 0.9, 0.6))
+	tab.add_child(active_header)
+
+	repair_active_label = RichTextLabel.new()
+	repair_active_label.bbcode_enabled = true
+	repair_active_label.fit_content = true
+	tab.add_child(repair_active_label)
+
+	repair_cancel_list = ItemList.new()
+	repair_cancel_list.name = "RepairCancelList"
+	repair_cancel_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	repair_cancel_list.select_mode = ItemList.SELECT_SINGLE
+	repair_cancel_list.item_selected.connect(_on_repair_cancel_list_selected)
+	tab.add_child(repair_cancel_list)
+
+	var cancel_bar = HBoxContainer.new()
+	cancel_bar.alignment = BoxContainer.ALIGNMENT_CENTER
+	tab.add_child(cancel_bar)
+
+	repair_cancel_btn = Button.new()
+	repair_cancel_btn.text = tr("Cancel Repair")
+	repair_cancel_btn.disabled = true
+	repair_cancel_btn.pressed.connect(_on_repair_cancel)
+	cancel_bar.add_child(repair_cancel_btn)
 
 
 func _refresh_repair_view() -> void:
@@ -640,6 +709,12 @@ func _refresh_repair_view() -> void:
 		repair_label.text = tr("Select a unit to view repair status")
 		repair_assign_btn.disabled = true
 		repair_unassign_btn.disabled = true
+		repair_repair_btn.disabled = true
+		repair_cancel_btn.disabled = true
+		repair_component_list.clear()
+		repair_cancel_list.clear()
+		repair_estimate_label.text = ""
+		repair_active_label.text = ""
 		return
 
 	var damaged = selected_unit.get_damaged_components()
@@ -650,26 +725,10 @@ func _refresh_repair_view() -> void:
 	lines.add("[b]Unit:[/b] " + selected_unit.unit_name)
 	lines.add("Total components: " + str(selected_unit.components.size()))
 	lines.add("[color=#88cc88]Undamaged: %d[/color]" % undamaged_count)
-	lines.add("[color=#ffaa44]Damaged: %d[/color]" % damaged.size())
+	lines.add("[color=#ffaa44]Damaged: %d[/color]" % (damaged.size() - destroyed.size()))
 	lines.add("[color=#ff4444]Destroyed: %d[/color]" % destroyed.size())
 	lines.add("")
 	lines.add("Repair budget: " + str(PersonnelManager.get_unit_repair_budget(selected_unit)) + " hours/day")
-	lines.add("")
-	lines.add("[b]Damaged Components:[/b]")
-	if damaged.is_empty():
-		lines.add("  None")
-	else:
-		for c in damaged:
-			var loc = c.location.location_name if c.location else "?"
-			lines.add("  [color=#ffaa44]" + c.component_name + "[/color] [" + loc + "]")
-	lines.add("")
-	lines.add("[b]Destroyed Components:[/b]")
-	if destroyed.is_empty():
-		lines.add("  None")
-	else:
-		for c in destroyed:
-			var loc = c.location.location_name if c.location else "?"
-			lines.add("  [color=#ff4444]" + c.component_name + "[/color] [" + loc + "]")
 	lines.add("")
 	lines.add("[b]Assigned Technicians:[/b]")
 	if selected_unit.assigned_technicians.is_empty():
@@ -680,6 +739,155 @@ func _refresh_repair_view() -> void:
 	repair_label.text = lines.get_text()
 	repair_assign_btn.disabled = false
 	repair_unassign_btn.disabled = selected_unit.assigned_technicians.is_empty()
+
+	_populate_repair_component_list()
+	_populate_repair_active_list()
+	_update_repair_estimate()
+
+
+func _populate_repair_component_list() -> void:
+	repair_component_list.clear()
+	if not selected_unit:
+		return
+
+	var active_names: Array[String] = []
+	for r in RefitManager.get_unit_repairs(selected_unit):
+		active_names.append(r.component_name)
+
+	var idx := 0
+	for c in selected_unit.components:
+		if c.status == Enums.ComponentStatus.UNDAMAGED:
+			idx += 1
+			continue
+		var loc_name = c.location.location_name if c.location else "?"
+		var status_hex = "#ffaa44" if c.status == Enums.ComponentStatus.DAMAGED else "#ff4444"
+		var status_text = "DAMAGED" if c.status == Enums.ComponentStatus.DAMAGED else "DESTROYED"
+		var repairing = " [REPAIRING]" if c.component_name in active_names else ""
+		var label = c.component_name + "  [" + loc_name + "]  " + status_text + repairing
+		repair_component_list.add_item(label)
+		repair_component_list.set_item_custom_fg_color(idx, Color(status_hex))
+		idx += 1
+
+	repair_component_list.set_item_count(idx)
+
+
+func _populate_repair_active_list() -> void:
+	repair_cancel_list.clear()
+	repair_active_label.text = ""
+	if not selected_unit:
+		return
+
+	var repairs = RefitManager.get_unit_repairs(selected_unit)
+	if repairs.is_empty():
+		repair_active_label.text = tr("  No active repairs")
+		repair_cancel_btn.disabled = true
+		return
+
+	var lines = RichTextHelper.new()
+	for r in repairs:
+		var pct = 1.0 - (float(r.hours_remaining) / float(r.total_hours))
+		var pct_done = int(pct * 100)
+		var bar = ""
+		var bar_w = 20
+		var filled = int(pct * bar_w)
+		for i in bar_w:
+			bar += "#" if i < filled else "."
+		var status_name = Enums.ComponentStatus.keys()[r.current_status]
+		lines.add("[b]%s[/b] (%s) [color=#888888]%s[/color]" % [r.component_name, status_name, bar])
+		lines.add("  [color=#88cc88]%d%%[/color] — %dh remaining" % [pct_done, r.hours_remaining])
+	repair_active_label.text = lines.get_text()
+	repair_cancel_btn.disabled = true
+
+	for r in repairs:
+		repair_cancel_list.add_item(r.component_name)
+
+
+func _update_repair_estimate() -> void:
+	if not selected_unit or repair_component_list.get_selected_items().is_empty():
+		repair_estimate_label.text = ""
+		repair_repair_btn.disabled = true
+		return
+
+	var sel_idx = repair_component_list.get_selected_items()[0]
+	var damaged_list = []
+	for c in selected_unit.components:
+		if c.status != Enums.ComponentStatus.UNDAMAGED:
+			damaged_list.append(c)
+
+	if sel_idx < 0 or sel_idx >= damaged_list.size():
+		repair_repair_btn.disabled = true
+		return
+
+	var comp = damaged_list[sel_idx]
+
+	var active_names: Array[String] = []
+	for r in RefitManager.get_unit_repairs(selected_unit):
+		active_names.append(r.component_name)
+	if comp.component_name in active_names:
+		repair_estimate_label.text = "[color=#ffaa44]This component is already being repaired[/color]"
+		repair_repair_btn.disabled = true
+		return
+
+	var hours = RefitManager.calculate_component_repair_hours(comp)
+	var cost = RefitManager.calculate_component_repair_spare_cost(comp)
+	var in_inv = GameState.player_inventory.get(comp.component_name, 0)
+
+	var lines = RichTextHelper.new()
+	var loc_name = comp.location.location_name if comp.location else "?"
+	lines.add("[b]" + comp.component_name + "[/b] [" + loc_name + "]")
+	lines.add("Status: " + ("[color=#ffaa44]Damaged[/color]" if comp.status == Enums.ComponentStatus.DAMAGED else "[color=#ff4444]Destroyed[/color]"))
+	lines.add("Est. hours: " + str(hours))
+	lines.add("Spare cost: " + Helpers.fmt_money(cost))
+	lines.add("In inventory: " + str(in_inv))
+	repair_estimate_label.text = lines.get_text()
+	repair_repair_btn.disabled = false
+
+
+func _on_repair_component_selected(_idx: int) -> void:
+	_update_repair_estimate()
+
+
+func _on_repair_selected() -> void:
+	if not selected_unit or repair_component_list.get_selected_items().is_empty():
+		return
+
+	var sel_idx = repair_component_list.get_selected_items()[0]
+	var damaged_list = []
+	for c in selected_unit.components:
+		if c.status != Enums.ComponentStatus.UNDAMAGED:
+			damaged_list.append(c)
+
+	if sel_idx < 0 or sel_idx >= damaged_list.size():
+		return
+
+	var comp = damaged_list[sel_idx]
+	var result = RefitManager.start_component_repair(selected_unit, comp)
+	if result.success:
+		_populate_repair_component_list()
+		_populate_repair_active_list()
+		_update_repair_estimate()
+	else:
+		repair_estimate_label.text = "[color=#ff4444]" + result.reason + "[/color]"
+
+
+func _on_repair_cancel() -> void:
+	if not selected_unit or repair_cancel_list.get_selected_items().is_empty():
+		return
+
+	var sel_idx = repair_cancel_list.get_selected_items()[0]
+	var repairs = RefitManager.get_unit_repairs(selected_unit)
+	if sel_idx < 0 or sel_idx >= repairs.size():
+		return
+
+	var component_name = repairs[sel_idx].component_name
+	RefitManager.cancel_component_repair(selected_unit, component_name)
+	_populate_repair_component_list()
+	_populate_repair_active_list()
+	_update_repair_estimate()
+
+
+func _on_repair_cancel_list_selected(_idx: int) -> void:
+	repair_cancel_btn.disabled = false
 
 
 func _on_repair_assign() -> void:

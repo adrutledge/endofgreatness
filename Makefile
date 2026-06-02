@@ -106,6 +106,15 @@ lint:
 export:
 	$(GODOT) --headless --export-release "$(EXPORT_PRESET)" $(EXPORT_DIR)/
 
+## Generate .godot script class cache so class_name types are available before autoloads compile.
+## Only needed on fresh clones or after `make clean`.
+bootstrap:
+	@$(GODOT) --editor --quit --path . 2>&1 | grep -v "^ERROR" | grep -v "^WARNING" | grep -v "^  at" | grep -v "resources" | grep -v "^$$" || true
+	@echo ".godot cache generated"
+
+test: bootstrap data/systems_index.json data/timeline_events.json $(MTF_STAMP) $(MARKET_STAMP) $(STRAT_GEN_STAMP) $(STARMAP_CACHE_STAMP)
+
 clean:
 	rm -rf $(EXPORT_DIR)/
 	rm -f *.pck *.zip .tested_*
+	rm -rf .godot/

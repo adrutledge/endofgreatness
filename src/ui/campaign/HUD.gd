@@ -16,7 +16,7 @@ func _ready() -> void:
 	EventBus.contract_completed.connect(_refresh)
 	EventBus.bills_paid.connect(_refresh)
 	EventBus.funds_depleted.connect(_refresh)
-	TimeManager.date_changed.connect(_refresh)
+	EventBus.day_started.connect(_refresh)
 	_refresh()
 
 

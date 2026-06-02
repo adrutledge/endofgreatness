@@ -13,8 +13,6 @@ var tactical_round: int = 0
 var is_tactical_mode: bool = false
 var total_days: int = 0
 
-signal date_changed(date: Dictionary)
-
 func _process(delta: float) -> void:
 	if is_paused or is_tactical_mode:
 		return
@@ -42,7 +40,6 @@ func advance_day() -> void:
 			current_date.month = 1
 			current_date.year += 1
 	total_days += 1
-	date_changed.emit(current_date.duplicate())
 	EventBus.emit_time_tick(current_date.duplicate())
 	EventBus.emit_day_started(current_date.duplicate())
 	if total_days % 7 == 0:

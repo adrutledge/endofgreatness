@@ -1,6 +1,6 @@
 # Implementation Status
 
-Generated: 3025-05-31 (updated per commit ef7cdad)
+Generated: 3025-06-02
 Plan: `ai/plan.md`
 
 ---
@@ -15,7 +15,7 @@ Time (calendar, pause, tactical, day/week/month_started signals), Economy (marke
 32 faction JSONs (is_periphery, hidden_on_map flags), 263 component JSONs, hundreds of .mtf/.blk files, 12 RATs, 3174 systems from SUCKIT CSVs, 9670 ISO-format timeline events, 169 data-driven skills in data/skills.json, contract config in data/config/contract_generation.json, critical_slots fixes, reputation_levels_gates fix
 
 ## Phase 3: Strategic Layer — MOSTLY COMPLETE
-StarMap (3174 systems, faction territory/disputed stripes via Voronoi grid, A* pathfinding, collision-free labels, hidden waypoints, 720 LY cutoff, Clan/abandoned/SLSC/hidden/UNM filtering, zoom 0.3-5.0, centered on home), sidebar (UnitRoster removed — folded into MechLab repair + Personnel), contract generator (data-driven config, distance-based pool), org management, strategic events, MechLab, unit generator, InventoryManager, PersonnelManagement (personnel/medbay tabs), Helpers.fmt_money/fmt_number
+StarMap (3174 systems, faction territory/disputed stripes via Voronoi grid, A* pathfinding, collision-free labels, hidden waypoints, 720 LY cutoff, Clan/abandoned/SLSC/hidden/UNM filtering, zoom 0.3-5.0, centered on home), sidebar (UnitRoster removed — folded into MechLab repair + Personnel), contract generator (data-driven config, distance-based pool), org management, strategic events, MechLab (incl. per-component repair with queue, skill checks, spare parts consumption), unit generator, InventoryManager, PersonnelManagement (personnel/medbay tabs), Helpers.fmt_money/fmt_number
 
 ## Phases 4-6: Operational/Rules/Tactical — NOT STARTED (MegaMekParser only)
 
@@ -24,4 +24,9 @@ Aerospace, advanced narrative (contract chains, data-driven contract definitions
 
 ---
 
-## Tests: 37 total (13 MTF parser + 22 market + 2 strategic gen), all passing
+## Tests: 42 total (13 MTF parser + 22 market + 2 strategic gen + 5 starmap cache), all passing
+
+## Infrastructure
+- `TimeManager.date_changed` removed — all systems use `EventBus.day_started` (Signal Down pattern)
+- `make bootstrap` generates `.godot` script class cache for headless runs; auto-runs before `make test`
+- `make clean` removes `.godot/` cache

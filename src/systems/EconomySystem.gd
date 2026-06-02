@@ -25,7 +25,7 @@ var interstellar_order_manager: InterstellarOrderManager
 var _funds_warning_emitted: bool = false
 
 func _ready() -> void:
-	TimeManager.date_changed.connect(_on_date_changed)
+	EventBus.day_started.connect(_on_day_started)
 	EventBus.month_started.connect(_on_month_started)
 	EventBus.contract_accepted.connect(_on_contract_accepted)
 	EventBus.contract_completed.connect(_on_contract_completed)
@@ -191,7 +191,7 @@ func order_item(item_name: String, quantity: int, cost_per_unit: int, source_sys
 	GameState.add_delivery(item_name, quantity, eta_tick)
 	return true
 
-func _on_date_changed(date: Dictionary) -> void:
+func _on_day_started(date: Dictionary) -> void:
 	var burn = get_daily_burn_rate()
 	var daily_total = burn.total
 

@@ -9,7 +9,7 @@ var _last_auto_reorder_day: int = -1
 
 func _ready() -> void:
 	_load_config()
-	TimeManager.date_changed.connect(_on_date_changed)
+	EventBus.day_started.connect(_on_day_started)
 
 
 func _load_config() -> void:
@@ -25,7 +25,7 @@ func get_config(key: String, default = null):
 	return _spares_config.get(key, default)
 
 
-func _on_date_changed(date: Dictionary) -> void:
+func _on_day_started(date: Dictionary) -> void:
 	if not _spares_config.get("auto_reorder_enabled", false):
 		return
 

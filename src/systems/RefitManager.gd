@@ -1,6 +1,7 @@
 extends Node
 
 var active_refits: Array[Dictionary] = []
+var active_repairs: Array[Dictionary] = []
 
 var facility_level: int = 2
 
@@ -19,10 +20,11 @@ const CLASS_COST_PCT: Dictionary = {
 }
 
 func _ready() -> void:
-	TimeManager.date_changed.connect(_on_date_changed)
+	EventBus.day_started.connect(_on_day_started)
 
-func _on_date_changed(_date: Dictionary) -> void:
+func _on_day_started(_date: Dictionary) -> void:
 	_process_refits()
+	_process_repairs()
 
 func determine_refit_class(current_component_name: String, current_location: String,
 		target_component_name: String, target_location: String,
@@ -736,3 +738,202 @@ func get_refit_class_name(cl: Enums.RefitClass) -> String:
 		Enums.RefitClass.E:
 			return "E (Chassis)"
 	return "?"
+
+# ----- Per-Component Repair (P3.6.4) -----
+
+func start_component_repair(unit: TacticalUnit, component: Component) -> Dictionary:
+	if component.status == Enums.ComponentStatus.UNDAMAGED:
+		return {"success": false, "reason": "Component is not damaged"}
+	if _get_repair(unit, component.component_name) != null:
+		return {"success": false, "reason": "Component already has an active repair"}
+
+	var hours = calculate_component_repair_hours(component)
+	var spare_cost = calculate_component_repair_spare_cost(component)
+	var parts_in_inventory := _consume_spare_parts(component, spare_cost)
+
+	var repair_entry = {
+		"tactical_unit": unit,
+		"component_name": component.component_name,
+		"current_status": component.status,
+		"hours_remaining": hours,
+		"total_hours": hours,
+		"spare_cost": spare_cost,
+		"parts_consumed": parts_in_inventory,
+		"tech_applied": false,
+	}
+	active_repairs.append(repair_entry)
+
+	var log_name = "repair_started"
+	GameState.log_event(log_name, {
+		"unit": unit.unit_name,
+		"component": component.component_name,
+		"status": Enums.ComponentStatus.keys()[component.status],
+		"hours": hours,
+		"cost": spare_cost,
+	})
+	return {"success": true, "repair": repair_entry}
+
+
+func calculate_component_repair_hours(component: Component) -> int:
+	var def = _component_def(component.component_name)
+	var diff = def.get("repair_difficulty", 2) if not def.is_empty() else component.repair_difficulty
+	var tonnage = max(0.5, component.tonnage)
+	var base = int(ceil(tonnage * (1.0 + diff * 0.5)))
+	if component.status == Enums.ComponentStatus.DESTROYED:
+		base = int(ceil(base * 2.0))
+	return max(1, base)
+
+
+func calculate_component_repair_spare_cost(component: Component) -> int:
+	var def = _component_def(component.component_name)
+	var base_cost = def.get("cost", 1000) if not def.is_empty() else component.cost
+	var pct = 0.5
+	if component.status == Enums.ComponentStatus.DESTROYED:
+		pct = 1.0
+	return max(1, int(ceil(base_cost * pct)))
+
+
+func _consume_spare_parts(component: Component, cost: int) -> bool:
+	var comp_name = component.component_name
+	if GameState.player_inventory.get(comp_name, 0) > 0:
+		GameState.player_inventory[comp_name] -= 1
+		if GameState.player_inventory[comp_name] <= 0:
+			GameState.player_inventory.erase(comp_name)
+		return true
+	if EconomySystem.get_balance() >= cost:
+		EconomySystem.deduct_funds(cost, "Repair parts: " + comp_name)
+		return false
+	GameState.log_event("repair_parts_shortage", {
+		"component": comp_name,
+		"cost": cost,
+		"balance": EconomySystem.get_balance(),
+	})
+	return false
+
+
+func _process_repairs() -> void:
+	for repair in active_repairs:
+		var tu = repair.tactical_unit
+		var budget = PersonnelManager.get_unit_repair_budget(tu)
+		if budget <= 0:
+			continue
+		var hours_this_tick = min(budget, repair.hours_remaining)
+		repair.hours_remaining -= hours_this_tick
+
+	var completed: Array[int] = []
+	for i in range(active_repairs.size()):
+		if active_repairs[i].hours_remaining <= 0 and not active_repairs[i].tech_applied:
+			_apply_component_repair(active_repairs[i])
+			completed.append(i)
+
+	for i in range(completed.size() - 1, -1, -1):
+		active_repairs.remove_at(completed[i])
+
+
+func _apply_component_repair(repair: Dictionary) -> void:
+	var tu = repair.tactical_unit
+	var component: Component = null
+	for c in tu.components:
+		if c.component_name == repair.component_name:
+			component = c
+			break
+	if not component:
+		repair.tech_applied = true
+		return
+
+	var tech = _get_best_tech(tu)
+	var tech_skill = tech.get_tech_skill() if tech else 4
+
+	var def = _component_def(component.component_name)
+	var difficulty = def.get("repair_difficulty", 2) if not def.is_empty() else component.repair_difficulty
+	var state_penalty = 2 if repair.current_status == Enums.ComponentStatus.DESTROYED else 0
+	var tn = TN_BY_DIFFICULTY.get(difficulty, 6) + state_penalty
+
+	var part_quality = 2
+	var quality_mod := 0
+	match part_quality:
+		Enums.Quality.A: quality_mod = -2
+		Enums.Quality.B: quality_mod = -1
+		Enums.Quality.C: quality_mod = 0
+		Enums.Quality.D: quality_mod = 1
+		Enums.Quality.E: quality_mod = 2
+		Enums.Quality.F: quality_mod = 4
+	tn += quality_mod
+
+	var roll = randi() % 6 + randi() % 6 + 2
+	var success = roll >= tn
+
+	var log_entry = {
+		"date": TimeManager.get_date_string(),
+		"technician": tech.personnel_name if tech else "Unknown",
+		"tech_skill": tech_skill,
+		"target_number": tn,
+		"roll": roll,
+		"result": "success" if success else "failure",
+		"component": repair.component_name,
+		"repair": true,
+	}
+
+	if success:
+		if repair.current_status == Enums.ComponentStatus.DESTROYED:
+			component.status = Enums.ComponentStatus.DAMAGED
+			GameState.log_event("repair_partial", {
+				"unit": tu.unit_name,
+				"component": repair.component_name,
+				"next_status": "DAMAGED",
+			})
+		else:
+			component.status = Enums.ComponentStatus.UNDAMAGED
+			GameState.log_event("repair_completed", {
+				"unit": tu.unit_name,
+				"component": repair.component_name,
+			})
+	else:
+		var extra_hours := int(ceil(repair.total_hours * 0.3))
+		repair.hours_remaining += extra_hours
+		repair.total_hours += extra_hours
+		repair.failure_count = repair.get("failure_count", 0) + 1
+		GameState.log_event("repair_retry", {
+			"unit": tu.unit_name,
+			"component": repair.component_name,
+			"retry_count": repair.failure_count,
+			"extra_hours": extra_hours,
+		})
+
+	repair.tech_applied = true
+	tu.customization_history.append(log_entry)
+
+
+func _get_repair(unit: TacticalUnit, component_name: String):
+	for r in active_repairs:
+		if r.tactical_unit == unit and r.component_name == component_name and not r.tech_applied:
+			return r
+	return null
+
+
+func cancel_component_repair(unit: TacticalUnit, component_name: String) -> void:
+	for i in range(active_repairs.size() - 1, -1, -1):
+		var r = active_repairs[i]
+		if r.tactical_unit == unit and r.component_name == component_name and not r.tech_applied:
+			active_repairs.remove_at(i)
+			GameState.log_event("repair_cancelled", {
+				"unit": unit.unit_name,
+				"component": component_name,
+			})
+			return
+
+
+func get_unit_repairs(unit: TacticalUnit) -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
+	for r in active_repairs:
+		if r.tactical_unit == unit and not r.tech_applied:
+			result.append(r)
+	return result
+
+
+func get_active_repair_count() -> int:
+	var count := 0
+	for r in active_repairs:
+		if not r.tech_applied:
+			count += 1
+	return count

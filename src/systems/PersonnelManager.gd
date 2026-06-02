@@ -11,9 +11,9 @@ var abstract_medic_count: int = 0
 const SPECIALIZATIONS: Array[String] = ["Mech", "Vehicle", "Aerospace"]
 
 func _ready() -> void:
-	TimeManager.date_changed.connect(_on_date_changed)
+	EventBus.day_started.connect(_on_day_started)
 
-func _on_date_changed(date: Dictionary) -> void:
+func _on_day_started(date: Dictionary) -> void:
 	process_aging()
 	_process_healing_ticks()
 	_refresh_candidates()
