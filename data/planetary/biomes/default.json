@@ -1,0 +1,26 @@
+{
+  "biomes": {
+    "temperate": { "PLAINS": 50, "FOREST": 20, "MOUNTAIN": 10, "WATER": 10, "ROUGH": 10 },
+    "desert": { "DESERT": 60, "MOUNTAIN": 15, "PLAINS": 15, "ROUGH": 10 },
+    "tundra": { "PLAINS": 40, "MOUNTAIN": 20, "WATER": 15, "FOREST": 10, "ROUGH": 15 },
+    "oceanic": { "WATER": 50, "PLAINS": 25, "FOREST": 15, "ROUGH": 10 },
+    "urban": { "URBAN": 70, "PLAINS": 10, "FOREST": 5, "WATER": 5, "ROUGH": 10 }
+  },
+  "conditions": [
+    { "activity": "Riot", "biome": "urban" },
+    { "atmo_in": ["none", "trace"], "biome": "desert" },
+    { "temp_min": 50, "biome": "desert" },
+    { "temp_max": -20, "biome": "tundra" },
+    { "land_max": 20, "biome": "oceanic" }
+  ],
+  "map_sizes": {
+    "Garrison": [12, 10],
+    "Cadre": [10, 8],
+    "Riot": [8, 8],
+    "Defense": [10, 10],
+    "Assault": [8, 8],
+    "Recon": [14, 12],
+    "Pirate Hunting": [12, 10],
+    "Raid": [10, 8]
+  }
+}

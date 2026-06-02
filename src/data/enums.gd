@@ -137,71 +137,43 @@ static func get_skill_attributes(skill: String) -> Array[String]:
 		skill = skill.left(idx)
 	return []
 
-const TRAIT_DEFS: Array[Dictionary] = [
-	{ "id": "ambidextrous", "name": "Ambidextrous", "category": TraitCategory.POSITIVE, "desc": "No off-hand penalty", "effect": "off_hand_penalty", "value": 0 },
-	{ "id": "animal_empathy", "name": "Animal Empathy", "category": TraitCategory.POSITIVE, "desc": "Bonus with animals", "effect": "skill_bonus", "value": 1, "skill": "animal_handling" },
-	{ "id": "combat_sense", "name": "Combat Sense", "category": TraitCategory.POSITIVE, "desc": "+1 initiative, +2 surprise", "effect": "initiative_bonus", "value": 1 },
-	{ "id": "connections", "name": "Connections", "category": TraitCategory.POSITIVE, "desc": "Favors from an organization", "effect": "", "value": 0 },
-	{ "id": "double_jointed", "name": "Double-Jointed", "category": TraitCategory.POSITIVE, "desc": "Bonus to Escape Artist and Climbing", "effect": "skill_bonus", "value": 1, "skill": "escape_artist" },
-	{ "id": "eidetic_memory", "name": "Eidetic Memory", "category": TraitCategory.POSITIVE, "desc": "Remember fine details", "effect": "", "value": 0 },
-	{ "id": "enchanting", "name": "Enchanting", "category": TraitCategory.POSITIVE, "desc": "Bonus to social skills", "effect": "skill_bonus", "value": 1, "skill": "negotiation" },
-	{ "id": "environmental_adaptation", "name": "Environmental Adaptation", "category": TraitCategory.POSITIVE, "desc": "Survive harsh environments", "effect": "survival_bonus", "value": 2 },
-	{ "id": "fast_learner", "name": "Fast Learner", "category": TraitCategory.POSITIVE, "desc": "Learn skills faster", "effect": "learning_modifier", "value": -1 },
-	{ "id": "fit", "name": "Fit", "category": TraitCategory.POSITIVE, "desc": "Recover from fatigue faster", "effect": "fatigue_recovery", "value": 1 },
-	{ "id": "g_tolerance", "name": "G-Tolerance", "category": TraitCategory.POSITIVE, "desc": "Resist high-G effects", "effect": "", "value": 0 },
-	{ "id": "iron_will", "name": "Iron Will", "category": TraitCategory.POSITIVE, "desc": "+3 vs fear/intimidation", "effect": "willpower_bonus", "value": 3 },
-	{ "id": "land_grants", "name": "Land Grants", "category": TraitCategory.POSITIVE, "desc": "Own land", "effect": "", "value": 0 },
-	{ "id": "lightning_calculator", "name": "Lightning Calculator", "category": TraitCategory.POSITIVE, "desc": "Mental math", "effect": "", "value": 0 },
-	{ "id": "lucky", "name": "Lucky", "category": TraitCategory.POSITIVE, "desc": "Reroll once per session", "effect": "luck", "value": 1 },
-	{ "id": "natural_aptitude", "name": "Natural Aptitude", "category": TraitCategory.POSITIVE, "desc": "-1 TN for linked skill", "effect": "skill_tn_bonus", "value": -1 },
-	{ "id": "pain_resistance", "name": "Pain Resistance", "category": TraitCategory.POSITIVE, "desc": "Ignore wound penalties", "effect": "wound_ignore", "value": 1 },
-	{ "id": "rank", "name": "Rank", "category": TraitCategory.POSITIVE, "desc": "Military/organization rank", "effect": "", "value": 0 },
-	{ "id": "reputation", "name": "Reputation", "category": TraitCategory.POSITIVE, "desc": "Known for something", "effect": "", "value": 0 },
-	{ "id": "resources", "name": "Resources", "category": TraitCategory.POSITIVE, "desc": "Wealth/equipment access", "effect": "wealth_bonus", "value": 0 },
-	{ "id": "sense_of_direction", "name": "Sense of Direction", "category": TraitCategory.POSITIVE, "desc": "Always know north", "effect": "", "value": 0 },
-	{ "id": "sense_of_balance", "name": "Sense of Balance", "category": TraitCategory.POSITIVE, "desc": "Bonus to balance checks", "effect": "skill_bonus", "value": 1, "skill": "acrobatics" },
-	{ "id": "title", "name": "Title", "category": TraitCategory.POSITIVE, "desc": "Noble title", "effect": "", "value": 0 },
-	{ "id": "toughness", "name": "Toughness", "category": TraitCategory.POSITIVE, "desc": "+1 damage resistance", "effect": "damage_resistance", "value": 1 },
-	{ "id": "zero_g_tolerance", "name": "Zero-G Tolerance", "category": TraitCategory.POSITIVE, "desc": "No penalty in zero-G", "effect": "", "value": 0 },
-	{ "id": "addiction", "name": "Addiction", "category": TraitCategory.NEGATIVE, "desc": "Substance dependency", "effect": "", "value": 0 },
-	{ "id": "amnesia", "name": "Amnesia", "category": TraitCategory.NEGATIVE, "desc": "Memory gaps", "effect": "", "value": 0 },
-	{ "id": "bloodmark", "name": "Bloodmark", "category": TraitCategory.NEGATIVE, "desc": "Known criminal mark", "effect": "", "value": 0 },
-	{ "id": "combat_paralysis", "name": "Combat Paralysis", "category": TraitCategory.NEGATIVE, "desc": "Freeze in combat", "effect": "initiative_penalty", "value": -2 },
-	{ "id": "compulsion", "name": "Compulsion", "category": TraitCategory.NEGATIVE, "desc": "Personality quirk", "effect": "", "value": 0 },
-	{ "id": "dependents", "name": "Dependents", "category": TraitCategory.NEGATIVE, "desc": "People relying on you", "effect": "", "value": 0 },
-	{ "id": "difficult_circumstances", "name": "Difficult Circumstances", "category": TraitCategory.NEGATIVE, "desc": "Ongoing personal problems", "effect": "", "value": 0 },
-	{ "id": "enemy", "name": "Enemy", "category": TraitCategory.NEGATIVE, "desc": "Someone wants to harm you", "effect": "", "value": 0 },
-	{ "id": "glass_jaw", "name": "Glass Jaw", "category": TraitCategory.NEGATIVE, "desc": "Easier to crit", "effect": "crit_vulnerability", "value": 1 },
-	{ "id": "greedy", "name": "Greedy", "category": TraitCategory.NEGATIVE, "desc": "Must resist greed", "effect": "", "value": 0 },
-	{ "id": "handicap", "name": "Handicap", "category": TraitCategory.NEGATIVE, "desc": "Physical/mental impairment", "effect": "", "value": 0 },
-	{ "id": "illiterate", "name": "Illiterate", "category": TraitCategory.NEGATIVE, "desc": "Cannot read/write", "effect": "", "value": 0 },
-	{ "id": "impulsive", "name": "Impulsive", "category": TraitCategory.NEGATIVE, "desc": "Act before thinking", "effect": "", "value": 0 },
-	{ "id": "incompetent", "name": "Incompetent", "category": TraitCategory.NEGATIVE, "desc": "Cannot use a skill", "effect": "", "value": 0 },
-	{ "id": "low_pain_threshold", "name": "Low Pain Threshold", "category": TraitCategory.NEGATIVE, "desc": "Worse wound penalties", "effect": "wound_penalty", "value": -1 },
-	{ "id": "low_g_tolerance", "name": "Low-G Tolerance", "category": TraitCategory.NEGATIVE, "desc": "Sick in low-G", "effect": "", "value": 0 },
-	{ "id": "night_blindness", "name": "Night Blindness", "category": TraitCategory.NEGATIVE, "desc": "Penalties in low light", "effect": "vision_penalty", "value": -2 },
-	{ "id": "overconfident", "name": "Overconfident", "category": TraitCategory.NEGATIVE, "desc": "Underestimate danger", "effect": "", "value": 0 },
-	{ "id": "phobia", "name": "Phobia", "category": TraitCategory.NEGATIVE, "desc": "Fear of something", "effect": "", "value": 0 },
-	{ "id": "poverty", "name": "Poverty", "category": TraitCategory.NEGATIVE, "desc": "Little money", "effect": "wealth_penalty", "value": 0 },
-	{ "id": "prejudice", "name": "Prejudice", "category": TraitCategory.NEGATIVE, "desc": "Bias against group", "effect": "", "value": 0 },
-	{ "id": "slow_learner", "name": "Slow Learner", "category": TraitCategory.NEGATIVE, "desc": "Learn skills slower", "effect": "learning_modifier", "value": 2 },
-	{ "id": "unattractive", "name": "Unattractive", "category": TraitCategory.NEGATIVE, "desc": "Penalty to social skills", "effect": "skill_penalty", "value": -1, "skill": "negotiation" },
-	{ "id": "unlucky", "name": "Unlucky", "category": TraitCategory.NEGATIVE, "desc": "GM can force reroll", "effect": "luck", "value": -1 },
-	{ "id": "vengeful", "name": "Vengeful", "category": TraitCategory.NEGATIVE, "desc": "Must pursue vengeance", "effect": "", "value": 0 },
-	{ "id": "weak_willed", "name": "Weak Willed", "category": TraitCategory.NEGATIVE, "desc": "-3 vs intimidation", "effect": "willpower_penalty", "value": -3 },
-	{ "id": "weakness", "name": "Weakness", "category": TraitCategory.NEGATIVE, "desc": "Vulnerability to substance/environment", "effect": "", "value": 0 },
-	{ "id": "xenophobia", "name": "Xenophobia", "category": TraitCategory.NEGATIVE, "desc": "Fear/distrust of foreigners", "effect": "", "value": 0 },
-]
+static var _trait_cache: Array = []
+static var _trait_cache_loaded: bool = false
+
+static func _ensure_traits() -> void:
+	if _trait_cache_loaded:
+		return
+	_trait_cache_loaded = true
+	var merged: Dictionary = {"positive": [], "negative": []}
+	var dir = DirAccess.open("res://data/traits/")
+	if dir:
+		dir.list_dir_begin()
+		var fname = dir.get_next()
+		while fname != "":
+			if fname.ends_with(".json"):
+				var file = FileAccess.open("res://data/traits/" + fname, FileAccess.READ)
+				if file:
+					var j = JSON.new()
+					if j.parse(file.get_as_text()) == OK:
+						var data = j.data
+						for cat in ["positive", "negative"]:
+							var entries: Array = data.get(cat, [])
+							for e in entries:
+								e.category = TraitCategory.POSITIVE if cat == "positive" else TraitCategory.NEGATIVE
+								_trait_cache.append(e)
+			fname = dir.get_next()
 
 static func get_trait_def(trait_id: String) -> Dictionary:
-	for t in TRAIT_DEFS:
-		if t.id == trait_id:
+	_ensure_traits()
+	for t in _trait_cache:
+		if t.get("id") == trait_id:
 			return t
 	return {}
 
-static func get_traits_by_category(category: TraitCategory) -> Array[Dictionary]:
-	var result: Array[Dictionary] = []
-	for t in TRAIT_DEFS:
-		if t.category == category:
+static func get_traits_by_category(category: TraitCategory) -> Array:
+	_ensure_traits()
+	var result: Array = []
+	for t in _trait_cache:
+		if t.get("category", -1) == category:
 			result.append(t)
 	return result

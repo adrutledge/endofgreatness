@@ -7,6 +7,15 @@ var salvage_pool: Array[Dictionary] = []
 ## Key = "q,r" string, value = Dictionary with generated enemy units.
 var tactical_cache: Dictionary = {}
 
+## Serialized planetary hex map state for this contract's operational layer.
+## Populated when the map is first generated; persists until the contract ends.
+var planetary_map_data: Dictionary = {}
+
+## Generated OpFor pool for this contract. Array of unit dicts.
+## Each entry: { unit_name, chassis_name, tonnage, quality, gunnery, piloting, is_commander, status, faction }
+var opfor_pool: Array[Dictionary] = []
+var opfor_template_id: String = ""
+
 @export var issuer: String
 @export var target: String
 @export var planet: String

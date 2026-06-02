@@ -25,6 +25,11 @@ STARMAP_CACHE_DATA := data/systems_index.json
 STARMAP_CACHE_TEST := tests/test_starmap_cache.gd
 STARMAP_CACHE_STAMP := .tested_starmap_cache
 
+PLAN_MAP_GEN_SRC := src/strategic/PlanetaryMapGenerator.gd
+PLAN_MAP_GEN_DATA := src/data/HexMap.gd
+PLAN_MAP_GEN_TEST := tests/test_planetary_map_generator.gd
+PLAN_MAP_GEN_STAMP := .tested_plan_map_gen
+
 SUCKIT_SRC := tools/suckit/parse_suckit.py
 
 
@@ -89,30 +94,25 @@ $(STARMAP_CACHE_STAMP): $(STARMAP_CACHE_SRC) $(STARMAP_CACHE_DATA) $(STARMAP_CAC
 	echo "[Starmap Cache] $$r"
 	@touch $(STARMAP_CACHE_STAMP)
 
-test: data/systems_index.json data/timeline_events.json $(MTF_STAMP) $(MARKET_STAMP) $(STRAT_GEN_STAMP) $(STARMAP_CACHE_STAMP)
-	@$(MAKE) --quiet lint 2>/dev/null || true
+$(PLAN_MAP_GEN_STAMP): $(PLAN_MAP_GEN_SRC) $(PLAN_MAP_GEN_DATA) $(PLAN_MAP_GEN_TEST)
+	@r=$$($(GODOT) --headless --script $(PLAN_MAP_GEN_TEST) 2>&1 | grep "Results"); \
+	echo "[Plan Map Gen] $$r"
+	@touch $(PLAN_MAP_GEN_STAMP)
 
-## Headless generator integration test (requires autoloads, runs full engine)
-test-gen:
-	@$(GODOT) --path . --headless -- --test-generator 2>&1 | grep -E "^(PASSED|FAILED|===)" || echo "test-gen target not available in --script mode"
+DATA_FORMAT_TEST := tests/test_data_formats.gd
+DATA_FORMAT_STAMP := .tested_data_format
 
-lint:
-	@if command -v $(GDLINT) >/dev/null 2>&1; then \
-		$(GDLINT) src/; \
-	else \
-		echo "gdlint not found — install with: pip install gdtoolkit"; \
-	fi
-
-export:
-	$(GODOT) --headless --export-release "$(EXPORT_PRESET)" $(EXPORT_DIR)/
+$(DATA_FORMAT_STAMP): $(DATA_FORMAT_TEST)
+	@r=$$($(GODOT) --headless --script $(DATA_FORMAT_TEST) 2>&1 | grep "Results"); \
+	echo "[Data Formats] $$r"
+	@touch $(DATA_FORMAT_STAMP)
 
 ## Generate .godot script class cache so class_name types are available before autoloads compile.
-## Only needed on fresh clones or after `make clean`.
 bootstrap:
 	@$(GODOT) --editor --quit --path . 2>&1 | grep -v "^ERROR" | grep -v "^WARNING" | grep -v "^  at" | grep -v "resources" | grep -v "^$$" || true
 	@echo ".godot cache generated"
 
-test: bootstrap data/systems_index.json data/timeline_events.json $(MTF_STAMP) $(MARKET_STAMP) $(STRAT_GEN_STAMP) $(STARMAP_CACHE_STAMP)
+test: bootstrap data/systems_index.json data/timeline_events.json $(MTF_STAMP) $(MARKET_STAMP) $(STRAT_GEN_STAMP) $(STARMAP_CACHE_STAMP) $(PLAN_MAP_GEN_STAMP) $(DATA_FORMAT_STAMP)
 
 clean:
 	rm -rf $(EXPORT_DIR)/

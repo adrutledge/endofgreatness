@@ -9,6 +9,10 @@
   "contracts_offered": ["defensive_garrison", "convoy_escort", "fortification"],
   "allies": ["federated_suns", "mercenary_review_board"],
   "enemies": ["draconis_combine", "free_worlds_league", "capellan_confederation"],
+  "first_names": ["Klaus", "Helga", "Friedrich", "Greta", "Wolfgang", "Ingrid", "Dieter", "Astrid", "Otto", "Liselotte", "Hans", "Ursula"],
+  "last_names": ["Steiner", "Hauptmann", "Eisenhardt", "Bergmann", "Richthofen", "Schmidt", "Weber", "Wagner", "Becker", "Hoffmann"],
+  "hair_colors": ["Blonde", "Brown", "Brown", "Brown", "Red", "Auburn", "Blonde"],
+  "eye_colors": ["Blue", "Blue", "Green", "Grey", "Brown", "Blue", "Grey"],
   "is_rebel": false,
   "is_pirate": false,
   "is_civilian": false

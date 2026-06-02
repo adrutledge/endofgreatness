@@ -10,6 +10,35 @@ var abstract_medic_count: int = 0
 
 const SPECIALIZATIONS: Array[String] = ["Mech", "Vehicle", "Aerospace"]
 
+static var _type_data: Dictionary = {}
+static var _type_loaded: bool = false
+
+static func _load_type_data() -> Dictionary:
+	if _type_loaded:
+		return _type_data
+	var merged: Dictionary = {"roles": {}}
+	var dir = DirAccess.open("res://data/personnel_types/")
+	if dir:
+		dir.list_dir_begin()
+		var fname = dir.get_next()
+		while fname != "":
+			if fname.ends_with(".json"):
+				var file = FileAccess.open("res://data/personnel_types/" + fname, FileAccess.READ)
+				if file:
+					var j = JSON.new()
+					if j.parse(file.get_as_text()) == OK:
+						var data = j.data
+						if data.has("roles"):
+							for k in data.roles:
+								merged.roles[k] = data.roles[k]
+						for field in ["first_names", "last_names", "hair_colors", "eye_colors"]:
+							if data.has(field) and not merged.has(field):
+								merged[field] = data[field]
+			fname = dir.get_next()
+	_type_data = merged
+	_type_loaded = true
+	return merged
+
 func _ready() -> void:
 	EventBus.day_started.connect(_on_day_started)
 
@@ -176,11 +205,26 @@ func generate_candidates(planet: String, planet_data: Dictionary, has_hiring_hal
 	return candidates
 
 func generate_random_personnel(planet_data: Dictionary) -> Personnel:
+	var td = _load_type_data()
 	var TraitRes = preload("res://src/data/Trait.gd")
 	var p = Personnel.new()
-	var first_names = ["Alex", "Jordan", "Sam", "Casey", "Taylor", "Morgan", "Riley", "Quinn", "Avery", "Dakota"]
-	var last_names = ["Smith", "Jones", "Lee", "Chen", "Patel", "Khan", "Mueller", "Garcia", "Kim", "Singh"]
+
+	var faction_first: Array = []
+	var faction_last: Array = []
+	var faction_code = ""
+	var fk = []
+	for code in GameState.factions:
+		fk.append(code)
+	if not fk.is_empty():
+		faction_code = fk[randi() % fk.size()]
+		var fdata = GameState.factions.get(faction_code, {})
+		if fdata:
+			faction_first = fdata.get("first_names", [])
+			faction_last = fdata.get("last_names", [])
+	var first_names: Array = faction_first if not faction_first.is_empty() else td.get("first_names", ["Alex", "Jordan"])
+	var last_names: Array = faction_last if not faction_last.is_empty() else td.get("last_names", ["Smith", "Jones"])
 	p.personnel_name = first_names[randi() % first_names.size()] + " " + last_names[randi() % last_names.size()]
+	p.prior_affiliation = faction_code
 	var roles = [Enums.PersonnelRole.MECHWARRIOR, Enums.PersonnelRole.CREW, Enums.PersonnelRole.TECHNICIAN, Enums.PersonnelRole.ASTECH, Enums.PersonnelRole.MEDIC, Enums.PersonnelRole.DOCTOR, Enums.PersonnelRole.HR, Enums.PersonnelRole.LOGISTICAL, Enums.PersonnelRole.TRANSPORT, Enums.PersonnelRole.COMMAND, Enums.PersonnelRole.CIVILIAN]
 	p.role = roles[randi() % roles.size()]
 	p.body = _rand_atow_attr()
@@ -205,18 +249,13 @@ func generate_random_personnel(planet_data: Dictionary) -> Personnel:
 	if 3025 - birth_year < 16:
 		p.role = Enums.PersonnelRole.CHILD
 
-	var hair_colors = ["Brown", "Black", "Blonde", "Red", "Grey", "White", "Auburn"]
-	var eye_colors = ["Brown", "Blue", "Green", "Grey", "Hazel"]
-	p.hair_color = hair_colors[randi() % hair_colors.size()]
-	p.eye_color = eye_colors[randi() % eye_colors.size()]
+	var fdata = GameState.factions.get(faction_code, {})
+	var hair_src: Array = fdata.get("hair_colors", td.get("hair_colors", ["Brown", "Black"]))
+	var eye_src: Array = fdata.get("eye_colors", td.get("eye_colors", ["Brown", "Blue"]))
+	p.hair_color = hair_src[randi() % hair_src.size()]
+	p.eye_color = eye_src[randi() % eye_src.size()]
 	p.height_cm = randi() % 40 + 150
 	p.weight_kg = randi() % 40 + 55
-
-	var faction_codes = []
-	for code in GameState.factions:
-		faction_codes.append(code)
-	if not faction_codes.is_empty():
-		p.prior_affiliation = faction_codes[randi() % faction_codes.size()]
 
 	if randi() % 3 < 2:
 		var pool = Enums.get_traits_by_category(Enums.TraitCategory.POSITIVE)
@@ -244,71 +283,35 @@ func generate_random_personnel(planet_data: Dictionary) -> Personnel:
 			t_rec.effect_value = t_data.get("value", 0)
 			t_rec.effect_skill = t_data.get("skill", "")
 			p.traits.append(t_rec)
-	match p.role:
-		Enums.PersonnelRole.HR:
-			p.skills["administration"] = randi() % 5 + 2
-			p.skills["negotiation"] = randi() % 4 + 1
-			p.skills["leadership"] = randi() % 3 + 1
-		Enums.PersonnelRole.LOGISTICAL:
-			p.skills["administration"] = randi() % 4 + 2
-			p.skills["negotiation"] = randi() % 3 + 1
-			p.skills["computers"] = randi() % 5 + 2
-			p.skills["science_mathematics"] = randi() % 4 + 1
-		Enums.PersonnelRole.TRANSPORT:
-			p.skills["administration"] = randi() % 3 + 1
-			p.skills["negotiation"] = randi() % 3 + 1
-			p.skills["navigation_ground"] = randi() % 4 + 2
-			p.skills["navigation_air"] = randi() % 3 + 1
-			p.skills["navigation_space"] = randi() % 3 + 1
-			p.skills["communications_conventional"] = randi() % 3 + 1
-		Enums.PersonnelRole.COMMAND:
-			p.skills["administration"] = randi() % 4 + 2
-			p.skills["negotiation"] = randi() % 4 + 1
-			p.skills["leadership"] = randi() % 5 + 3
-			p.skills["strategy"] = randi() % 4 + 2
-			p.skills["tactics_land"] = randi() % 4 + 1
-		Enums.PersonnelRole.MEDIC:
-			p.skills["medic"] = randi() % 5 + 2
-			p.skills["survival"] = randi() % 3 + 1
-		Enums.PersonnelRole.DOCTOR:
-			p.skills["surgery_general"] = randi() % 5 + 2
-			p.skills["administration"] = randi() % 4 + 2
-			p.skills["negotiation"] = randi() % 3 + 1
-		Enums.PersonnelRole.TECHNICIAN:
-			p.specialization = SPECIALIZATIONS[randi() % SPECIALIZATIONS.size()]
-			match p.specialization:
-				"Mech":
-					p.skills["tech_mech"] = randi() % 6 + 1
-				"Vehicle":
-					p.skills["tech_mechanic"] = randi() % 6 + 1
-				"Aerospace":
-					p.skills["tech_aerospace"] = randi() % 6 + 1
-		Enums.PersonnelRole.ASTECH:
-			p.skills["astech"] = randi() % 6 + 1
-		Enums.PersonnelRole.MECHWARRIOR:
-			p.skills["gunnery_mech"] = randi() % 6 + 1
-			p.skills["piloting_mech"] = randi() % 4 + 1
-			p.skills["small_arms"] = randi() % 4 + 1
-			if randi() % 100 < 2:
-				p.skills["gunnery_ground_vehicle"] = max(1, randi() % 4)
-				p.skills["piloting_ground_vehicle"] = max(1, randi() % 3)
-			# Rare LAM pilot: trained in both mech and aerospace
-			if randi() % 100 < 1:
-				p.skills["gunnery_aerospace"] = max(1, randi() % 4)
-				p.skills["piloting_aerospace"] = max(1, randi() % 3)
-		Enums.PersonnelRole.CREW:
-			p.skills["gunnery_mech"] = randi() % 6 + 1
-			p.skills["gunnery_ground_vehicle"] = randi() % 6 + 1
-			p.skills["piloting_mech"] = randi() % 4 + 1
-			p.skills["piloting_ground_vehicle"] = randi() % 4 + 1
-			p.skills["small_arms"] = randi() % 4 + 1
-			p.skills["stealth"] = randi() % 3 + 1
-		Enums.PersonnelRole.CIVILIAN:
-			p.skills["career"] = randi() % 4 + 2
-			p.skills["negotiation"] = randi() % 3 + 1
-		Enums.PersonnelRole.CHILD:
-			p.skills["language_english"] = randi() % 3 + 2
-			p.skills["running"] = randi() % 3 + 1
+	var role_key = Enums.PersonnelRole.keys()[p.role]
+	var role_def = td.get("roles", {}).get(role_key, {})
+	var skills_def: Array = role_def.get("skills", [])
+	for s in skills_def:
+		var sname = s.get("name", "")
+		if sname.is_empty():
+			continue
+		var smin = s.get("min", 1)
+		var smax = s.get("max", 5)
+		var weight = s.get("weight", 3)
+		if s.has("specialization"):
+			var spec_pool: Array = s.get("specialization_pool", SPECIALIZATIONS)
+			p.specialization = spec_pool[randi() % spec_pool.size()]
+		if s.get("select_one", false):
+			var roll = randi() % 100
+			if roll < weight * 20:
+				p.skills[sname] = randi() % (smax - smin + 1) + smin
+		else:
+			p.skills[sname] = randi() % (smax - smin + 1) + smin
+
+	var rare: Array = role_def.get("rare_skills", [])
+	for rs in rare:
+		var chance = rs.get("chance", 0.0)
+		if randf() < chance:
+			var rname = rs.get("name", "")
+			var pname = rs.get("pilot_name", "")
+			if rname and pname:
+				p.skills[rname] = max(1, randi() % rs.get("max", 4))
+				p.skills[pname] = max(1, randi() % rs.get("max", 4))
 	return p
 
 func add_relationship(from_name: String, to_name: String, type: int, valence: int = 1, strength: int = 1) -> void:
@@ -416,31 +419,10 @@ func unassign_personnel_from_unit(personnel: Personnel, unit: TacticalUnit) -> v
 		unit.abstract_crew_count -= 1
 
 func get_salary(personnel: Personnel) -> int:
-	match personnel.role:
-		Enums.PersonnelRole.COMMAND:
-			return 3000
-		Enums.PersonnelRole.DOCTOR:
-			return 2500
-		Enums.PersonnelRole.TECHNICIAN:
-			return 2000
-		Enums.PersonnelRole.MEDIC:
-			return 1800
-		Enums.PersonnelRole.HR:
-			return 1500
-		Enums.PersonnelRole.LOGISTICAL:
-			return 1500
-		Enums.PersonnelRole.TRANSPORT:
-			return 1500
-		Enums.PersonnelRole.ASTECH:
-			return 1200
-		Enums.PersonnelRole.CREW:
-			return 1000
-		Enums.PersonnelRole.CIVILIAN:
-			return 500
-		Enums.PersonnelRole.CHILD:
-			return 0
-		_:
-			return 0
+	var td = _load_type_data()
+	var role_key = Enums.PersonnelRole.keys()[personnel.role]
+	var role_def = td.get("roles", {}).get(role_key, {})
+	return role_def.get("salary", 0)
 
 func _rand_atow_attr() -> int:
 	return randi() % 7 + 2
@@ -493,15 +475,8 @@ func get_abstract_salary_cost() -> int:
 
 
 func get_role_daily_salary(role: Enums.PersonnelRole) -> int:
-	match role:
-		Enums.PersonnelRole.ASTECH:
-			return 50
-		Enums.PersonnelRole.MEDIC:
-			return 80
-		Enums.PersonnelRole.CREW:
-			return 60
-		Enums.PersonnelRole.TECHNICIAN:
-			return 90
-		_:
-			return 0
+	var td = _load_type_data()
+	var role_key = Enums.PersonnelRole.keys()[role]
+	var role_def = td.get("roles", {}).get(role_key, {})
+	return role_def.get("salary", 0)
 

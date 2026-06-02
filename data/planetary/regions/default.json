@@ -1,0 +1,119 @@
+{
+  "regions": [
+    {
+      "name": "Mountain Pass",
+      "width": 10,
+      "height": 8,
+      "terrain": [
+        "PLAINS ROUGH MOUNTAIN MOUNTAIN MOUNTAIN MOUNTAIN MOUNTAIN MOUNTAIN ROUGH PLAINS",
+        "PLAINS PLAINS ROUGH MOUNTAIN MOUNTAIN MOUNTAIN MOUNTAIN ROUGH PLAINS PLAINS",
+        "PLAINS PLAINS PLAINS ROUGH ROUGH ROUGH ROUGH PLAINS PLAINS PLAINS",
+        "FOREST PLAINS PLAINS PLAINS ROUGH ROUGH PLAINS PLAINS PLAINS FOREST",
+        "FOREST PLAINS PLAINS PLAINS ROUGH ROUGH PLAINS PLAINS PLAINS FOREST",
+        "PLAINS PLAINS PLAINS ROUGH ROUGH ROUGH ROUGH PLAINS PLAINS PLAINS",
+        "PLAINS PLAINS ROUGH MOUNTAIN MOUNTAIN MOUNTAIN MOUNTAIN ROUGH PLAINS PLAINS",
+        "PLAINS ROUGH MOUNTAIN MOUNTAIN MOUNTAIN MOUNTAIN MOUNTAIN MOUNTAIN ROUGH PLAINS"
+      ],
+      "roads": [
+        "4,2-5,2", "4,5-5,5",
+        "3,3-3,4", "6,3-6,4"
+      ],
+      "rivers": [
+        "1,0-1,1-1,2-2,2-2,3-2,4-2,5-1,5-1,6-1,7",
+        "8,0-8,1-8,2-7,2-7,3-7,4-7,5-8,5-8,6-8,7"
+      ],
+      "constraints": {
+        "biomes": ["temperate", "tundra"],
+        "activity_types": ["Assault", "Defense", "Recon"]
+      },
+      "weight": 30
+    },
+    {
+      "name": "River Valley",
+      "width": 12,
+      "height": 8,
+      "terrain": [
+        "FOREST FOREST PLAINS PLAINS FOREST FOREST PLAINS PLAINS FOREST FOREST FOREST FOREST",
+        "FOREST PLAINS PLAINS PLAINS PLAINS PLAINS PLAINS PLAINS FOREST FOREST FOREST FOREST",
+        "ROUGH FOREST PLAINS PLAINS PLAINS PLAINS PLAINS PLAINS FOREST FOREST PLAINS FOREST",
+        "PLAINS PLAINS PLAINS PLAINS PLAINS PLAINS PLAINS PLAINS PLAINS PLAINS PLAINS PLAINS",
+        "PLAINS PLAINS PLAINS PLAINS PLAINS PLAINS PLAINS PLAINS PLAINS PLAINS PLAINS PLAINS",
+        "ROUGH FOREST PLAINS PLAINS PLAINS PLAINS PLAINS PLAINS FOREST FOREST PLAINS FOREST",
+        "FOREST PLAINS PLAINS PLAINS PLAINS PLAINS PLAINS PLAINS FOREST FOREST FOREST FOREST",
+        "FOREST FOREST PLAINS PLAINS FOREST FOREST PLAINS PLAINS FOREST FOREST FOREST FOREST"
+      ],
+      "roads": [
+        "0,1-1,1-2,1-3,1-4,1", "7,1-8,1-9,1-10,1-11,1",
+        "0,6-1,6-2,6-3,6-4,6", "7,6-8,6-9,6-10,6-11,6",
+        "3,0-3,1-3,2", "8,0-8,1-8,2",
+        "3,5-3,6-3,7", "8,5-8,6-8,7"
+      ],
+      "rivers": [
+        "4,0-4,1-4,2-4,3-5,3-5,4-4,4-4,5-4,6-4,7",
+        "7,0-7,1-7,2-7,3-6,3-6,4-7,4-7,5-7,6-7,7"
+      ],
+      "constraints": {
+        "biomes": ["temperate", "tundra"],
+        "activity_types": ["Recon", "Pirate Hunting", "Assault"]
+      },
+      "weight": 25
+    },
+    {
+      "name": "Urban Outskirts",
+      "width": 10,
+      "height": 10,
+      "terrain": [
+        "PLAINS PLAINS URBAN URBAN URBAN URBAN URBAN URBAN PLAINS PLAINS",
+        "PLAINS URBAN URBAN URBAN URBAN URBAN URBAN URBAN URBAN PLAINS",
+        "URBAN URBAN URBAN URBAN URBAN URBAN URBAN URBAN URBAN URBAN",
+        "URBAN URBAN URBAN URBAN PLAINS PLAINS URBAN URBAN URBAN URBAN",
+        "URBAN URBAN PLAINS PLAINS PLAINS PLAINS PLAINS PLAINS URBAN URBAN",
+        "URBAN URBAN PLAINS PLAINS PLAINS PLAINS PLAINS PLAINS URBAN URBAN",
+        "URBAN URBAN URBAN URBAN PLAINS PLAINS URBAN URBAN URBAN URBAN",
+        "URBAN URBAN URBAN URBAN URBAN URBAN URBAN URBAN URBAN URBAN",
+        "PLAINS URBAN URBAN URBAN URBAN URBAN URBAN URBAN URBAN PLAINS",
+        "PLAINS PLAINS URBAN URBAN URBAN URBAN URBAN URBAN PLAINS PLAINS"
+      ],
+      "roads": [
+        "2,0-2,1-2,2-2,3", "7,0-7,1-7,2-7,3",
+        "2,6-2,7-2,8-2,9", "7,6-7,7-7,8-7,9",
+        "1,4-2,4-3,4-4,4-5,4-6,4-7,4-8,4",
+        "1,5-2,5-3,5-4,5-5,5-6,5-7,5-8,5"
+      ],
+      "rivers": [
+        "4,0-4,1-4,2-4,3-4,4-4,5-4,6-4,7-4,8-4,9"
+      ],
+      "constraints": {
+        "biomes": ["urban", "temperate"],
+        "activity_types": ["Riot", "Garrison", "Assault"],
+        "population_min": 5000
+      },
+      "weight": 35
+    },
+    {
+      "name": "Desert Wadi",
+      "width": 10,
+      "height": 8,
+      "terrain": [
+        "DESERT ROUGH DESERT DESERT DESERT DESERT DESERT DESERT ROUGH DESERT",
+        "DESERT DESERT DESERT DESERT PLAINS PLAINS DESERT DESERT DESERT DESERT",
+        "ROUGH DESERT DESERT PLAINS PLAINS PLAINS PLAINS DESERT DESERT ROUGH",
+        "DESERT DESERT PLAINS PLAINS DESERT PLAINS PLAINS DESERT DESERT DESERT",
+        "DESERT DESERT PLAINS PLAINS DESERT PLAINS PLAINS DESERT DESERT DESERT",
+        "ROUGH DESERT DESERT PLAINS PLAINS PLAINS PLAINS DESERT DESERT ROUGH",
+        "DESERT DESERT DESERT DESERT PLAINS PLAINS DESERT DESERT DESERT DESERT",
+        "DESERT ROUGH DESERT DESERT DESERT DESERT DESERT DESERT ROUGH DESERT"
+      ],
+      "roads": [
+        "1,1-2,1-3,1-4,1-5,1-6,1-7,1-8,1",
+        "1,6-2,6-3,6-4,6-5,6-6,6-7,6-8,6",
+        "4,2-4,3-4,4-4,5", "5,2-5,3-5,4-5,5"
+      ],
+      "constraints": {
+        "biomes": ["desert"],
+        "activity_types": ["Recon", "Pirate Hunting", "Assault", "Raid"]
+      },
+      "weight": 30
+    }
+  ]
+}

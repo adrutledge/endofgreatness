@@ -1,0 +1,112 @@
+{
+  "roles": {
+    "HR": {
+      "skills": [
+        {"name": "administration", "min": 2, "max": 6, "weight": 5},
+        {"name": "negotiation", "min": 1, "max": 5, "weight": 4},
+        {"name": "leadership", "min": 1, "max": 4, "weight": 3}
+      ],
+      "salary": 70
+    },
+    "LOGISTICAL": {
+      "skills": [
+        {"name": "administration", "min": 2, "max": 6, "weight": 4},
+        {"name": "negotiation", "min": 1, "max": 4, "weight": 3},
+        {"name": "computers", "min": 2, "max": 7, "weight": 5},
+        {"name": "science_mathematics", "min": 1, "max": 5, "weight": 3}
+      ],
+      "salary": 100
+    },
+    "TRANSPORT": {
+      "skills": [
+        {"name": "administration", "min": 1, "max": 4, "weight": 3},
+        {"name": "negotiation", "min": 1, "max": 4, "weight": 3},
+        {"name": "navigation_ground", "min": 2, "max": 6, "weight": 5},
+        {"name": "navigation_air", "min": 1, "max": 4, "weight": 3},
+        {"name": "navigation_space", "min": 1, "max": 4, "weight": 3},
+        {"name": "communications_conventional", "min": 1, "max": 4, "weight": 3}
+      ],
+      "salary": 80
+    },
+    "COMMAND": {
+      "skills": [
+        {"name": "administration", "min": 2, "max": 6, "weight": 4},
+        {"name": "negotiation", "min": 1, "max": 5, "weight": 3},
+        {"name": "leadership", "min": 3, "max": 8, "weight": 5},
+        {"name": "strategy", "min": 2, "max": 6, "weight": 4},
+        {"name": "tactics_land", "min": 1, "max": 5, "weight": 3}
+      ],
+      "salary": 150
+    },
+    "MEDIC": {
+      "skills": [
+        {"name": "medic", "min": 2, "max": 7, "weight": 5},
+        {"name": "survival", "min": 1, "max": 4, "weight": 3}
+      ],
+      "salary": 80
+    },
+    "DOCTOR": {
+      "skills": [
+        {"name": "surgery_general", "min": 2, "max": 7, "weight": 5},
+        {"name": "administration", "min": 2, "max": 6, "weight": 4},
+        {"name": "negotiation", "min": 1, "max": 4, "weight": 3}
+      ],
+      "salary": 120
+    },
+    "TECHNICIAN": {
+      "skills": [
+        {"name": "tech_mech", "min": 1, "max": 7, "weight": 5, "specialization": "Mech"},
+        {"name": "tech_mechanic", "min": 1, "max": 7, "weight": 3, "specialization": "Vehicle"},
+        {"name": "tech_aerospace", "min": 1, "max": 7, "weight": 2, "specialization": "Aerospace"}
+      ],
+      "salary": 90
+    },
+    "ASTECH": {
+      "skills": [
+        {"name": "astech", "min": 1, "max": 7, "weight": 5}
+      ],
+      "salary": 50
+    },
+    "MECHWARRIOR": {
+      "skills": [
+        {"name": "gunnery_mech", "min": 1, "max": 7, "weight": 5},
+        {"name": "piloting_mech", "min": 1, "max": 5, "weight": 4},
+        {"name": "small_arms", "min": 1, "max": 5, "weight": 3}
+      ],
+      "salary": 2000,
+      "rare_skills": [
+        {"name": "gunnery_ground_vehicle", "chance": 0.02, "min": 1, "max": 4, "pilot_name": "piloting_ground_vehicle"},
+        {"name": "gunnery_aerospace", "chance": 0.01, "min": 1, "max": 4, "pilot_name": "piloting_aerospace"}
+      ]
+    },
+    "CREW": {
+      "skills": [
+        {"name": "gunnery_mech", "min": 1, "max": 7, "weight": 4},
+        {"name": "gunnery_ground_vehicle", "min": 1, "max": 7, "weight": 4},
+        {"name": "piloting_mech", "min": 1, "max": 5, "weight": 3},
+        {"name": "piloting_ground_vehicle", "min": 1, "max": 5, "weight": 3},
+        {"name": "small_arms", "min": 1, "max": 5, "weight": 3},
+        {"name": "stealth", "min": 1, "max": 4, "weight": 2}
+      ],
+      "salary": 60
+    },
+    "CIVILIAN": {
+      "skills": [
+        {"name": "career", "min": 2, "max": 6, "weight": 5},
+        {"name": "negotiation", "min": 1, "max": 4, "weight": 3}
+      ],
+      "salary": 500
+    },
+    "CHILD": {
+      "skills": [
+        {"name": "language_english", "min": 2, "max": 5, "weight": 5},
+        {"name": "running", "min": 1, "max": 4, "weight": 3}
+      ],
+      "salary": 0
+    }
+  },
+  "first_names": ["Alex", "Jordan", "Sam", "Casey", "Taylor", "Morgan", "Riley", "Quinn", "Avery", "Dakota"],
+  "last_names": ["Smith", "Jones", "Lee", "Chen", "Patel", "Khan", "Mueller", "Garcia", "Kim", "Singh"],
+  "hair_colors": ["Brown", "Black", "Blonde", "Red", "Grey", "White", "Auburn"],
+  "eye_colors": ["Brown", "Blue", "Green", "Grey", "Hazel"]
+}

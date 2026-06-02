@@ -1,8 +1,43 @@
 class_name ContractGenerator
 extends Node
 
+const CONTRACTS_DIR: String = "res://data/contracts/"
+
 var _config: Dictionary = {}
 var _loaded := false
+
+static var _contract_defs_cache: Array[Dictionary] = []
+static var _contract_defs_loaded: bool = false
+
+
+static func load_contract_definitions() -> Array[Dictionary]:
+	if _contract_defs_loaded:
+		return _contract_defs_cache
+	var merged: Dictionary = {"contracts": []}
+	var dir = DirAccess.open(CONTRACTS_DIR)
+	if dir:
+		dir.list_dir_begin()
+		var fname = dir.get_next()
+		while fname != "":
+			if fname.ends_with(".json"):
+				var file = FileAccess.open(CONTRACTS_DIR + fname, FileAccess.READ)
+				if file:
+					var j = JSON.new()
+					if j.parse(file.get_as_text()) == OK:
+						var data = j.data
+						if data.has("contracts"):
+							merged.contracts.append_array(data.contracts)
+			fname = dir.get_next()
+	_contract_defs_cache = merged.get("contracts", [])
+	_contract_defs_loaded = true
+	return _contract_defs_cache
+
+
+static func find_contract_definition(id: String) -> Dictionary:
+	for cd in load_contract_definitions():
+		if cd.get("id", "") == id:
+			return cd
+	return {}
 
 
 func _ensure_config() -> void:

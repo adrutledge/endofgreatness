@@ -19,9 +19,24 @@ enum ObjectiveType {
 	EVENT,
 }
 
+## Base movement cost in days per hex for a reference speed-4 mech.
+## Road reduces cost to 1 regardless of terrain. WATER is impassable.
+const TERRAIN_MOVEMENT_COST: Dictionary = {
+	Terrain.PLAINS: 1.0,
+	Terrain.FOREST: 1.5,
+	Terrain.MOUNTAIN: 3.0,
+	Terrain.WATER: -1.0,
+	Terrain.URBAN: 3.0,
+	Terrain.DESERT: 1.0,
+	Terrain.ROUGH: 1.5,
+}
+
+const REFERENCE_SPEED: int = 4
+
 var width: int
 var height: int
 var hexes: Array[Array] = []
+var landing_zone: Vector2i = Vector2i(0, 0)
 
 var _axial_to_index: Dictionary = {}
 
@@ -44,7 +59,10 @@ func _init(w: int = 10, h: int = 10) -> void:
 				"revealed": false,
 				"objective": ObjectiveType.NONE,
 				"objective_data": {},
+				"objective_completed": false,
 				"explored": false,
+				"has_road": false,
+				"has_river": false,
 			}
 			row_data.append(hd)
 			_axial_to_index[Vector2i(q, r)] = idx
@@ -126,3 +144,90 @@ static func hex_corners(center: Vector2, hex_size: float) -> PackedVector2Array:
 			center.y + hex_size * sin(angle_rad)
 		))
 	return corners
+
+
+## Returns the base travel cost in days for a hex, given the slowest mech's walk MP.
+## Returns -1 for impassable terrain.
+func get_hex_travel_cost(q: int, r: int, slowest_walk_mp: int) -> float:
+	var h = get_hex(q, r)
+	if h.is_empty():
+		return -1.0
+	var terrain = h.get("terrain", Terrain.PLAINS)
+	if h.get("has_road", false):
+		return 1.0
+	var base = TERRAIN_MOVEMENT_COST.get(terrain, 1.0)
+	if base < 0:
+		return -1.0
+	var speed_factor = float(REFERENCE_SPEED) / float(max(1, slowest_walk_mp))
+	var cost = base * speed_factor
+	if h.get("has_river", false):
+		cost += 0.5
+	return cost
+
+
+## A* pathfinding on the hex grid. Returns an Array of Vector2i from start to end (inclusive),
+## or an empty array if no path exists. Cost is travel days per hex.
+func find_path(start_q: int, start_r: int, end_q: int, end_r: int, slowest_walk_mp: int) -> Array[Vector2i]:
+	var start = Vector2i(start_q, start_r)
+	var end = Vector2i(end_q, end_r)
+	if start == end:
+		return [start]
+
+	var open_set: Array[Vector2i] = [start]
+	var came_from: Dictionary = {}
+	var g_score: Dictionary = {}
+	var f_score: Dictionary = {}
+
+	var key := func(pos: Vector2i) -> String: return "%d,%d" % [pos.x, pos.y]
+
+	g_score[key.call(start)] = 0.0
+	f_score[key.call(start)] = _hex_distance(start, end)
+
+	while not open_set.is_empty():
+		var current = open_set[0]
+		var current_f = f_score.get(key.call(current), INF)
+		for pos in open_set:
+			var pf = f_score.get(key.call(pos), INF)
+			if pf < current_f:
+				current = pos
+				current_f = pf
+
+		if current == end:
+			return _reconstruct_path(came_from, current)
+
+		open_set.erase(current)
+
+		for adj in get_adjacent(current.x, current.y):
+			var cost = get_hex_travel_cost(adj.x, adj.y, slowest_walk_mp)
+			if cost < 0:
+				continue
+			var h_adj = get_hex(adj.x, adj.y)
+			if h_adj.is_empty():
+				continue
+
+			var tentative_g = g_score.get(key.call(current), INF) + cost
+			if tentative_g < g_score.get(key.call(adj), INF):
+				came_from[key.call(adj)] = current
+				g_score[key.call(adj)] = tentative_g
+				f_score[key.call(adj)] = tentative_g + _hex_distance(adj, end)
+				if adj not in open_set:
+					open_set.append(adj)
+
+	return []
+
+
+static func _hex_distance(a: Vector2i, b: Vector2i) -> float:
+	var dq = abs(a.x - b.x)
+	var dr = abs(a.y - b.y)
+	var ds = abs(-a.x - a.y + b.x + b.y)
+	return max(dq, dr, ds)
+
+
+static func _reconstruct_path(came_from: Dictionary, current: Vector2i) -> Array[Vector2i]:
+	var path: Array[Vector2i] = [current]
+	var key := func(pos: Vector2i) -> String: return "%d,%d" % [pos.x, pos.y]
+	while came_from.has(key.call(current)):
+		current = came_from[key.call(current)]
+		path.append(current)
+	path.reverse()
+	return path

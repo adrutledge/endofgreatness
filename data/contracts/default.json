@@ -1,0 +1,40 @@
+{
+  "contracts": [
+    {
+      "id": "hesperus_garrison_duty",
+      "name": "Hesperus II Garrison Rotation",
+      "activity_type": "Garrison",
+      "planet": "Hesperus II",
+      "issuer": "LC",
+      "target": "",
+      "description": "The Lyran Commonwealth requires a mercenary company to supplement the garrison on Hesperus II during a planned rotation of regular forces.",
+      "duration": 180,
+      "payment": 1500000,
+      "salvage_rate": 0.3,
+      "salvage_type": "exchange",
+      "command_rights": "LIAISON",
+      "transport_coverage": 0.8,
+      "base_coverage": 0.7,
+      "battle_loss_reimbursement": 0.5,
+      "minimum_tonnage": 120,
+      "minimum_unit_counts": {"MECH": 4},
+      "opfor": {
+        "template_id": "house_garrison",
+        "pool_size": [4, 8]
+      },
+      "planetary_map": {
+        "canonical": "galatea_canopy_village",
+        "region": "urban_center"
+      },
+      "objectives": [
+        {"type": "PRIMARY", "count": 1, "data": {"type": "defend_position"}},
+        {"type": "SECONDARY", "count": 1, "data": {"type": "patrol", "bonus": 100000}}
+      ],
+      "victory": {
+        "primary_objectives_required": 1,
+        "opfor_depletion_pct": 0.6
+      },
+      "weight": 5
+    }
+  ]
+}

@@ -6,7 +6,7 @@ var cooldown_ticks: int = 3
 var ticks_since_last_event: int = 0
 
 func _ready() -> void:
-	_build_event_pool()
+	_load_event_pool()
 
 
 func generate_event(context: Dictionary) -> Dictionary:
@@ -65,202 +65,25 @@ func generate_event(context: Dictionary) -> Dictionary:
 	return resolved
 
 
-func _build_event_pool() -> void:
-	event_pool = [
-		{
-			"id": "pirate_raid",
-			"title": "Pirate Raid Incoming",
-			"description": "Scouts report a pirate raid heading for your position. They outnumber you but their equipment is jury-rigged and poorly maintained.",
-			"weight": 10,
-			"conditions": {
-				"requires_base": true,
-				"min_reputation": -100,
-				"exclude_factions": ["major_house"]
-			},
-			"choices": [
-				{
-					"label": "Fight them off",
-					"outcome": {
-						"reputation_delta": {},
-						"funds_delta": 0,
-						"personnel_effect": "minor_injuries",
-						"message": "You drive off the pirates after a sharp engagement. Some personnel sustain minor injuries."
-					}
-				},
-				{
-					"label": "Pay them off (50,000 C-Bills)",
-					"outcome": {
-						"reputation_delta": {"locals": -5, "pirates": 10},
-						"funds_delta": -50000,
-						"personnel_effect": "none",
-						"message": "The pirates take your payment and withdraw, though your standing with the locals suffers."
-					}
-				}
-			]
-		},
-		{
-			"id": "supply_delay",
-			"title": "Supply Shipment Delayed",
-			"description": "Your scheduled supply shipment has been delayed due to 'administrative complications' at the orbital depot. You're running low on critical spare parts.",
-			"weight": 12,
-			"conditions": {},
-			"choices": [
-				{
-					"label": "Wait for normal processing",
-					"outcome": {
-						"reputation_delta": {},
-						"funds_delta": 0,
-						"personnel_effect": "morale_down",
-						"message": "The shipment arrives a week late. Your techs grumble about the delay."
-					}
-				},
-				{
-					"label": "Pay for expedited handling (25,000 C-Bills)",
-					"outcome": {
-						"reputation_delta": {},
-						"funds_delta": -25000,
-						"personnel_effect": "none",
-						"message": "A few well-placed C-Bills grease the wheels. Your shipment arrives on schedule."
-					}
-				}
-			]
-		},
-		{
-			"id": "faction_assistance",
-			"title": "Faction Requests Assistance",
-			"description": "A nearby faction representative contacts you with an urgent request: they need armed support for a 'security situation' at one of their outposts.",
-			"weight": 8,
-			"conditions": {
-				"min_reputation": -20,
-				"requires_contract": false
-			},
-			"choices": [
-				{
-					"label": "Provide assistance (+Reputation)",
-					"outcome": {
-						"reputation_delta": {"requesting_faction": 15, "opposing_faction": -5},
-						"funds_delta": 0,
-						"personnel_effect": "none",
-						"message": "Your intervention is a success. The faction praises your professionalism."
-					}
-				},
-				{
-					"label": "Decline politely",
-					"outcome": {
-						"reputation_delta": {"requesting_faction": -10},
-						"funds_delta": 0,
-						"personnel_effect": "none",
-						"message": "The faction representative is disappointed but understands your position."
-					}
-				}
-			]
-		},
-		{
-			"id": "personnel_dispute",
-			"title": "Personnel Dispute",
-			"description": "A heated argument has broken out between two senior members of your staff. The rest of the crew is taking sides, and morale is suffering.",
-			"weight": 10,
-			"conditions": {
-				"requires_personnel": true
-			},
-			"choices": [
-				{
-					"label": "Mediate the dispute",
-					"outcome": {
-						"reputation_delta": {},
-						"funds_delta": 0,
-						"personnel_effect": "morale_up",
-						"message": "You listen to both sides and broker a compromise. The crew respects your leadership."
-					}
-				},
-				{
-					"label": "Reassign personnel to different shifts",
-					"outcome": {
-						"reputation_delta": {},
-						"funds_delta": 0,
-						"personnel_effect": "morale_neutral",
-						"message": "Separating the involved parties cools tensions, though the underlying issue remains unresolved."
-					}
-				}
-			]
-		},
-		{
-			"id": "lucky_find",
-			"title": "Lucky Salvage Find",
-			"description": "While reviewing local salvage listings, you spot an underpriced lot that contains valuable Star League-era components. Someone clearly didn't know what they had.",
-			"weight": 6,
-			"conditions": {},
-			"choices": [
-				{
-					"label": "Snap it up immediately",
-					"outcome": {
-						"reputation_delta": {},
-						"funds_delta": 50000,
-						"personnel_effect": "morale_up",
-						"message": "You acquire the salvage at a steal. The components are worth a small fortune."
-					}
-				}
-			]
-		},
-		{
-			"id": "mech_breakdown",
-			"title": "Mech Component Failure",
-			"description": "One of your BattleMechs suffers a critical myomer bundle failure during routine maintenance. The replacement part is expensive and hard to source.",
-			"weight": 10,
-			"conditions": {
-				"requires_mech": true
-			},
-			"choices": [
-				{
-					"label": "Order replacement part (30,000 C-Bills)",
-					"outcome": {
-						"reputation_delta": {},
-						"funds_delta": -30000,
-						"personnel_effect": "none",
-						"message": "The part arrives and your techs get the 'Mech operational again."
-					}
-				},
-				{
-					"label": "Cannibalize from another unit",
-					"outcome": {
-						"reputation_delta": {},
-						"funds_delta": 0,
-						"personnel_effect": "morale_down",
-						"message": "You pull a part from another 'Mech, leaving it inoperative. The crew is unhappy with the makeshift solution."
-					}
-				}
-			]
-		},
-		{
-			"id": "diplomatic_visit",
-			"title": "Faction Envoy Arrives",
-			"description": "A diplomatic envoy from a major faction arrives unexpectedly, requesting a formal meeting. They seem to be evaluating your company for a potential long-term contract.",
-			"weight": 8,
-			"conditions": {
-				"min_reputation": 10
-			},
-			"choices": [
-				{
-					"label": "Host them properly (10,000 C-Bills)",
-					"outcome": {
-						"reputation_delta": {"envoy_faction": 15},
-						"funds_delta": -10000,
-						"personnel_effect": "none",
-						"message": "The envoy is impressed by your professionalism. Talks of a long-term contract begin."
-					}
-				},
-				{
-					"label": "Brief meeting only",
-					"outcome": {
-						"reputation_delta": {"envoy_faction": 3},
-						"funds_delta": 0,
-						"personnel_effect": "none",
-						"message": "The meeting is cordial but brief. The envoy departs with a neutral impression."
-					}
-				}
-			]
-		}
-	]
+func _load_event_pool() -> void:
+	event_pool.clear()
+	var dir = DirAccess.open("res://data/events/strategic/")
+	if not dir:
+		return
+	dir.list_dir_begin()
+	var fname = dir.get_next()
+	while fname != "":
+		if fname.ends_with(".json"):
+			var file = FileAccess.open("res://data/events/strategic/" + fname, FileAccess.READ)
+			if file:
+				var j = JSON.new()
+				if j.parse(file.get_as_text()) == OK:
+					var data = j.data
+					var events: Array = data.get("events", [])
+					for ev in events:
+						if ev.has("id") and ev.has("choices"):
+							event_pool.append(ev)
+		fname = dir.get_next()
 
 
 func check_conditions(conditions: Dictionary, context: Dictionary) -> bool:

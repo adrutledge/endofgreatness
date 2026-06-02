@@ -1,6 +1,6 @@
 # Implementation Status
 
-Generated: 3025-06-02
+Generated: 3025-06-02 (final)
 Plan: `ai/plan.md`
 
 ---
@@ -24,7 +24,13 @@ Aerospace, advanced narrative (contract chains, data-driven contract definitions
 
 ---
 
-## Tests: 42 total (13 MTF parser + 22 market + 2 strategic gen + 5 starmap cache), all passing
+## Tests: 82 total, all passing
+- 13 MTF parser — MTF/BLK unit parsing and validation
+- 22 market population — planetary market generation and scarcity
+- 2 strategic unit generator — starting force generation
+- 5 starmap cache — territory computation and caching
+- 25 planetary map generator — map gen, objectives, biomes, OpFor, regions, RAT fallback, contract defs, canonical fallthrough
+- 15 data formats — config files, rules, skills, unit types, systems index, positive + negative edge cases
 
 ## Infrastructure
 - `TimeManager.date_changed` removed — all systems use `EventBus.day_started` (Signal Down pattern)

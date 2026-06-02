@@ -1,0 +1,109 @@
+{
+  "opfor": [
+    {
+      "id": "pirate_band",
+      "name": "Pirate Band",
+      "weight": 40,
+      "activity_types": ["Raid", "Pirate Hunting", "Assault", "Recon"],
+      "biomes": ["*"],
+      "factions": ["PIR"],
+      "quality": [4, 5],
+      "pool_size": [4, 8],
+      "has_home_hex_chance": 0.3,
+      "morale": 0.3,
+      "commander": {"chance": 0.2, "gunnery_bonus": -1, "piloting_bonus": -1, "edge": 1},
+      "composition": {
+        "mechs": {
+          "count_pct": 0.8,
+          "weight_classes": {"Light": 50, "Medium": 35, "Heavy": 12, "Assault": 3},
+          "rat_key": "periphery"
+        }
+      }
+    },
+    {
+      "id": "planetary_militia",
+      "name": "Planetary Militia",
+      "weight": 35,
+      "activity_types": ["Garrison", "Defense", "Riot", "Cadre"],
+      "biomes": ["*"],
+      "factions": ["*"],
+      "quality": [3, 4],
+      "pool_size": [6, 12],
+      "has_home_hex_chance": 0.6,
+      "morale": 0.5,
+      "commander": {"chance": 0.4, "gunnery_bonus": -1, "piloting_bonus": 0, "edge": 1},
+      "composition": {
+        "mechs": {
+          "count_pct": 0.6,
+          "weight_classes": {"Light": 30, "Medium": 40, "Heavy": 25, "Assault": 5},
+          "rat_key": "is_general"
+        },
+        "vehicles": {
+          "count_pct": 0.4,
+          "types": ["tracked", "wheeled"],
+          "quality": [3, 5]
+        }
+      }
+    },
+    {
+      "id": "house_garrison",
+      "name": "House Garrison Battalion",
+      "weight": 30,
+      "activity_types": ["Garrison", "Defense"],
+      "biomes": ["*"],
+      "factions": ["LC", "FS", "DC", "FWL", "CC"],
+      "quality": [2, 3],
+      "pool_size": [8, 16],
+      "has_home_hex_chance": 0.7,
+      "morale": 0.7,
+      "commander": {"chance": 0.6, "gunnery_bonus": 0, "piloting_bonus": 0, "edge": 2, "name_pool": ["Captain", "Leftenant", "Hauptmann"]},
+      "composition": {
+        "mechs": {
+          "count_pct": 0.7,
+          "weight_classes": {"Light": 20, "Medium": 35, "Heavy": 30, "Assault": 15},
+          "rat_key": null
+        }
+      }
+    },
+    {
+      "id": "elite_house_unit",
+      "name": "Elite House Regiment",
+      "weight": 15,
+      "activity_types": ["Assault", "Defense"],
+      "biomes": ["*"],
+      "factions": ["LC", "FS", "DC", "FWL", "CC"],
+      "quality": [0, 2],
+      "pool_size": [6, 12],
+      "has_home_hex_chance": 0.4,
+      "morale": 0.9,
+      "commander": {"chance": 0.8, "gunnery_bonus": 1, "piloting_bonus": 1, "edge": 3, "name_pool": ["Colonel", "Kommandant", "Tai-sa"]},
+      "composition": {
+        "mechs": {
+          "count_pct": 0.9,
+          "weight_classes": {"Light": 10, "Medium": 25, "Heavy": 40, "Assault": 25},
+          "rat_key": null
+        }
+      }
+    },
+    {
+      "id": "mercenary_company",
+      "name": "Mercenary Company",
+      "weight": 25,
+      "activity_types": ["Assault", "Defense", "Raid", "Pirate Hunting"],
+      "biomes": ["*"],
+      "factions": ["*"],
+      "quality": [2, 4],
+      "pool_size": [4, 10],
+      "has_home_hex_chance": 0.5,
+      "morale": 0.6,
+      "commander": {"chance": 0.5, "gunnery_bonus": 0, "piloting_bonus": 0, "edge": 2},
+      "composition": {
+        "mechs": {
+          "count_pct": 0.75,
+          "weight_classes": {"Light": 25, "Medium": 35, "Heavy": 30, "Assault": 10},
+          "rat_key": "merc"
+        }
+      }
+    }
+  ]
+}

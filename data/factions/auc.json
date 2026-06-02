@@ -9,8 +9,11 @@
   "contracts_offered": [],
   "allies": [],
   "enemies": [],
+  "first_names": ["Arano", "Kamea", "Rajendra", "Sama", "Tirso", "Espinosa", "Ignacio", "Coronel", "Mara", "Delmastro"],
+  "last_names": ["Arano", "Espinosa", "Mastiff", "Gallagher", "Karosas", "Tien", "Sumire", "Zhou", "O'Donnell", "Madeira"],
+  "hair_colors": ["Brown", "Black", "Black", "Brown", "Black"],
+  "eye_colors": ["Brown", "Brown", "Brown", "Hazel"],
   "is_rebel": false,
   "is_pirate": false,
-  "is_civilian": true,
-  "is_periphery": true
+  "is_civilian": false
 }

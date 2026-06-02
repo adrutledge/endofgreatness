@@ -1,0 +1,196 @@
+{
+  "objectives": [
+    {
+      "id": "standard_primary",
+      "type": "PRIMARY",
+      "label": "Primary",
+      "count": {"min": 1, "max": 1},
+      "priority": 10,
+      "activity_types": ["*"],
+      "biomes": ["*"],
+      "data": {"copies_activity": true},
+      "weight": 100
+    },
+    {
+      "id": "supply_cache",
+      "type": "SECONDARY",
+      "label": "Supply Cache",
+      "count": {"min": 1, "max": 2},
+      "priority": 5,
+      "activity_types": ["*"],
+      "biomes": ["*"],
+      "data": {"type": "supply_cache"},
+      "weight": 80
+    },
+    {
+      "id": "rescue_hostages",
+      "type": "SECONDARY",
+      "label": "Rescue Hostages",
+      "count": {"min": 1, "max": 1},
+      "priority": 6,
+      "activity_types": ["Riot", "Assault"],
+      "biomes": ["urban"],
+      "data": {"type": "rescue", "discovery_text": "Civilians are being held in this hex."},
+      "weight": 30
+    },
+    {
+      "id": "artifact_hunt",
+      "type": "SECONDARY",
+      "label": "Artifact Cache",
+      "count": {"min": 1, "max": 1},
+      "priority": 5,
+      "activity_types": ["Recon", "Pirate Hunting", "Raid"],
+      "biomes": ["desert", "temperate", "tundra"],
+      "data": {"type": "artifact", "description": "Ancient cache of advanced equipment.", "value_range": [5000, 50000]},
+      "weight": 25
+    },
+    {
+      "id": "sabotage_target",
+      "type": "SECONDARY",
+      "label": "Sabotage Target",
+      "count": {"min": 1, "max": 1},
+      "priority": 6,
+      "activity_types": ["Raid", "Assault"],
+      "biomes": ["urban"],
+      "data": {"type": "sabotage", "discovery_text": "Key infrastructure identified."},
+      "weight": 20
+    },
+    {
+      "id": "battlefield_remnants",
+      "type": "ASSETS",
+      "label": "Battlefield Remnants",
+      "count": {"min": 0, "max": 2},
+      "priority": 0,
+      "activity_types": ["*"],
+      "biomes": ["*"],
+      "data": {"type": "battlefield_remnants", "description": "Scattered wreckage of old military vehicles and equipment.", "value_range": [2000, 15000]},
+      "weight": 40
+    },
+    {
+      "id": "artifact",
+      "type": "ASSETS",
+      "label": "Artifact",
+      "count": {"min": 0, "max": 1},
+      "priority": 0,
+      "activity_types": ["*"],
+      "biomes": ["*"],
+      "data": {"type": "artifact", "description": "A valuable piece of historical significance.", "value_range": [5000, 50000]},
+      "weight": 20
+    },
+    {
+      "id": "civilian_equipment",
+      "type": "ASSETS",
+      "label": "Civilian Equipment",
+      "count": {"min": 0, "max": 1},
+      "priority": 0,
+      "activity_types": ["Garrison", "Riot", "Cadre"],
+      "biomes": ["urban", "temperate"],
+      "data": {"type": "civilian_equipment", "description": "A cache of industrial machinery and construction vehicles.", "value_range": [3000, 20000]},
+      "weight": 20
+    },
+    {
+      "id": "salvageable_mech",
+      "type": "ASSETS",
+      "label": "Salvageable Mech",
+      "count": {"min": 0, "max": 1},
+      "priority": 0,
+      "activity_types": ["Assault", "Defense", "Pirate Hunting"],
+      "biomes": ["*"],
+      "data": {"type": "salvageable_mech", "description": "A downed BattleMech with recoverable components.", "value_range": [10000, 80000]},
+      "weight": 15
+    },
+    {
+      "id": "military_supplies",
+      "type": "ASSETS",
+      "label": "Military Supplies",
+      "count": {"min": 0, "max": 1},
+      "priority": 0,
+      "activity_types": ["*"],
+      "biomes": ["*"],
+      "data": {"type": "military_supplies", "description": "Abandoned crates of ammunition, armor plating, and spare parts.", "value_range": [4000, 25000]},
+      "weight": 30
+    },
+    {
+      "id": "precious_metals",
+      "type": "ASSETS",
+      "label": "Precious Metals",
+      "count": {"min": 0, "max": 1},
+      "priority": 0,
+      "activity_types": ["Recon", "Raid", "Pirate Hunting"],
+      "biomes": ["desert", "mountain", "rough"],
+      "data": {"type": "precious_metals", "description": "A cache of refined germanium and precious metals.", "value_range": [15000, 100000]},
+      "weight": 10
+    },
+    {
+      "id": "currency_cache",
+      "type": "ASSETS",
+      "label": "Currency Cache",
+      "count": {"min": 0, "max": 1},
+      "priority": 0,
+      "activity_types": ["Riot", "Raid", "Pirate Hunting"],
+      "biomes": ["urban"],
+      "data": {"type": "currency_cache", "description": "A hidden stash of C-Bills.", "value_range": [10000, 75000]},
+      "weight": 12
+    },
+    {
+      "id": "enemy_patrol",
+      "type": "ENEMY",
+      "label": "Enemy Patrol",
+      "count": {"min": 1, "max": 3},
+      "priority": 0,
+      "activity_types": ["*"],
+      "biomes": ["*"],
+      "data": {"strength_range": [1, 3]},
+      "weight": 100
+    }
+  ],
+  "events": [
+    {
+      "id": "lostech_discovery",
+      "trigger": "on_explore",
+      "conditions": {
+        "hex_not_objective": true,
+        "hex_biomes": ["desert", "mountain", "rough"],
+        "chance": 0.05,
+        "min_explored": 5
+      },
+      "effect": {
+        "message": "Your scouts discover the remnants of an old Star League outpost!",
+        "actions": [
+          {"type": "add_objective", "objective_type": "ASSETS", "data": {"type": "lostech_cache", "description": "Star League-era equipment cache.", "value": 75000}}
+        ]
+      }
+    },
+    {
+      "id": "ambush",
+      "trigger": "on_explore",
+      "conditions": {
+        "hex_not_objective": true,
+        "chance": 0.03,
+        "min_explored": 3
+      },
+      "effect": {
+        "message": "Ambush! Enemy forces were lying in wait.",
+        "actions": [
+          {"type": "add_objective", "objective_type": "ENEMY", "data": {"strength": 2}}
+        ]
+      }
+    },
+    {
+      "id": "abandoned_base",
+      "trigger": "on_explore",
+      "conditions": {
+        "hex_not_objective": true,
+        "hex_biomes": ["urban"],
+        "chance": 0.04,
+        "min_explored": 3
+      },
+      "effect": {
+        "message": "You find an abandoned military outpost with supplies.",
+        "actions": [
+          {"type": "add_objective", "objective_type": "ASSETS", "data": {"type": "military_supplies", "description": "Abandoned outpost supplies.", "value": 20000}}
+        ]
+      }
+    }
+  ]
+}

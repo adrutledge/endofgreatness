@@ -1,25 +1,33 @@
 class_name RATParser
 extends RefCounted
 
+static var _file_map: Dictionary = {
+	"fed_suns": "fed_suns.json",
+	"lyran": "lyran.json",
+	"fwl": "fwl.json",
+	"drac_combine": "drac_combine.json",
+	"capellan": "capellan.json",
+	"is_general": "is_general.json",
+	"merc": "merc.json",
+	"magistracy": "magistracy.json",
+	"taurian": "taurian.json",
+	"outworlds": "outworlds.json",
+	"marian": "marian.json",
+	"periphery": "periphery.json",
+}
+
+
 static func load_rat(faction_key: String, era: String = "3025") -> Dictionary:
-	var file_map := {
-		"fed_suns": "fed_suns.json",
-		"lyran": "lyran.json",
-		"fwl": "fwl.json",
-		"drac_combine": "drac_combine.json",
-		"capellan": "capellan.json",
-		"is_general": "is_general.json",
-		"merc": "merc.json",
-		"magistracy": "magistracy.json",
-		"taurian": "taurian.json",
-		"outworlds": "outworlds.json",
-		"marian": "marian.json",
-		"periphery": "periphery.json",
-	}
-	var filename = file_map.get(faction_key.to_lower())
-	if filename.is_empty():
-		push_warning("RATParser: no RAT file for faction '%s', falling back to is_general" % faction_key)
-		filename = "is_general.json"
+	var key = faction_key.to_lower().strip_edges()
+	var filename = _file_map.get(key)
+	if filename == null:
+		var custom_path = "res://data/rat/" + key + ".json"
+		var custom_file = FileAccess.open(custom_path, FileAccess.READ)
+		if custom_file:
+			filename = key + ".json"
+		else:
+			push_warning("RATParser: no RAT for '%s', falling back to is_general" % key)
+			filename = "is_general.json"
 
 	var path = "res://data/rat/" + filename
 	var file = FileAccess.open(path, FileAccess.READ)
@@ -44,11 +52,28 @@ static func roll_on_table(rat_data: Dictionary, weight_class: String) -> String:
 	if entries.is_empty():
 		return ""
 
-	var roll = randi() % 1000 + 1
+	var die_type = rat_data.get("die_type", "d1000")
+	var roll = _roll_die(die_type)
 	for entry in entries:
 		if roll >= entry.get("min", 1) and roll <= entry.get("max", 1000):
 			return entry.get("chassis", "")
 	return ""
+
+
+static func _roll_die(die_type: String) -> int:
+	match die_type:
+		"2d6":
+			return (randi() % 6 + 1) + (randi() % 6 + 1)
+		"2d10":
+			return (randi() % 10 + 1) + (randi() % 10 + 1)
+		"3d6":
+			return (randi() % 6 + 1) + (randi() % 6 + 1) + (randi() % 6 + 1)
+		"1d20":
+			return randi() % 20 + 1
+		"1d100":
+			return randi() % 100 + 1
+		_:
+			return randi() % 1000 + 1
 
 
 static func pick_weight_class() -> String:
