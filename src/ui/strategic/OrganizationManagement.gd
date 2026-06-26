@@ -249,24 +249,36 @@ func _set_deployed_recursive(unit: OperationalUnit, contract: Contract) -> void:
 
 func _on_create() -> void:
 	Helpers.debug_print("OrgMgmt", "_on_create")
-	var dialog = AcceptDialog.new()
+	var dialog := AcceptDialog.new()
 	dialog.title = tr("Create Organizational Unit")
-	dialog.dialog_text = "Enter a name for the new Organizational Unit:"
+	dialog.dialog_text = ""
+	dialog.min_size = Vector2i(400, 160)
 
-	var line_edit = LineEdit.new()
+	var vbox := VBoxContainer.new()
+	var label := Label.new()
+	label.text = tr("Enter a name for the new Organizational Unit:")
+	vbox.add_child(label)
+	var line_edit := LineEdit.new()
 	line_edit.placeholder_text = tr("Unit name")
-	line_edit.size = Vector2(300, 30)
-	dialog.add_child(line_edit)
+	line_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	vbox.add_child(line_edit)
+	dialog.add_child(vbox)
+
+	var name_result := ""
+	dialog.confirmed.connect(func():
+		name_result = line_edit.text
+	)
 	add_child(dialog)
+	dialog.popup_centered()
+	await dialog.confirmed
 
-	dialog.popup_centered(Vector2i(400, 200))
-	await dialog.visible
-
-	var ou = OrganizationalUnit.new()
-	ou.unit_name = line_edit.text if line_edit.text else "New Unit " + str(GameState.player.organizational_units.size() + 1)
+	dialog.queue_free()
+	if name_result.is_empty():
+		name_result = "New Unit " + str(GameState.player.organizational_units.size() + 1)
+	var ou := OrganizationalUnit.new()
+	ou.unit_name = name_result
 	GameState.player.organizational_units.append(ou)
 	populate_tree()
-	dialog.queue_free()
 
 func _on_remove() -> void:
 	Helpers.debug_print("OrgMgmt", "_on_remove selection_type=%d" % selection_type)
