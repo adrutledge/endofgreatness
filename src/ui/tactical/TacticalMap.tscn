@@ -12,47 +12,102 @@ anchor_bottom = 1.0
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 12
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 12
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
 
-[node name="VBox" type="VBoxContainer" parent="Margin"]
+[node name="HBox" type="HBoxContainer" parent="Margin"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="Title" type="Label" parent="Margin/VBox"]
+[node name="MapPanel" type="Panel" parent="Margin/HBox"]
+size_flags_horizontal = 3
+custom_minimum_size = Vector2i(480, 400)
+
+[node name="HexDraw" type="Control" parent="Margin/HBox/MapPanel"]
+unique_name_in_owner = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 0
+
+[node name="SidePanel" type="VBoxContainer" parent="Margin/HBox"]
+size_flags_horizontal = 1
+custom_minimum_size = Vector2i(260, 0)
+
+[node name="Title" type="Label" parent="Margin/HBox/SidePanel"]
 unique_name_in_owner = true
 text = "Tactical Engagement"
-theme_override_font_sizes/font_size = 20
-size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 18
 horizontal_alignment = 1
 
-[node name="TitleLabel" type="Label" parent="Margin/VBox"]
+[node name="TitleLabel" type="Label" parent="Margin/HBox/SidePanel"]
 unique_name_in_owner = true
 text = ""
-theme_override_font_sizes/font_size = 14
+theme_override_font_sizes/font_size = 13
 horizontal_alignment = 1
 
-[node name="HSeparator" type="HSeparator" parent="Margin/VBox"]
+[node name="HSeparator" type="HSeparator" parent="Margin/HBox/SidePanel"]
 
-[node name="InfoLabel" type="RichTextLabel" parent="Margin/VBox"]
+[node name="ModeSelector" type="HBoxContainer" parent="Margin/HBox/SidePanel"]
+
+[node name="ModeWalk" type="Button" parent="Margin/HBox/SidePanel/ModeSelector"]
+unique_name_in_owner = true
+text = "Walk"
+toggle_mode = true
+button_pressed = true
+size_flags_horizontal = 3
+
+[node name="ModeRun" type="Button" parent="Margin/HBox/SidePanel/ModeSelector"]
+unique_name_in_owner = true
+text = "Run"
+toggle_mode = true
+size_flags_horizontal = 3
+
+[node name="ModeJump" type="Button" parent="Margin/HBox/SidePanel/ModeSelector"]
+unique_name_in_owner = true
+text = "Jump"
+toggle_mode = true
+size_flags_horizontal = 3
+
+[node name="UnitLabel" type="Label" parent="Margin/HBox/SidePanel"]
+text = "Selected Unit:"
+theme_override_font_sizes/font_size = 12
+
+[node name="UnitSelector" type="OptionButton" parent="Margin/HBox/SidePanel"]
+unique_name_in_owner = true
+size_flags_horizontal = 4
+
+[node name="HexInfoLabel" type="Label" parent="Margin/HBox/SidePanel"]
+unique_name_in_owner = true
+text = ""
+theme_override_font_sizes/font_size = 12
+autowrap_mode = 1
+custom_minimum_size = Vector2i(0, 60)
+
+[node name="InfoLabel" type="RichTextLabel" parent="Margin/HBox/SidePanel"]
 unique_name_in_owner = true
 text = ""
 bbcode_enabled = true
 size_flags_vertical = 3
 fit_content = true
 
-[node name="ButtonBar" type="HBoxContainer" parent="Margin/VBox"]
+[node name="ButtonBar" type="HBoxContainer" parent="Margin/HBox/SidePanel"]
 alignment = 1
 
-[node name="ResolveButton" type="Button" parent="Margin/VBox/ButtonBar"]
+[node name="MoveButton" type="Button" parent="Margin/HBox/SidePanel/ButtonBar"]
+unique_name_in_owner = true
+text = "Move"
+disabled = true
+
+[node name="ResolveButton" type="Button" parent="Margin/HBox/SidePanel/ButtonBar"]
 unique_name_in_owner = true
 text = "Auto-Resolve"
 
-[node name="ReturnButton" type="Button" parent="Margin/VBox/ButtonBar"]
+[node name="ReturnButton" type="Button" parent="Margin/HBox/SidePanel/ButtonBar"]
 unique_name_in_owner = true
-text = "Return to StarMap"
+text = "Return"

@@ -1,0 +1,22 @@
+{
+	"version": "1.0",
+	"comment": "Global tactical movement constants.",
+	"turn_cost": 1,
+	"max_elevation_change": 2,
+	"run_elevation_change_cost": 1,
+	"walk_elevation_change_cost": 1,
+	"jump_elevation_change_cost": 0,
+	"walk_mp_multiplier": 1,
+	"run_mp_multiplier": 2,
+	"jump_mp_multiplier": 1,
+	"facing_count": 6,
+	"facing_directions": {
+		"0": {"name": "0°", "dx": 1, "dy": 0},
+		"1": {"name": "60°", "dx": 1, "dy": -1},
+		"2": {"name": "120°", "dx": 0, "dy": -1},
+		"3": {"name": "180°", "dx": -1, "dy": 0},
+		"4": {"name": "240°", "dx": -1, "dy": 1},
+		"5": {"name": "300°", "dx": 0, "dy": 1}
+	},
+	"edition": {"from": "1.0"}
+}

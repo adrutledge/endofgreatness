@@ -1,0 +1,102 @@
+# End of Greatness — AI Session Context
+
+## Project
+BattleTech grand strategy simulation in Godot 4.6.2 (GDScript).
+
+## Quick Reference
+- **Plan:** `ai/plan.md` — versions, phases, design notes
+- **Status:** `ai/status.md` — what's done vs not started
+- **Combat rules:** `docs/tactical_combat_rules.md`
+- **Makefile:** `make test` (full suite), `make test-unit` (fast), `make test-integration` (slow)
+
+## Project Structure
+
+```
+src/
+  core/          — Autoloads: GameState, EventBus, TimeManager, DataManager, ThemeManager,
+                   StarmapCacheGenerator, SaveManager, ModManager
+  data/          — Resource classes: TacticalUnit, Component, Personnel, Contract, Faction,
+                   Strategic/Organizational/OperationalUnit, HexMap, etc.
+  data/validators/ — TM validation per unit type (MechValidator, VehicleValidator, UnitValidator base)
+  systems/       — EconomySystem, ReputationSystem, PersonnelManager, RefitManager,
+                   InventoryManager, UnitTransportManager, InterstellarOrderManager, PlanetaryMarket
+  strategic/     — ContractGenerator, PlanetaryMapGenerator, StrategicUnitGenerator, RATParser,
+                   EventPopupHandler, StrategicEventGenerator
+   tactical/      — CombatResolver, PSRResolver, LOSResolver, AIEvaluator, PhaseManager (stubs),
+                    CritResolver, MegaMekParser, MovementCostResolver, ClusterHitsResolver,
+                    FacingResolver, AerospaceMovementResolver, ControlCheckResolver,
+                    TacticalMovementResolver (Dial's bucket over hex/facing/height),
+                    EffectRegistry (terrain effect handler registry with PSR data)
+  operational/   — OrganizationManager
+  ui/            — CampaignView, HUD, StarMap, MechLab (~1900 lines), LogisticsPanel (~1350 lines),
+                   PersonnelManagement, ContractBoard, PanelManager, ModalLayer, etc.
+  utils/         — Helpers (fmt_money, fmt_number, debug_print)
+tests/           — 10 suites, 138 tests
+mods/            — Self-contained mod directories with strings.json keyed localization
+data/            — factions/, components/, units/, starmap (3174 systems), timeline (9670 events),
+                    skills (169), rat/, rules/ (hit_locations, heat_table, cluster_hits,
+                    physical_attacks, psr_triggers, forced_withdrawal, suspension_factors, combat_config,
+                    terrain_types, terrain_effects, terrain_movement),
+                    config/ (contract_generation, spares_config), unit_types/, traits/, planetary/
+docs/            — tactical_combat_rules.md
+```
+
+## Architecture & Conventions
+- **Autoloads (14):** GameState, EventBus, TimeManager, DataManager, ThemeManager, StarmapCacheGenerator, EconomySystem, ReputationSystem, PersonnelManager, RefitManager, UnitTransportManager, InventoryManager, PanelManager, SaveManager, ModManager
+- **Resource classes** — all data classes extend Resource with class_name (TacticalUnit, Component, Personnel, Contract, Faction, etc.)
+- **Signal Down, Call Up** — systems emit signals, UI calls methods on systems
+- **Lazy Refresh** — `mark_for_rebuild()` + `_ensure_fresh()` dirty-flag pattern
+- **Data-driven first** — JSON over hardcoded logic; component defs, AI personalities, PSR triggers all data
+- **Edition-gated entries** — optional `"edition": {"from": "a", "to": "b"}` on any JSON entry
+- **tr() for UI** — all user-facing strings use `tr()`; content strings use `tr_content()` via ModManager
+- **Zstd compression** — all saves use `.json.zst` with zstd compression
+- **Semver** — MAJOR = V number; exact major+minor match for mod compatibility
+- **EventBus signals (20+):** day_started, week_started, month_started, contract_accepted/completed, etc.
+- **Save forward compatibility** — versioned JSON with sequential `_upgrade_to_v<N>()` functions (one atomic change per version). Saves are self-contained (no invariant game data duplicated).
+- **Mod data in saves** — saves record `mod_versions` (mod_id → version at save time) and `mod_extras` (per-mod opaque data). On load: restore mod_extras, run mod migrations (only if saved version ≠ current version), then restore core state. Mod migrations receive the mod's own extra data and return transformed data — they cannot modify core save fields. Mods access persistent data via `SaveManager.get_mod_data(mod_id)` / `set_mod_data(mod_id, data)`. Register migrations via `ModManager.register_migration(mod_id, callable, from_version, to_version)`.
+- **NPC persistence** — archetype reference + seed + limited flags in saves, not full data duplication
+- **MegaMekParser** — parses .mtf and .blk unit files into TacticalUnit resources
+- **TM validation** — per-type validators (MechValidator, VehicleValidator) registered in TacticalUnitValidator. Extensible for aerospace/dropship/warship via register_validator().
+- **Crit effects** — data-driven per component: crit_effect_type (weapon/ammo/actuator/gyro/engine/heat_sink), explodes_on_crit, crit_effect_data. Handlers registered in CritEffectRegistry.
+- **UI stack** — PanelManager manages overlay panels (personnel, event_log, mech_lab, logistics, contract_board, org_mgmt). ModalLayer handles dialogs FIFO with pause support.
+- **Deferred bugs:** HUD BillsLabel not found via $TopBar/Finances/BillsLabel — use two-step get_node.
+
+## Current State (V1 — Basic Gameplay Loop)
+- **Phases 0-3:** Complete (Foundation, Core Systems, Data, Strategic Layer)
+- **Phases 4-6:** Not started (Operational, Rules Engine, Tactical)
+- **Save system:** Complete (versioned serialization, migrations, auto-save, full UI)
+- **Mod system:** Complete (self-contained mod dirs, keyed localization, version checking)
+- **AI/tactical design:** Comprehensive, stubs implemented for CombatResolver, PSRResolver, AIEvaluator, PhaseManager
+- **Advanced tech prep:** Component JSON fields documented (slot_flexible, weight_multiplier, etc.), not implemented
+- **Tests:** 148 passing across 10 suites: MTF parser (13), market (22), strat unit gen (2), starmap cache (5), plan map gen (25), data formats (48), save system (9), mod system (9), tactical integration (6), AI evaluator (9)
+- **Make targets:** test (full), test-unit (100 fast), test-integration (38 slow), lint (gdlint)
+
+## Useful Commands
+```bash
+make test        # Full test suite
+make test-unit   # Fast tests only (100 tests)
+make lint        # GDScript style check
+make bootstrap   # Regenerate .godot cache
+```
+
+## Best Practices
+- **Flag prefixes** — use consistently for deferred work: `Flag for rules verification:`, `Flag for later:`, `Deferred:`. Keeps them searchable and prevents treating them as implemented.
+- **Save migration markers** — when adding a new field to a Resource class (Personnel, TacticalUnit, etc.), add a `# TODO: save migration` comment. Prevents shipping features that silently break save compatibility.
+- **One change per file edit** — keep edits focused. If fixing a typo in one file and adding a feature in another, do them separately. Reduces AI confusion from mixed-context diffs.
+- **Signal lifecycle** — connect signals in `_ready()`, disconnect in `_exit_tree()`. Prevents signals firing into freed nodes when scenes unload.
+- **Assertions at boundaries** — use `assert()` at public function entry points to catch programmer errors early (wrong type, null where disallowed, impossible state). Fail fast, not silent.
+- **Null-guard public functions** — check parameters and autoload references at public function boundaries with clear error messages (`printerr` or `push_error`), not silent default returns.
+- **Data validation gating** — three modes: `--opencode-debug` (startup + debug menu button), `--opencode-validate-data` (standalone CI mode), `--opencode-validate-in-game` (live modder mode, F5 keybind). All run `validate_data()` on all loaded data files.
+
+## File Roles & Maintenance Rules
+- **Plan (`plan.md`):** source of truth for design decisions, version targets, architecture notes. Update when a decision is made.
+- **Status (`status.md`):** source of truth for implementation state. Update when something is completed or a phase advances.
+- **Context (`context.md`):** session bootstrap cache. Keep concise — point to plan/status for depth rather than duplicating. Add a decision here only when it's critical for the AI to know at session start.
+- **Rule:** when you implement something, update status.md. When you decide something, update plan.md. If it changes what the AI needs to know first, update context.md too.
+- **Data file constraint:** creating a new data file type or changing the format of an existing one requires: (1) positive + negative tests in `test_data_formats.gd` covering structure and edge cases, (2) a table entry or note in `docs/tactical_combat_rules.md` (or the appropriate docs file), (3) an update to the data directory map in this file. This ensures the data-driven system stays tested and documented as it grows.
+
+## Key Design Decisions to Preserve
+- pilot_skill and command_skill are separate — both influence AI personality. pilot_skill affects gunnery/piloting/heat/ammo/role. command_skill affects focus fire/initiative sinking/strategic depth/posture/ally support.
+- Strategic_depth: 0/1/2 based on command_skill (lookahead for positioning)
+- Heat dissipation is the only renewable resource — better pilots manage the curve
+

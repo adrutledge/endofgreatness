@@ -41,12 +41,14 @@ func _refresh(_dummy = null) -> void:
 func _refresh_finances() -> void:
 	var topbar = $TopBar
 	var balance_label = topbar.get_node("Finances/BalanceLabel")
-	var bills_label = topbar.get_node("Finances").get_node("BillsLabel")
+	var finances = topbar.get_node("Finances")
+	var bills_label = finances.get_node("BillsLabel") if finances and finances.has_node("BillsLabel") else null
 	var balance = EconomySystem.get_balance() if EconomySystem else 0
 	balance_label.text = tr("C-Bills: %s") % Helpers.fmt_money(balance)
 	var burn = EconomySystem.get_daily_burn_rate() if EconomySystem else {}
 	var daily = burn.get("total", 0)
-	bills_label.text = tr("Daily Burn: %s/day") % Helpers.fmt_money(daily)
+	if bills_label:
+		bills_label.text = tr("Daily Burn: %s/day") % Helpers.fmt_money(daily)
 
 
 func _refresh_contracts() -> void:

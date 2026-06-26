@@ -1,0 +1,72 @@
+{
+	"version": "1.0",
+	"comment": "Reference documentation for terrain effect tags. Each effect maps to a registered handler in EffectRegistry.",
+	"effects": [
+		{
+			"id": "cover_light",
+			"description": "Provides light cover bonus (+1 to-hit for incoming fire)",
+			"handler": "cover_handler",
+			"applies_to": ["combat"]
+		},
+		{
+			"id": "cover_heavy",
+			"description": "Provides heavy cover bonus (+2 to-hit for incoming fire)",
+			"handler": "cover_handler",
+			"applies_to": ["combat"]
+		},
+		{
+			"id": "water_terrain",
+			"description": "Marks this terrain as water; depth-dependent elevation and run restrictions apply",
+			"handler": "water_handler",
+			"applies_to": ["movement"]
+		},
+		{
+			"id": "risk_psr_water",
+			"description": "Entering water at this depth triggers a Piloting Skill Roll",
+			"handler": "psr_water_handler",
+			"applies_to": ["movement", "psr"]
+		},
+		{
+			"id": "risk_psr_rough",
+			"description": "Entering rough terrain triggers a Piloting Skill Roll",
+			"handler": "psr_rough_handler",
+			"applies_to": ["movement", "psr"]
+		},
+		{
+			"id": "risk_psr_sand",
+			"description": "Entering sand triggers a Piloting Skill Roll",
+			"handler": "psr_sand_handler",
+			"applies_to": ["movement", "psr"]
+		},
+		{
+			"id": "risk_psr_snow",
+			"description": "Entering heavy snow triggers a Piloting Skill Roll",
+			"handler": "psr_snow_handler",
+			"applies_to": ["movement", "psr"]
+		},
+		{
+			"id": "risk_psr_swamp",
+			"description": "Entering swamp triggers a Piloting Skill Roll",
+			"handler": "psr_swamp_handler",
+			"applies_to": ["movement", "psr"]
+		},
+		{
+			"id": "surface_slippery",
+			"description": "Surface is slippery; multiplies turn cost by 2",
+			"handler": "slippery_surface_handler",
+			"applies_to": ["movement"]
+		},
+		{
+			"id": "skid_risk_on_run_turn",
+			"description": "Turning while running on this surface risks a skid PSR",
+			"handler": "skid_risk_handler",
+			"applies_to": ["movement", "psr"]
+		},
+		{
+			"id": "bog_down_chance",
+			"description": "Unit may bog down when entering or remaining in this terrain",
+			"handler": "bog_down_handler",
+			"applies_to": ["movement"]
+		}
+	]
+}

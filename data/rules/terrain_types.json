@@ -1,0 +1,112 @@
+{
+	"version": "1.0",
+	"comment": "Tactical terrain movement costs per movement mode. Effects tag system for extensible behavior.",
+	"terrain_types": [
+		{
+			"id": "clear",
+			"name": "Clear",
+			"description": "Open ground, no movement penalty",
+			"walk_cost": 1,
+			"run_cost": 1,
+			"jump_cost": 1,
+			"effects": [],
+			"edition": {"from": "1.0"}
+		},
+		{
+			"id": "light_woods",
+			"name": "Light Woods",
+			"description": "Scattered trees, light cover",
+			"walk_cost": 2,
+			"run_cost": 2,
+			"jump_cost": 1,
+			"effects": ["cover_light"],
+			"edition": {"from": "1.0"}
+		},
+		{
+			"id": "heavy_woods",
+			"name": "Heavy Woods",
+			"description": "Dense forest, heavy cover",
+			"walk_cost": 3,
+			"run_cost": 3,
+			"jump_cost": 2,
+			"effects": ["cover_heavy"],
+			"edition": {"from": "1.0"}
+		},
+		{
+			"id": "water",
+			"name": "Water",
+			"description": "Water terrain with variable depth. Run prohibited at depth > 0.",
+			"walk_cost": 1,
+			"run_cost": 1,
+			"jump_cost": 1,
+			"water_depths": [
+				{"depth": 0, "walk_cost_add": 0, "run_allowed": true, "elevation_change": 0, "effects": []},
+				{"depth": 1, "walk_cost_add": 1, "run_allowed": false, "elevation_change": 1, "effects": ["risk_psr_water"]},
+				{"depth": 2, "walk_cost_add": 1, "run_allowed": false, "elevation_change": 2, "effects": ["risk_psr_water"]},
+				{"depth": 3, "walk_cost_add": 1, "run_allowed": false, "elevation_change": 3, "effects": ["risk_psr_water"]}
+			],
+			"effects": ["water_terrain"],
+			"edition": {"from": "1.0"}
+		},
+		{
+			"id": "paved",
+			"name": "Paved",
+			"description": "Roads, pavement, hard surface",
+			"walk_cost": 1,
+			"run_cost": 1,
+			"jump_cost": 1,
+			"effects": ["skid_risk_on_run_turn"],
+			"edition": {"from": "1.0"}
+		},
+		{
+			"id": "rough",
+			"name": "Rough",
+			"description": "Rocky or broken ground",
+			"walk_cost": 2,
+			"run_cost": 2,
+			"jump_cost": 1,
+			"effects": ["risk_psr_rough"],
+			"edition": {"from": "1.0"}
+		},
+		{
+			"id": "sand",
+			"name": "Sand",
+			"description": "Loose sand, soft ground",
+			"walk_cost": 2,
+			"run_cost": 2,
+			"jump_cost": 1,
+			"effects": ["risk_psr_sand"],
+			"edition": {"from": "1.0"}
+		},
+		{
+			"id": "ice",
+			"name": "Ice",
+			"description": "Ice sheet, very slippery",
+			"walk_cost": 2,
+			"run_cost": 2,
+			"jump_cost": 1,
+			"effects": ["surface_slippery", "skid_risk_on_run_turn"],
+			"edition": {"from": "1.0"}
+		},
+		{
+			"id": "heavy_snow",
+			"name": "Heavy Snow",
+			"description": "Deep snow, impairs movement",
+			"walk_cost": 2,
+			"run_cost": 2,
+			"jump_cost": 1,
+			"effects": ["risk_psr_snow"],
+			"edition": {"from": "1.0"}
+		},
+		{
+			"id": "swamp",
+			"name": "Swamp",
+			"description": "Boggy marsh, risk of bogging down",
+			"walk_cost": 3,
+			"run_cost": 3,
+			"jump_cost": 2,
+			"effects": ["bog_down_chance", "risk_psr_swamp"],
+			"edition": {"from": "1.0"}
+		}
+	]
+}

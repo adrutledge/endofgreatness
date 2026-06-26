@@ -1,96 +1,128 @@
+class_name MovementCostResolver
 extends Node
 
 ## Resolves movement costs and restrictions per unit type and terrain.
 ##
-## Each unit type (mech, vehicle with motive type, aerospace) has different
-## terrain costs and restrictions defined in data/unit_types/*.json and
-## data/rules/terrain_movement.json.
+## Data-driven: reads terrain costs from data/rules/terrain_types.json and
+## global constants from data/rules/terrain_movement.json.
 ##
-## Ground units pay MP per hex entered based on terrain type.
-## Aerospace units use thrust-based movement (different resolver).
+## Ground units pay MP per hex entered based on terrain type + movement mode.
+## Aerospace units use thrust-based movement (separate resolver).
 
 const HexMap = preload("res://src/data/HexMap.gd")
 
+static var _terrain_cache: Array = []
+static var _movement_config: Dictionary = {}
 
-## Returns the MP cost to enter a given hex.
-##
+
+static func _ensure_loaded() -> void:
+	if not _terrain_cache.is_empty():
+		return
+	var file = FileAccess.open("res://data/rules/terrain_types.json", FileAccess.READ)
+	if file:
+		var j = JSON.new()
+		if j.parse(file.get_as_text()) == OK:
+			_terrain_cache = j.data.get("terrain_types", [])
+
+	var cfg_file = FileAccess.open("res://data/rules/terrain_movement.json", FileAccess.READ)
+	if cfg_file:
+		var j = JSON.new()
+		if j.parse(cfg_file.get_as_text()) == OK:
+			_movement_config = j.data
+
+
+## Returns the terrain definition dictionary for a terrain string ID.
+static func get_terrain_def(terrain_id: String) -> Dictionary:
+	_ensure_loaded()
+	for t in _terrain_cache:
+		if t.get("id") == terrain_id:
+			return t
+	return {}
+
+
+## Resolves MP cost to enter a hex for mechs.
 ## Parameters:
-##   unit_type: Enums.UnitType (MECH, VEHICLE, AEROSPACE, etc.)
-##   motion_type: String for vehicles — "tracked", "wheeled", "hover", "vtol", "wi_ge"
-##   terrain: HexMap.Terrain value
-##   current_mp: unit's remaining MP this phase
-##   has_motive_damage: true if the vehicle has sustained motive damage
-## Returns Dictionary: {can_enter (bool), mp_cost (int), blocked_by (String)}
-func resolve(unit_type: int, motion_type: String, terrain: int, current_mp: int = 99,
-		has_motive_damage: bool = false) -> Dictionary:
+##   terrain_id: String terrain ID from terrain_types.json
+##   mode: String — "walk", "run", or "jump"
+##   current_mp: unit's remaining MP
+##   elevation_change: height difference across the edge being crossed (0, 1, or 2)
+##   water_depth: int — depth level for water hexes (0 if not water)
+## Returns Dictionary: {can_enter (bool), mp_cost (int), blocked_by (String), effects (Array), risks (Dictionary)}
+func resolve(terrain_id: String, mode: String, current_mp: int = 99,
+		elevation_change: int = 0, water_depth: int = 0) -> Dictionary:
+	_ensure_loaded()
+	var def = get_terrain_def(terrain_id)
+	if def.is_empty():
+		return {"can_enter": false, "mp_cost": 999, "blocked_by": "unknown_terrain", "effects": [], "risks": {}}
 
-	if unit_type == Enums.UnitType.VEHICLE:
-		return _resolve_vehicle(motion_type, terrain, current_mp, has_motive_damage)
+	var base_cost: int
+	match mode:
+		"walk": base_cost = def.get("walk_cost", 1)
+		"run": base_cost = def.get("run_cost", 1)
+		"jump": base_cost = def.get("jump_cost", 1)
+		_: base_cost = 1
 
-	if unit_type == Enums.UnitType.MECH:
-		return _resolve_mech(terrain, current_mp)
+	var total_cost := base_cost
+	var blocked := ""
+	var effects: Array = def.get("effects", []).duplicate()
 
-	return {"can_enter": true, "mp_cost": 1, "blocked_by": ""}
+	if terrain_id == "water" and water_depth > 0:
+		var depths: Array = def.get("water_depths", [])
+		var depth_entry: Dictionary = {}
+		for d in depths:
+			if d.get("depth") == water_depth:
+				depth_entry = d
+				break
+		if not depth_entry.is_empty():
+			total_cost += depth_entry.get("walk_cost_add", 0)
+			if mode == "run" and not depth_entry.get("run_allowed", true):
+				blocked = "no_run_water"
+			for de in depth_entry.get("effects", []):
+				if de not in effects:
+					effects.append(de)
+		else:
+			blocked = "unknown_water_depth"
 
+	if mode == "run" and terrain_id == "water" and water_depth > 0:
+		blocked = "no_run_water"
 
-func _resolve_mech(terrain: int, current_mp: int) -> Dictionary:
-	var cost = 1
-	match terrain:
-		HexMap.Terrain.PLAINS: cost = 1
-		HexMap.Terrain.FOREST: cost = 2
-		HexMap.Terrain.MOUNTAIN: cost = 3
-		HexMap.Terrain.WATER: cost = 2
-		HexMap.Terrain.URBAN: cost = 1
-		HexMap.Terrain.DESERT: cost = 1
-		HexMap.Terrain.ROUGH: cost = 2
+	if elevation_change > 0 and mode != "jump":
+		var elev_cost = _movement_config.get("walk_elevation_change_cost", 1)
+		if mode == "run":
+			elev_cost = _movement_config.get("run_elevation_change_cost", 1)
+		var max_elev = _movement_config.get("max_elevation_change", 2)
+		if elevation_change > max_elev:
+			blocked = "elevation_too_steep"
+		else:
+			total_cost += elev_cost * elevation_change
 
-	if current_mp < cost:
-		return {"can_enter": false, "mp_cost": cost, "blocked_by": "insufficient_mp"}
-	return {"can_enter": true, "mp_cost": cost, "blocked_by": ""}
+	var risks = EffectRegistry.evaluate(effects, mode, {"mode": mode})
 
+	if risks.get("blocked", false):
+		blocked = risks.get("blocked_by", "effect_blocked")
 
-func _resolve_vehicle(motion_type: String, terrain: int, current_mp: int, has_motive_damage: bool) -> Dictionary:
-	var cost_mult = 1
-	var blocked = ""
-
-	match motion_type.to_lower():
-		"hover":
-			match terrain:
-				HexMap.Terrain.WATER: cost_mult = 1
-				HexMap.Terrain.PLAINS: cost_mult = 1
-				HexMap.Terrain.DESERT: cost_mult = 1
-				HexMap.Terrain.URBAN: cost_mult = 2
-				HexMap.Terrain.FOREST: cost_mult = 3
-				_: blocked = "impassable"
-
-		"wheeled":
-			match terrain:
-				HexMap.Terrain.PLAINS: cost_mult = 1
-				HexMap.Terrain.URBAN: cost_mult = 1
-				HexMap.Terrain.DESERT: cost_mult = 2
-				HexMap.Terrain.FOREST: cost_mult = 3
-				HexMap.Terrain.ROUGH: cost_mult = 4
-				_: blocked = "impassable"
-
-		"tracked":
-			match terrain:
-				HexMap.Terrain.PLAINS: cost_mult = 1
-				HexMap.Terrain.URBAN: cost_mult = 1
-				HexMap.Terrain.DESERT: cost_mult = 1
-				HexMap.Terrain.FOREST: cost_mult = 2
-				HexMap.Terrain.ROUGH: cost_mult = 2
-				HexMap.Terrain.WATER: cost_mult = 3
-				_: blocked = "impassable"
-
-		_:
-			cost_mult = 2
+	total_cost += risks.get("cost_mod", 0)
 
 	if not blocked.is_empty():
-		return {"can_enter": false, "mp_cost": 999, "blocked_by": blocked}
+		return {"can_enter": false, "mp_cost": total_cost, "blocked_by": blocked, "effects": effects, "risks": risks}
+	if current_mp < total_cost:
+		return {"can_enter": false, "mp_cost": total_cost, "blocked_by": "insufficient_mp", "effects": effects, "risks": risks}
+	return {"can_enter": true, "mp_cost": total_cost, "blocked_by": "", "effects": effects, "risks": risks}
 
-	var motive_penalty = 2 if has_motive_damage else 0
-	var cost = max(1, cost_mult + motive_penalty)
 
-	if current_mp < cost:
-		return {"can_enter": false, "mp_cost": cost, "blocked_by": "insufficient_mp"}
-	return {"can_enter": true, "mp_cost": cost, "blocked_by": ""}
+## Legacy compatibility: resolve using HexMap.Terrain enum.
+func resolve_from_enum(terrain_enum: int, mode: String, current_mp: int = 99) -> Dictionary:
+	var id := _enum_to_id(terrain_enum)
+	return resolve(id, mode, current_mp)
+
+
+static func _enum_to_id(e: int) -> String:
+	match e:
+		HexMap.Terrain.PLAINS: return "clear"
+		HexMap.Terrain.FOREST: return "light_woods"
+		HexMap.Terrain.MOUNTAIN: return "rough"
+		HexMap.Terrain.WATER: return "water"
+		HexMap.Terrain.URBAN: return "paved"
+		HexMap.Terrain.DESERT: return "sand"
+		HexMap.Terrain.ROUGH: return "rough"
+		_: return "clear"

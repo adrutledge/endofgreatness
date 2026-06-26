@@ -33,9 +33,9 @@ PLAN_MAP_GEN_STAMP := .tested_plan_map_gen
 SUCKIT_SRC := tools/suckit/parse_suckit.py
 
 
-.PHONY: all build run test lint export clean test-gen suckit
+.PHONY: all build run test test-unit test-integration lint check export clean test-gen suckit
 
-all: lint test build
+all: test
 
 build:
 	$(GODOT) --headless --export-release "$(EXPORT_PRESET)" $(EXPORT_DIR)/
@@ -107,12 +107,82 @@ $(DATA_FORMAT_STAMP): $(DATA_FORMAT_TEST)
 	echo "[Data Formats] $$r"
 	@touch $(DATA_FORMAT_STAMP)
 
+SAVE_SYSTEM_TEST := tests/test_save_system.gd
+SAVE_SYSTEM_STAMP := .tested_save_system
+
+$(SAVE_SYSTEM_STAMP): $(SAVE_SYSTEM_TEST)
+	@r=$$($(GODOT) --headless --script $(SAVE_SYSTEM_TEST) 2>&1 | grep "Results"); \
+	echo "[Save System] $$r"
+	@touch $(SAVE_SYSTEM_STAMP)
+
+MOD_SYSTEM_TEST := tests/test_mod_system.gd
+MOD_SYSTEM_STAMP := .tested_mod_system
+
+$(MOD_SYSTEM_STAMP): $(MOD_SYSTEM_TEST)
+	@r=$$($(GODOT) --headless --script $(MOD_SYSTEM_TEST) 2>&1 | grep "Results"); \
+	echo "[Mod System] $$r"
+	@touch $(MOD_SYSTEM_STAMP)
+
+TACTICAL_INTEGRATION_TEST := tests/test_tactical_integration.gd
+TACTICAL_INTEGRATION_STAMP := .tested_tactical_integration
+
+$(TACTICAL_INTEGRATION_STAMP): $(TACTICAL_INTEGRATION_TEST)
+	@r=$$($(GODOT) --headless --script $(TACTICAL_INTEGRATION_TEST) 2>&1 | grep "Results"); \
+	echo "[Tactical Integration] $$r"
+	@touch $(TACTICAL_INTEGRATION_STAMP)
+
+AI_EVALUATOR_TEST := tests/test_ai_evaluator.gd
+AI_EVALUATOR_STAMP := .tested_ai_evaluator
+
+PARSE_CHECK_TEST := tests/test_parse_check.gd
+PARSE_CHECK_STAMP := .tested_parse
+
+$(AI_EVALUATOR_STAMP): $(AI_EVALUATOR_TEST)
+	@r=$$($(GODOT) --headless --script $(AI_EVALUATOR_TEST) 2>&1 | grep "Results"); \
+	echo "[AI Evaluator] $$r"
+	@touch $(AI_EVALUATOR_STAMP)
+
 ## Generate .godot script class cache so class_name types are available before autoloads compile.
 bootstrap:
 	@$(GODOT) --editor --quit --path . 2>&1 | grep -v "^ERROR" | grep -v "^WARNING" | grep -v "^  at" | grep -v "resources" | grep -v "^$$" || true
 	@echo ".godot cache generated"
 
-test: bootstrap data/systems_index.json data/timeline_events.json $(MTF_STAMP) $(MARKET_STAMP) $(STRAT_GEN_STAMP) $(STARMAP_CACHE_STAMP) $(PLAN_MAP_GEN_STAMP) $(DATA_FORMAT_STAMP)
+## Fast parse check — validates all .gd files compile without errors.
+## Uses godot --editor --quit (same mechanism as bootstrap) but reports
+## parse errors instead of suppressing them.
+## Catches parse errors and type inference failures in ~10-15s.
+.PHONY: check
+check:
+	@log=$$($(GODOT) --editor --quit --path . 2>&1); \
+	parse_errors=$$(echo "$$log" | grep -cE "Parse Error" || true); \
+	load_errors=$$(echo "$$log" | grep -cE "Failed to load script.*Parse error" || true); \
+	total=$$((parse_errors + load_errors)); \
+	if [ "$$total" -gt 0 ]; then \
+		echo "$$log" | grep -E "(Parse Error|Failed to load script)" | grep -v "^WARNING" | grep -v "^  at" | head -20; \
+		echo "[Check] $$total parse error(s) found"; \
+		exit 1; \
+	else \
+		echo "[Check] All scripts parse OK"; \
+	fi
+
+lint:
+	@count=$$($(GDLINT) src/ 2>&1 | grep -cE "(Error|Warning)" || true); \
+	echo "[Lint] $$count issues found"; \
+	if [ "$$count" -gt 0 ]; then \
+		$(GDLINT) src/ 2>&1; \
+	fi
+
+# Fast unit tests — run during development
+UNIT_TESTS := $(MTF_STAMP) $(MARKET_STAMP) $(DATA_FORMAT_STAMP) $(SAVE_SYSTEM_STAMP) $(MOD_SYSTEM_STAMP) $(AI_EVALUATOR_STAMP)
+
+# Slower integration/validation tests — run before merge
+INTEGRATION_TESTS := $(STRAT_GEN_STAMP) $(STARMAP_CACHE_STAMP) $(PLAN_MAP_GEN_STAMP) $(TACTICAL_INTEGRATION_STAMP)
+
+test: bootstrap data/systems_index.json data/timeline_events.json $(UNIT_TESTS) $(INTEGRATION_TESTS)
+
+test-unit: bootstrap data/systems_index.json data/timeline_events.json $(UNIT_TESTS)
+
+test-integration: bootstrap data/systems_index.json data/timeline_events.json $(INTEGRATION_TESTS)
 
 clean:
 	rm -rf $(EXPORT_DIR)/

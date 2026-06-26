@@ -200,13 +200,16 @@ func _deserialize_hex_map(data: Dictionary) -> HexMap:
 		h.has_road = entry.get("has_road", false)
 		h.has_river = entry.get("has_river", false)
 	return hm
+
+
+func _init_deployed_units() -> void:
 	deployed_units.clear()
 	unit_selector.clear()
 	if not contract:
 		return
 
 	for ou in GameState.player.organizational_units:
-		if ou.contract_id == contract.get_instance_id() and ou.is_deployed:
+		if ou.contract_id == str(contract.get_instance_id()) and ou.is_deployed:
 			_collect_sub_units(ou)
 			break
 

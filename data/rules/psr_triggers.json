@@ -1,0 +1,83 @@
+{
+	"comment": "PSR trigger definitions. Movement triggers reference terrain effect tags from terrain_effects.json.",
+	"version": "1.1",
+	"triggers": [
+		{
+			"id": "skid_paved_turn",
+			"condition": "run_after_turn_on_paved",
+			"modifier": 1,
+			"tags": ["skid"],
+			"on_failure": {"ends_movement": true, "cause": "skid"}
+		},
+		{
+			"id": "jump_damaged_actuator",
+			"condition": "jump_landing_with_damaged_leg_actuator",
+			"modifier": 1,
+			"tags": ["jump"],
+			"on_failure": {"fall": true}
+		},
+		{
+			"id": "low_gravity_over_mp",
+			"condition": "movement_exceeds_1g_mp",
+			"modifier": 1,
+			"tags": ["gravity"],
+			"on_failure": {"damage_per_leg": 1}
+		},
+		{
+			"id": "charging",
+			"condition": "charge_declared",
+			"modifier": 0,
+			"tags": ["physical"],
+			"on_failure": {"fall": true, "ends_movement": true}
+		},
+		{
+			"id": "dfa_landing",
+			"condition": "dfa_landing",
+			"modifier": -2,
+			"tags": ["physical", "jump"],
+			"on_failure": {"damage_per_leg": 2, "fall": true}
+		},
+		{
+			"id": "rough_terrain_entry",
+			"condition": "rough_terrain",
+			"modifier": 0,
+			"tags": ["movement", "terrain"],
+			"on_failure": {"fall": false, "ends_movement": false, "stumble": true}
+		},
+		{
+			"id": "water_entry",
+			"condition": "water_entry",
+			"modifier": -1,
+			"tags": ["movement", "terrain"],
+			"on_failure": {"fall": false, "stumble": true}
+		},
+		{
+			"id": "sand_entry",
+			"condition": "sand_entry",
+			"modifier": 1,
+			"tags": ["movement", "terrain"],
+			"on_failure": {"fall": false, "stumble": true}
+		},
+		{
+			"id": "snow_entry",
+			"condition": "snow_entry",
+			"modifier": 1,
+			"tags": ["movement", "terrain"],
+			"on_failure": {"fall": false, "stumble": true}
+		},
+		{
+			"id": "swamp_entry",
+			"condition": "swamp_entry",
+			"modifier": 1,
+			"tags": ["movement", "terrain"],
+			"on_failure": {"bog_down": true, "ends_movement": true}
+		},
+		{
+			"id": "skid_ice_run",
+			"condition": "run_on_ice",
+			"modifier": 2,
+			"tags": ["movement", "skid"],
+			"on_failure": {"ends_movement": true, "cause": "skid"}
+		}
+	]
+}
