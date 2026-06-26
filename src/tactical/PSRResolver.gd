@@ -1,53 +1,119 @@
+class_name PSRResolver
 extends Node
 
-## Resolves Piloting Skill Rolls (PSRs) for mechs and ground vehicles.
+## Evaluates and resolves Piloting Skill Rolls.
 ##
-## A PSR is triggered when:
-##   - 20+ damage taken in a single phase (cumulative +1 per 20 damage)
-##   - Entering certain terrain (depth 1+ water, rubble)
-##   - Performing certain maneuvers (DFA, charge, sprint on rough)
-##   - Taking leg or gyro damage
-##
-## Target number = piloting skill + terrain modifier + damage modifier + maneuver modifier.
-## Roll 2d6; if result >= target, the PSR is passed. On failure, the unit falls
-## (mechs take fall damage per ton; vehicles may be immobilized).
+## Per-engagement instance. Loads PSR trigger definitions from data,
+## evaluates conditions against the current game state, and resolves
+## failures with their defined consequences.
+
+var _triggers: Array = []
+var _loaded: bool = false
 
 
-## Returns a dict with: passed (bool), fall_damage (int, 0 if passed),
-## fall_direction (String), description (String).
-##
-## Parameters:
-##   piloting_skill: 1-10 (lower is better)
-##   damage_this_phase: total damage taken in the current phase
-##   terrain_mod: modifier from terrain being entered (0-3)
-##   maneuver_mod: modifier from maneuver attempted (0-4)
-##   has_leg_damage: true if a leg is damaged/destroyed (+1 penalty)
-##   has_gyro_damage: true if gyro is damaged (+2 penalty)
-##   tonnage: unit tonnage (for fall damage calculation)
-##   roll: optional pre-rolled 2d6 value
-func resolve(piloting_skill: int, damage_this_phase: int = 0, terrain_mod: int = 0,
-		maneuver_mod: int = 0, has_leg_damage: bool = false, has_gyro_damage: bool = false,
-		tonnage: float = 20.0, roll: int = -1) -> Dictionary:
+func _ready() -> void:
+	_load_triggers()
 
-	var damage_penalty = damage_this_phase / 20
-	var leg_penalty = 1 if has_leg_damage else 0
-	var gyro_penalty = 2 if has_gyro_damage else 0
 
-	var target = piloting_skill + terrain_mod + maneuver_mod + damage_penalty + leg_penalty + gyro_penalty
+func _load_triggers() -> void:
+	var file = FileAccess.open("res://data/rules/psr_triggers.json", FileAccess.READ)
+	if not file:
+		return
+	var j = JSON.new()
+	if j.parse(file.get_as_text()) != OK:
+		return
+	_triggers = j.data.get("triggers", [])
+	_loaded = true
 
-	var rng = RandomNumberGenerator.new()
-	rng.randomize()
-	var r = roll if roll >= 2 else rng.randi_range(2, 12)
 
-	var passed = r >= target
-	var fall_damage = 0
-	if not passed:
-		fall_damage = int(tonnage / 10) + rng.randi_range(0, 2)
+## Returns the active trigger list filtered by enabled tags.
+func get_active_triggers(enabled_tags: Array = []) -> Array:
+	if not _loaded:
+		return []
+	if enabled_tags.is_empty():
+		return _triggers
+	var result: Array = []
+	for t in _triggers:
+		var tags: Array = t.get("tags", [])
+		var keep = false
+		for tag in tags:
+			if tag in enabled_tags:
+				keep = true
+				break
+		if keep:
+			result.append(t)
+	return result
 
-	return {
-		"passed": passed,
-		"fall_damage": fall_damage if not passed else 0,
-		"roll": r,
-		"target": target,
-		"description": "PSR %d vs %d: %s" % [r, target, "passed" if passed else "failed (fall %d dmg)" % fall_damage],
+
+## Evaluates whether a PSR is triggered for the given condition key.
+## Returns the trigger dict if triggered, null otherwise.
+func check_trigger(condition_key: String, context: Dictionary = {}) -> Dictionary:
+	for t in _triggers:
+		if t.get("condition", "") == condition_key:
+			return t.duplicate()
+	return {}
+
+
+## Resolves a PSR. Returns Dictionary with success, roll, modifier, effects.
+func resolve_psr(piloting_skill: int, modifier: int = 0) -> Dictionary:
+	var tn = piloting_skill + modifier
+	var roll = randi() % 6 + randi() % 6 + 2
+	var success = roll >= tn
+	var result = {
+		"success": success,
+		"roll": roll,
+		"tn": tn,
+		"modifier": modifier,
+		"pilot_skill": piloting_skill
 	}
+	if Helpers.debug:
+		var eb = Engine.get_main_loop().root.get_node_or_null("EventBus") if Engine.get_main_loop() else null
+		if eb:
+			eb.emit_rules_check("psr", {
+				"pilot_skill": piloting_skill,
+				"modifier": modifier,
+			}, result)
+	return result
+
+
+## Evaluates all active triggers for a given movement/fire action.
+## Returns Array of trigger results including PSR outcomes.
+func evaluate_movement(movement_type: String, path: Array, unit_state: Dictionary,
+		enabled_tags: Array = []) -> Array:
+	var results: Array = []
+	var active = get_active_triggers(enabled_tags)
+	for trigger in active:
+		var condition = trigger.get("condition", "")
+		var match = _evaluate_condition(condition, movement_type, path, unit_state)
+		if match:
+			var psr_result = resolve_psr(
+				unit_state.get("piloting_skill", 5),
+				trigger.get("modifier", 0)
+			)
+			results.append({
+				"trigger": trigger,
+				"psr": psr_result,
+				"failure_effects": trigger.get("on_failure", {})
+			})
+	return results
+
+
+func _evaluate_condition(condition: String, movement_type: String,
+		path: Array, unit_state: Dictionary) -> bool:
+	match condition:
+		"run_after_turn_on_paved":
+			return movement_type == "run" and _path_has_turn_on_paved(path)
+		"jump_landing_with_damaged_leg_actuator":
+			return movement_type == "jump" and unit_state.get("damaged_leg_actuator", false)
+		"movement_exceeds_1g_mp":
+			return unit_state.get("gravity_multiplier", 1.0) < 1.0 and \
+				unit_state.get("mp_used", 0) > unit_state.get("walk_mp_1g", 0)
+		"charge_declared":
+			return movement_type == "charge"
+		"dfa_landing":
+			return movement_type == "dfa"
+	return false
+
+
+func _path_has_turn_on_paved(path: Array) -> bool:
+	return false  # stub: path analysis pending

@@ -357,7 +357,7 @@ func _on_hire_selected() -> void:
 
 func _on_fire() -> void:
 	if selected_personnel:
-		PersonnelManager.fire_personnel(selected_personnel)
+		PersonnelManager.remove_personnel(selected_personnel, "fired", {})
 		_clear_details()
 		populate_roster()
 

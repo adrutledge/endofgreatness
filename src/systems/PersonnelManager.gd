@@ -80,10 +80,11 @@ func get_unit_repair_budget(unit: TacticalUnit) -> int:
 
 func hire_personnel(personnel: Personnel) -> void:
 	personnel_roster.append(personnel)
-	EventBus.emit_personnel_hired(personnel)
+	EventBus.emit_personnel_joined(personnel, "hired", {})
 
-func fire_personnel(personnel: Personnel) -> void:
+func remove_personnel(personnel: Personnel, reason: String, details: Dictionary = {}) -> void:
 	personnel_roster.erase(personnel)
+	EventBus.emit_personnel_left(personnel, reason, details)
 
 func promote_personnel(personnel: Personnel, new_rank: String) -> void:
 	personnel.rank = new_rank
@@ -453,7 +454,7 @@ func process_aging() -> void:
 					"cause": "old_age"
 				})
 	for p in to_remove:
-		fire_personnel(p)
+			remove_personnel(p, "died_old_age", {})
 
 
 func get_doctor_patient_count(doctor: Personnel) -> int:

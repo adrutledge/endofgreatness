@@ -27,6 +27,8 @@ func load_factions() -> void:
 	var dir = DirAccess.open("res://data/factions")
 	if not dir:
 		push_warning("Factions directory not found")
+		if Helpers.debug:
+			EventBus.emit_parse_error("res://data/factions/", "Directory not found")
 		return
 	dir.list_dir_begin()
 	var file_name = dir.get_next()
@@ -130,6 +132,8 @@ func load_starmap() -> void:
 	var file = FileAccess.open("res://data/systems_index.json", FileAccess.READ)
 	if not file:
 		push_warning("systems_index.json not found")
+		if Helpers.debug:
+			EventBus.emit_parse_error("res://data/systems_index.json", "File not found")
 		return
 	var json_str = file.get_as_text()
 	var json = JSON.new()

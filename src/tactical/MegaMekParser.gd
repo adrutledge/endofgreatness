@@ -315,7 +315,7 @@ static func parse_blk(file_path: String, component_defs: Dictionary = {}) -> Tac
 		location_map[name] = cl
 
 	var engine_type_code = int(tags.get("engine_type", "0"))
-	var suspension = TacticalUnit.get_suspension_factor(motion_type, unit.tonnage)
+	var suspension = TacticalUnitValidator.get_suspension_factor(motion_type, unit.tonnage)
 	var base_rating = int(unit.tonnage * unit.movement_mp) - suspension
 	if base_rating % 5 != 0:
 		base_rating = base_rating + (5 - base_rating % 5)

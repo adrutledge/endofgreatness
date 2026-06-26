@@ -7,7 +7,12 @@ signal tactical_engagement_resolved(result: Dictionary)
 signal time_tick(date: Dictionary)
 signal unit_damaged(unit: TacticalUnit, component: Component)
 signal reputation_changed(faction: String, new_value: int, reason: String)
-signal personnel_hired(personnel: Personnel)
+signal personnel_joined(personnel: Personnel, reason: String, details: Dictionary)
+signal personnel_left(personnel: Personnel, reason: String, details: Dictionary)
+signal parse_error(resource_path: String, message: String)
+signal rules_check(rule_id: String, parameters: Dictionary, result: Variant)
+signal jump_completed(from_system: String, to_system: String, jumps_remaining: int)
+signal contract_arrived(contract: Contract)
 signal theme_changed(theme_name: String)
 signal funds_depleted(balance: int)
 signal delivery_arrived(item_name: String, quantity: int)
@@ -50,8 +55,23 @@ func emit_unit_damaged(unit: TacticalUnit, component: Component) -> void:
 func emit_reputation_changed(faction: String, new_value: int, reason: String) -> void:
 	reputation_changed.emit(faction, new_value, reason)
 
-func emit_personnel_hired(personnel: Personnel) -> void:
-	personnel_hired.emit(personnel)
+func emit_personnel_joined(personnel: Personnel, reason: String, details: Dictionary = {}) -> void:
+	personnel_joined.emit(personnel, reason, details)
+
+func emit_personnel_left(personnel: Personnel, reason: String, details: Dictionary = {}) -> void:
+	personnel_left.emit(personnel, reason, details)
+
+func emit_parse_error(resource_path: String, message: String) -> void:
+	parse_error.emit(resource_path, message)
+
+func emit_rules_check(rule_id: String, parameters: Dictionary, result = null) -> void:
+	rules_check.emit(rule_id, parameters, result)
+
+func emit_jump_completed(from_system: String, to_system: String, jumps_remaining: int) -> void:
+	jump_completed.emit(from_system, to_system, jumps_remaining)
+
+func emit_contract_arrived(contract: Contract) -> void:
+	contract_arrived.emit(contract)
 
 func emit_theme_changed(theme_name: String) -> void:
 	theme_changed.emit(theme_name)

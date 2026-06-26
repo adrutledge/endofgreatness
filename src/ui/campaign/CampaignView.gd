@@ -66,6 +66,8 @@ func _setup_hud() -> void:
 func _on_strategic_planetary(contract: Contract) -> void:
 	planetary_layer.load_contract(contract)
 	layer_mgr.push("planetary")
+	if EventBus:
+		EventBus.emit_contract_arrived(contract)
 
 
 func _on_planetary_closed() -> void:

@@ -24,6 +24,7 @@ config/icon="res://assets/icons/game_icon.svg"
 
 GameState="*res://src/core/GameState.gd"
 EventBus="*res://src/core/EventBus.gd"
+DebugLogger="*res://src/core/DebugLogger.gd"
 TimeManager="*res://src/core/TimeManager.gd"
 DataManager="*res://src/core/DataManager.gd"
 ThemeManager="*res://src/core/ThemeManager.gd"
@@ -35,6 +36,8 @@ RefitManager="*res://src/systems/RefitManager.gd"
 UnitTransportManager="*res://src/systems/UnitTransportManager.gd"
 InventoryManager="*res://src/systems/InventoryManager.gd"
 PanelManager="*res://src/ui/strategic/PanelManager.gd"
+SaveManager="*res://src/core/SaveManager.gd"
+ModManager="*res://src/core/ModManager.gd"
 
 [rendering]
 
