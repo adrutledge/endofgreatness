@@ -80,6 +80,7 @@ make bootstrap   # Regenerate .godot cache
 ```
 
 ## Best Practices
+- **Commit & push after each major line item** — once implementation is complete and `make test` passes with 0 failures, commit and push. Keeps history granular and prevents drift.
 - **Flag prefixes** — use consistently for deferred work: `Flag for rules verification:`, `Flag for later:`, `Deferred:`. Keeps them searchable and prevents treating them as implemented.
 - **Save migration markers** — when adding a new field to a Resource class (Personnel, TacticalUnit, etc.), add a `# TODO: save migration` comment. Prevents shipping features that silently break save compatibility.
 - **One change per file edit** — keep edits focused. If fixing a typo in one file and adding a feature in another, do them separately. Reduces AI confusion from mixed-context diffs.
