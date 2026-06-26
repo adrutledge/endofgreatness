@@ -16,6 +16,7 @@ var selection_type: int = SelectionType.NONE
 @onready var detail_info: Label = %DetailInfo
 @onready var detail_type: Label = %DetailType
 @onready var deploy_button: Button = %DeployButton
+@onready var add_unit_button: Button = %AddUnitButton
 @onready var create_button: Button = %CreateButton
 @onready var remove_button: Button = %RemoveButton
 @onready var close_button: Button = %CloseButton
@@ -42,6 +43,7 @@ func _ready() -> void:
 	%DetailType.add_theme_color_override("font_color", Color(0.6, 0.8, 1.0))
 	close_button.pressed.connect(_on_close)
 	deploy_button.pressed.connect(_on_deploy)
+	add_unit_button.pressed.connect(_on_add_unit)
 	create_button.pressed.connect(_on_create)
 	remove_button.pressed.connect(_on_remove)
 	tree.item_selected.connect(_on_tree_selected)
@@ -107,6 +109,7 @@ func _on_tree_selected() -> void:
 			detail_type.text = tr("Strategic Unit (Player)")
 			detail_info.text = tr("Organizational Units: ") + str(GameState.player.organizational_units.size()) + "\n" + tr("Balance: ") + Helpers.fmt_money(GameState.player.current_balance) + "\n" + tr("Location: ") + (GameState.player.current_planet if GameState.player.current_planet else tr("Unknown"))
 			deploy_button.disabled = true
+			add_unit_button.disabled = true
 			remove_button.disabled = true
 			create_button.disabled = false
 
@@ -127,6 +130,7 @@ func _on_tree_selected() -> void:
 				info += "\nContract: " + selected_org_unit.contract_id
 			detail_info.text = info
 			deploy_button.disabled = false
+			add_unit_button.disabled = false
 			remove_button.disabled = false
 			create_button.disabled = true
 
@@ -147,6 +151,7 @@ func _on_tree_selected() -> void:
 				info += "\nStatus: In reserve"
 			detail_info.text = info
 			deploy_button.disabled = true
+			add_unit_button.disabled = true
 			remove_button.disabled = false
 			create_button.disabled = true
 
@@ -164,6 +169,7 @@ func _on_tree_selected() -> void:
 			info += "\nDamaged components: " + str(selected_tactical_unit.get_damaged_components().size())
 			detail_info.text = info
 			deploy_button.disabled = true
+			add_unit_button.disabled = true
 			remove_button.disabled = true
 			create_button.disabled = true
 
@@ -279,6 +285,137 @@ func _on_create() -> void:
 	ou.unit_name = name_result
 	GameState.player.organizational_units.append(ou)
 	populate_tree()
+
+func _on_add_unit() -> void:
+	if not selected_org_unit:
+		return
+	var templates = DataManager.unit_templates
+	if templates.is_empty():
+		detail_info.text = tr("No unit templates available.")
+		return
+
+	var current_year = TimeManager.current_date.year if TimeManager else 3025
+	var available: Array[TacticalUnit] = []
+	for name in templates:
+		var t = templates[name]
+		if t.unit_type != Enums.UnitType.MECH:
+			continue
+		if t.era > current_year:
+			continue
+		available.append(t)
+
+	if available.is_empty():
+		detail_info.text = tr("No mechs available for purchase (era %d).") % current_year
+		return
+
+	available.sort_custom(func(a, b): return a.tonnage < b.tonnage)
+
+	var dialog := AcceptDialog.new()
+	dialog.title = tr("Purchase & Assign Mech")
+	dialog.min_size = Vector2i(500, 360)
+	dialog.ok_button_text = tr("Purchase")
+
+	var vbox := VBoxContainer.new()
+	var label := Label.new()
+	label.text = tr("Select a mech to add to %s:") % selected_org_unit.unit_name
+	vbox.add_child(label)
+
+	var unit_list := ItemList.new()
+	unit_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	unit_list.select_mode = ItemList.SELECT_SINGLE
+	for t in available:
+		var cost = _get_unit_cost(t)
+		var label_text = "%s %s — %dt — %s" % [t.chassis_name, t.model_name, int(t.tonnage), Helpers.fmt_money(cost)]
+		if GameState.player.current_balance < cost:
+			label_text += " [color=#ff4444]" + tr("(insufficient)") + "[/color]"
+		var idx = unit_list.add_item(label_text)
+		unit_list.set_item_metadata(idx, {"template": t, "cost": cost})
+	vbox.add_child(unit_list)
+
+	dialog.add_child(vbox)
+	dialog.confirmed.connect(func():
+		var sel = unit_list.get_selected_items()
+		if sel.is_empty():
+			return
+		var meta = unit_list.get_item_metadata(sel[0])
+		var template: TacticalUnit = meta.template
+		var cost: int = meta.cost
+		if GameState.player.current_balance < cost:
+			detail_info.text = tr("Insufficient funds for %s (%s required).") % [template.unit_name, Helpers.fmt_money(cost)]
+			dialog.queue_free()
+			return
+
+		GameState.player.current_balance -= cost
+
+		var opu = OperationalUnit.new()
+		opu.unit_name = template.chassis_name + " " + template.model_name
+		opu.role = "Line"
+		var copy = _deep_copy_template(template)
+		opu.tactical_units.append(copy)
+
+		selected_org_unit.sub_units.append(opu)
+		detail_info.text = tr("Purchased %s for %s and assigned to %s.") % [copy.unit_name, Helpers.fmt_money(cost), selected_org_unit.unit_name]
+		populate_tree()
+	)
+
+	dialog.canceled.connect(func():
+		dialog.queue_free()
+	)
+	add_child(dialog)
+	dialog.popup_centered()
+
+
+func _get_unit_cost(template: TacticalUnit) -> int:
+	var val = TacticalUnitValidator.calculate_tm_cost(template)
+	return max(val, 50000)
+
+
+func _deep_copy_template(source: TacticalUnit) -> TacticalUnit:
+	var unit = TacticalUnit.new()
+	unit.unit_name = source.unit_name
+	unit.chassis_name = source.chassis_name
+	unit.model_name = source.model_name
+	unit.unit_type = source.unit_type
+	unit.engine_rating = source.engine_rating
+	unit.engine_type = source.engine_type
+	unit.gyro_type = source.gyro_type
+	unit.internal_structure_type = source.internal_structure_type
+	unit.armor_type = source.armor_type
+	unit.total_armor_points = source.total_armor_points
+	unit.heat_sink_count = source.heat_sink_count
+	unit.tonnage = source.tonnage
+	unit.movement_mp = source.movement_mp
+	unit.run_mp = source.run_mp
+	unit.jump_mp = source.jump_mp
+	unit.motion_type = source.motion_type
+	unit.abstract_crew_count = source.abstract_crew_count
+	unit.rules_level = source.rules_level
+	unit.era = source.era
+	for c in source.components:
+		var copy = Component.new()
+		copy.component_name = c.component_name
+		copy.component_type = c.component_type
+		copy.tonnage = c.tonnage
+		copy.critical_slots = c.critical_slots
+		copy.cost = c.cost
+		copy.tech_base = c.tech_base
+		copy.tech_level = c.tech_level
+		copy.quality_range = c.quality_range
+		copy.repair_difficulty = c.repair_difficulty
+		copy.status = Enums.ComponentStatus.UNDAMAGED
+		if c.location:
+			var loc_copy = ComponentLocation.new()
+			loc_copy.location_name = c.location.location_name
+			loc_copy.hit_chance = c.location.hit_chance
+			loc_copy.armor = c.location.armor
+			loc_copy.rear_armor = c.location.rear_armor
+			loc_copy.structure = c.location.structure
+			loc_copy.max_armor = c.location.max_armor
+			loc_copy.max_structure = c.location.max_structure
+			copy.location = loc_copy
+		unit.components.append(copy)
+	return unit
+
 
 func _on_remove() -> void:
 	Helpers.debug_print("OrgMgmt", "_on_remove selection_type=%d" % selection_type)

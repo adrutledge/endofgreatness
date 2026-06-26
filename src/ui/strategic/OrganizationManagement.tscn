@@ -96,6 +96,11 @@ unique_name_in_owner = true
 text = "Deploy to Active Contract"
 disabled = true
 
+[node name="AddUnitButton" type="Button" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin/DetailVBox/ButtonVBox"]
+unique_name_in_owner = true
+text = "Add Unit"
+disabled = true
+
 [node name="CreateButton" type="Button" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin/DetailVBox/ButtonVBox"]
 unique_name_in_owner = true
 text = "Create Organizational Unit"

@@ -82,9 +82,21 @@ func _on_planetary_tactical(contract: Contract, hex_data: Dictionary) -> void:
 
 
 func _on_tactical_closed() -> void:
+	var result = tactical_layer._get_result_copy() if tactical_layer.has_method("_get_result_copy") else tactical_layer._result
 	layer_mgr.pop()
-	if EventBus and tactical_layer._result:
-		EventBus.emit_tactical_engagement_resolved(tactical_layer._result)
+
+	# Remove destroyed player units from their parent OperationalUnit
+	if result and result.has("destroyed_player_units"):
+		var destroyed: Array = result.destroyed_player_units
+		if not destroyed.is_empty():
+			for ou in GameState.player.organizational_units:
+				for su in ou.sub_units:
+					su.tactical_units = su.tactical_units.filter(func(tu): return tu.unit_name not in destroyed)
+					for sub in su.sub_units:
+						sub.tactical_units = sub.tactical_units.filter(func(tu): return tu.unit_name not in destroyed)
+
+	if EventBus and result:
+		EventBus.emit_tactical_engagement_resolved(result)
 
 
 func _get_deployed_units() -> Array[OperationalUnit]:

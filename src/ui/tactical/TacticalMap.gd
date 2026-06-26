@@ -563,6 +563,14 @@ func _on_resolve() -> void:
 	resolver.queue_free()
 
 	_refresh_display()
+
+	# Collect destroyed player units
+	var destroyed: Array[String] = []
+	for u in player_units:
+		if u.total_armor_points <= 0:
+			destroyed.append(u.unit_name)
+	_result["destroyed_player_units"] = destroyed
+
 	info_label.text += "\n[b]" + tr("Combat Results:") + "[/b]\n"
 	info_label.text += tr("Enemies destroyed: %d / %d") % [_result.get("enemies_destroyed", 0), _result.get("total_enemies", 0)] + "\n"
 	info_label.text += tr("Player units lost: %d") % _result.get("player_units_lost", 0) + "\n"
@@ -577,6 +585,10 @@ func _on_return() -> void:
 		EconomySystem.process_engagement(contract)
 	ReputationSystem.modify_reputation(contract.issuer, 2, "Tactical engagement completed")
 	closed.emit()
+
+
+func _get_result_copy() -> Dictionary:
+	return _result.duplicate()
 
 
 # ---- Helpers ----
