@@ -2,6 +2,8 @@ extends Node
 
 signal contract_accepted(contract: Contract)
 signal combat_started(contract_id: String, hex_position: Vector2i)
+signal tactical_engagement_started(contract: Contract, hex_data: Dictionary)
+signal tactical_engagement_resolved(result: Dictionary)
 signal time_tick(date: Dictionary)
 signal unit_damaged(unit: TacticalUnit, component: Component)
 signal reputation_changed(faction: String, new_value: int, reason: String)
@@ -22,11 +24,22 @@ signal dispatch_completed(item_name: String, quantity: int, unit_name: String)
 signal auto_reorder_triggered(orders_placed: int, total_cost: int)
 signal funds_low_for_reorder(balance: int, required: int)
 
+signal save_started()
+signal save_completed(success: bool)
+signal load_started()
+signal load_completed(success: bool)
+
 func emit_contract_accepted(contract: Contract) -> void:
 	contract_accepted.emit(contract)
 
 func emit_combat_started(contract_id: String, hex_position: Vector2i) -> void:
 	combat_started.emit(contract_id, hex_position)
+
+func emit_tactical_engagement_started(contract: Contract, hex_data: Dictionary) -> void:
+	tactical_engagement_started.emit(contract, hex_data)
+
+func emit_tactical_engagement_resolved(result: Dictionary) -> void:
+	tactical_engagement_resolved.emit(result)
 
 func emit_time_tick(date: Dictionary) -> void:
 	time_tick.emit(date)
@@ -81,3 +94,15 @@ func emit_auto_reorder_triggered(orders_placed: int, total_cost: int) -> void:
 
 func emit_funds_low_for_reorder(balance: int, required: int) -> void:
 	funds_low_for_reorder.emit(balance, required)
+
+func emit_save_started() -> void:
+	save_started.emit()
+
+func emit_save_completed(success: bool) -> void:
+	save_completed.emit(success)
+
+func emit_load_started() -> void:
+	load_started.emit()
+
+func emit_load_completed(success: bool) -> void:
+	load_completed.emit(success)

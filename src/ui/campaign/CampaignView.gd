@@ -75,10 +75,14 @@ func _on_planetary_closed() -> void:
 func _on_planetary_tactical(contract: Contract, hex_data: Dictionary) -> void:
 	tactical_layer.load_engagement(contract, hex_data, _get_deployed_units())
 	layer_mgr.push("tactical")
+	if EventBus:
+		EventBus.emit_tactical_engagement_started(contract, hex_data)
 
 
 func _on_tactical_closed() -> void:
 	layer_mgr.pop()
+	if EventBus and tactical_layer._result:
+		EventBus.emit_tactical_engagement_resolved(tactical_layer._result)
 
 
 func _get_deployed_units() -> Array[OperationalUnit]:

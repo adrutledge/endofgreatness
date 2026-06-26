@@ -26,22 +26,27 @@ var enemy_units: Array[TacticalUnit] = []
 var deployment: Array[OperationalUnit] = []
 var _hex_data: Dictionary = {}
 var _tactical_hex_map: HexMap
-var _movement_resolver: TacticalMovementResolver
+var _phase_manager: PhaseManager
 var _current_unit_idx: int = -1
 var _selected_hex: Vector2i = Vector2i(-1, -1)
+var _selected_target: String = ""
 var _mode: String = "walk"
 var _reachable_result: Dictionary = {}
 var _camera_offset: Vector2 = Vector2(200, 80)
 var _camera_zoom: float = 1.0
 var _panning: bool = false
 var _pan_start: Vector2 = Vector2()
+var _current_actor_unit_id: String = ""
+var _pending_target_hex: Vector2i = Vector2i(-1, -1)
 
 var _unit_positions: Array[Vector2i] = []
 var _unit_facings: Array[int] = []
 var _unit_heights: Array[int] = []
 var _unit_current_mp: Array[int] = []
+
 var _resolved: bool = false
 var _result: Dictionary = {}
+var _movement_resolver: TacticalMovementResolver
 
 @onready var hex_draw: Control = %HexDraw
 @onready var info_label: RichTextLabel = %InfoLabel
@@ -49,11 +54,18 @@ var _result: Dictionary = {}
 @onready var title_label: Label = %TitleLabel
 @onready var unit_selector: OptionButton = %UnitSelector
 @onready var move_button: Button = %MoveButton
+@onready var skip_button: Button = %SkipButton
 @onready var resolve_button: Button = %ResolveButton
 @onready var return_button: Button = %ReturnButton
 @onready var mode_walk: Button = %ModeWalk
 @onready var mode_run: Button = %ModeRun
 @onready var mode_jump: Button = %ModeJump
+@onready var phase_label: Label = %PhaseLabel
+@onready var initiative_label: Label = %InitiativeLabel
+@onready var end_phase_button: Button = %EndPhaseButton
+@onready var weapon_panel: VBoxContainer = %WeaponPanel
+@onready var weapon_selector: OptionButton = %WeaponSelector
+@onready var fire_button: Button = %FireButton
 
 
 func _ready() -> void:
@@ -71,9 +83,12 @@ func _ready() -> void:
 	hex_draw.gui_input.connect(_on_hex_draw_input)
 	hex_draw.draw.connect(_on_draw)
 	unit_selector.item_selected.connect(_on_unit_selected)
-	move_button.pressed.connect(_on_move)
+	move_button.pressed.connect(_on_move_confirm)
+	skip_button.pressed.connect(_on_skip)
 	resolve_button.pressed.connect(_on_resolve)
 	return_button.pressed.connect(_on_return)
+	end_phase_button.pressed.connect(_on_end_phase)
+	fire_button.pressed.connect(_on_fire_confirm)
 
 	mode_walk.toggled.connect(func(t): _on_mode_changed("walk", t))
 	mode_run.toggled.connect(func(t): _on_mode_changed("run", t))
@@ -119,98 +134,195 @@ func load_engagement(c: Contract, hex_data: Dictionary, deployed: Array[Operatio
 		_unit_heights.append(_tactical_hex_map.get_hex(_tactical_hex_map.landing_zone.x, _tactical_hex_map.landing_zone.y).get("elevation", 0))
 		_unit_current_mp.append(u.movement_mp)
 
-	if player_units.size() > 0:
-		_current_unit_idx = 0
-		unit_selector.select(0)
-		_update_reachable()
+	_start_phase_engagement()
 
+
+func _start_phase_engagement() -> void:
+	_phase_manager = PhaseManager.new()
+	add_child(_phase_manager)
+
+	_phase_manager.phase_changed.connect(_on_phase_changed)
+	_phase_manager.initiative_determined.connect(_on_initiative_determined)
+	_phase_manager.player_input_required.connect(_on_player_input_required)
+	_phase_manager.movement_declared.connect(_on_movement_declared)
+	_phase_manager.fire_declared.connect(_on_fire_declared)
+	_phase_manager.damage_applied.connect(_on_damage_applied)
+	_phase_manager.engagement_ended.connect(_on_engagement_ended)
+
+	_phase_manager.start_engagement(_build_sides_dict())
 	_refresh_display()
 
 
-func _build_tactical_hex_map() -> void:
-	var map_w = _hex_data.get("map_width", 16)
-	var map_h = _hex_data.get("map_height", 16)
-	_tactical_hex_map = HexMap.new(map_w, map_h)
+func _build_sides_dict() -> Dictionary:
+	var player_side = {"units": []}
+	for i in range(player_units.size()):
+		var u = player_units[i]
+		var pos = _unit_positions[i] if i < _unit_positions.size() else _tactical_hex_map.landing_zone
+		player_side.units.append({
+			"id": "player_%d" % i,
+			"is_player": true,
+			"hex_position": pos,
+			"current_facing": _unit_facings[i] if i < _unit_facings.size() else 0,
+			"current_height": _unit_heights[i] if i < _unit_heights.size() else 0,
+			"walk_mp": u.movement_mp,
+			"run_mp": u.run_mp,
+			"jump_mp": u.jump_mp,
+			"current_mp": u.movement_mp,
+			"weapons": [{"name": "Medium Laser", "damage": 5, "heat": 3, "range_brackets": {"short": 3, "medium": 6, "long": 9}}],
+			"gunnery": 4,
+			"piloting": 5,
+			"total_armor": u.total_armor_points,
+			"is_active": true,
+			"tonnage": u.tonnage,
+			"unit_name": u.unit_name,
+		})
 
-	var terrain_ids = _hex_data.get("terrain_grid", [])
-	for row in range(_tactical_hex_map.hexes.size()):
-		var hex_row = _tactical_hex_map.hexes[row]
-		for col in range(hex_row.size()):
-			var h = hex_row[col]
-			var t_key = "%d,%d" % [h.q, h.r]
-			var cell_data: Dictionary = {}
-			if row < terrain_ids.size() and col < terrain_ids[row].size():
-				cell_data = terrain_ids[row][col] if terrain_ids[row][col] is Dictionary else {"terrain": terrain_ids[row][col]}
-			h.terrain = cell_data.get("terrain", HexMap.Terrain.PLAINS)
-			h.elevation = cell_data.get("elevation", 0)
-			h.water_depth = cell_data.get("water_depth", 0)
-			h.structures = cell_data.get("structures", [])
-			h.has_road = cell_data.get("has_road", false)
+	var enemy_side = {"units": []}
+	for i in range(enemy_units.size()):
+		var u = enemy_units[i]
+		var pos = Vector2i(3 + i, 3 + i)
+		enemy_side.units.append({
+			"id": "enemy_%d" % i,
+			"is_player": false,
+			"hex_position": pos,
+			"current_facing": 0,
+			"current_height": 0,
+			"walk_mp": u.movement_mp,
+			"run_mp": u.run_mp,
+			"jump_mp": u.jump_mp,
+			"current_mp": u.movement_mp,
+			"weapons": [{"name": "Medium Laser", "damage": 5, "heat": 3, "range_brackets": {"short": 3, "medium": 6, "long": 9}}],
+			"gunnery": 4,
+			"piloting": 5,
+			"total_armor": u.total_armor_points,
+			"is_active": true,
+			"tonnage": u.tonnage,
+			"unit_name": u.unit_name,
+		})
+
+	return {"player": player_side, "enemy": enemy_side}
 
 
-func _get_terrain_id_from_hex(hex_dict: Dictionary) -> String:
-	var e = hex_dict.get("terrain", HexMap.Terrain.PLAINS)
-	match e:
-		HexMap.Terrain.PLAINS: return "clear"
-		HexMap.Terrain.FOREST: return "light_woods"
-		HexMap.Terrain.MOUNTAIN: return "rough"
-		HexMap.Terrain.WATER: return "water"
-		HexMap.Terrain.URBAN: return "paved"
-		HexMap.Terrain.DESERT: return "sand"
-		HexMap.Terrain.ROUGH: return "rough"
-	return "clear"
+# ---- Phase manager callbacks ----
+
+func _on_phase_changed(phase: int, round: int) -> void:
+	var phase_names = ["INITIATIVE", "MOVEMENT", "DECLARE FIRE", "RESOLVE FIRE", "DECLARE PHYSICAL", "RESOLVE PHYSICAL", "END"]
+	var name = phase_names[phase] if phase >= 0 and phase < phase_names.size() else "?"
+	phase_label.text = "Round %d — %s" % [round, name]
+
+	move_button.hide()
+	skip_button.hide()
+	weapon_panel.hide()
+	end_phase_button.disabled = phase != PhaseManager.Phase.MOVEMENT and phase != PhaseManager.Phase.DECLARE_FIRE and phase != PhaseManager.Phase.DECLARE_PHYSICAL
+	_resolved = false
 
 
-# --- Reachable / Movement ---
+func _on_initiative_determined(order: Array) -> void:
+	initiative_label.text = "Order: " + ", ".join(order)
+	_refresh_display()
 
-func _update_reachable() -> void:
-	if _current_unit_idx < 0 or _current_unit_idx >= player_units.size():
-		_reachable_result = {}
-		hex_draw.queue_redraw()
-		return
 
-	var start_pos = _unit_positions[_current_unit_idx] if _current_unit_idx < _unit_positions.size() else _tactical_hex_map.landing_zone
-	var start_facing = _unit_facings[_current_unit_idx] if _current_unit_idx < _unit_facings.size() else 0
-	var start_height = _unit_heights[_current_unit_idx] if _current_unit_idx < _unit_heights.size() else _tactical_hex_map.get_hex(start_pos.x, start_pos.y).get("elevation", 0)
-	var pu = player_units[_current_unit_idx]
+func _on_player_input_required(phase: int, unit_id: String, data: Dictionary) -> void:
+	_current_actor_unit_id = unit_id
+	var unit = _phase_manager.get_unit(unit_id)
 
-	var max_mp = pu.movement_mp
-	if _mode == "run":
-		max_mp = pu.run_mp
-	elif _mode == "jump":
-		max_mp = pu.jump_mp
-	if max_mp <= 0:
-		_reachable_result = {}
-		hex_draw.queue_redraw()
-		return
+	match phase:
+		PhaseManager.Phase.MOVEMENT:
+			# Find which player unit index this corresponds to
+			var idx = _unit_idx_from_id(unit_id)
+			if idx >= 0:
+				_current_unit_idx = idx
+				unit_selector.select(idx)
+			_update_reachable_for_unit(unit)
+			move_button.show()
+			move_button.text = "Move Here"
+			move_button.disabled = true
+			skip_button.show()
+			hex_info_label.text = tr("Select destination hex for %s") % unit.get("unit_name", unit_id)
 
-	_reachable_result = _movement_resolver.find_reachable(
-		_tactical_hex_map, start_pos.x, start_pos.y, start_facing, start_height,
-		max_mp, _mode, pu.tonnage)
+		PhaseManager.Phase.DECLARE_FIRE, PhaseManager.Phase.DECLARE_PHYSICAL:
+			var targets: Array = data.get("eligible_targets", [])
+			weapon_panel.show()
+			weapon_selector.clear()
+			var weapons = unit.get("weapons", [])
+			for wi in range(weapons.size()):
+				var w = weapons[wi]
+				weapon_selector.add_item(w.get("name", "Weapon %d" % wi))
+			fire_button.disabled = true
+			skip_button.show()
+			hex_info_label.text = tr("Select target for %s") % unit.get("unit_name", unit_id)
+			# Store eligible targets for click detection
+			_eligible_targets = targets
 
+
+var _eligible_targets: Array = []
+
+
+func _on_movement_declared(unit_id: String, path: Array, mode: String) -> void:
+	# Update position tracking for player units
+	for i in range(player_units.size()):
+		if "player_%d" % i == unit_id:
+			if path.size() > 0:
+				_unit_positions[i] = path[path.size() - 1] if path[path.size() - 1] is Vector2i else path[0]
+			break
 	hex_draw.queue_redraw()
 
 
-func _on_mode_changed(mode: String, toggled: bool) -> void:
-	if not toggled:
+func _on_fire_declared(attacker_id: String, target_id: String, weapon_idx: int) -> void:
+	_refresh_display()
+	hex_draw.queue_redraw()
+
+
+func _on_damage_applied(target_id: String, location: String, damage: int, is_destroyed: bool) -> void:
+	info_label.text = tr("[color=#ff4444]%s hit for %d damage to %s%s") % [target_id, damage, location, (" — DESTROYED" if is_destroyed else "")]
+	hex_draw.queue_redraw()
+
+
+func _on_engagement_ended(winner: String) -> void:
+	_resolved = true
+	resolve_button.hide()
+	return_button.text = tr("Return to Planetary Map")
+	phase_label.text = tr("Engagement Over — %s wins") % winner
+	_refresh_display()
+
+
+# ---- Player input handlers ----
+
+func _on_move_confirm() -> void:
+	if _pending_target_hex.x < 0:
 		return
-	_mode = mode
-	mode_walk.button_pressed = mode == "walk"
-	mode_run.button_pressed = mode == "run"
-	mode_jump.button_pressed = mode == "jump"
-	_selected_hex = Vector2i(-1, -1)
-	move_button.disabled = true
-	_update_reachable()
+	if _phase_manager and _phase_manager.waiting_for_player:
+		_phase_manager.submit_move(_current_actor_unit_id, _pending_target_hex, _mode)
+		_pending_target_hex = Vector2i(-1, -1)
+		move_button.hide()
+		skip_button.hide()
 
 
-func _on_unit_selected(index: int) -> void:
-	_current_unit_idx = index
-	_selected_hex = Vector2i(-1, -1)
-	move_button.disabled = true
-	_update_reachable()
+func _on_fire_confirm() -> void:
+	var wi = weapon_selector.selected
+	if wi < 0 or _selected_target.is_empty():
+		return
+	if _phase_manager and _phase_manager.waiting_for_player:
+		_phase_manager.submit_fire(_current_actor_unit_id, _selected_target, wi)
+		_selected_target = ""
+		weapon_panel.hide()
+		skip_button.hide()
 
 
-# --- Hex draw / input ---
+func _on_skip() -> void:
+	if _phase_manager and _phase_manager.waiting_for_player:
+		_phase_manager.submit_skip(_current_actor_unit_id)
+		move_button.hide()
+		skip_button.hide()
+		weapon_panel.hide()
+
+
+func _on_end_phase() -> void:
+	if _phase_manager:
+		_phase_manager.submit_end_phase()
+
+
+# ---- Hex draw / input ----
 
 func _on_hex_draw_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
@@ -219,7 +331,35 @@ func _on_hex_draw_input(event: InputEvent) -> void:
 			var hex_coord = _pixel_to_hex(local_pos)
 			if hex_coord.x >= 0:
 				_selected_hex = hex_coord
-				_update_hex_info()
+
+				if _phase_manager and _phase_manager.waiting_for_player:
+					var phase = _phase_manager.current_phase
+					if phase == PhaseManager.Phase.MOVEMENT:
+						# Check if hex is reachable
+						var hex_key = "%d,%d" % [hex_coord.x, hex_coord.y]
+						var reachable = _reachable_result.get("reachable_hexes", {})
+						if reachable.has(hex_key):
+							_pending_target_hex = hex_coord
+							move_button.disabled = false
+							hex_info_label.text = tr("Move to (%d, %d) — click Move Here") % [hex_coord.x, hex_coord.y]
+						else:
+							_pending_target_hex = Vector2i(-1, -1)
+							move_button.disabled = true
+
+					elif phase == PhaseManager.Phase.DECLARE_FIRE or phase == PhaseManager.Phase.DECLARE_PHYSICAL:
+						# Check if clicked hex contains an eligible target
+						_selected_target = ""
+						fire_button.disabled = true
+						for tid in _eligible_targets:
+							var tu = _phase_manager.get_unit(tid)
+							if tu and tu.hex_position == hex_coord and tu.get("is_active", true):
+								_selected_target = tid
+								fire_button.disabled = false
+								hex_info_label.text = tr("Target: %s — select weapon and fire") % tu.get("unit_name", tid)
+								break
+						if _selected_target.is_empty():
+							hex_info_label.text = tr("No target at that hex")
+
 				hex_draw.queue_redraw()
 
 		if event.button_index == MOUSE_BUTTON_MIDDLE and event.pressed:
@@ -257,7 +397,6 @@ func _on_draw() -> void:
 			var terrain_id = _get_terrain_id_from_hex(h)
 			var color = TERRAIN_COLORS.get(terrain_id, Color(0.3, 0.3, 0.3))
 
-			# Structure indicator
 			var structures: Array = h.get("structures", [])
 			if not structures.is_empty():
 				color = color.lerp(Color(0.5, 0.4, 0.6), 0.15)
@@ -271,10 +410,8 @@ func _on_draw() -> void:
 		var parts = hex_key.split(",")
 		var hq = int(parts[0])
 		var hr = int(parts[1])
-		var info = reachable[hex_key]
 		var pixel = HexMap.axial_to_pixel(hq, hr, HEX_SIZE) + center
 		var r_corners = HexMap.hex_corners(pixel, HEX_SIZE * _camera_zoom + 3)
-
 		var color := Color(0.2, 0.7, 0.3, 0.25)
 		if _selected_hex.x == hq and _selected_hex.y == hr:
 			color = Color(1.0, 0.9, 0.3, 0.35)
@@ -283,10 +420,21 @@ func _on_draw() -> void:
 	# Draw units
 	for i in range(player_units.size()):
 		var pos = _unit_positions[i] if i < _unit_positions.size() else _tactical_hex_map.landing_zone
-		_draw_unit_marker(draw, center, pos.x, pos.y, Color(0.3, 0.8, 1.0),
-			i == _current_unit_idx)
+		_draw_unit_marker(draw, center, pos.x, pos.y, Color(0.3, 0.8, 1.0), i == _current_unit_idx)
 
+	# Draw enemy units from phase manager if available, else from raw data
+	var drawn_enemies: Array = []
+	if _phase_manager:
+		var e_units = _phase_manager.get_side_units("enemy")
+		for u in e_units:
+			if not u.get("is_active", true):
+				continue
+			var pos = u.get("hex_position", Vector2i.ZERO)
+			_draw_unit_marker(draw, center, pos.x, pos.y, Color(0.9, 0.3, 0.3), false)
+			drawn_enemies.append(u.id)
 	for i in range(enemy_units.size()):
+		if drawn_enemies.has("enemy_%d" % i):
+			continue
 		var pos = Vector2i(3 + i, 3 + i)
 		_draw_unit_marker(draw, center, pos.x, pos.y, Color(0.9, 0.3, 0.3), false)
 
@@ -328,128 +476,80 @@ static func _round_to_axial(q: float, r: float) -> Vector2i:
 	return Vector2i(int(rq), int(rr))
 
 
-# --- Info / Display ---
+# ---- Reachable / Movement ----
 
-func _update_hex_info() -> void:
-	if _selected_hex.x < 0:
-		hex_info_label.text = ""
-		move_button.disabled = true
+func _update_reachable_for_unit(unit: Dictionary) -> void:
+	if not _tactical_hex_map:
+		return
+	var start_pos = unit.get("hex_position", _tactical_hex_map.landing_zone)
+	var start_facing = unit.get("current_facing", 0)
+	var start_height = unit.get("current_height", _tactical_hex_map.get_hex(start_pos.x, start_pos.y).get("elevation", 0))
+
+	var max_mp = unit.get("current_mp", unit.get("walk_mp", 4))
+	if max_mp <= 0:
+		_reachable_result = {}
+		hex_draw.queue_redraw()
 		return
 
-	var hex_key = "%d,%d" % [_selected_hex.x, _selected_hex.y]
-	var reachable = _reachable_result.get("reachable_hexes", {})
-	var costs = _reachable_result.get("costs", {})
-	var edges = _reachable_result.get("edges", [])
+	_reachable_result = _movement_resolver.find_reachable(
+		_tactical_hex_map, start_pos.x, start_pos.y, start_facing, start_height,
+		max_mp, _mode, unit.get("tonnage", 0))
+	hex_draw.queue_redraw()
 
-	var text = ""
-	if reachable.has(hex_key):
-		var info = reachable[hex_key]
-		var cost = info.get("min_cost", INF)
-		text = tr("Hex (%d, %d) — Reachable\nMP Cost: %d") % [_selected_hex.x, _selected_hex.y, cost]
 
-		var collapse := false
-		var psr_triggers: Array = []
-		for e in edges:
-			var to_key = e.get("to", "")
-			if to_key.begins_with(hex_key):
-				if e.get("collapse_warning", false):
-					collapse = true
-				for r in e.get("psr_risks", []):
-					if r.get("trigger", "") not in psr_triggers:
-						psr_triggers.append(r.trigger)
+func _on_mode_changed(mode: String, toggled: bool) -> void:
+	if not toggled:
+		return
+	_mode = mode
+	mode_walk.button_pressed = mode == "walk"
+	mode_run.button_pressed = mode == "run"
+	mode_jump.button_pressed = mode == "jump"
+	_selected_hex = Vector2i(-1, -1)
+	move_button.disabled = true
+	if _phase_manager and _phase_manager.waiting_for_player:
+		var unit = _phase_manager.get_unit(_current_actor_unit_id)
+		if unit:
+			_update_reachable_for_unit(unit)
 
-		if collapse:
-			text += "\n[color=#ff4444]" + tr("COLLAPSE RISK") + "[/color]"
-		if not psr_triggers.is_empty():
-			text += "\n[color=#ffaa44]" + tr("PSR: %s") % ", ".join(psr_triggers) + "[/color]"
 
-		move_button.disabled = false
-	else:
-		text = tr("Hex (%d, %d) — Not reachable") % [_selected_hex.x, _selected_hex.y]
-		move_button.disabled = true
+func _on_unit_selected(index: int) -> void:
+	_current_unit_idx = index
+	_selected_hex = Vector2i(-1, -1)
+	move_button.disabled = true
 
-	hex_info_label.text = text
 
+func _unit_idx_from_id(unit_id: String) -> int:
+	if unit_id.begins_with("player_"):
+		return int(unit_id.trim_prefix("player_"))
+	return -1
+
+
+# ---- Info / Display ----
 
 func _refresh_display() -> void:
 	var text = ""
 	text += "[b]" + tr("Player Forces:") + "[/b]\n"
-	for i in range(player_units.size()):
-		var u = player_units[i]
-		var dmg = u.get_damaged_components().size()
-		var destroyed = u.get_destroyed_components().size()
-		text += "  %s (%dt)" % [u.unit_name, int(u.tonnage)]
-		if dmg > 0 or destroyed > 0:
-			text += " [color=#ffaa44]Dmg:%d[/color] [color=#ff4444]Des:%d[/color]" % [dmg, destroyed]
-		text += "\n"
+	var p_side = _phase_manager.get_side_units("player") if _phase_manager else []
+	for u in p_side:
+		var name = u.get("unit_name", u.id)
+		var hp = u.get("total_armor", 0)
+		var active = u.get("is_active", true)
+		var status = "" if active else " [color=#ff4444]DESTROYED[/color]"
+		text += "  %s (%d HP)%s\n" % [name, hp, status]
 
 	text += "\n[b]" + tr("Enemy Forces:") + "[/b]\n"
-	if _resolved:
-		for u in enemy_units:
-			var destroyed = u.get_destroyed_components().size()
-			var total = u.components.size()
-			var status = "[color=#44ff66]" + tr("Intact") + "[/color]"
-			if destroyed >= total:
-				status = "[color=#ff4444]" + tr("Destroyed") + "[/color]"
-			elif destroyed > 0:
-				status = "[color=#ffaa44]" + tr("Damaged") + "[/color]"
-			text += "  %s (%dt) — %s\n" % [u.unit_name, int(u.tonnage), status]
-	else:
-		for u in enemy_units:
-			text += "  %s (%dt)\n" % [u.unit_name, int(u.tonnage)]
-	text += "\n[b]" + tr("Mode: %s") % _mode.capitalize() + "[/b]\n"
+	var e_side = _phase_manager.get_side_units("enemy") if _phase_manager else []
+	for u in e_side:
+		var name = u.get("unit_name", u.id)
+		var hp = u.get("total_armor", 0)
+		var active = u.get("is_active", true)
+		var status = "" if active else " [color=#ff4444]DESTROYED[/color]"
+		text += "  %s (%d HP)%s\n" % [name, hp, status]
 
 	info_label.text = text
 
 
-func _on_move() -> void:
-	if _current_unit_idx < 0 or _selected_hex.x < 0:
-		return
-	var unit = player_units[_current_unit_idx]
-	var hex_key = "%d,%d" % [_selected_hex.x, _selected_hex.y]
-	var reachable = _reachable_result.get("reachable_hexes", {})
-	if not reachable.has(hex_key):
-		return
-
-	var costs = _reachable_result.get("costs", {})
-	var came_from = _reachable_result.get("came_from", {})
-
-	var best_cost := INF
-	var best_state := ""
-	for f in range(6):
-		for h in range(10):
-			var key = "%d,%d,%d,%d" % [_selected_hex.x, _selected_hex.y, f, h]
-			if costs.has(key) and costs[key] < best_cost:
-				best_cost = costs[key]
-				best_state = key
-
-	if best_state.is_empty():
-		return
-
-	var path = TacticalMovementResolver.reconstruct_path(came_from, best_state)
-	if path.is_empty():
-		return
-
-	# Move unit to destination
-	var last = path[path.size() - 1]
-	var parts = last.split(",")
-	var dest_q = int(parts[0])
-	var dest_r = int(parts[1])
-	var dest_f = int(parts[2])
-	var dest_h = int(parts[3])
-
-	if _current_unit_idx < _unit_positions.size():
-		_unit_positions[_current_unit_idx] = Vector2i(dest_q, dest_r)
-		_unit_facings[_current_unit_idx] = dest_f
-		_unit_heights[_current_unit_idx] = dest_h
-		_unit_current_mp[_current_unit_idx] = max(0, _unit_current_mp[_current_unit_idx] - int(best_cost))
-
-	_selected_hex = Vector2i(-1, -1)
-	move_button.disabled = true
-	_update_reachable()
-	_refresh_display()
-	hex_draw.queue_redraw()
-
+# ---- Combat resolution (auto-resolve fallback) ----
 
 func _on_resolve() -> void:
 	if _resolved:
@@ -463,18 +563,12 @@ func _on_resolve() -> void:
 	resolver.queue_free()
 
 	_refresh_display()
-
-	var result_text = "\n[b]" + tr("Combat Result:") + "[/b]\n"
-	if _result.get("player_victory", false):
-		result_text += "[color=#44ff66]" + tr("Victory!") + "[/color]\n"
-	else:
-		result_text += "[color=#ff4444]" + tr("Defeat") + "[/color]\n"
-	result_text += tr("Enemies destroyed: %d / %d") % [_result.get("enemies_destroyed", 0), _result.get("total_enemies", 0)] + "\n"
-	result_text += tr("Player units lost: %d") % _result.get("player_units_lost", 0) + "\n"
+	info_label.text += "\n[b]" + tr("Combat Results:") + "[/b]\n"
+	info_label.text += tr("Enemies destroyed: %d / %d") % [_result.get("enemies_destroyed", 0), _result.get("total_enemies", 0)] + "\n"
+	info_label.text += tr("Player units lost: %d") % _result.get("player_units_lost", 0) + "\n"
 	var salvage_val = _result.get("salvage_value", 0)
 	if salvage_val > 0:
-		result_text += tr("Salvage recovered: %s") % Helpers.fmt_money(salvage_val) + "\n"
-	info_label.text += result_text
+		info_label.text += tr("Salvage recovered: %s") % Helpers.fmt_money(salvage_val) + "\n"
 	return_button.text = tr("Return to Planetary Map")
 
 
@@ -485,7 +579,42 @@ func _on_return() -> void:
 	closed.emit()
 
 
-# Legacy serialization (kept from existing code)
+# ---- Helpers ----
+
+func _build_tactical_hex_map() -> void:
+	var map_w = _hex_data.get("map_width", 16)
+	var map_h = _hex_data.get("map_height", 16)
+	_tactical_hex_map = HexMap.new(map_w, map_h)
+
+	var terrain_ids = _hex_data.get("terrain_grid", [])
+	for row in range(_tactical_hex_map.hexes.size()):
+		var hex_row = _tactical_hex_map.hexes[row]
+		for col in range(hex_row.size()):
+			var h = hex_row[col]
+			var cell_data: Dictionary = {}
+			if row < terrain_ids.size() and col < terrain_ids[row].size():
+				var raw = terrain_ids[row][col]
+				cell_data = raw if raw is Dictionary else {"terrain": raw}
+			h.terrain = cell_data.get("terrain", HexMap.Terrain.PLAINS)
+			h.elevation = cell_data.get("elevation", 0)
+			h.water_depth = cell_data.get("water_depth", 0)
+			h.structures = cell_data.get("structures", [])
+			h.has_road = cell_data.get("has_road", false)
+
+
+func _get_terrain_id_from_hex(hex_dict: Dictionary) -> String:
+	var e = hex_dict.get("terrain", HexMap.Terrain.PLAINS)
+	match e:
+		HexMap.Terrain.PLAINS: return "clear"
+		HexMap.Terrain.FOREST: return "light_woods"
+		HexMap.Terrain.MOUNTAIN: return "rough"
+		HexMap.Terrain.WATER: return "water"
+		HexMap.Terrain.URBAN: return "paved"
+		HexMap.Terrain.DESERT: return "sand"
+		HexMap.Terrain.ROUGH: return "rough"
+	return "clear"
+
+
 func _serialize_units(units: Array[TacticalUnit]) -> Array[Dictionary]:
 	var result: Array[Dictionary] = []
 	for u in units:
