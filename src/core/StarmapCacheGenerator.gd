@@ -1,6 +1,23 @@
 extends Node
 
+## Generates a hex-grid territory cache for the starmap.
+##
+## Divides the Inner Sphere into 20 LY diameter flat-top hexes.
+## Each hex is colored by the faction(s) with systems within 60 LY.
+## Multi-faction hexes get striped (contested) rendering.
+## This replaces the old Voronoi-pass grid with a coarser hex grid
+## that is faster to compute and render, with no territory holes.
+
 const CACHE_PATH = "user://cache/starmap_territory.json"
+
+const HEX_DIAMETER: float = 20.0
+const HEX_RADIUS: float = HEX_DIAMETER / 2.0  # 10 LY
+const HEX_SIDE: float = HEX_RADIUS  # 10 LY (flat-top: side = radius)
+const HEX_HEIGHT: float = HEX_SIDE * sqrt(3.0)  # ~17.32 LY
+const HEX_WIDTH: float = HEX_DIAMETER  # 20 LY
+const AUTHORITY_RADIUS: float = 60.0  # LY
+const AUTHORITY_RADIUS_SQ: float = AUTHORITY_RADIUS * AUTHORITY_RADIUS
+const EXTENT: float = 800.0
 
 var _generating: bool = false
 
@@ -24,146 +41,125 @@ func _cache_fresh() -> bool:
 	var parser = JSON.new()
 	if parser.parse(cache_file.get_as_text()) != OK:
 		return false
-	return parser.data.get("source_mtime", 0) == source_mtime
+	var data = parser.data
+	if data.get("source_mtime", 0) != source_mtime:
+		return false
+	if data.get("format_version") != 2:
+		return false
+	return true
 
 
-func _generate() -> void:
-	Helpers.debug_print("StarmapCache", "generating territory cache in background")
-	var groups = _build_groups()
-	var major_codes = ["CC", "DC", "FS", "FWL", "LC", "TC", "MOC", "OA", "I", "AuC", "MH", "OC", "CF", "LL", "TD", "MV", "EF", "IP", "NCR", "CDP", "RC", "FrR", "IE", "MC"]
-
-	var territory: Dictionary = {}
-	for owner in groups:
-		if owner in major_codes and groups[owner].size() >= 3:
-			territory[owner] = groups[owner]
-
-	var step = 4.0
-	var extent = 800.0
-	var grid: Dictionary = {}
-	var disputed: Dictionary = {}
-	var computed_rows := 0
-
-	for x in range(-int(extent), int(extent) + 1, int(step)):
-		for y in range(-int(extent), int(extent) + 1, int(step)):
-			var pt = Vector2(x, y)
-			var best_owner = ""
-			var best_dist = INF
-
-			for owner in territory:
-				for sp in territory[owner]:
-					var d = pt.distance_squared_to(sp)
-					if d < best_dist:
-						best_dist = d
-						best_owner = owner
-
-			var disputed_pair = ""
-			for owner in groups:
-				if not owner.begins_with("D("):
-					continue
-				for sp in groups[owner]:
-					var d = pt.distance_squared_to(sp)
-					if d < best_dist:
-						best_dist = d
-						var inner = owner.substr(2, owner.length() - 3)
-						if "/" in inner:
-							var parts = inner.split("/")
-							if parts.size() == 2 and parts[0] in major_codes and parts[1] in major_codes:
-								disputed_pair = inner
-								best_owner = ""
-
-			if not disputed_pair.is_empty():
-				if not disputed.has(disputed_pair):
-					disputed[disputed_pair] = []
-				disputed[disputed_pair].append(pt)
-			elif not best_owner.is_empty():
-				if not grid.has(best_owner):
-					grid[best_owner] = []
-				grid[best_owner].append(pt)
-
-		computed_rows += 1
-		if computed_rows % 10 == 0:
-			await get_tree().process_frame
-
-	# Compute density-aware radius and filter
-	var faction_radius: Dictionary = {}
-	for owner in territory:
-		var pts = territory[owner]
-		var total_nn := 0.0
-		var count := 0
-		for p in pts:
-			var closest = INF
-			for q in pts:
-				if q == p:
-					continue
-				var d = p.distance_squared_to(q)
-				if d < closest:
-					closest = d
-			if closest < INF:
-				total_nn += sqrt(closest)
-				count += 1
-		var avg_nn = total_nn / max(count, 1)
-		var min_r = 45.0 if owner in ["CC", "DC", "FS", "FWL", "LC"] else 30.0
-		faction_radius[owner] = clampf(avg_nn * 2.0, min_r, 90.0)
-
-	var faction_territory: Dictionary = {}
-	for owner in grid:
-		var pts = grid[owner]
-		var max_r = faction_radius.get(owner, 90.0)
-		var max_r_sq = max_r * max_r
-		var filtered: Array[Vector2] = []
-		for pt in pts:
-			var min_dist_sq = INF
-			for sp in territory[owner]:
-				var d = pt.distance_squared_to(sp)
-				if d < min_dist_sq:
-					min_dist_sq = d
-			if min_dist_sq <= max_r_sq:
-				filtered.append(pt)
-		if filtered.size() >= 3:
-			faction_territory[owner] = filtered
-
-	_save_cache(faction_territory, disputed)
-	_generating = false
-	Helpers.debug_print("StarmapCache", "territory cache generated and saved")
-
-
-func _build_groups() -> Dictionary:
-	var groups: Dictionary = {}
+func _get_system_positions() -> Array[Dictionary]:
+	var result: Array[Dictionary] = []
 	if not DataManager or DataManager.systems_data.is_empty():
-		return groups
+		return result
 	for name in DataManager.systems_data:
 		var sys = DataManager.systems_data[name]
 		var owner = sys.get("owner_faction", "")
-		if owner.is_empty() or owner in ["I", "X", "U"]:
+		if owner.is_empty():
 			continue
 		var coords = sys.get("coordinates", {})
 		var pos = Vector2(coords.get("x", 0.0), -coords.get("y", 0.0))
-		if not groups.has(owner):
-			groups[owner] = []
-		groups[owner].append(pos)
-	return groups
+		var dist = pos.length()
+		if dist > 720.0:
+			continue
+		result.append({"name": name, "pos": pos, "owner": owner})
+	return result
 
 
-func _save_cache(faction_territory: Dictionary, disputed: Dictionary) -> void:
-	var cache = {
+func _generate() -> void:
+	Helpers.debug_print("StarmapCache", "generating hex territory cache")
+	var systems = _get_system_positions()
+	var hexes: Array[Dictionary] = []
+
+	# Pre-build spatial index: system positions by 120 LY grid cell for fast lookup
+	var spatial_idx: Dictionary = {}
+	var cell_size := AUTHORITY_RADIUS * 2.0  # 120 LY
+	for s in systems:
+		var pos = s["pos"]
+		var cell_key = "%d,%d" % [int(floor(pos.x / cell_size)), int(floor(pos.y / cell_size))]
+		if not spatial_idx.has(cell_key):
+			spatial_idx[cell_key] = []
+		spatial_idx[cell_key].append(s)
+
+	var y_start = int(-EXTENT)
+	var y_end = int(EXTENT)
+	var x_start = int(-EXTENT)
+	var x_end = int(EXTENT)
+
+	for row in range(y_start, y_end, int(HEX_HEIGHT)):
+		var offset = (abs(row) / int(HEX_HEIGHT)) % 2  # row parity for hex stagger
+		for col in range(x_start, x_end, int(HEX_WIDTH * 0.75)):
+			var cx = col + offset * (HEX_WIDTH * 0.375)
+			var cy = row
+
+			# Skip hexes too far from origin
+			if sqrt(cx * cx + cy * cy) > 720.0 + AUTHORITY_RADIUS:
+				continue
+
+			# Count systems within AUTHORITY_RADIUS
+			var faction_counts: Dictionary = {}
+			var cell_cx = int(floor(cx / cell_size))
+			var cell_cy = int(floor(cy / cell_size))
+
+			# Check 3x3 neighborhood of spatial grid cells
+			for dcx in range(-1, 2):
+				for dcy in range(-1, 2):
+					var ck = "%d,%d" % [cell_cx + dcx, cell_cy + dcy]
+					var cell_systems = spatial_idx.get(ck, [])
+					for s in cell_systems:
+						var d = cx - s["pos"].x
+						if abs(d) > AUTHORITY_RADIUS:
+							continue
+						var dy = cy - s["pos"].y
+						if abs(dy) > AUTHORITY_RADIUS:
+							continue
+						if d * d + dy * dy <= AUTHORITY_RADIUS_SQ:
+							var owner = s["owner"]
+							if owner in ["I", "X", "U", "A"]:
+								continue
+							faction_counts[owner] = faction_counts.get(owner, 0) + 1
+
+			if faction_counts.is_empty():
+				continue
+
+			hexes.append({
+				"cx": cx,
+				"cy": cy,
+				"factions": faction_counts,
+			})
+
+	_save_cache(hexes)
+	_generating = false
+	Helpers.debug_print("StarmapCache", "hex territory cache saved (%d hexes)" % hexes.size())
+
+
+func _save_cache(hexes: Array) -> void:
+	var data = {
+		"format_version": 2,
 		"source_mtime": FileAccess.get_modified_time("res://data/systems_index.json"),
-		"faction_territory": {},
-		"disputed_territory": {},
+		"hex_metadata": {
+			"diameter": HEX_DIAMETER,
+			"radius": HEX_RADIUS,
+			"authority_radius": AUTHORITY_RADIUS,
+			"extent": EXTENT,
+		},
+		"hexes": [],
 	}
-	for owner in faction_territory:
-		var pts: Array = []
-		for v in faction_territory[owner]:
-			pts.append({"x": v.x, "y": v.y})
-		cache["faction_territory"][owner] = pts
-	for pair in disputed:
-		var pts: Array = []
-		for v in disputed[pair]:
-			pts.append({"x": v.x, "y": v.y})
-		cache["disputed_territory"][pair] = pts
+
+	for h in hexes:
+		var factions_list: Array[Dictionary] = []
+		for f in h["factions"]:
+			factions_list.append({"id": f, "count": h["factions"][f]})
+		data["hexes"].append({
+			"cx": h["cx"],
+			"cy": h["cy"],
+			"factions": factions_list,
+		})
 
 	var dir = DirAccess.open("user://")
 	if dir and not dir.dir_exists("user://cache"):
 		dir.make_dir("user://cache")
 	var file = FileAccess.open(CACHE_PATH, FileAccess.WRITE)
 	if file:
-		file.store_string(JSON.new().stringify(cache))
+		file.store_string(JSON.new().stringify(data))
