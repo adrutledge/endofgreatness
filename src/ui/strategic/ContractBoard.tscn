@@ -138,6 +138,12 @@ text = "View Planetary Map"
 visible = false
 size_flags_vertical = 0
 
+[node name="DeployButton" type="Button" parent="MarginContainer/VBox/HSplit/DetailPanel/DetailMargin/DetailVBox"]
+unique_name_in_owner = true
+text = "Deploy Forces"
+visible = false
+size_flags_vertical = 0
+
 [node name="BottomBar" type="HBoxContainer" parent="MarginContainer/VBox"]
 size_flags_vertical = 0
 

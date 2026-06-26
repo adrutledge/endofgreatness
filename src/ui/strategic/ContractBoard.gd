@@ -19,6 +19,7 @@ var _dirty: bool = true
 @onready var accept_button: Button = %AcceptButton
 @onready var complete_button: Button = %CompleteContractButton
 @onready var view_map_button: Button = %ViewMapButton
+@onready var deploy_button: Button = %DeployButton
 @onready var close_button: Button = %CloseButton
 
 
@@ -48,6 +49,7 @@ func _ready() -> void:
 	accept_button.pressed.connect(_on_accept)
 	complete_button.pressed.connect(_on_complete)
 	view_map_button.pressed.connect(_on_view_map)
+	deploy_button.pressed.connect(_on_deploy)
 	close_button.pressed.connect(_on_close)
 	available_list.item_selected.connect(_on_available_selected)
 	active_list.item_selected.connect(_on_active_selected)
@@ -101,6 +103,7 @@ func _on_available_selected(index: int) -> void:
 	accept_button.disabled = false
 	complete_button.hide()
 	view_map_button.hide()
+	deploy_button.hide()
 	_show_contract_details(_selected_contract)
 
 
@@ -113,6 +116,7 @@ func _on_active_selected(index: int) -> void:
 	accept_button.disabled = true
 	complete_button.show()
 	view_map_button.show()
+	deploy_button.show()
 	_show_contract_details(_selected_contract)
 
 
@@ -170,6 +174,14 @@ func _on_view_map() -> void:
 	if not _selected_contract or not _selected_is_active:
 		return
 	view_map_requested.emit(_selected_contract)
+
+
+func _on_deploy() -> void:
+	if not _selected_contract or not _selected_is_active:
+		return
+	var on_deployed := func(c: Contract):
+		view_map_requested.emit(c)
+	OrganizationManager.show_deploy_dialog(self, _selected_contract, on_deployed)
 
 
 func _on_contract_settled(contract: Contract, settlement: Dictionary) -> void:

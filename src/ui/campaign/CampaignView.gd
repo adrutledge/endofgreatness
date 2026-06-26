@@ -56,6 +56,7 @@ func _setup_panels() -> void:
 	PanelManager.register_panel("logistics", $PanelOverlay/LogisticsPanel, func(): $PanelOverlay/LogisticsPanel.populate())
 	PanelManager.register_panel("contract_board", $PanelOverlay/ContractBoard, func(): $PanelOverlay/ContractBoard.populate())
 	PanelManager.register_panel("org_mgmt", $PanelOverlay/OrganizationManagement, func(): $PanelOverlay/OrganizationManagement.populate_tree())
+	$PanelOverlay/OrganizationManagement.deploy_and_travel_requested.connect(_on_strategic_planetary)
 
 
 func _setup_hud() -> void:

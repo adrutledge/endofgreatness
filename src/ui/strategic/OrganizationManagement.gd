@@ -2,6 +2,7 @@ class_name OrganizationManagement
 extends Panel
 
 signal closed()
+signal deploy_and_travel_requested(contract: Contract)
 
 var selected_org_unit: OrganizationalUnit
 var selected_op_unit: OperationalUnit
@@ -173,29 +174,60 @@ func _clear_details() -> void:
 
 func _on_deploy() -> void:
 	Helpers.debug_print("OrgMgmt", "_on_deploy")
-	if not selected_org_unit:
-		Helpers.debug_warn("OrgMgmt", "_on_deploy — no org unit selected")
-		return
 	if GameState.active_contracts.is_empty():
-		Helpers.debug_warn("OrgMgmt", "_on_deploy — no active contracts")
 		detail_info.text = tr("No active contracts available for deployment.")
 		return
 
-	var contract = GameState.active_contracts[0]
-	if selected_org_unit.contract_id != "":
-		detail_info.text = tr("Already assigned to contract: ") + selected_org_unit.contract_id
+	var contract: Contract
+	if GameState.active_contracts.size() == 1:
+		contract = GameState.active_contracts[0]
+	else:
+		contract = await _pick_contract()
+	if contract == null:
 		return
 
-	var shortfalls = _get_deployment_shortfalls(selected_org_unit, contract)
-	if not shortfalls.is_empty():
-		detail_info.text = tr("Deployment failed — missing:\n") + str(shortfalls)
-		return
+	var on_deployed := func(c: Contract):
+		populate_tree()
+		deploy_and_travel_requested.emit(c)
 
-	for ou in selected_org_unit.sub_units:
-		_set_deployed_recursive(ou, contract)
-	selected_org_unit.contract_id = contract.resource_path
-	detail_info.text = tr("Deployed ") + selected_org_unit.unit_name + " to contract: " + contract.issuer + " on " + contract.planet
-	populate_tree()
+	OrganizationManager.show_deploy_dialog(self, contract, on_deployed)
+
+
+func _pick_contract() -> Contract:
+	var dialog := AcceptDialog.new()
+	dialog.title = tr("Select Contract")
+	dialog.min_size = Vector2i(400, 180)
+	dialog.ok_button_text = tr("Select")
+	dialog.dialog_text = ""
+
+	var vbox := VBoxContainer.new()
+	vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var label := Label.new()
+	label.text = tr("Multiple active contracts found. Select one to deploy to:")
+	vbox.add_child(label)
+	var selector := OptionButton.new()
+	selector.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	for c in GameState.active_contracts:
+		var text = "%s — %s on %s" % [c.issuer, c.activity_type, c.planet]
+		selector.add_item(text)
+		selector.set_item_metadata(selector.item_count - 1, c)
+	vbox.add_child(selector)
+	dialog.add_child(vbox)
+
+	var result: Contract = null
+	dialog.confirmed.connect(func():
+		var idx = selector.selected
+		if idx >= 0 and idx < GameState.active_contracts.size():
+			result = GameState.active_contracts[idx]
+		dialog.queue_free()
+	)
+	dialog.canceled.connect(func():
+		dialog.queue_free()
+	)
+	add_child(dialog)
+	dialog.popup_centered()
+	await dialog.tree_exited
+	return result
 
 func _get_deployment_shortfalls(org_unit: OrganizationalUnit, contract: Contract) -> Dictionary:
 	var have = org_unit.get_unit_counts_by_type()
