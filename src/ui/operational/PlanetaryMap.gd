@@ -385,7 +385,7 @@ func _on_map_input(event: InputEvent) -> void:
 
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-			var local_pos = event.position - map_draw.size / 2 - camera_offset
+			var local_pos = map_draw.get_local_mouse_position() - map_draw.size / 2 - camera_offset
 			var clicked = _pixel_to_hex(local_pos)
 			if clicked:
 				var h = hex_map.get_hex(clicked.x, clicked.y)
@@ -398,21 +398,27 @@ func _on_map_input(event: InputEvent) -> void:
 
 		if event.button_index == MOUSE_BUTTON_MIDDLE and event.pressed:
 			panning = true
-			pan_start = event.position
+			pan_start = map_draw.get_local_mouse_position()
 
 		if event.button_index == MOUSE_BUTTON_MIDDLE and not event.pressed:
 			panning = false
 
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP and event.pressed:
+			var mouse_map = map_draw.get_local_mouse_position() - map_draw.size / 2
+			var world_before = (mouse_map - camera_offset) / camera_zoom
 			camera_zoom = clamp(camera_zoom * 1.1, 0.3, 3.0)
+			camera_offset = mouse_map - world_before * camera_zoom
 			map_draw.queue_redraw()
 
 		if event.button_index == MOUSE_BUTTON_WHEEL_DOWN and event.pressed:
+			var mouse_map = map_draw.get_local_mouse_position() - map_draw.size / 2
+			var world_before = (mouse_map - camera_offset) / camera_zoom
 			camera_zoom = clamp(camera_zoom / 1.1, 0.3, 3.0)
+			camera_offset = mouse_map - world_before * camera_zoom
 			map_draw.queue_redraw()
 
 	if event is InputEventMouseMotion and panning:
-		camera_offset += event.relative
+		camera_offset = pan_start - map_draw.get_local_mouse_position()
 		map_draw.queue_redraw()
 
 

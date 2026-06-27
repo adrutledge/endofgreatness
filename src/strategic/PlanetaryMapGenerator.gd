@@ -176,7 +176,8 @@ static func generate_opfor_pool(template: Dictionary, rng: RandomNumberGenerator
 	if pool_count <= 0:
 		return pool
 
-	var mech_comp = template.get("composition", {}).get("mechs", {})
+	var composition = template.get("composition", {})
+	var mech_comp = composition.get("mechs", {}) if composition is Dictionary else {}
 	var mech_pct = mech_comp.get("count_pct", 1.0)
 	var mech_count = int(ceil(pool_count * mech_pct))
 
