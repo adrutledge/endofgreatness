@@ -148,6 +148,11 @@ fit_content = true
 [node name="ButtonBar" type="HBoxContainer" parent="Margin/VBox/HBox/SidePanel"]
 alignment = 1
 
+[node name="MoveButton" type="Button" parent="Margin/VBox/HBox/SidePanel/ButtonBar"]
+unique_name_in_owner = true
+text = "Move Here"
+visible = false
+
 [node name="SkipButton" type="Button" parent="Margin/VBox/HBox/SidePanel/ButtonBar"]
 unique_name_in_owner = true
 text = "Skip"
