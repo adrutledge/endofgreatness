@@ -80,8 +80,17 @@ func _show_layer_hud(layer: String, map_node: Node) -> void:
 	var hud = scene.instantiate()
 	if hud.has_method("set_map_layer"):
 		hud.set_map_layer(map_node)
-	layer_hud.add_child(hud)
-	_current_hud = hud
+	# Wrap in a full-screen Control so anchor_left/margin_left work
+	# (CanvasLayer extends Node2D, and Control anchors need a Control parent)
+	var wrapper := Control.new()
+	wrapper.anchors_preset = Control.PRESET_FULL_RECT
+	wrapper.add_child(hud)
+	hud.anchor_left = 1.0
+	hud.anchor_right = 1.0
+	hud.anchor_bottom = 1.0
+	hud.margin_left = -260
+	layer_hud.add_child(wrapper)
+	_current_hud = wrapper
 
 
 func _hide_layer_hud() -> void:
