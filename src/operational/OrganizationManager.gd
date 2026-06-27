@@ -37,12 +37,13 @@ static func deploy_unit(org_unit: OrganizationalUnit, contract: Contract) -> Dic
 		_set_deployed_recursive(ou, contract)
 
 	org_unit.contract_id = str(contract.get_instance_id())
+	org_unit.is_deployed = true
 	result.success = true
 	return result
 
 
 static func _set_deployed_recursive(unit: OperationalUnit, contract: Contract) -> void:
-	unit.contract_id = contract.resource_path
+	unit.contract_id = str(contract.get_instance_id())
 	unit.is_deployed = true
 	unit.current_planet = contract.planet
 	for sub in unit.sub_units:

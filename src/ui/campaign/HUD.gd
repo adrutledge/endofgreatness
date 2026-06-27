@@ -30,7 +30,7 @@ func _on_toggle_pause() -> void:
 	if TimeManager:
 		TimeManager.toggle_pause()
 		var btn = $TopBar/TimeControls/PauseButton
-		btn.text = "▶" if TimeManager.is_paused else "⏸"
+		btn.text = "▶" if TimeManager.is_paused else "❚❚"
 
 
 func _on_speed(speed: String, toggled: bool) -> void:

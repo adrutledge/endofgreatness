@@ -5,6 +5,7 @@ extends Resource
 @export var commander: Personnel
 @export var sub_units: Array[OperationalUnit] = []
 @export var contract_id: String = ""
+@export var is_deployed: bool = false
 
 func get_all_tactical_units() -> Array[TacticalUnit]:
 	var result: Array[TacticalUnit] = []
