@@ -82,10 +82,10 @@ func _show_layer_hud(layer: String, map_node: Node) -> void:
 	if not scene:
 		return
 	var hud = scene.instantiate()
-	if hud.has_method("set_map_layer"):
-		hud.set_map_layer(map_node)
 	layer_hud.add_child(hud)
 	_position_hud(hud)
+	if hud.has_method("set_map_layer"):
+		hud.set_map_layer(map_node)
 	_current_hud = hud
 
 
