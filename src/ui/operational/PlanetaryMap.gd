@@ -338,6 +338,11 @@ func _init_deployed_units() -> void:
 	deployed_units.clear()
 	if not contract:
 		return
+	# Reveal landing zone so the map isn't entirely fog-of-war
+	if hex_map:
+		hex_map.reveal_hex(hex_map.landing_zone.x, hex_map.landing_zone.y)
+		for adj in HexMap.get_adjacent(hex_map.landing_zone.x, hex_map.landing_zone.y):
+			hex_map.reveal_hex(adj.x, adj.y)
 	for ou in GameState.player.organizational_units:
 		if ou.contract_id == str(contract.get_instance_id()) and ou.is_deployed:
 			for su in ou.sub_units:
