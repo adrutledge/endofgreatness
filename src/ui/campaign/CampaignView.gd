@@ -8,11 +8,19 @@ const HUD_HEIGHT: float = 28.0
 
 signal campaign_exited()
 
+const LAYER_HUD_SCENES = {
+	"strategic": preload("res://src/ui/strategic/StrategicHUD.tscn"),
+	"planetary": preload("res://src/ui/operational/PlanetaryHUD.tscn"),
+}
+
 @onready var strategic_layer = $StrategicLayer
 @onready var planetary_layer = $PlanetaryLayer
 @onready var tactical_layer = $TacticalLayer
 @onready var layer_mgr = $LayerManager
 @onready var modal_layer = $ModalLayer
+@onready var layer_hud = $LayerHUD
+
+var _current_hud: Node = null
 
 func _ready() -> void:
 	layer_mgr.register_layer("strategic", strategic_layer)
@@ -36,6 +44,7 @@ func _ready() -> void:
 	$PanelOverlay/ContractBoard.view_map_requested.connect(_on_strategic_planetary)
 
 	layer_mgr.push("strategic")
+	_show_layer_hud("strategic", strategic_layer)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -63,6 +72,24 @@ func _setup_hud() -> void:
 	pass
 
 
+func _show_layer_hud(layer: String, map_node: Node) -> void:
+	_hide_layer_hud()
+	var scene = LAYER_HUD_SCENES.get(layer)
+	if not scene:
+		return
+	var hud = scene.instantiate()
+	if hud.has_method("set_map_layer"):
+		hud.set_map_layer(map_node)
+	layer_hud.add_child(hud)
+	_current_hud = hud
+
+
+func _hide_layer_hud() -> void:
+	if _current_hud:
+		_current_hud.queue_free()
+		_current_hud = null
+
+
 var _last_arrived_contract: int = 0
 
 
@@ -72,6 +99,7 @@ func _on_strategic_planetary(contract: Contract) -> void:
 	_last_arrived_contract = contract.get_instance_id()
 	planetary_layer.load_contract(contract)
 	layer_mgr.push("planetary")
+	_show_layer_hud("planetary", planetary_layer)
 	if EventBus:
 		EventBus.emit_contract_arrived(contract)
 
@@ -89,7 +117,9 @@ func _on_planetary_tactical(contract: Contract, hex_data: Dictionary) -> void:
 
 func _on_tactical_closed() -> void:
 	var result = tactical_layer._get_result_copy() if tactical_layer.has_method("_get_result_copy") else tactical_layer._result
+	_hide_layer_hud()
 	layer_mgr.pop()
+	_show_layer_hud("strategic", strategic_layer)
 
 	# Remove destroyed player units from their parent OperationalUnit
 	if result and result.has("destroyed_player_units"):

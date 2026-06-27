@@ -1,6 +1,7 @@
 extends Node2D
 
 signal planetary_map_requested(contract: Contract)
+signal system_selected(system_data: Dictionary)
 
 var systems_positions: Array[Dictionary] = []
 var jump_routes: Array[Dictionary] = []
@@ -26,21 +27,10 @@ const HEX_WIDTH: float = HEX_DIAMETER
 const TERRITORY_CACHE_PATH = "user://cache/starmap_territory.json"
 
 @onready var camera: Camera2D = $Camera2D
-@onready var info_panel = $CanvasLayer/StrategicActions/MarginContainer/VBox/SystemInfoPanel
-@onready var sidebar = $CanvasLayer/StrategicActions
 
 
 func _ready() -> void:
 	Helpers.debug_print("StarMap", "_ready start")
-
-	sidebar.organization_tree_requested.connect(func(): PanelManager.open_panel("org_mgmt"))
-	sidebar.contract_board_requested.connect(func(): PanelManager.open_panel("contract_board"))
-	sidebar.personnel_management_requested.connect(func(): PanelManager.open_panel("personnel"))
-	sidebar.mech_lab_requested.connect(func(): PanelManager.open_panel("mech_lab"))
-	sidebar.logistics_requested.connect(func(): PanelManager.open_panel("logistics"))
-	sidebar.event_log_requested.connect(func(): PanelManager.open_panel("event_log"))
-	$CanvasLayer/StrategicActions/%ContractBoardButton.pressed.connect(func(): PanelManager.open_panel("contract_board"))
-	$CanvasLayer/StrategicActions/%OrganizationTreeButton.pressed.connect(func(): PanelManager.open_panel("org_mgmt"))
 	_load_systems()
 	_load_territory_cache()
 	_calculate_jump_routes()
@@ -105,7 +95,7 @@ func _check_system_click(world_pos: Vector2) -> void:
 			selected_system = {}
 			path_start = {}
 			jump_path = []
-			info_panel.hide_panel()
+			system_selected.emit({})
 		else:
 			if not selected_system.is_empty() and selected_system != closest:
 				path_start = selected_system
@@ -113,18 +103,12 @@ func _check_system_click(world_pos: Vector2) -> void:
 				var to_pos = closest["pos"]
 				jump_path = _a_star_jump_path(from_pos, to_pos)
 			selected_system = closest
-			var sys_name = closest["data"].get("name", "")
-			var detail = DataManager.get_system_detail(sys_name)
-			var display_data = closest["data"].duplicate()
-			for key in detail:
-				if key != "_file":
-					display_data[key] = detail[key]
-			info_panel.show_system(display_data)
+			system_selected.emit(closest)
 	else:
 		selected_system = {}
 		path_start = {}
 		jump_path = []
-		info_panel.hide_panel()
+		system_selected.emit({})
 	queue_redraw()
 
 
@@ -390,9 +374,10 @@ func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
 		if PanelManager.close_top_panel():
 			get_viewport().set_input_as_handled()
-		elif info_panel.visible:
+		elif not selected_system.is_empty():
 			selected_system = {}
-			info_panel.hide_panel()
+			jump_path = []
+			system_selected.emit({})
 			queue_redraw()
 			get_viewport().set_input_as_handled()
 		return

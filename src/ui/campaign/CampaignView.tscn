@@ -46,5 +46,8 @@ script = ExtResource("4")
 
 [node name="HUD" parent="." instance=ExtResource("11")]
 
+[node name="LayerHUD" type="CanvasLayer" parent="."]
+layer = 4
+
 [node name="ModalLayer" type="CanvasLayer" parent="."]
 script = ExtResource("12")

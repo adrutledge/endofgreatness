@@ -11,30 +11,13 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="."]
+[node name="MapPanel" type="Panel" parent="."]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 12
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 12
-
-[node name="VBox" type="VBoxContainer" parent="MarginContainer"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="HBox" type="HBoxContainer" parent="MarginContainer/VBox"]
-size_flags_vertical = 3
-
-[node name="MapPanel" type="Panel" parent="MarginContainer/VBox/HBox"]
-size_flags_horizontal = 3
 mouse_filter = 0
 
-[node name="MapMargin" type="MarginContainer" parent="MarginContainer/VBox/HBox/MapPanel"]
+[node name="MapMargin" type="MarginContainer" parent="MapPanel"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -44,7 +27,7 @@ theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 
-[node name="MapDraw" type="Control" parent="MarginContainer/VBox/HBox/MapPanel/MapMargin"]
+[node name="MapDraw" type="Control" parent="MapPanel/MapMargin"]
 unique_name_in_owner = true
 anchors_preset = 15
 anchor_right = 1.0
@@ -53,38 +36,8 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 0
 
-[node name="SidePanel" type="VBoxContainer" parent="MarginContainer/VBox/HBox"]
-size_flags_horizontal = 1
-
-[node name="HexInfoLabel" type="Label" parent="MarginContainer/VBox/HBox/SidePanel"]
-unique_name_in_owner = true
-text = ""
-theme_override_font_sizes/font_size = 14
-autowrap_mode = 1
-
-[node name="ExploreButton" type="Button" parent="MarginContainer/VBox/HBox/SidePanel"]
-unique_name_in_owner = true
-text = "Explore Hex"
-disabled = true
-size_flags_horizontal = 4
-
-[node name="EngageButton" type="Button" parent="MarginContainer/VBox/HBox/SidePanel"]
-unique_name_in_owner = true
-text = "Engage Enemy"
-visible = false
-size_flags_horizontal = 4
-
-[node name="DetailLabel" type="RichTextLabel" parent="MarginContainer/VBox/HBox/SidePanel"]
+[node name="DetailLabel" type="RichTextLabel" parent="."]
 unique_name_in_owner = true
 text = ""
 bbcode_enabled = true
-fit_content = true
-size_flags_vertical = 3
-
-[node name="BottomBar" type="HBoxContainer" parent="MarginContainer/VBox"]
-size_flags_vertical = 0
-
-[node name="CloseButton" type="Button" parent="MarginContainer/VBox/BottomBar"]
-unique_name_in_owner = true
-text = "Abandon Contract"
-size_flags_horizontal = 0
+visible = false

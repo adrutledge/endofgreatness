@@ -1,0 +1,55 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/ui/strategic/StrategicHUD.gd" id="1"]
+
+[node name="StrategicHUD" type="Panel"]
+script = ExtResource("1")
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+margin_left = -260
+custom_minimum_size = Vector2i(260, 0)
+
+[node name="VBox" type="VBoxContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_top = 8
+
+[node name="Title" type="Label" parent="VBox"]
+text = "Inner Sphere"
+theme_override_font_sizes/font_size = 18
+horizontal_alignment = 1
+
+[node name="SystemInfo" type="RichTextLabel" parent="VBox"]
+text = ""
+bbcode_enabled = true
+custom_minimum_size = Vector2i(0, 100)
+
+[node name="HSeparator" type="HSeparator" parent="VBox"]
+
+[node name="FactionList" type="ItemList" parent="VBox"]
+size_flags_vertical = 3
+select_mode = 0
+
+[node name="HSeparator2" type="HSeparator" parent="VBox"]
+
+[node name="ContractBoardButton" type="Button" parent="VBox"]
+text = "Contract Board"
+
+[node name="OrgMgmtButton" type="Button" parent="VBox"]
+text = "Organization"
+
+[node name="PersonnelButton" type="Button" parent="VBox"]
+text = "Personnel"
+
+[node name="MechLabButton" type="Button" parent="VBox"]
+text = "Mech Lab"
+
+[node name="LogisticsButton" type="Button" parent="VBox"]
+text = "Logistics"
+
+[node name="EventLogButton" type="Button" parent="VBox"]
+text = "Event Log"
