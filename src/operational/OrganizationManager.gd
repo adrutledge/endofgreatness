@@ -168,6 +168,11 @@ static func show_deploy_dialog(caller: Node, contract: Contract, on_deployed: Ca
 	dialog.ok_button_text = T("Deploy & Pay Transport")
 	dialog.dialog_text = ""
 
+	var scroll := ScrollContainer.new()
+	scroll.custom_minimum_size = Vector2i(0, 140)
+	scroll.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.size_flags_vertical = Control.SIZE_SHRINK_BEGIN
+
 	var vbox := VBoxContainer.new()
 	vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
@@ -189,7 +194,8 @@ static func show_deploy_dialog(caller: Node, contract: Contract, on_deployed: Ca
 	info_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	vbox.add_child(info_label)
 
-	dialog.add_child(vbox)
+	scroll.add_child(vbox)
+	dialog.add_child(scroll)
 
 	var _update_info := func():
 		var idx = selector.selected
