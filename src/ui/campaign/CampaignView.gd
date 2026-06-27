@@ -63,7 +63,13 @@ func _setup_hud() -> void:
 	pass
 
 
+var _last_arrived_contract: int = 0
+
+
 func _on_strategic_planetary(contract: Contract) -> void:
+	if contract.get_instance_id() == _last_arrived_contract:
+		return
+	_last_arrived_contract = contract.get_instance_id()
 	planetary_layer.load_contract(contract)
 	layer_mgr.push("planetary")
 	if EventBus:

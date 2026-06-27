@@ -148,6 +148,16 @@ func load_contract(c: Contract) -> void:
 	_generate_map()
 	_init_deployed_units()
 	_generate_opfor_pool()
+	_center_on_landing_zone()
+
+
+func _center_on_landing_zone() -> void:
+	if not hex_map:
+		return
+	var lz = hex_map.landing_zone
+	var lz_pixel = HexMap.axial_to_pixel(lz.x, lz.y, hex_size * camera_zoom)
+	camera_offset = map_draw.size / 2 - lz_pixel
+	map_draw.queue_redraw()
 
 
 func _generate_map() -> void:
@@ -293,7 +303,7 @@ func _on_map_draw() -> void:
 
 	for row in hex_map.hexes:
 		for h in row:
-			var pixel = HexMap.axial_to_pixel(h.q, h.r, hex_size) + center
+			var pixel = HexMap.axial_to_pixel(h.q, h.r, hex_size * camera_zoom) + center
 
 			if not h.revealed and not _is_adjacent_to_revealed(h.q, h.r):
 				continue
@@ -339,7 +349,7 @@ func _hex_in_path(q: int, r: int) -> bool:
 func _draw_force_markers(draw: Control, center: Vector2) -> void:
 	for du in deployed_units:
 		var pos = du.hex_pos
-		var pixel = HexMap.axial_to_pixel(pos.x, pos.y, hex_size) + center
+		var pixel = HexMap.axial_to_pixel(pos.x, pos.y, hex_size * camera_zoom) + center
 		var size = hex_size * camera_zoom * 0.3
 		var is_selected = deployed_units.find(du) == selected_unit_idx
 
@@ -418,7 +428,7 @@ func _on_map_input(event: InputEvent) -> void:
 			map_draw.queue_redraw()
 
 	if event is InputEventMouseMotion and panning:
-		camera_offset = pan_start - map_draw.get_local_mouse_position()
+		camera_offset += event.relative
 		map_draw.queue_redraw()
 
 
