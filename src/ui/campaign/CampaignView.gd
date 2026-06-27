@@ -45,6 +45,7 @@ func _ready() -> void:
 
 	layer_mgr.push("strategic")
 	_show_layer_hud("strategic", strategic_layer)
+	get_viewport().size_changed.connect(_on_viewport_resized)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -80,19 +81,26 @@ func _show_layer_hud(layer: String, map_node: Node) -> void:
 	var hud = scene.instantiate()
 	if hud.has_method("set_map_layer"):
 		hud.set_map_layer(map_node)
-	# Wrap in a full-screen Control so anchor_left/margin_left work
-	# (CanvasLayer extends Node2D, and Control anchors need a Control parent)
-	var wrapper := Control.new()
-	wrapper.anchors_preset = Control.PRESET_FULL_RECT
-	wrapper.add_child(hud)
-	layer_hud.add_child(wrapper)
-	_current_hud = wrapper
+	layer_hud.add_child(hud)
+	_position_hud(hud)
+	_current_hud = hud
+
+
+func _position_hud(hud: Control) -> void:
+	var vp = get_viewport().get_visible_rect().size
+	hud.position = Vector2(vp.x - 260, 28)
+	hud.size = Vector2(260, vp.y - 28)
 
 
 func _hide_layer_hud() -> void:
 	if _current_hud:
 		_current_hud.queue_free()
 		_current_hud = null
+
+
+func _on_viewport_resized() -> void:
+	if _current_hud:
+		_position_hud(_current_hud)
 
 
 var _last_arrived_contract: int = 0

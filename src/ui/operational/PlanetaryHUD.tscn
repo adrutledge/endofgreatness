@@ -4,11 +4,6 @@
 
 [node name="PlanetaryHUD" type="Panel"]
 script = ExtResource("1")
-anchor_left = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-margin_left = -260
-custom_minimum_size = Vector2i(260, 0)
 
 [node name="VBox" type="VBoxContainer" parent="."]
 anchors_preset = 15
