@@ -97,6 +97,36 @@ flat = true
 [node name="Spacer4" type="Control" parent="TopBar"]
 size_flags_horizontal = 10
 
+[node name="TimeControls" type="HBoxContainer" parent="TopBar"]
+
+[node name="PauseButton" type="Button" parent="TopBar/TimeControls"]
+unique_name_in_owner = true
+text = "▶"
+theme_override_font_sizes/font_size = 11
+flat = true
+
+[node name="Speed1x" type="Button" parent="TopBar/TimeControls"]
+unique_name_in_owner = true
+text = "1×"
+theme_override_font_sizes/font_size = 10
+flat = true
+toggle_mode = true
+button_pressed = true
+
+[node name="Speed2x" type="Button" parent="TopBar/TimeControls"]
+unique_name_in_owner = true
+text = "2×"
+theme_override_font_sizes/font_size = 10
+flat = true
+toggle_mode = true
+
+[node name="Speed5x" type="Button" parent="TopBar/TimeControls"]
+unique_name_in_owner = true
+text = "5×"
+theme_override_font_sizes/font_size = 10
+flat = true
+toggle_mode = true
+
 [node name="DateTime" type="VBoxContainer" parent="TopBar"]
 
 [node name="DateLabel" type="Label" parent="TopBar/DateTime"]

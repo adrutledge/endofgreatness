@@ -209,7 +209,7 @@ func _init_deployed_units() -> void:
 		return
 
 	for ou in GameState.player.organizational_units:
-		if ou.contract_id == contract.resource_path and ou.is_deployed:
+		if ou.contract_id == str(contract.get_instance_id()) and ou.is_deployed:
 			_collect_sub_units(ou)
 			break
 

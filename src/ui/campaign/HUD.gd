@@ -11,6 +11,12 @@ func _ready() -> void:
 	var menu_btn = topbar.get_node("MenuButton")
 	menu_btn.pressed.connect(_on_menu_button)
 
+	var tc = $TopBar/TimeControls
+	tc.get_node("PauseButton").pressed.connect(_on_toggle_pause)
+	tc.get_node("Speed1x").toggled.connect(func(t): _on_speed("1x", t))
+	tc.get_node("Speed2x").toggled.connect(func(t): _on_speed("2x", t))
+	tc.get_node("Speed5x").toggled.connect(func(t): _on_speed("5x", t))
+
 	EventBus.month_started.connect(_refresh)
 	EventBus.contract_accepted.connect(_refresh)
 	EventBus.contract_completed.connect(_refresh)
@@ -18,6 +24,26 @@ func _ready() -> void:
 	EventBus.funds_depleted.connect(_refresh)
 	EventBus.day_started.connect(_refresh)
 	_refresh()
+
+
+func _on_toggle_pause() -> void:
+	if TimeManager:
+		TimeManager.toggle_pause()
+		var btn = $TopBar/TimeControls/PauseButton
+		btn.text = "▶" if TimeManager.is_paused else "⏸"
+
+
+func _on_speed(speed: String, toggled: bool) -> void:
+	if not toggled:
+		return
+	$TopBar/TimeControls/Speed1x.button_pressed = speed == "1x"
+	$TopBar/TimeControls/Speed2x.button_pressed = speed == "2x"
+	$TopBar/TimeControls/Speed5x.button_pressed = speed == "5x"
+	if TimeManager:
+		match speed:
+			"1x": TimeManager.tick_interval = 1.0
+			"2x": TimeManager.tick_interval = 0.5
+			"5x": TimeManager.tick_interval = 0.2
 
 
 func _on_menu_button() -> void:
