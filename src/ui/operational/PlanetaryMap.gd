@@ -66,6 +66,13 @@ func _ready() -> void:
 		HexMap.ObjectiveType.EVENT: "! " + tr("Event"),
 	}
 
+	var bg = StyleBoxFlat.new()
+	bg.bg_color = Color(0.08, 0.08, 0.12, 0.95)
+	add_theme_stylebox_override("panel", bg)
+
+	map_draw.draw.connect(_on_map_draw)
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	if not hex_map or not visible:
 		return
