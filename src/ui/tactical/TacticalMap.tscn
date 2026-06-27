@@ -32,14 +32,14 @@ custom_minimum_size = Vector2i(0, 28)
 unique_name_in_owner = true
 text = "Round 1 — INITIATIVE"
 theme_override_font_sizes/font_size = 14
-theme_override_colors/font_color = Color(1, 0.9, 0.6)
+theme_override_colors/font_color = Color(1.0, 0.9, 0.6, 1.0)
 size_flags_horizontal = 3
 
 [node name="InitiativeLabel" type="Label" parent="Margin/VBox/PhaseBar"]
 unique_name_in_owner = true
 text = ""
 theme_override_font_sizes/font_size = 11
-theme_override_colors/font_color = Color(0.7, 0.8, 0.9)
+theme_override_colors/font_color = Color(0.7, 0.8, 0.9, 1.0)
 size_flags_horizontal = 3
 
 [node name="EndPhaseButton" type="Button" parent="Margin/VBox/PhaseBar"]
