@@ -1,0 +1,50 @@
+{
+	"comment": "Stub — full data pending. 2d6 hit location tables per unit type, arc, and cover status.",
+	"version": "1.0",
+	"tables": {
+		"biped_front": {
+			"description": "Standard biped front arc",
+			"2": "ct_crit",
+			"3": "ra",
+			"4": "ra",
+			"5": "rl",
+			"6": "rt",
+			"7": "ct",
+			"8": "lt",
+			"9": "ll",
+			"10": "la",
+			"11": "la",
+			"12": "head"
+		},
+		"biped_rear": {
+			"description": "Standard biped rear arc (same table, rear armor)",
+			"2": "ct_crit",
+			"3": "ra",
+			"4": "ra",
+			"5": "rl",
+			"6": "rt",
+			"7": "ct",
+			"8": "lt",
+			"9": "ll",
+			"10": "la",
+			"11": "la",
+			"12": "head"
+		},
+		"quad_front": {
+			"description": "Quad front arc (front legs replace arms)",
+			"todo": "fill quad table"
+		},
+		"quad_rear": {
+			"description": "Quad rear arc",
+			"todo": "fill quad table"
+		},
+		"vehicle_front": {
+			"description": "Vehicle front arc",
+			"todo": "fill vehicle table"
+		},
+		"partial_cover_modifier": {
+			"description": "Under partial cover, leg results are rerolled or absorbed by cover",
+			"rule": "leg_results_absorbed"
+		}
+	}
+}

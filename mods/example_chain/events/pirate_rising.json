@@ -1,0 +1,20 @@
+{
+	"id": "pirate_rising",
+	"type": "strategic",
+	"title_key": "example_chain.event.pirate_rising.title",
+	"description_key": "example_chain.event.pirate_rising.desc",
+	"trigger": {
+		"on": "contract_completed",
+		"conditions": {
+			"faction": "PIR",
+			"min_kills": 3
+		}
+	},
+	"effects": {
+		"generate_contract": {
+			"type": "pirate_sweep",
+			"issuer": "LOCAL",
+			"target": "PIR"
+		}
+	}
+}

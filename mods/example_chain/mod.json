@@ -1,0 +1,10 @@
+{
+	"id": "example_chain",
+	"name": "Example Event Chain",
+	"version": "1.0.0",
+	"compatible_version": "1.0.0",
+	"author": "Modder",
+	"description": "An example mod showing the mod system. Adds a pirate-themed event chain and faction.",
+	"load_priority": 0,
+	"dependencies": []
+}

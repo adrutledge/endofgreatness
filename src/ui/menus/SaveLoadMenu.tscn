@@ -1,0 +1,61 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/ui/menus/SaveLoadMenu.gd" id="1"]
+
+[node name="SaveLoadMenu" type="Control"]
+script = ExtResource("1")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+margin_left = -300.0
+margin_top = -220.0
+margin_right = 300.0
+margin_bottom = 220.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Title" type="Label" parent="VBoxContainer"]
+text = "Load Game"
+theme_override_font_sizes/font_size = 22
+horizontal_alignment = 1
+
+[node name="SavesList" type="ItemList" parent="VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(500, 280)
+select_mode = 0
+
+[node name="InfoLabel" type="Label" parent="VBoxContainer"]
+unique_name_in_owner = true
+text = ""
+theme_override_colors/font_color = Color(0.7, 0.7, 0.8)
+
+[node name="StatusLabel" type="Label" parent="VBoxContainer"]
+unique_name_in_owner = true
+text = ""
+horizontal_alignment = 1
+
+[node name="Buttons" type="HBoxContainer" parent="VBoxContainer"]
+
+[node name="LoadButton" type="Button" parent="VBoxContainer/Buttons"]
+unique_name_in_owner = true
+text = "Load"
+size_flags_horizontal = 3
+
+[node name="DeleteButton" type="Button" parent="VBoxContainer/Buttons"]
+unique_name_in_owner = true
+text = "Delete"
+size_flags_horizontal = 3
+
+[node name="BackButton" type="Button" parent="VBoxContainer/Buttons"]
+unique_name_in_owner = true
+text = "Back"
+size_flags_horizontal = 3

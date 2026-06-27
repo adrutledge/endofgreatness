@@ -21,3 +21,6 @@ Thumbs.db
 .tested_*
 3028-*.pdf
 debug/
+
+# Godot resource UIDs (auto-generated, machine-specific)
+*.uid

@@ -1,0 +1,15 @@
+{
+	"example_chain.faction.pirate_corsairs.name": "Corsair Confederacy",
+	"example_chain.faction.pirate_corsairs.desc": "A loose coalition of pirate bands operating in the Periphery.",
+
+	"example_chain.event.pirate_rising.title": "Pirate Rising",
+	"example_chain.event.pirate_rising.desc": "Intelligence reports indicate the Corsair Confederacy is massing for a major raid. Local militias are offering lucrative short-term contracts.",
+
+	"example_chain.event.salvage_windfall.title": "Unexpected Salvage Windfall",
+	"example_chain.event.salvage_windfall.desc": "While patrolling the outer system, your scouts discover a derelict DropShip adrift. Its cargo bay contains intact components and spare parts.",
+
+	"example_chain.contract.pirate_sweep.name": "Pirate Sweep",
+	"example_chain.contract.pirate_sweep.brief": "Clear pirate staging points in the outer belt. Expect light resistance but tricky navigation.",
+
+	"example_chain.mercenary_rating.elite": "Elite Mercenaries of the Corsair Front"
+}

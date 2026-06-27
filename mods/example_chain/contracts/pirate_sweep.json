@@ -1,0 +1,10 @@
+{
+	"id": "pirate_sweep",
+	"activity_type": "raid",
+	"name_key": "example_chain.contract.pirate_sweep.name",
+	"brief_key": "example_chain.contract.pirate_sweep.brief",
+	"min_tonnage": 120,
+	"duration_days": 45,
+	"salvage_rate": 0.4,
+	"c_bill_payment": 750000
+}

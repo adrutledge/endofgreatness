@@ -1,0 +1,103 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://src/ui/paper_doll/PaperDoll.gd" id="1"]
+
+[node name="PaperDoll" type="Control"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1")
+
+[node name="Header" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_top = 4
+offset_bottom = 24
+text = "Paper Doll — Click a slot to select"
+theme_override_font_sizes/font_size = 13
+
+[node name="PaperDollSelectedInfo" type="Label" parent="."]
+unique_name_in_owner = true
+layout_mode = 0
+offset_top = 26
+offset_bottom = 44
+theme_override_colors/font_color = Color(1, 0.9, 0.6, 1)
+
+[node name="Scroll" type="ScrollContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 46
+offset_bottom = -40
+
+[node name="Wrapper" type="VBoxContainer" parent="Scroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+
+[node name="HeadRow" type="HBoxContainer" parent="Scroll/Wrapper"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="LeftHeadSpacer" type="Control" parent="Scroll/Wrapper/HeadRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HeadCenter" type="Control" parent="Scroll/Wrapper/HeadRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RightHeadSpacer" type="Control" parent="Scroll/Wrapper/HeadRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RightHeadSpacer2" type="Control" parent="Scroll/Wrapper/HeadRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HeadSep" type="HSeparator" parent="Scroll/Wrapper"]
+layout_mode = 2
+
+[node name="MidRow" type="HBoxContainer" parent="Scroll/Wrapper"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LegSep" type="HSeparator" parent="Scroll/Wrapper"]
+layout_mode = 2
+
+[node name="LegRow" type="HBoxContainer" parent="Scroll/Wrapper"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="LeftLegSpacer" type="Control" parent="Scroll/Wrapper/LegRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="LegMidSpacer" type="Control" parent="Scroll/Wrapper/LegRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RightLegSpacer" type="Control" parent="Scroll/Wrapper/LegRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ButtonBar" type="HBoxContainer" parent="."]
+layout_mode = 0
+offset_top = -36
+offset_bottom = -4
+anchor_right = 1.0
+anchor_bottom = 1.0
+alignment = 1
+
+[node name="ResetButton" type="Button" parent="ButtonBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Reset Changes"
+
+[node name="SaveButton" type="Button" parent="ButtonBar"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Save Changes"

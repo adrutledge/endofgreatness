@@ -1,0 +1,16 @@
+{
+	"comment": "Stub — full heat table pending. Known thresholds documented.",
+	"version": "1.0",
+	"standard_max_heat": 30,
+	"optional_max_heat": 60,
+	"thresholds": {
+		"5":  {"walk_mp": -1},
+		"8":  {"to_hit_mod": 1},
+		"10": {"comment": "shutdown check threshold, ammo explosion check threshold"},
+		"15": {"comment": "movement penalty increases"},
+		"20": {"comment": "to-hit penalty increases"},
+		"25": {"comment": "second shutdown check"},
+		"30": {"shutdown": true}
+	},
+	"note": "Full threshold table with all penalties at each heat level (walk MP, run MP, to-hit, shutdown chance, ammo explosion chance) to be filled per rulebook."
+}

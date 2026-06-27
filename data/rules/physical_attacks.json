@@ -1,0 +1,38 @@
+{
+	"comment": "Physical attack damage formulas and to-hit modifiers. All physical attacks use piloting skill, not gunnery.",
+	"version": "1.0",
+	"skill": "piloting",
+	"to_hit_mods_flag": "All to-hit modifiers below are extrapolated and likely incorrect — flag for full rules review",
+	"attacks": {
+		"punch": {
+			"damage_formula": "tonnage / 10 * (0.5 if arms_used_for_walking else 1)",
+			"to_hit_mod": 0,
+			"notes": "Each arm punches independently. Cannot punch if carrying a club or using arms for walking (quads)."
+		},
+		"kick": {
+			"damage_formula": "tonnage / 5 * 0.5",
+			"to_hit_mod": -2,
+			"notes": "Leg kicks. Standard physical attack for bipeds."
+		},
+		"push": {
+			"damage_formula": 0,
+			"to_hit_mod": 0,
+			"notes": "Moves target 1 hex. May cause fall damage or push out of engagement. No direct damage."
+		},
+		"club": {
+			"damage_formula": "attacker_tonnage / 5 * 0.5",
+			"to_hit_mod": 1,
+			"notes": "Uses a blown-off limb as improvised club. Picked up during movement phase. Precludes DFA/charge."
+		},
+		"charge": {
+			"damage_formula": "(attacker_tonnage / 5) * distance_traveled",
+			"to_hit_mod": -1,
+			"notes": "Distance traveled = hexes moved before impact. Both attacker and target take damage. Target is pushed. Attacker cannot fire weapons during charge."
+		},
+		"dfa": {
+			"damage_formula": "(attacker_tonnage / 2) * (distance_jumped / 3)",
+			"to_hit_mod": -2,
+			"notes": "Death From Above. Jump jets required. Attacker lands in target hex. Both take damage. Attacker falls after DFA. Target is pushed."
+		}
+	}
+}

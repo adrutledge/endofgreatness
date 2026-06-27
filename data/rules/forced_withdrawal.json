@@ -1,0 +1,22 @@
+{
+	"comment": "Forced withdrawal trigger conditions. A unit meeting any condition enters forced withdrawal: must move toward nearest map edge each turn but may still fire. May path around environmental hazards.",
+	"version": "1.0",
+	"conditions": [
+		{
+			"id": "engine_plus_gyro_hit",
+			"description": "At least 1 engine hit and at least 1 gyro hit simultaneously",
+			"check": "engine_hits >= 1 and gyro_hits >= 1"
+		},
+		{
+			"id": "two_torsos_no_front_armor",
+			"description": "Any two torso locations (CT, LT, RT) have zero front armor",
+			"check": "count_torsos_with_zero_front_armor >= 2"
+		},
+		{
+			"id": "example_third_condition",
+			"description": "Placeholder — additional triggers from rulebook to be added",
+			"check": "pending_rules_verification"
+		}
+	],
+	"note": "Conditions use a simple expression language evaluated by the PSR/forced withdrawal resolver. Each condition is checked at end of each phase. When any condition is true, the unit enters forced withdrawal. Full rulebook conditions pending."
+}

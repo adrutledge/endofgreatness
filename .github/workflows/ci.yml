@@ -1,0 +1,109 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+    paths-ignore: ['**.md', 'ai/**', 'docs/**', 'tools/**']
+  pull_request:
+    branches: [main]
+    paths-ignore: ['**.md', 'ai/**', 'docs/**', 'tools/**']
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  GODOT_VERSION: 4.6.2
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Godot headless
+        run: |
+          wget -q https://github.com/godotengine/godot/releases/download/${{ env.GODOT_VERSION }}-stable/Godot_v${{ env.GODOT_VERSION }}-stable_linux_headless.64.zip
+          unzip -q Godot_v${{ env.GODOT_VERSION }}-stable_linux_headless.64.zip
+          sudo mv Godot_v${{ env.GODOT_VERSION }}-stable_linux_headless.64 /usr/local/bin/godot
+
+      - name: Cache .godot
+        uses: actions/cache@v4
+        with:
+          path: .godot
+          key: godot-cache-${{ hashFiles('src/**', 'data/**', 'project.godot') }}
+          restore-keys: godot-cache-
+
+      - name: Run linter
+        run: make lint
+
+      - name: Run tests
+        run: make test
+
+  build:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: test
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - preset: Linux/X11
+            artifact: endofgreatness-linux
+          - preset: Windows Desktop
+            artifact: endofgreatness-windows
+          - preset: macOS
+            artifact: endofgreatness-macos
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Godot headless
+        run: |
+          wget -q https://github.com/godotengine/godot/releases/download/${{ env.GODOT_VERSION }}-stable/Godot_v${{ env.GODOT_VERSION }}-stable_linux_headless.64.zip
+          unzip -q Godot_v${{ env.GODOT_VERSION }}-stable_linux_headless.64.zip
+          sudo mv Godot_v${{ env.GODOT_VERSION }}-stable_linux_headless.64 /usr/local/bin/godot
+
+      - name: Install export templates
+        run: |
+          wget -q https://github.com/godotengine/godot/releases/download/${{ env.GODOT_VERSION }}-stable/Godot_v${{ env.GODOT_VERSION }}-stable_export_templates.tpz
+          mkdir -p ~/.local/share/godot/export_templates
+          unzip -q Godot_v${{ env.GODOT_VERSION }}-stable_export_templates.tpz -d ~/.local/share/godot/export_templates/
+          mv ~/.local/share/godot/export_templates/templates ~/.local/share/godot/export_templates/${{ env.GODOT_VERSION }}.stable
+
+      - name: Cache .godot
+        uses: actions/cache@v4
+        with:
+          path: .godot
+          key: godot-cache-${{ hashFiles('src/**', 'data/**', 'project.godot') }}
+          restore-keys: godot-cache-
+
+      - name: Generate .godot cache
+        run: make bootstrap
+
+      - name: Export ${{ matrix.preset }}
+        run: |
+          mkdir -p export
+          godot --headless --export-release "${{ matrix.preset }}"
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: export/
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Download all build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-artifacts
+
+      - name: Create release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release-artifacts/**/*
+          generate_release_notes: true
