@@ -1,5 +1,7 @@
 extends Panel
 
+const HexMap = preload("res://src/data/HexMap.gd")
+
 ## Right-side HUD for the planetary map layer.
 ## Shows contract info, hex selection details, and action buttons.
 ## Owns no hex grid — communicates with PlanetaryMap via direct calls.
@@ -70,9 +72,11 @@ func _on_hex_selected(hex_dict: Dictionary) -> void:
 	var r = hex_dict.get("r", 0)
 	hex_info_label.text = "Hex (%d, %d)" % [q, r]
 	explore_button.disabled = hex_dict.get("revealed", false)
-	if hex_dict.get("objective", 0) > 0:
-		hex_info_label.text += "\nObjective present"
-	engage_button.hide()
+	var obj = hex_dict.get("objective", HexMap.ObjectiveType.NONE)
+	if obj == HexMap.ObjectiveType.ENEMY or obj == HexMap.ObjectiveType.PRIMARY:
+		engage_button.show()
+	else:
+		engage_button.hide()
 	# Enable move if path is available
 	move_button.disabled = not (_map and _map.has_method("has_path_preview") and _map.has_path_preview())
 
