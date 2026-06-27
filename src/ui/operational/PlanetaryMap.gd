@@ -90,6 +90,9 @@ func _ready() -> void:
 
 	%Title.add_theme_color_override("font_color", Color(1.0, 0.9, 0.6))
 
+	if map_draw.size.x <= 0 or map_draw.size.y <= 0:
+		push_warning("PlanetaryMap: MapDraw zero size at _ready")
+
 
 func _build_move_ui() -> void:
 	var side = %HexInfoLabel.get_parent()

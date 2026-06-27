@@ -52,11 +52,13 @@ size_flags_vertical = 3
 
 [node name="MapPanel" type="Panel" parent="MarginContainer/VBox/HSplit"]
 size_flags_horizontal = 3
+mouse_filter = 0
 
 [node name="MapMargin" type="MarginContainer" parent="MarginContainer/VBox/HSplit/MapPanel"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+mouse_filter = 0
 theme_override_constants/margin_left = 4
 theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
