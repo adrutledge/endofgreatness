@@ -81,9 +81,8 @@ func _setup_tcp() -> void:
 func _configure_headless() -> void:
 	if DisplayServer and DisplayServer.get_name() != "headless":
 		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_MINIMIZED)
-	var sm = Engine.get_singleton("SaveManager")
-	if sm:
-		sm.AUTOSAVE_PREFIX = HEADLESS_AUTOSAVE_PREFIX
+	if SaveManager:
+		SaveManager.AUTOSAVE_PREFIX = HEADLESS_AUTOSAVE_PREFIX
 
 
 
@@ -205,12 +204,11 @@ func _handle_get_log(count: int) -> void:
 
 
 func _handle_dump_org() -> void:
-	var gs = Engine.get_singleton("GameState")
-	if not gs or not is_instance_valid(gs.player):
+	if not is_instance_valid(GameState.player):
 		_send_response({"ok": false, "error": "no player state"})
 		return
 	var tree := []
-	for ou in gs.player.organizational_units:
+	for ou in GameState.player.organizational_units:
 		tree.append(_dump_org_unit(ou))
 	_send_response({"ok": true, "org_tree": tree})
 
@@ -247,7 +245,7 @@ func _dump_op_unit(opu) -> Dictionary:
 
 
 func _handle_advance(days: int) -> void:
-	var tm = Engine.get_singleton("TimeManager")
+	var tm = TimeManager
 	if not tm:
 		_send_response({"ok": false, "error": "TimeManager not available"})
 		return
@@ -261,21 +259,21 @@ func _handle_advance(days: int) -> void:
 
 
 func _handle_pause() -> void:
-	var tm = Engine.get_singleton("TimeManager")
+	var tm = TimeManager
 	if tm:
 		tm.is_paused = true
 	_send_response({"ok": true, "paused": true})
 
 
 func _handle_unpause() -> void:
-	var tm = Engine.get_singleton("TimeManager")
+	var tm = TimeManager
 	if tm:
 		tm.is_paused = false
 	_send_response({"ok": true, "paused": false})
 
 
 func _handle_set_speed(data: Dictionary) -> void:
-	var tm = Engine.get_singleton("TimeManager")
+	var tm = TimeManager
 	if tm:
 		if data.has("interval"):
 			tm.tick_interval = maxf(0.01, float(data.interval))
@@ -288,7 +286,7 @@ func _handle_set_speed(data: Dictionary) -> void:
 
 
 func _handle_save(name: String) -> void:
-	var sm = Engine.get_singleton("SaveManager")
+	var sm = SaveManager
 	if not sm:
 		_send_response({"ok": false, "error": "SaveManager not available"})
 		return
@@ -297,7 +295,7 @@ func _handle_save(name: String) -> void:
 
 
 func _handle_load(path: String) -> void:
-	var sm = Engine.get_singleton("SaveManager")
+	var sm = SaveManager
 	if not sm:
 		_send_response({"ok": false, "error": "SaveManager not available"})
 		return
@@ -307,7 +305,7 @@ func _handle_load(path: String) -> void:
 
 
 func _handle_add_funds(amount: int) -> void:
-	var gs = Engine.get_singleton("GameState")
+	var gs = GameState
 	if not gs or not is_instance_valid(gs.player):
 		_send_response({"ok": false, "error": "no player state"})
 		return
@@ -316,7 +314,7 @@ func _handle_add_funds(amount: int) -> void:
 
 
 func _handle_set_funds(amount: int) -> void:
-	var gs = Engine.get_singleton("GameState")
+	var gs = GameState
 	if not gs or not is_instance_valid(gs.player):
 		_send_response({"ok": false, "error": "no player state"})
 		return
@@ -328,13 +326,13 @@ func _handle_add_item(name: String, quantity: int) -> void:
 	if name.is_empty() or quantity <= 0:
 		_send_response({"ok": false, "error": "invalid item name or quantity"})
 		return
-	var gs = Engine.get_singleton("GameState")
+	var gs = GameState
 	if not gs:
 		_send_response({"ok": false, "error": "no game state"})
 		return
 	var cur = gs.player_inventory.get(name, 0)
 	gs.player_inventory[name] = cur + quantity
-	var eb = Engine.get_singleton("EventBus")
+	var eb = EventBus
 	if eb:
 		eb.emit_inventory_changed(name, quantity, "opencode_debug")
 	_send_response({"ok": true, "new_total": gs.player_inventory[name]})
@@ -344,7 +342,7 @@ func _handle_remove_item(name: String, quantity: int) -> void:
 	if name.is_empty() or quantity <= 0:
 		_send_response({"ok": false, "error": "invalid item name or quantity"})
 		return
-	var gs = Engine.get_singleton("GameState")
+	var gs = GameState
 	if not gs:
 		_send_response({"ok": false, "error": "no game state"})
 		return
@@ -356,14 +354,14 @@ func _handle_remove_item(name: String, quantity: int) -> void:
 	gs.player_inventory[name] = cur - removed
 	if gs.player_inventory[name] <= 0:
 		gs.player_inventory.erase(name)
-	var eb = Engine.get_singleton("EventBus")
+	var eb = EventBus
 	if eb:
 		eb.emit_inventory_changed(name, -removed, "opencode_debug")
 	_send_response({"ok": true, "new_total": gs.player_inventory.get(name, 0)})
 
 
 func _handle_add_personnel(data: Dictionary) -> void:
-	var pm = Engine.get_singleton("PersonnelManager")
+	var pm = PersonnelManager
 	if not pm:
 		_send_response({"ok": false, "error": "PersonnelManager not available"})
 		return
@@ -416,7 +414,7 @@ func _handle_remove_personnel(name: String) -> void:
 	if name.is_empty():
 		_send_response({"ok": false, "error": "name required"})
 		return
-	var pm = Engine.get_singleton("PersonnelManager")
+	var pm = PersonnelManager
 	if not pm:
 		_send_response({"ok": false, "error": "PersonnelManager not available"})
 		return
@@ -435,7 +433,7 @@ func _handle_add_unit(data: Dictionary) -> void:
 	if chassis.is_empty():
 		_send_response({"ok": false, "error": "chassis required"})
 		return
-	var dm = Engine.get_singleton("DataManager")
+	var dm = DataManager
 	if not dm:
 		_send_response({"ok": false, "error": "DataManager not available"})
 		return
@@ -504,7 +502,7 @@ func _deep_copy_unit(source: TacticalUnit) -> TacticalUnit:
 
 
 func _place_unit_in_org(unit: TacticalUnit, org_name: String) -> bool:
-	var gs = Engine.get_singleton("GameState")
+	var gs = GameState
 	if not gs or not is_instance_valid(gs.player):
 		return false
 	if gs.player.organizational_units.is_empty():
@@ -545,7 +543,7 @@ func _handle_remove_unit(id: String) -> void:
 	if id.is_empty():
 		_send_response({"ok": false, "error": "unit_id required"})
 		return
-	var gs = Engine.get_singleton("GameState")
+	var gs = GameState
 	if not gs or not is_instance_valid(gs.player):
 		_send_response({"ok": false, "error": "no player state"})
 		return
@@ -620,15 +618,9 @@ func probe_snapshot(reason: String = "manual") -> void:
 	_emit(snapshot)
 
 
-func _get_singleton(name: String):
-	if name in Engine.get_singleton_list():
-		return Engine.get_singleton(name)
-	return null
-
-
 func _probe_ui() -> Dictionary:
 	var result := {}
-	var pm = _get_singleton("PanelManager")
+	var pm = PanelManager
 	if not pm:
 		return result
 	for name in pm._panels:
@@ -672,7 +664,7 @@ func _dump_control(node: Control, depth: int) -> Dictionary:
 
 func _probe_state() -> Dictionary:
 	var s := {}
-	var gs = _get_singleton("GameState")
+	var gs = GameState
 	if gs:
 		s["date"] = _game_time()
 		s["active_contracts"] = gs.active_contracts.size()
@@ -687,18 +679,18 @@ func _probe_state() -> Dictionary:
 					tu_count += opu.tactical_units.size()
 			s["tactical_unit_count"] = tu_count
 		s["inventory_size"] = gs.player_inventory.size()
-	var em = _get_singleton("EconomySystem")
+	var em = EconomySystem
 	if em:
 		s["accumulated_expenses"] = em.accumulated_expenses
-	var pm = Engine.get_singleton("PersonnelManager")
+	var pm = PersonnelManager
 	if pm:
 		s["personnel_count"] = pm.personnel_roster.size()
 		s["astechs"] = pm.abstract_astech_count
 		s["medics"] = pm.abstract_medic_count
-	var im = _get_singleton("InventoryManager")
+	var im = InventoryManager
 	if im:
 		s["in_transit_count"] = im.in_transit.size()
-	var tm = _get_singleton("TimeManager")
+	var tm = TimeManager
 	if tm:
 		s["is_paused"] = tm.is_paused
 		s["total_days"] = tm.total_days
@@ -707,7 +699,7 @@ func _probe_state() -> Dictionary:
 
 
 func _game_time() -> Dictionary:
-	var tm = Engine.get_singleton("TimeManager")
+	var tm = TimeManager
 	if not tm:
 		return {}
 	return {
