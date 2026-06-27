@@ -27,7 +27,7 @@ visible = false
 visible = false
 
 [node name="PanelOverlay" type="CanvasLayer" parent="."]
-layer = 2
+layer = 5
 
 [node name="OrganizationManagement" parent="PanelOverlay" instance=ExtResource("5")]
 
@@ -47,7 +47,7 @@ script = ExtResource("4")
 [node name="HUD" parent="." instance=ExtResource("11")]
 
 [node name="LayerHUD" type="CanvasLayer" parent="."]
-layer = 4
+layer = 2
 
 [node name="ModalLayer" type="CanvasLayer" parent="."]
 script = ExtResource("12")
