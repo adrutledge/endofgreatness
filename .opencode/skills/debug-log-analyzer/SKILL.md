@@ -7,7 +7,7 @@ description: >-
 
 ## Log file location
 
-`debug_output.log` in the project root. Created each time `make runoc` is used.
+`debug/debug_output.log` in the project. Created each time `make runoc` is used.
 Populated via `tee` — every line of stderr and stdout goes here in real time.
 
 ## Useful commands
@@ -17,7 +17,7 @@ Populated via `tee` — every line of stderr and stdout goes here in real time.
 ```bash
 python3 -c "
 import re
-with open('debug_output.log') as f:
+with open('debug/debug_output.log') as f:
     lines = f.readlines()
 last = max(i for i, l in enumerate(lines) if 'OpenCodeDebugger ready' in l)
 for l in lines[last:]:
@@ -30,21 +30,21 @@ for l in lines[last:]:
 ### Count errors by type
 
 ```bash
-grep -c "SCRIPT ERROR" debug_output.log   # GDScript runtime errors
-grep -c "Parse Error" debug_output.log    # Scene / script parse failures
-grep -c "^ERROR:" debug_output.log        # Engine-level errors
+grep -c "SCRIPT ERROR" debug/debug_output.log   # GDScript runtime errors
+grep -c "Parse Error" debug/debug_output.log    # Scene / script parse failures
+grep -c "^ERROR:" debug/debug_output.log        # Engine-level errors
 ```
 
 ### Show the last N lines (recent activity during a play session)
 
 ```bash
-tail -30 debug_output.log
+tail -30 debug/debug_output.log
 ```
 
 ### Show all warnings (non-critical but useful context)
 
 ```bash
-grep "WARNING:" debug_output.log | tail -20
+grep "WARNING:" debug/debug_output.log | tail -20
 ```
 
 ## Workflow

@@ -53,7 +53,7 @@ rune:
 
 ## Launch with OpenCode debug mode + pipe (for opencode consumption)
 runoc: bootstrap
-	@$(GODOT) --path . $(GODOT_FLAGS) -- --opencode-debug --opencode-pipe 2>&1 | tee debug_output.log
+	@mkdir -p debug && $(GODOT) --path . $(GODOT_FLAGS) -- --opencode-debug --opencode-pipe 2>&1 | tee debug/debug_output.log
 
 ## Headless OpenCode debug (no window, auto campaign, file output)
 runoc-headless:

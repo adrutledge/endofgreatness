@@ -17,7 +17,7 @@ export/
 .DS_Store
 Thumbs.db
 
-debug_output.log
+debug/debug_output.log
 
 # Build artifacts
 .tested_*
