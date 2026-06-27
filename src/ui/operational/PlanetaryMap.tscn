@@ -61,18 +61,6 @@ mouse_filter = 0
 [node name="SidePanel" type="VBoxContainer" parent="MarginContainer/VBox/HSplit"]
 size_flags_horizontal = 1
 
-[node name="Title" type="Label" parent="MarginContainer/VBox/HSplit/SidePanel"]
-unique_name_in_owner = true
-text = "Planetary Map"
-theme_override_font_sizes/font_size = 18
-horizontal_alignment = 1
-
-[node name="ContractLabel" type="Label" parent="MarginContainer/VBox/HSplit/SidePanel"]
-unique_name_in_owner = true
-text = ""
-theme_override_font_sizes/font_size = 13
-horizontal_alignment = 1
-
 [node name="HexInfoLabel" type="Label" parent="MarginContainer/VBox/HSplit/SidePanel"]
 unique_name_in_owner = true
 text = ""

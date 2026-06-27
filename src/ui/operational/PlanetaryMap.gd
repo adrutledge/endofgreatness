@@ -43,12 +43,13 @@ var marker_palette: Array[Color] = [
 @onready var explore_button: Button = %ExploreButton
 @onready var engage_button: Button = %EngageButton
 @onready var close_button: Button = %CloseButton
-@onready var contract_label: Label = %ContractLabel
 
 var unit_selector: OptionButton
 var progress_label: Label
 var move_button: Button
 var elapsed_label: Label
+var contract_label: Label
+var _title_label: Label
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -58,7 +59,28 @@ func _unhandled_input(event: InputEvent) -> void:
 		_on_map_input(event)
 
 
+func _build_side_panel() -> void:
+	var side = %HexInfoLabel.get_parent()
+	_title_label = Label.new()
+	_title_label.name = "Title"
+	_title_label.text = tr("Planetary Map")
+	_title_label.add_theme_font_size_override("font_size", 18)
+	_title_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	_title_label.add_theme_color_override("font_color", Color(1.0, 0.9, 0.6))
+	side.add_child(_title_label)
+	side.move_child(_title_label, 0)
+
+	contract_label = Label.new()
+	contract_label.name = "ContractLabel"
+	contract_label.text = ""
+	contract_label.add_theme_font_size_override("font_size", 13)
+	contract_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	side.add_child(contract_label)
+	side.move_child(contract_label, 1)
+
+
 func _ready() -> void:
+	_build_side_panel()
 	terrain_colors = {
 		HexMap.Terrain.PLAINS: Color(0.5, 0.7, 0.3),
 		HexMap.Terrain.FOREST: Color(0.2, 0.5, 0.15),
@@ -84,7 +106,7 @@ func _ready() -> void:
 	Helpers.validate_nodes("PlanetaryMap", [
 		["map_draw", map_draw], ["detail_label", detail_label],
 		["hex_info_label", hex_info_label], ["explore_button", explore_button],
-		["close_button", close_button], ["contract_label", contract_label],
+		["close_button", close_button],
 	])
 
 	_build_move_ui()
@@ -93,8 +115,6 @@ func _ready() -> void:
 	explore_button.pressed.connect(_on_explore)
 	engage_button.pressed.connect(_on_engage)
 	map_draw.draw.connect(_on_map_draw)
-
-	%Title.add_theme_color_override("font_color", Color(1.0, 0.9, 0.6))
 
 	if map_draw.size.x <= 0 or map_draw.size.y <= 0:
 		push_warning("PlanetaryMap: MapDraw zero size at _ready")

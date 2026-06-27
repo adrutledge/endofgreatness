@@ -191,8 +191,8 @@ static func generate_opfor_pool(template: Dictionary, rng: RandomNumberGenerator
 	var commander_cfg = template.get("commander", {})
 	var has_commander = rng.randf() < commander_cfg.get("chance", 0.0)
 
-	var rat_key = mech_comp.get("rat_key", "")
-	if rat_key.is_empty():
+	var rat_key = mech_comp.get("rat_key", "") if mech_comp is Dictionary else ""
+	if rat_key == null or rat_key.is_empty():
 		rat_key = _faction_to_rat.get(faction, "is_general")
 	var rat_data = RATParser.load_rat(rat_key)
 	if rat_data.is_empty():
