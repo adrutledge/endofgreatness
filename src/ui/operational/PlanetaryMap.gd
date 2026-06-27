@@ -350,6 +350,10 @@ func set_selected_unit_index(idx: int) -> void:
 		_update_path_preview()
 
 
+func has_path_preview() -> bool:
+	return not path_preview.is_empty()
+
+
 func _save_map_state() -> void:
 	if contract and hex_map:
 		contract.planetary_map_data = _serialize_hex_map()

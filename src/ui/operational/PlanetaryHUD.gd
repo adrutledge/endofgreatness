@@ -68,12 +68,13 @@ func _on_unit_selected(idx: int) -> void:
 func _on_hex_selected(hex_dict: Dictionary) -> void:
 	var q = hex_dict.get("q", 0)
 	var r = hex_dict.get("r", 0)
-	var terrain = hex_dict.get("terrain", 0)
 	hex_info_label.text = "Hex (%d, %d)" % [q, r]
 	explore_button.disabled = hex_dict.get("revealed", false)
 	if hex_dict.get("objective", 0) > 0:
 		hex_info_label.text += "\nObjective present"
 	engage_button.hide()
+	# Enable move if path is available
+	move_button.disabled = not (_map and _map.has_method("has_path_preview") and _map.has_path_preview())
 
 
 func _on_reachable_updated(reachable: Dictionary) -> void:
