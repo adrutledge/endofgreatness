@@ -93,15 +93,20 @@ func _refresh_badges() -> void:
 	var injured_badge = topbar.get_node("BadgesContainer/InjuredBadge")
 	var reorder_badge = topbar.get_node("BadgesContainer/ReorderBadge")
 	var balance = EconomySystem.get_balance() if EconomySystem else 0
-	var next_bills = EconomySystem.accumulated_expenses if EconomySystem else 0
+	var burn = EconomySystem.get_daily_burn_rate() if EconomySystem else {}
+	var daily = burn.get("total", 0)
+	var days_left := 999
+	if daily > 0:
+		days_left = int(balance / daily)
 	if balance < 0:
-		funds_badge.text = " [color=#ff4444]" + tr("⚠ FUNDS LOW") + "[/color] "
+		funds_badge.text = " [color=#ff4444]" + tr("⚠ FUNDS DEPLETED") + "[/color] "
 		funds_badge.visible = true
-	elif balance < next_bills:
-		funds_badge.text = " [color=#ffaa44]" + tr("⚠ FUNDS LOW") + "[/color] "
+	elif days_left <= 7:
+		funds_badge.text = " [color=#ffaa44]" + tr("⚠ FUNDS LOW: %d days") % days_left + "[/color] "
 		funds_badge.visible = true
 	else:
 		funds_badge.visible = false
+
 	var injured = false
 	if PersonnelManager:
 		for p in PersonnelManager.personnel_roster:
@@ -109,7 +114,24 @@ func _refresh_badges() -> void:
 				injured = true
 				break
 	injured_badge.visible = injured
-	reorder_badge.visible = false
+
+	# Reorder badge: show if any active contract has no deployed units
+	var has_undeployed = false
+	if GameState:
+		for c in GameState.active_contracts:
+			var found_deployed = false
+			for ou in GameState.player.organizational_units:
+				if ou.contract_id == str(c.get_instance_id()):
+					found_deployed = true
+					break
+			if not found_deployed:
+				has_undeployed = true
+				break
+	if has_undeployed:
+		reorder_badge.text = " [color=#ffaa44]" + tr("⚠ DEPLOY PENDING") + "[/color] "
+		reorder_badge.visible = true
+	else:
+		reorder_badge.visible = false
 
 
 func _refresh_date() -> void:
