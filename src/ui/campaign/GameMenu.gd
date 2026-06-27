@@ -19,13 +19,42 @@ func _ready() -> void:
 
 
 func _on_save() -> void:
-	Helpers.debug_print("GameMenu", "Save not yet implemented")
-	dismissed.emit()
+	_show_save_dialog()
 
 
 func _on_load() -> void:
-	Helpers.debug_print("GameMenu", "Load not yet implemented")
-	dismissed.emit()
+	_show_load_dialog()
+
+
+func _show_save_dialog() -> void:
+	var cv = _get_campaign_view()
+	if not cv:
+		return
+	var dialog = preload("res://src/ui/campaign/SaveDialog.tscn").instantiate()
+	dialog.dismissed.connect(func():
+		dismissed.emit()
+		cv.dismiss_modal()
+	)
+	cv.show_modal(dialog)
+
+
+func _show_load_dialog() -> void:
+	var cv = _get_campaign_view()
+	if not cv:
+		return
+	var dialog = preload("res://src/ui/campaign/LoadDialog.tscn").instantiate()
+	dialog.dismissed.connect(func():
+		dismissed.emit()
+		cv.dismiss_modal()
+	)
+	cv.show_modal(dialog)
+
+
+func _get_campaign_view():
+	var cv = get_tree().current_scene
+	if cv and cv.has_method("show_modal"):
+		return cv
+	return null
 
 
 func _on_quit() -> void:

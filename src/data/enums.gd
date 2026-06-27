@@ -45,61 +45,6 @@ static func get_all_skills() -> Array[String]:
 			skills.append("protocol_" + code.to_lower())
 	return skills
 
-const SKILL_ATTRIBUTE_LINKS: Dictionary = {
-	"acrobatics": ["reflexes"],
-	"acting": ["charisma"],
-	"administration": ["intelligence", "willpower"],
-	"animal_handling": ["willpower"],
-	"appraisal": ["intelligence"],
-	"archery": ["dexterity"],
-	"art": ["dexterity", "intelligence"],
-	"artillery": ["intelligence", "willpower"],
-	"astech": ["intelligence", "dexterity"],
-	"career": ["intelligence"],
-	"climbing": ["strength"],
-	"communications": ["intelligence"],
-	"computers": ["dexterity", "intelligence"],
-	"cryptography": ["intelligence", "willpower"],
-	"demolitions": ["dexterity", "intelligence"],
-	"disguise": ["charisma"],
-	"driving": ["reflexes", "dexterity"],
-	"escape_artist": ["dexterity"],
-	"forgery": ["dexterity", "intelligence"],
-	"gunnery": ["reflexes", "dexterity"],
-	"interest": ["intelligence"],
-	"interrogation": ["charisma", "willpower"],
-	"investigation": ["intelligence", "willpower"],
-	"language": ["intelligence"],
-	"leadership": ["charisma", "willpower"],
-	"martial_arts": ["strength", "reflexes"],
-	"medic": ["intelligence", "willpower"],
-	"melee_weapons": ["strength", "dexterity"],
-	"navigation": ["intelligence"],
-	"negotiation": ["charisma", "willpower"],
-	"perception": ["intelligence"],
-	"piloting": ["reflexes", "dexterity"],
-	"prestidigitation": ["reflexes", "dexterity"],
-	"protocol": ["willpower", "charisma"],
-	"running": ["reflexes"],
-	"science": ["intelligence", "willpower"],
-	"security_systems": ["intelligence", "dexterity"],
-	"sensor_operations": ["intelligence"],
-	"small_arms": ["dexterity"],
-	"stealth": ["reflexes", "intelligence"],
-	"strategy": ["intelligence", "willpower"],
-	"streetwise": ["charisma", "willpower"],
-	"subterfuge": ["charisma", "intelligence"],
-	"support_weapons": ["strength", "dexterity"],
-	"surgery": ["intelligence", "dexterity"],
-	"survival": ["willpower"],
-	"swimming": ["strength"],
-	"tactics": ["intelligence", "willpower"],
-	"teaching": ["charisma", "willpower"],
-	"tech": ["intelligence", "dexterity"],
-	"zero_g_operations": ["reflexes", "dexterity"],
-}
-
-
 static var _skill_attrs_cache: Dictionary = {}
 
 
@@ -115,7 +60,7 @@ static func _load_skill_attrs() -> void:
 	for entry in j.data.get("skills", []):
 		var name = entry.get("name", "")
 		var links = entry.get("links", [])
-		if not name.is_empty() and not links.is_empty():
+		if not name.is_empty():
 			var typed: Array[String] = []
 			for item in links:
 				typed.append(str(item))
