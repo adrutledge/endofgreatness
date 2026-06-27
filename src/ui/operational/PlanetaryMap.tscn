@@ -43,6 +43,7 @@ size_flags_vertical = 0
 horizontal_alignment = 1
 
 [node name="HSeparator" type="HSeparator" parent="MarginContainer/VBox"]
+size_flags_vertical = 0
 
 [node name="HSplit" type="HSplitContainer" parent="MarginContainer/VBox"]
 anchors_preset = 15

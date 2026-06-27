@@ -757,9 +757,6 @@ func _show_asset_dialog(hex_data: Dictionary) -> void:
 		_save_map_state()
 		_update_progress()
 	)
-	var cancel_btn = dialog.get_cancel_button()
-	if cancel_btn:
-		cancel_btn.text = tr("Leave Them")
 	dialog.ok_button_text = tr("Take Assets")
 	add_child(dialog)
 	dialog.popup_centered()
