@@ -20,7 +20,7 @@ func _ready() -> void:
 	EventBus.month_started.connect(_refresh)
 	EventBus.contract_accepted.connect(_refresh)
 	EventBus.contract_completed.connect(_refresh)
-	EventBus.bills_paid.connect(_refresh)
+	EventBus.bills_paid.connect(func(_a, _b): _refresh())
 	EventBus.funds_depleted.connect(_refresh)
 	EventBus.day_started.connect(_refresh)
 	_refresh()

@@ -253,10 +253,12 @@ func generate_random_personnel(planet_data: Dictionary) -> Personnel:
 		fk.append(code)
 	if not fk.is_empty():
 		faction_code = fk[randi() % fk.size()]
-		var fdata = GameState.factions.get(faction_code, {})
+		var fdata = GameState.factions.get(faction_code)
 		if fdata:
-			faction_first = fdata.get("first_names", [])
-			faction_last = fdata.get("last_names", [])
+			var fn = fdata.get("first_names")
+			if fn != null: faction_first = fn
+			var ln = fdata.get("last_names")
+			if ln != null: faction_last = ln
 	var first_names: Array = faction_first if not faction_first.is_empty() else td.get("first_names", ["Alex", "Jordan"])
 	var last_names: Array = faction_last if not faction_last.is_empty() else td.get("last_names", ["Smith", "Jones"])
 	p.personnel_name = first_names[randi() % first_names.size()] + " " + last_names[randi() % last_names.size()]

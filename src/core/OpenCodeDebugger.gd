@@ -620,9 +620,15 @@ func probe_snapshot(reason: String = "manual") -> void:
 	_emit(snapshot)
 
 
+func _get_singleton(name: String):
+	if name in Engine.get_singleton_list():
+		return Engine.get_singleton(name)
+	return null
+
+
 func _probe_ui() -> Dictionary:
 	var result := {}
-	var pm = Engine.get_singleton("PanelManager")
+	var pm = _get_singleton("PanelManager")
 	if not pm:
 		return result
 	for name in pm._panels:
@@ -666,7 +672,7 @@ func _dump_control(node: Control, depth: int) -> Dictionary:
 
 func _probe_state() -> Dictionary:
 	var s := {}
-	var gs = Engine.get_singleton("GameState")
+	var gs = _get_singleton("GameState")
 	if gs:
 		s["date"] = _game_time()
 		s["active_contracts"] = gs.active_contracts.size()
@@ -681,7 +687,7 @@ func _probe_state() -> Dictionary:
 					tu_count += opu.tactical_units.size()
 			s["tactical_unit_count"] = tu_count
 		s["inventory_size"] = gs.player_inventory.size()
-	var em = Engine.get_singleton("EconomySystem")
+	var em = _get_singleton("EconomySystem")
 	if em:
 		s["accumulated_expenses"] = em.accumulated_expenses
 	var pm = Engine.get_singleton("PersonnelManager")
@@ -689,10 +695,10 @@ func _probe_state() -> Dictionary:
 		s["personnel_count"] = pm.personnel_roster.size()
 		s["astechs"] = pm.abstract_astech_count
 		s["medics"] = pm.abstract_medic_count
-	var im = Engine.get_singleton("InventoryManager")
+	var im = _get_singleton("InventoryManager")
 	if im:
 		s["in_transit_count"] = im.in_transit.size()
-	var tm = Engine.get_singleton("TimeManager")
+	var tm = _get_singleton("TimeManager")
 	if tm:
 		s["is_paused"] = tm.is_paused
 		s["total_days"] = tm.total_days
