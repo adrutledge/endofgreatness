@@ -164,13 +164,12 @@ static func show_deploy_dialog(caller: Node, contract: Contract, on_deployed: Ca
 
 	var dialog := AcceptDialog.new()
 	dialog.title = T("Deploy to %s") % contract.planet
-	dialog.min_size = Vector2i(420, 280)
+	dialog.min_size = Vector2i(420, 200)
 	dialog.ok_button_text = T("Deploy & Pay Transport")
 	dialog.dialog_text = ""
 
 	var vbox := VBoxContainer.new()
 	vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	vbox.size_flags_vertical = Control.SIZE_EXPAND_FILL
 
 	var selector_label := Label.new()
 	selector_label.text = T("Select Organizational Unit:")

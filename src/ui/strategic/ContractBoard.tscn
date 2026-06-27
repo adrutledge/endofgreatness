@@ -47,14 +47,14 @@ size_flags_vertical = 3
 [node name="LeftPanel" type="VBoxContainer" parent="MarginContainer/VBox/HSplit"]
 size_flags_horizontal = 3
 
-[node name="AvailableLabel" type="Label" parent="MarginContainer/VBox/HSplit/LeftPanel"]
+[node name="ActiveLabel" type="Label" parent="MarginContainer/VBox/HSplit/LeftPanel"]
 unique_name_in_owner = true
-text = "Available Contracts"
+text = "Active Contracts"
 theme_override_font_sizes/font_size = 14
 
-[node name="AvailableList" type="ItemList" parent="MarginContainer/VBox/HSplit/LeftPanel"]
+[node name="ActiveList" type="ItemList" parent="MarginContainer/VBox/HSplit/LeftPanel"]
 unique_name_in_owner = true
-size_flags_vertical = 3
+size_flags_vertical = 0
 allow_reselect = false
 allow_search = false
 auto_height = true
@@ -65,12 +65,12 @@ max_text_lines = 2
 same_column_width = false
 select_mode = 0
 
-[node name="ActiveLabel" type="Label" parent="MarginContainer/VBox/HSplit/LeftPanel"]
+[node name="AvailableLabel" type="Label" parent="MarginContainer/VBox/HSplit/LeftPanel"]
 unique_name_in_owner = true
-text = "Active Contracts"
+text = "Available Contracts"
 theme_override_font_sizes/font_size = 14
 
-[node name="ActiveList" type="ItemList" parent="MarginContainer/VBox/HSplit/LeftPanel"]
+[node name="AvailableList" type="ItemList" parent="MarginContainer/VBox/HSplit/LeftPanel"]
 unique_name_in_owner = true
 size_flags_vertical = 1
 allow_reselect = false
