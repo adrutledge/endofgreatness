@@ -406,11 +406,10 @@ func _on_map_input(event: InputEvent) -> void:
 					_update_hex_info()
 					map_draw.queue_redraw()
 
-		if event.button_index == MOUSE_BUTTON_MIDDLE and event.pressed:
+		if event.button_index == MOUSE_BUTTON_RIGHT and event.pressed:
 			panning = true
-			pan_start = map_draw.get_local_mouse_position()
 
-		if event.button_index == MOUSE_BUTTON_MIDDLE and not event.pressed:
+		if event.button_index == MOUSE_BUTTON_RIGHT and not event.pressed:
 			panning = false
 
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP and event.pressed:
