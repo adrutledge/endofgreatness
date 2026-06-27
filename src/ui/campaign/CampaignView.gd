@@ -9,8 +9,8 @@ const HUD_HEIGHT: float = 28.0
 signal campaign_exited()
 
 const LAYER_HUD_SCENES = {
-	"strategic": preload("res://src/ui/strategic/StrategicHUD.tscn"),
-	"planetary": preload("res://src/ui/operational/PlanetaryHUD.tscn"),
+	"strategic": "res://src/ui/strategic/StrategicHUD.tscn",
+	"planetary": "res://src/ui/operational/PlanetaryHUD.tscn",
 }
 
 @onready var strategic_layer = $StrategicLayer
@@ -75,7 +75,10 @@ func _setup_hud() -> void:
 
 func _show_layer_hud(layer: String, map_node: Node) -> void:
 	_hide_layer_hud()
-	var scene = LAYER_HUD_SCENES.get(layer)
+	var path = LAYER_HUD_SCENES.get(layer)
+	if not path:
+		return
+	var scene = ResourceLoader.load(path)
 	if not scene:
 		return
 	var hud = scene.instantiate()
@@ -118,7 +121,9 @@ func _on_strategic_planetary(contract: Contract) -> void:
 
 
 func _on_planetary_closed() -> void:
+	_last_arrived_contract = 0
 	layer_mgr.pop()
+	_show_layer_hud("strategic", strategic_layer)
 
 
 func _on_planetary_tactical(contract: Contract, hex_data: Dictionary) -> void:
