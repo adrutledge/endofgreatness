@@ -45,6 +45,7 @@ docs/            — tactical_combat_rules.md
 - **Autoloads (15):** GameState, EventBus, TimeManager, DataManager, ThemeManager, StarmapCacheGenerator, EconomySystem, ReputationSystem, PersonnelManager, RefitManager, UnitTransportManager, InventoryManager, PanelManager, SaveManager, ModManager, **OpenCodeDebugger**
 - **Resource classes** — all data classes extend Resource with class_name (TacticalUnit, Component, Personnel, Contract, Faction, etc.)
 - **Signal Down, Call Up** — systems emit signals, UI calls methods on systems
+- **Signal lifecycle** — connect signals in `_ready()`, disconnect in `_exit_tree()`. Prevents signals firing into freed nodes when scenes unload.
 - **Lazy Refresh** — `mark_for_rebuild()` + `_ensure_fresh()` dirty-flag pattern
 - **Data-driven first** — JSON over hardcoded logic; component defs, AI personalities, PSR triggers all data
 - **Edition-gated entries** — optional `"edition": {"from": "a", "to": "b"}` on any JSON entry
@@ -110,6 +111,8 @@ Commands: `probe`, `get_log`, `get_state`, `get_ui`, `dump_org`, `advance`, `pau
 | `make runoc-headless-pipe` | Headless with pipe |
 | `make runoc-load` | Headless loading autosave |
 
+> See **AGENTS.md** for AI behavioral rules, file maintenance conventions, and testing requirements.
+
 ## Useful Commands
 ```bash
 make test        # Full test suite
@@ -117,26 +120,4 @@ make test-unit   # Fast tests only (100 tests)
 make lint        # GDScript style check
 make bootstrap   # Regenerate .godot cache
 ```
-
-## Best Practices
-- **Commit & push after each major line item** — once implementation is complete and `make test` passes with 0 failures, commit and push. Keeps history granular and prevents drift.
-- **Flag prefixes** — use consistently for deferred work: `Flag for rules verification:`, `Flag for later:`, `Deferred:`. Keeps them searchable and prevents treating them as implemented.
-- **Save migration markers** — when adding a new field to a Resource class (Personnel, TacticalUnit, etc.), add a `# TODO: save migration` comment. Prevents shipping features that silently break save compatibility.
-- **One change per file edit** — keep edits focused. If fixing a typo in one file and adding a feature in another, do them separately. Reduces AI confusion from mixed-context diffs.
-- **Signal lifecycle** — connect signals in `_ready()`, disconnect in `_exit_tree()`. Prevents signals firing into freed nodes when scenes unload.
-- **Assertions at boundaries** — use `assert()` at public function entry points to catch programmer errors early (wrong type, null where disallowed, impossible state). Fail fast, not silent.
-- **Null-guard public functions** — check parameters and autoload references at public function boundaries with clear error messages (`printerr` or `push_error`), not silent default returns.
-- **Data validation gating** — three modes: `--opencode-debug` (startup + debug menu button), `--opencode-validate-data` (standalone CI mode), `--opencode-validate-in-game` (live modder mode, F5 keybind). All run `validate_data()` on all loaded data files.
-
-## File Roles & Maintenance Rules
-- **Plan (`plan.md`):** source of truth for design decisions, version targets, architecture notes. Update when a decision is made.
-- **Status (`status.md`):** source of truth for implementation state. Update when something is completed or a phase advances.
-- **Context (`context.md`):** session bootstrap cache. Keep concise — point to plan/status for depth rather than duplicating. Add a decision here only when it's critical for the AI to know at session start.
-- **Rule:** when you implement something, update status.md. When you decide something, update plan.md. If it changes what the AI needs to know first, update context.md too.
-- **Data file constraint:** creating a new data file type or changing the format of an existing one requires: (1) positive + negative tests in `test_data_formats.gd` covering structure and edge cases, (2) a table entry or note in `docs/tactical_combat_rules.md` (or the appropriate docs file), (3) an update to the data directory map in this file. This ensures the data-driven system stays tested and documented as it grows.
-
-## Key Design Decisions to Preserve
-- pilot_skill and command_skill are separate — both influence AI personality. pilot_skill affects gunnery/piloting/heat/ammo/role. command_skill affects focus fire/initiative sinking/strategic depth/posture/ally support.
-- Strategic_depth: 0/1/2 based on command_skill (lookahead for positioning)
-- Heat dissipation is the only renewable resource — better pilots manage the curve
 

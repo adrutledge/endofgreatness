@@ -1,5 +1,24 @@
 # End of Greatness — AI Build Plan
 
+## Versioning Scheme
+
+The game follows semver (MAJOR.MINOR.PATCH). **MAJOR = V number** — each V target in the plan is a MAJOR release. `compatible_version` in mods is checked against game MAJOR + MINOR (exact match required).
+
+- **V1 (1.x)** — Basic Gameplay Loop: unit → contract → deploy → explore → combat → complete → repeat
+- **V2 (2.x)** — Event System + Timeline Advancement
+- **V3 (3.x)** — Advanced Personnel
+- **V4 (4.x)** — Expanded Unit Types
+- **V5 (5.x)** — Advanced Contracting
+- **V6 (6.x)** — Aerospace
+- **V7 (7.x)** — Scripted Content Push
+- **V8 (8.x)** — Organic Narrative
+
+Within a MAJOR version:
+- **MINOR** bumps for significant feature additions (e.g., 1.0 → 1.1 adds a new system like RefitManager)
+- **PATCH** for bug fixes, polish, and minor tweaks
+
+Current: **1.0.0** (V1 — Phases 0-3 complete, Phases 4-6 not started)
+
 ## Core Gameplay Loop
 Form a unit → take a contract → deploy to the contract planet → explore the planetary hex map → engage in tactical combat(s) as objectives are encountered → complete the contract → repeat. Everything in Phases 0-6 serves this loop.
 
@@ -138,7 +157,7 @@ Bounty board, bounties on player, pirate interference, LosTech rumor tracking, S
 
 ### P3.6 — TechManual Construction, Refit & Validation
 
-- P3.6.1: validate_tm() on TacticalUnit (weight, slots, armor, engine, gyro, heat sinks, ammo)
+- P3.6.1: validate_tm() via TacticalUnitValidator dispatcher + per-type validators (MechValidator, VehicleValidator, future: AerospaceValidator, DropShipValidator, etc.). Register new types via `TacticalUnitValidator.register_validator(unit_type, validator_instance)`. Common checks (weight, engine, components) run before type-specific delegation in `validators/`. Shared utilities (ammo/weapon mapping, suspension factors, cost calc) stay on TacticalUnitValidator.
 - P3.6.2: RefitManager with B-E classification, cost/labor, parts sourcing, refit kits
 - P3.6.3: MechLab Designer with real-time TM validation, component browser
 - P3.6.4: Repair/maintenance/salvage per Campaign Operations, inventory item repair
@@ -211,6 +230,32 @@ Bounty board, bounties on player, pirate interference, LosTech rumor tracking, S
 - Ferro-fibrous, Endo Steel, double heat sinks, Clan tech
 - Lostech acquisition via rumor tracking
 
+**Data-driven validator fields** (component JSONs, all optional — default to standard values):
+| Field | Example | Purpose |
+|-------|---------|---------|
+| `weight_multiplier` | `0.5` | Endo Steel: structure weight × 0.5 |
+| `armor_multiplier` | `1.12` | Ferro-Fibrous: armor points per ton × 1.12 |
+| `slot_flexible` | `true` | Endo Steel, FF: slots are a tax on total chassis capacity, not tied to a specific location. Validator checks: sum(flexible slots) ≤ sum(free slots across all locations), AND no single location exceeds its limit from fixed components alone. |
+| `engine_weight_multiplier` | `0.5` | XL engine weight × 0.5 (XXL=0.25, Light=0.75, Compact=1.5) |
+| `engine_slot_locations` | `["Left Torso", "Right Torso"]` | Where engine slots go (XL = side torsos) |
+| `engine_slots_per_location` | `3` | 3 slots per side torso for XL (total 6 outside CT) |
+| `gyro_slots` | `6` | XL gyro uses 6 slots (Compact=2, Heavy=3) |
+| `gyro_weight_multiplier` | `1.0` | Standard=1.0, XL=0.5 (half), Heavy=1.5, Compact=0.5 |
+| `heat_sink_capacity` | `2.0` | Double heat sink: sinks 2 heat instead of 1 |
+| `heat_sink_weight` | `1.0` | DHS weight per sink (IS DHS=1, Clan DHS=0.5, standard=1) |
+| `heat_sink_slots` | `3` | DHS slots per sink (IS DHS=3, Clan DHS=2, standard=1) |
+| `heat_generation` | `+X` | Extra heat per turn (XXL engine, certain weapons, environment penalties). Negative = improved cooling. |
+| `ammo_type` | `"SRM"` | Base weapon this ammo feeds (SRM, LRM, AC/5, MG, etc.) |
+| `ammo_sub_type` | `"inferno"` | Ammo variant: standard, inferno, smoke, precision, tracer, etc. Each bin holds exactly one sub_type. Mixing in one bin is invalid. |
+| `shots_per_ton` | `15` | Shots per ton for this ammo type. Defaults per weapon class; different sub_types may vary. |
+| `pool_group` | `"SRM"` | When set, ammo is pooled by (pool_group × ammo_sub_type). SRM-2/4/6 → `"SRM"`, SRT-2/4/6 → `"SRT"`, LRM-5/10/15/20 → `"LRM"`, LRT-5/10/15/20 → `"LRT"`. Each sub_type is its own separate pool within the group. Unset means per-component tracking. |
+
+When populated in component JSONs, the validator will:
+- Read component defs for each component on the unit
+- Apply weight multipliers to the correct weight category (structure/armor/engine/gyro/HS)
+- Sum flexible-slot components separately, then check total free slots ≥ total flexible slots
+- Validate fixed-slot components against location rules (engine slots in side torsos, etc.)
+
 ### Non-Mech Units (Vehicles, Infantry, Aerospace)
 
 - Full vehicle/infantry/aerospace support (gated by campaign toggles, all off by default)
@@ -276,15 +321,16 @@ Bounty board, bounties on player, pirate interference, LosTech rumor tracking, S
 ### Data-Driven First
 Prefer data-driven systems over hardcoded logic wherever feasible. Configuration files (personnel types, faction data, contract generation weights, skill correlation rules) should define behavior that would otherwise require code changes. This enables modding, reduces compilation errors from misplaced indentation, and keeps the engine code focused on interpretation rather than domain logic.
 
-### Data Validation and Debugging
-Every data-driven system should include runtime validation that mod developers can invoke — a `validate_data()` method that checks all loaded JSON files for required fields, type correctness, cross-references (e.g., every RAT entry points to an existing MTF file), and range bounds. These validators are exposed as an in-game "Validate Data" button (debug menu or settings) and also run automatically on game launch in debug mode (`--opencode-debug` or `OPENCODE_DEBUG=true`), printing results to stderr via `printerr()`. Each invalid entry reports the file, field, and expected vs actual value. This catches mod errors immediately rather than causing silent failures mid-campaign. Test coverage for data-driven systems should include the validation logic itself, and each data file should have a corresponding test fixture where feasible.
-
 ### Event-Driven Unique Content
 Unique contracts (event-only types), special personnel (canon NPCs, ephemeral characters), custom injuries, system state changes, and other bespoke content should be event-driven rather than hardcoded. The event system has full access to: generating event-only contracts with exact opfor/map/victory conditions, spawning NPCs (either full Personnel resources with complete stats, or ephemeral references with name/archetype seed/faction/flags), toggling system ownership and visibility, modifying faction reputation, and patching any data-driven system. This avoids special-case code for every unique piece of content and keeps the event pipeline as the single path for all non-procedural state changes. Canonical characters (Victor Steiner-Davion, Hanse Davion, etc.) are generated by events at their lore-correct dates — use full Personnel for those who may join the player's force, ephemeral references for those who merely appear in narrative text.
 
 ### Signal Down, Call Up
 
 Systems emit signals downward (to listeners); UI/reactors call methods upward on systems.
+
+### Per-Instance Engagement Systems
+
+Tactical engagement resolvers (LOS, combat, crit, PSR) are **instances, not singletons or autoloads**. Each active engagement creates its own set of resolvers, connected directly to each other rather than through EventBus. This avoids data conflicts when multiple engagements run simultaneously (different maps, different units) and naturally scopes per-round caches (LOS symmetry, etc.) per engagement without ID filtering.
 
 ### Lazy Refresh Pattern
 
@@ -317,9 +363,57 @@ Autosaves default to the last day of each month (configurable interval). Multipl
 
 Save files from older versions load on newer versions via sequential migration functions. Each save stores a `save_version: int`. On load, if the save version is behind the current game version, migration functions are applied in order — each a small transform (add field, rename key, recompute derived value) that upgrades the save dict from version N to N+1. Saves are always written at the current version, so loading only upgrades forward. This parallels rolling database migrations: each migration is self-contained, idempotent where possible, and indexed by version. A save from V1 remains loadable in V9 after all intervening migrations have run.
 
+**Migration naming:** Functions are named `_upgrade_to_v<N>` where N is the target version (e.g., `_upgrade_to_v2` upgrades a save from version 1 to version 2). The runner increments the save's version number and calls the matching function. Each migration represents one atomic data change — not a batch per semver release — making them independently testable and reverting only one change if a migration breaks.
+
+
 ### Save File Self-Containment (constraint)
 
 A save file must restore all player campaign state on a fresh install (balance, inventory, units, personnel, contract chain progress). Invariant game data shipped with every install (component defs, faction data, RAT tables, timeline events, NPC archetypes) is assumed identical and does NOT need to be duplicated in the save. NPC persistence uses archetype reference + seed + limited flags (relationship, alive/dead, hostility), keeping saves lightweight while remaining self-contained for campaign state.
+
+### Mod System — Self-Contained Mod Dirs with Keyed Localization
+
+Each mod lives in its own directory under `mods/<mod_id>/`. Every mod is fully self-contained — no need to touch distribution files.
+
+**Directory layout:**
+```
+mods/<mod_id>/
+├── mod.json            # metadata: id, name, version, author, load_priority
+├── strings.json        # key → display text mappings for this mod's content
+├── events/             # event definitions (reference keys via title_key/desc_key)
+├── contracts/          # contract definitions
+├── factions/           # faction definitions
+├── personnel_types/    # personnel type definitions
+├── unit_types/         # unit type definitions
+└── planetary/          # biome/opfor/region definitions
+```
+
+**strings.json format:**
+```json
+{
+  "my_mod.event_1.title": "The Lostech Cache",
+  "my_mod.event_1.desc": "You discover an ancient Star League cache...",
+  "my_mod.faction.name": "New Faction"
+}
+```
+
+Data files reference strings by key instead of embedding display text:
+```json
+{"title_key": "my_mod.event_1.title", "description_key": "my_mod.event_1.desc"}
+```
+
+**Lookup order:** `ModManager.tr_content(key)` checks the merged mod strings, then falls back to Godot's `tr()` for UI chrome. Content mods never touch `.po` files.
+
+**Loading order:** Mods sorted by `load_priority` (lower first). Later mods' strings override earlier ones on key conflict. Built-in `data/` is the implicit core mod loaded first.
+
+**Version compatibility (semver, exact major+minor):** Every mod must declare `compatible_version` in its `mod.json` (e.g., `"1.5.0"`). The game's `GAME_VERSION` (e.g., `"1.5.2"`) is compared:
+- MAJOR must match exactly (1.x → 1.y, 2.x is rejected)
+- MINOR must match exactly (1.5 accepts 1.5.x, rejects 1.4.x and 1.6.x)
+- PATCH is ignored entirely
+- Mods without `compatible_version` are skipped with a warning
+
+**Search paths:** `res://mods/` (shipped with game) and `user://mods/` (user-installed). Both scanned at startup.
+
+**Data integration:** `ModManager.get_mod_data_paths(data_type)` returns mod subdirectories for a given data type (e.g., `"events"`, `"factions"`). DataManager can extend its scan paths with these.
 
 ### Modal Event Dialog Pattern
 
@@ -364,7 +458,140 @@ Pilot Skill Rolls use the unit's pilot skill as the target number with modifiers
 
 The `movement_mp` field on `TacticalUnit` stores base MP; terrain cost multipliers reduce effective MP per hex entered. Motive damage from vehicle crits reduces effective MP directly (already implemented in CombatResolver).
 
-### Combat Phase Flow (stable)
+### Critical Hit System (data-driven)
+
+#### Trigger
+Any internal structure damage triggers a crit confirmation — whether from armor overflow, through-armor crits, ammo explosions, or any other source. If a location had **zero structure before the damage started**, the damage transfers immediately with no confirmation at that location. Cascading is expected: an ammo explosion that destroys a location triggers a confirmation there, then transfers, then the overflow triggers another confirmation at the destination.
+
+#### Confirmation Roll
+After structure damage is applied at a location, roll 2d6:
+- **8–9**: 1 crit
+- **10–11**: 2 crits
+- **12**: limb blown off (arm/leg) or 3 crits (torso/head)
+
+#### Slot Table
+Each location has a fixed number of slots (Head=6, CT=12, LT/RT=12, LA/RA=12, LL/RL=6). Roll 1d6 or 1d12 depending on location size. If the rolled slot is:
+- **Empty** → reroll
+- **Slot-tax component** (Endo Steel, Ferro-Fibrous — `is_flexible: true`) → reroll (acts as empty for crits)
+- **Already critted in a previous crit phase** → reroll
+- **Otherwise** → fill the slot, apply effect to the component occupying it
+
+If a location has **zero crittable slots before the first crit is allocated** (all slots empty or slot-tax), all crits transfer inward. If any crittable slots exist, crits stay in that location — overflow past available unfilled slots is wasted.
+
+#### Transfer Chain
+General: arm/leg → same-side torso, side torso → center torso, head → center torso. Center torso = dead.
+
+If a leg's damage transfers to a side torso that is **already destroyed**, it continues inward to center torso (applies to biped and quad alike).
+
+**Slot sizes:** arms = 12 slots, legs = 6 slots (biped and quad alike).
+
+**Quad mechs:** left front leg → left torso, right front leg → right torso. Rear legs also chain to same-side torso for damage transfer, matching biped legs. The key difference: a front leg is **blown off** when its side torso is destroyed (same behavior as an arm on a biped). A rear leg is **not** blown off when its side torso is destroyed — it stays attached, matching standard biped leg behavior.
+
+#### Blown-Off Locations
+When a location is blown off (crit roll of 12 on an arm/leg, or a side torso destroyed which takes the matching arm with it), all components in that location are **left on the battlefield in the hex where the unit was standing**. The location and its components remain as intact as they were before — they are simply on the ground instead of attached to the mech. The location is tracked as `blown_off: true` on the `ComponentLocation` and the hex position is recorded.
+
+During combat, a unit may **pick up** a blown-off location in its own hex as part of its **movement** phase (costs some MP, configurable). The club is then usable as a physical attack weapon in the subsequent physical attack phase. Club damage and to-hit modifiers depend only on the wielding mech's stats (tonnage, physical attack modifiers), not the source mech's. Picking up a club during the movement phase also means the unit cannot make DFA or charge attacks that phase. After combat, blown-off components can be recovered for salvage or repair (reattachment of the limb, or stripping components from the wreckage). The repair system checks a unit's blown-off locations alongside its installed components when determining what can be repaired or salvaged.
+
+#### Per-Component Crit Effects
+
+Each component in `data/components/*.json` can define:
+
+```json
+{
+  "component_name": "Autocannon/5",
+  "crit_slots": 4,
+  "crit_effect_type": "weapon",
+  "explodes_on_crit": false
+}
+```
+
+| JSON field | Values | Effect |
+|-----------|--------|--------|
+| `crit_effect_type` | `"weapon"`, `"ammo"`, `"actuator"`, `"gyro"`, `"engine"`, `"heat_sink"`, `"none"` | Determines which logic runs when this component's slot is critted |
+| `crit_slots` | int | Total slots this component occupies (same as `critical_slots` — used to know how many total hits it can take across its positions) |
+| `explodes_on_crit` | bool | If true, on first crit the component's explosion damage is queued (ammo = standard, Gauss rifle = yes, Gauss ammo = no) |
+| `explosion_damage` | int | Custom explosion damage (default: ammo calculates from shots remaining × damage per shot; override for Gauss rifle = 20) |
+| `crit_effect_data` | dict | Per-type config — see table below |
+| `is_flexible` | bool | Slot-tax components (Endo Steel, Ferro-Fibrous) — always reroll on crit |
+
+**`crit_effect_data` per type:**
+
+| `crit_effect_type` | `crit_effect_data` fields | Behavior |
+|-------------------|--------------------------|----------|
+| `weapon` | `{}` | Set `disabled = true` on first hit. Track `crit_hits`. |
+| `ammo` | `{"explosion_damage_per_shot": 2, "shots_per_ton": 15}` | On first hit, if `explodes_on_crit`, queue explosion. Track `crit_hits` for repair. |
+| `actuator` | `{"actuator_type": "shoulder", "to_hit_mod": 1, "prevents": ["punch"]}` | Apply modifiers. Single-slot — track `disabled`. |
+| `gyro` | `{"psr_modifier": 1}` | Add `psr_modifier` to phase PSR total. Second hit = `disabled`. Track `crit_hits`. |
+| `engine` | `{"heat_per_hit": 5}` | Accrue heat. 1st = +5, 2nd = +10, 3rd = `disabled` (mech dead). Track `crit_hits`. |
+| `heat_sink` | `{}` | Set `disabled = true`. Track `crit_hits` for repair. |
+
+#### End-of-Phase PSRs
+
+PSRs from crits (gyro hits, leg actuator hits) are **not resolved immediately**. Each adds its modifier to the phase's accrued PSR total. At end of phase, all PSR triggers are rolled together using the cumulative modifier (which may also include modifiers from damage thresholds, terrain, etc. from the same phase).
+
+#### Implementation sketch
+
+```
+src/tactical/
+  CritResolver.gd          # Orchestrates: confirmation → allocation → effects → transfer
+  CritEffectRegistry.gd    # Maps crit_effect_type strings to effect handler classes
+  crit_effects/
+    WeaponCritEffect.gd    # Disables weapon, tracks hits
+    AmmoCritEffect.gd      # Queues explosion (configurable per component def)
+    ActuatorCritEffect.gd  # Applies to-hit/PSR/arc penalties
+    GyroCritEffect.gd      # Adds PSR modifier, disables on second hit
+    EngineCritEffect.gd    # Accrues heat, kills mech on third
+    HeatSinkCritEffect.gd  # Disables heat sink, tracks hits
+```
+
+Each effect handler implements:
+```gdscript
+func apply(unit: TacticalUnit, component: Component, slot_index: int, 
+            crit_hits: int, phase_state: Dictionary) -> Dictionary
+```
+
+Returns a result dict that can include:
+- `heat_delta: int` — engine heat to accrue
+- `psr_modifier: int` — to add to phase PSR total
+- `explosion: Dictionary` — `{damage: int, location: String}` to queue
+- `disabled: bool` — component no longer functional
+- `messages: Array[String]` — combat log entries
+
+#### Rules Edition Selection
+
+Each component JSON entry can declare which rules editions it applies to via an optional `edition` field:
+
+```json
+{
+  "component_name": "Gauss Rifle",
+  "tonnage": 15,
+  "crit_slots": 7,
+  "crit_effect_type": "weapon",
+  "explodes_on_crit": false,
+  "edition": { "from": "classic", "to": "mercenaries_2025" }
+}
+```
+
+When the field is absent, the entry applies to **all editions** (base rule). When present, it applies only to editions in the given range. An entry with the same `component_name` and a higher `edition` range completely shadows the base entry for that edition.
+
+**Edition identifiers** are short strings defined in `data/config/editions.json`:
+```json
+{
+  "editions": ["classic", "mercenaries_2025", "succession_wars"],
+  "default": "classic"
+}
+```
+
+The active edition is set at campaign start (and stored in the save). `CritResolver`, `DataManager`, `EconomySystem`, and any other rule-sensitive system query the active edition via `EditionManager.get_active()` and filter data entries accordingly.
+
+This applies to more than just crit effects — any data entry can be edition-gated:
+- Component defs (Gauss explosion rule changed between editions)
+- Weapon stats (damage, heat, range)
+- Combat config values (PSR thresholds, max turns)
+- Construction rules (slot limits, armor maxima)
+- Ammo behavior (explosion damage, armor bypass)
+
+Modders can add custom editions and edition-gated entries without touching base data.
 
 Tactical combat proceeds in phases. Each phase has declaration then resolution. The order is fixed; additional phases (artillery declaration) may be inserted as rules coverage expands.
 
