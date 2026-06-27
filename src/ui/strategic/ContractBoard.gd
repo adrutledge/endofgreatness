@@ -153,11 +153,17 @@ func _show_contract_details(c: Contract) -> void:
 func _on_accept() -> void:
 	if not _selected_contract or _selected_is_active:
 		return
-	GameState.add_active_contract(_selected_contract)
-	_available.erase(_selected_contract)
+	var contract = _selected_contract
+	GameState.add_active_contract(contract)
+	_available.erase(contract)
 	_selected_contract = null
 	_selected_is_active = false
 	populate()
+
+	var idx = GameState.active_contracts.find(contract)
+	if idx >= 0:
+		active_list.select(idx)
+		_on_active_selected(idx)
 
 
 func _on_complete() -> void:
