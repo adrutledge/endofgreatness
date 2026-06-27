@@ -52,7 +52,7 @@ rune:
 	OPENCODE_DEBUG=true $(GODOT) --path . $(GODOT_FLAGS)
 
 ## Launch with OpenCode debug mode + pipe (for opencode consumption)
-runoc:
+runoc: bootstrap
 	$(GODOT) --path . $(GODOT_FLAGS) -- --opencode-debug --opencode-pipe
 
 ## Headless OpenCode debug (no window, auto campaign, file output)
