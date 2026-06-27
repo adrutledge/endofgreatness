@@ -55,8 +55,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		else:
 			var top = layer_mgr.current()
 			if top != "strategic" and not top.is_empty():
-				layer_mgr.pop()
 				get_viewport().set_input_as_handled()
+				match top:
+					"planetary": _on_planetary_closed()
+					"tactical": _on_tactical_closed()
+					_: layer_mgr.pop()
 
 
 func _setup_panels() -> void:

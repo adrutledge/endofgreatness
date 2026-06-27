@@ -163,6 +163,8 @@ func _generate_map() -> void:
 	generator.queue_free()
 	generated = true
 	contract.planetary_map_data = _serialize_hex_map()
+	if not hex_map:
+		push_warning("PlanetaryMap: hex_map is null after _generate_map")
 
 
 func _serialize_hex_map() -> Dictionary:
