@@ -4,7 +4,6 @@
 
 [node name="PlanetaryHUD" type="Panel"]
 script = ExtResource("1")
-anchors_preset = 0
 anchor_right = 1.0
 anchor_bottom = 1.0
 margin_left = -260
@@ -19,11 +18,13 @@ theme_override_constants/margin_right = 8
 theme_override_constants/margin_top = 8
 
 [node name="Title" type="Label" parent="VBox"]
+unique_name_in_owner = true
 text = "Planetary Map"
 theme_override_font_sizes/font_size = 18
 horizontal_alignment = 1
 
 [node name="ContractLabel" type="Label" parent="VBox"]
+unique_name_in_owner = true
 text = ""
 theme_override_font_sizes/font_size = 13
 horizontal_alignment = 1
@@ -31,24 +32,30 @@ horizontal_alignment = 1
 [node name="HSeparator" type="HSeparator" parent="VBox"]
 
 [node name="HexInfoLabel" type="Label" parent="VBox"]
+unique_name_in_owner = true
 text = ""
 autowrap_mode = 1
 custom_minimum_size = Vector2i(0, 40)
 
 [node name="ExploreButton" type="Button" parent="VBox"]
+unique_name_in_owner = true
 text = "Explore Hex"
 disabled = true
 
 [node name="EngageButton" type="Button" parent="VBox"]
+unique_name_in_owner = true
 text = "Engage Enemy"
 visible = false
 
 [node name="UnitSelector" type="OptionButton" parent="VBox"]
+unique_name_in_owner = true
 size_flags_horizontal = 4
 
 [node name="MoveButton" type="Button" parent="VBox"]
+unique_name_in_owner = true
 text = "Move Here"
 disabled = true
 
 [node name="AbandonButton" type="Button" parent="VBox"]
+unique_name_in_owner = true
 text = "Abandon Contract"
