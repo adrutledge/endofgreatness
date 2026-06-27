@@ -51,7 +51,7 @@ var move_button: Button
 var elapsed_label: Label
 
 
-func _input(event: InputEvent) -> void:
+func _unhandled_input(event: InputEvent) -> void:
 	if not hex_map or not visible:
 		return
 	if event is InputEventMouseButton or event is InputEventMouseMotion:
