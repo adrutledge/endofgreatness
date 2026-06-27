@@ -750,18 +750,16 @@ func _primary_objectives_done() -> bool:
 
 func _on_close() -> void:
 	_save_map_state()
-	if not _primary_objectives_done():
-		var dialog = AcceptDialog.new()
-		dialog.title = tr("Return to StarMap?")
-		dialog.dialog_text = tr("Primary objectives remain incomplete. The contract will not be fulfilled. Return anyway?")
-		dialog.min_size = Vector2i(400, 150)
-		dialog.ok_button_text = tr("Return")
-		dialog.confirmed.connect(func():
-			hide()
-			closed.emit()
-		)
-		add_child(dialog)
-		dialog.popup_centered()
-		return
-	hide()
-	closed.emit()
+	var dialog := AcceptDialog.new()
+	dialog.title = tr("Abandon Contract")
+	dialog.dialog_text = tr("Abandon %s on %s? The contract will not be fulfilled.") % [contract.activity_type, contract.planet]
+	dialog.min_size = Vector2i(400, 120)
+	dialog.ok_button_text = tr("Abandon")
+	dialog.confirmed.connect(func():
+		if GameState:
+			GameState.remove_active_contract(contract)
+		hide()
+		closed.emit()
+	)
+	add_child(dialog)
+	dialog.popup_centered()

@@ -104,5 +104,5 @@ size_flags_vertical = 0
 
 [node name="CloseButton" type="Button" parent="MarginContainer/VBox/BottomBar"]
 unique_name_in_owner = true
-text = "Return to StarMap"
+text = "Abandon Contract"
 size_flags_horizontal = 0

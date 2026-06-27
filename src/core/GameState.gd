@@ -28,6 +28,10 @@ func add_active_contract(contract: Contract) -> void:
 	active_contracts.append(contract)
 	EventBus.emit_contract_accepted(contract)
 
+func remove_active_contract(contract: Contract) -> void:
+	contract.is_active = false
+	active_contracts.erase(contract)
+
 func complete_contract(contract: Contract) -> void:
 	contract.is_active = false
 	contract.is_completed = true
