@@ -23,9 +23,9 @@ jobs:
 
       - name: Install Godot headless
         run: |
-          wget -q https://github.com/godotengine/godot/releases/download/${{ env.GODOT_VERSION }}-stable/Godot_v${{ env.GODOT_VERSION }}-stable_linux_headless.64.zip
-          unzip -q Godot_v${{ env.GODOT_VERSION }}-stable_linux_headless.64.zip
-          sudo mv Godot_v${{ env.GODOT_VERSION }}-stable_linux_headless.64 /usr/local/bin/godot
+          wget -q https://github.com/godotengine/godot/releases/download/${{ env.GODOT_VERSION }}-stable/Godot_v${{ env.GODOT_VERSION }}-stable_linux_headless.x86_64.zip
+          unzip -q Godot_v${{ env.GODOT_VERSION }}-stable_linux_headless.x86_64.zip
+          sudo mv Godot_v${{ env.GODOT_VERSION }}-stable_linux_headless.x86_64 /usr/local/bin/godot
 
       - name: Cache .godot
         uses: actions/cache@v4
@@ -34,8 +34,8 @@ jobs:
           key: godot-cache-${{ hashFiles('src/**', 'data/**', 'project.godot') }}
           restore-keys: godot-cache-
 
-      - name: Run linter
-        run: make lint
+      - name: Run parse check
+        run: make check
 
       - name: Run tests
         run: make test
@@ -58,9 +58,9 @@ jobs:
 
       - name: Install Godot headless
         run: |
-          wget -q https://github.com/godotengine/godot/releases/download/${{ env.GODOT_VERSION }}-stable/Godot_v${{ env.GODOT_VERSION }}-stable_linux_headless.64.zip
-          unzip -q Godot_v${{ env.GODOT_VERSION }}-stable_linux_headless.64.zip
-          sudo mv Godot_v${{ env.GODOT_VERSION }}-stable_linux_headless.64 /usr/local/bin/godot
+          wget -q https://github.com/godotengine/godot/releases/download/${{ env.GODOT_VERSION }}-stable/Godot_v${{ env.GODOT_VERSION }}-stable_linux_headless.x86_64.zip
+          unzip -q Godot_v${{ env.GODOT_VERSION }}-stable_linux_headless.x86_64.zip
+          sudo mv Godot_v${{ env.GODOT_VERSION }}-stable_linux_headless.x86_64 /usr/local/bin/godot
 
       - name: Install export templates
         run: |
