@@ -277,35 +277,19 @@ func _generate_minimum_units(activity_type: String) -> Dictionary:
 	var counts = {}
 	match activity_type:
 		"Garrison":
-			counts["INFANTRY"] = randi() % 3 + 2
-			counts["VEHICLE"] = randi() % 2 + 1
-			counts["MECH"] = randi() % 2 + 0
+			counts["MECH"] = randi() % 2 + 1
 		"Cadre":
-			counts["INFANTRY"] = randi() % 2 + 1
-			counts["VEHICLE"] = randi() % 2 + 1
 			counts["MECH"] = randi() % 2 + 1
 		"Assault":
 			counts["MECH"] = randi() % 3 + 2
-			counts["VEHICLE"] = randi() % 2 + 1
-			counts["INFANTRY"] = randi() % 2 + 0
 		"Raid":
 			counts["MECH"] = randi() % 2 + 2
-			counts["VEHICLE"] = randi() % 2 + 0
-			counts["INFANTRY"] = randi() % 2 + 0
 		"Pirate Hunting":
 			counts["MECH"] = randi() % 2 + 1
-			counts["VEHICLE"] = randi() % 2 + 0
-			counts["INFANTRY"] = randi() % 2 + 0
 		"Recon":
-			counts["VEHICLE"] = randi() % 2 + 1
 			counts["MECH"] = randi() % 2 + 1
-			counts["INFANTRY"] = randi() % 2 + 0
 		"Defense":
-			counts["INFANTRY"] = randi() % 3 + 2
-			counts["VEHICLE"] = randi() % 2 + 2
-			counts["MECH"] = randi() % 2 + 1
+			counts["MECH"] = randi() % 2 + 2
 		_:
 			counts["MECH"] = randi() % 2 + 1
-			counts["VEHICLE"] = randi() % 2 + 0
-			counts["INFANTRY"] = randi() % 2 + 0
 	return counts
