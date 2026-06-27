@@ -51,6 +51,13 @@ var move_button: Button
 var elapsed_label: Label
 
 
+func _input(event: InputEvent) -> void:
+	if not hex_map or not visible:
+		return
+	if event is InputEventMouseButton or event is InputEventMouseMotion:
+		_on_map_input(event)
+
+
 func _ready() -> void:
 	terrain_colors = {
 		HexMap.Terrain.PLAINS: Color(0.5, 0.7, 0.3),
@@ -85,7 +92,6 @@ func _ready() -> void:
 	close_button.pressed.connect(_on_close)
 	explore_button.pressed.connect(_on_explore)
 	engage_button.pressed.connect(_on_engage)
-	map_draw.gui_input.connect(_on_map_input)
 	map_draw.draw.connect(_on_map_draw)
 
 	%Title.add_theme_color_override("font_color", Color(1.0, 0.9, 0.6))
