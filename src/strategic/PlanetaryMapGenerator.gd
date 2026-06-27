@@ -25,7 +25,7 @@ const _terrain_map: Dictionary = {
 
 static var _biome_cache: Dictionary = {}
 static var _canonical_cache: Dictionary = {}
-static var _region_cache: Array[Dictionary] = []
+static var _region_cache = []  # Array[Dictionary] — untyped to avoid assign-type mismatch from merged.get()
 static var _objective_cache: Dictionary = {}
 static var _objective_cache_loaded: bool = false
 static var _opfor_cache: Array = []
@@ -57,12 +57,12 @@ static func _load_canonical_map(map_name: String) -> Dictionary:
 	return j.data
 
 
-static func _load_regions() -> Array[Dictionary]:
+static func _load_regions() -> Array:
 	if not _region_cache.is_empty():
 		return _region_cache
 	var merged: Dictionary = {"regions": []}
 	_merge_json_dir(REGIONS_DIR, merged)
-	_region_cache = merged.get("regions", []) as Array[Dictionary]
+	_region_cache = merged.get("regions", [])
 	return _region_cache
 
 

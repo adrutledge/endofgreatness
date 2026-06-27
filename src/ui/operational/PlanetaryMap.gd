@@ -210,7 +210,8 @@ func _init_deployed_units() -> void:
 
 	for ou in GameState.player.organizational_units:
 		if ou.contract_id == str(contract.get_instance_id()) and ou.is_deployed:
-			_collect_sub_units(ou)
+			for su in ou.sub_units:
+				_collect_sub_units(su)
 			break
 
 	if deployed_units.is_empty():
