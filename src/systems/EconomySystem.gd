@@ -263,118 +263,111 @@ func _process_monthly_bills() -> void:
 ## Called after each tactical engagement.
 ## Processes salvage recovery and reimburses battle losses immediately.
 ## Returns a Dictionary with salvage + reimbursement results.
-func process_engagement(contract: Contract) -> Dictionary:
-	var salvage = process_salvage_after_engagement(contract)
-	var reimbursement = reimburse_engagement_losses(contract)
-	var result = salvage.duplicate()
-	result.reimbursement = reimbursement
-	result.total = salvage.get("salvage_bonus", 0) + reimbursement
-	return result
+func process_engagement(contract: Contract, engagement_value: int = 0) -> Dictionary:
+	if contract.salvage_type == "exchange":
+		return _process_exchange_engagement(contract, engagement_value)
+	else:
+		return _process_parts_engagement(contract, engagement_value)
 
 
 ## Processes salvage recovery from the engagement's salvage pool.
 ## Returns a Dictionary describing what was recovered.
-func process_salvage_after_engagement(contract: Contract) -> Dictionary:
-	var key = contract.get_instance_id()
-	var pool: Array = contract_salvage_pool.get(key, [])
-	if pool.is_empty():
-		pool = contract.salvage_pool
-
-	var result = {
-		"salvage_bonus": 0,
+func _process_exchange_engagement(contract: Contract, engagement_value: int) -> Dictionary:
+	var cash = int(engagement_value * contract.salvage_rate)
+	add_funds(cash, "Salvage (exchange): " + contract.issuer)
+	var reimbursement = reimburse_engagement_losses(contract)
+	return {
+		"salvage_bonus": cash,
+		"reimbursement": reimbursement,
+		"total": cash + reimbursement,
 		"salvage_items": [],
 		"salvage_skipped": [],
 		"hours_used": 0,
 	}
 
-	if pool.is_empty() or contract.salvage_rate <= 0.0:
-		return result
 
-	# Sort by value descending so we take the most valuable items first
-	pool.sort_custom(func(a, b): return a.c_bill_value > b.c_bill_value)
+func _process_parts_engagement(contract: Contract, engagement_value: int) -> Dictionary:
+	var reimbursement = reimburse_engagement_losses(contract)
 
-	var total_salvage_value := 0
-	for entry in pool:
-		total_salvage_value += entry.c_bill_value
+	if engagement_value <= 0 or contract.salvage_rate <= 0.0:
+		return {"salvage_bonus": 0, "reimbursement": reimbursement, "total": reimbursement, "salvage_items": [], "salvage_skipped": [], "hours_used": 0}
 
-	var max_salvage_value := int(total_salvage_value * contract.salvage_rate)
-	var remaining_value := max_salvage_value
-	var available_hours := get_available_recovery_hours()
-	var remaining_hours := available_hours
+	var cap_remaining = engagement_value * (contract.salvage_rate - contract.salvage_percentage_used)
+	if cap_remaining <= 0:
+		return {"salvage_bonus": 0, "reimbursement": reimbursement, "total": reimbursement, "salvage_items": [], "salvage_skipped": [], "hours_used": 0}
 
-	var recovered: Array[Dictionary] = []
-	var skipped: Array[Dictionary] = []
-	var kept: Array[Dictionary] = []
+	var pool = _generate_salvage_pool(engagement_value)
+	var selected = _select_salvage_items(pool, cap_remaining, contract.salvage_type)
+	var taken_value := 0
 
-	for entry in pool:
-		if remaining_value <= 0:
-			skipped.append(entry.duplicate())
+	for item in selected:
+		var inv_name = item.name
+		if item.get("damaged", false):
+			inv_name = "Damaged " + inv_name
+		var qty = item.get("quantity", 1)
+		GameState.player_inventory[inv_name] = GameState.player_inventory.get(inv_name, 0) + qty
+		taken_value += item.value * qty
+		Helpers.debug_print("Salvage", "Recovered: %s x%d (val: %d)" % [inv_name, qty, item.value])
+
+	contract.salvage_percentage_used = min(contract.salvage_rate, contract.salvage_percentage_used + taken_value / float(max(1, engagement_value)))
+
+	return {
+		"salvage_bonus": taken_value,
+		"reimbursement": reimbursement,
+		"total": taken_value + reimbursement,
+		"salvage_items": selected,
+		"salvage_skipped": [],
+		"hours_used": 0,
+	}
+
+
+func _generate_salvage_pool(engagement_value: int) -> Array[Dictionary]:
+	var pool: Array[Dictionary] = []
+	var rng = RandomNumberGenerator.new()
+	rng.randomize()
+	var weapon_count = max(1, int(engagement_value / 15000))
+	var weapon_pool = ["Medium Laser", "Small Laser", "SRM-4", "LRM-5", "Machine Gun",
+		"Medium Laser", "Heat Sink", "Heat Sink", "Actuator", "Actuator"]
+	for i in range(weapon_count):
+		var name = weapon_pool[rng.randi_range(0, weapon_pool.size() - 1)]
+		var cost = _get_salvage_item_value(name)
+		var damaged = rng.randf() < 0.3
+		if damaged:
+			cost = int(cost * 0.5)
+		pool.append({"name": name, "value": cost, "quantity": 1, "damaged": damaged})
+	return pool
+
+
+func _get_salvage_item_value(name: String) -> int:
+	var defs = DataManager.component_defs if DataManager else {}
+	var entry = defs.get(name, defs.get(name.to_lower(), {}))
+	if entry:
+		return entry.get("cost", 5000)
+	match name:
+		"Heat Sink": return 3000
+		"Actuator": return 2000
+		"Medium Laser": return 20000
+		"Small Laser": return 6000
+		"SRM-4": return 12000
+		"LRM-5": return 15000
+		"Machine Gun": return 3000
+	return 5000
+
+
+func _select_salvage_items(pool: Array[Dictionary], cap: float, salvage_type: String) -> Array[Dictionary]:
+	if salvage_type == "employer_chooses":
+		pool.sort_custom(func(a, b): return a.value < b.value)
+	else:
+		pool.sort_custom(func(a, b): return a.value > b.value)
+
+	var selected: Array[Dictionary] = []
+	var total := 0
+	for item in pool:
+		if total + item.value > int(cap):
 			continue
-
-		if entry.c_bill_value > remaining_value:
-			kept.append(entry.duplicate())
-			continue
-
-		# Per CO: roll recovery chance — components that fail the roll are lost
-		var recovery_roll := randf()
-		var chance = entry.get("recovery_chance", 0.5)
-		if recovery_roll > chance:
-			skipped.append(entry.duplicate())
-			continue
-
-		var hours_needed := int(ceil(entry.recovery_hours))
-		if hours_needed > remaining_hours:
-			kept.append(entry.duplicate())
-			continue
-
-		if contract.salvage_type == "items":
-			var inv_name = entry.component_name
-			var qty = entry.get("quantity", 1)
-			var condition: int = entry.get("condition", Enums.ComponentStatus.UNDAMAGED)
-			if condition == Enums.ComponentStatus.DAMAGED:
-				inv_name = "Damaged " + inv_name
-			GameState.player_inventory[inv_name] = GameState.player_inventory.get(inv_name, 0) + qty
-
-		remaining_value -= entry.c_bill_value
-		remaining_hours -= hours_needed
-		recovered.append(entry.duplicate())
-
-	if contract.salvage_type == "exchange" and not recovered.is_empty():
-		var bonus_value := max_salvage_value - remaining_value
-		add_funds(bonus_value, "Salvage conversion: " + contract.issuer)
-		result.salvage_bonus = bonus_value
-
-	result.salvage_items = recovered
-	result.salvage_skipped = skipped
-	result.hours_used = available_hours - remaining_hours
-
-	# Remove recovered items from the pool; keep skipped+kept for future engagements
-	var claimed_names: Array[String] = []
-	for r in recovered:
-		claimed_names.append(r.component_name)
-
-	var new_pool: Array[Dictionary] = []
-	for entry in pool:
-		if entry.component_name in claimed_names:
-			continue
-		new_pool.append(entry)
-	for k in kept:
-		if k.component_name not in claimed_names:
-			new_pool.append(k)
-
-	contract_salvage_pool[key] = new_pool
-	contract.salvage_pool = new_pool.duplicate()
-
-	if not recovered.is_empty():
-		GameState.log_event("salvage_recovered", {
-			"contract": contract.issuer + "/" + contract.activity_type,
-			"type": contract.salvage_type,
-			"items": recovered,
-			"total_value": max_salvage_value - remaining_value,
-			"hours_used": result.hours_used,
-		})
-
-	return result
+		selected.append(item)
+		total += item.value
+	return selected
 
 
 func reimburse_engagement_losses(contract: Contract) -> int:

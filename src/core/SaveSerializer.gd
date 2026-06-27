@@ -223,6 +223,7 @@ static func _serialize_contract(c: Contract) -> Dictionary:
 		"planetary_map_data": c.planetary_map_data.duplicate(),
 		"opfor_pool": c.opfor_pool.duplicate(),
 		"opfor_template_id": c.opfor_template_id,
+		"salvage_percentage_used": c.salvage_percentage_used,
 	}
 
 
@@ -689,6 +690,7 @@ static func _deserialize_contract(data: Dictionary) -> Contract:
 	c.planetary_map_data = data.get("planetary_map_data", {}).duplicate()
 	c.opfor_pool = data.get("opfor_pool", []).duplicate()
 	c.opfor_template_id = data.get("opfor_template_id", "")
+	c.salvage_percentage_used = data.get("salvage_percentage_used", 0.0)
 	return c
 
 

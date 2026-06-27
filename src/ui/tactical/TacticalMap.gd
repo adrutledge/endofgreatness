@@ -581,8 +581,9 @@ func _on_resolve() -> void:
 
 
 func _on_return() -> void:
-	if contract and _result.get("salvage_value", 0) > 0:
-		EconomySystem.process_engagement(contract)
+	var engagement_value = _result.get("salvage_value", 0)
+	if contract and engagement_value > 0:
+		EconomySystem.process_engagement(contract, engagement_value)
 	ReputationSystem.modify_reputation(contract.issuer, 2, "Tactical engagement completed")
 	closed.emit()
 

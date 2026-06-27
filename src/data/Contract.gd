@@ -35,6 +35,7 @@ var payout_per_month: int
 var total_paid: int = 0
 var is_active: bool = false
 var is_completed: bool = false
+var salvage_percentage_used: float = 0.0
 
 func meets_minimum_counts(unit_counts: Dictionary) -> Dictionary:
 	var shortfalls: Dictionary = {}
