@@ -370,6 +370,7 @@ func _is_adjacent_to_revealed(q: int, r: int) -> bool:
 
 
 func _on_map_input(event: InputEvent) -> void:
+	Helpers.debug_print("PlanetaryMap", "input: %s" % event.get_class())
 	if not hex_map:
 		return
 
