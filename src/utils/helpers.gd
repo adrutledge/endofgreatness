@@ -14,11 +14,11 @@ static func _ensure_debug() -> void:
 	if Engine.is_editor_hint():
 		return
 	for arg in OS.get_cmdline_user_args():
-		if arg == "--opencode-debug" or arg == "-d":
+		if arg == "--debug" or arg == "-d":
 			debug = true
 			break
 	if not debug:
-		var env = OS.get_environment("OPENCODE_debug")
+		var env = OS.get_environment("DEBUG")
 		if env and env.to_lower() in ["1", "true", "yes"]:
 			debug = true
 
@@ -27,14 +27,20 @@ static func debug_print(tag: String, msg: String) -> void:
 	_ensure_debug()
 	if not debug:
 		return
-	printerr("[DBG][%s] %s" % [tag, msg])
+	if Engine.has_singleton("OpenCodeDebugger"):
+		Engine.get_singleton("OpenCodeDebugger").debug_log("DBG", tag, msg)
+	else:
+		printerr("[DBG][%s] %s" % [tag, msg])
 
 
 static func debug_warn(tag: String, msg: String) -> void:
 	_ensure_debug()
 	if not debug:
 		return
-	push_warning("[DBG][%s] %s" % [tag, msg])
+	if Engine.has_singleton("OpenCodeDebugger"):
+		Engine.get_singleton("OpenCodeDebugger").debug_log("WARN", tag, msg)
+	else:
+		push_warning("[DBG][%s] %s" % [tag, msg])
 
 
 static func validate_nodes(tag: String, pairs) -> void:

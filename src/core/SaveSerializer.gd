@@ -125,6 +125,7 @@ static func _serialize_tactical_units(units: Array) -> Array:
 
 static func _serialize_tactical_unit(tu: TacticalUnit) -> Dictionary:
 	return {
+		"unit_id": tu.unit_id,
 		"unit_name": tu.unit_name,
 		"chassis_name": tu.chassis_name,
 		"model_name": tu.model_name,
@@ -591,6 +592,7 @@ static func _deserialize_tactical_units(data: Array, roster_map: Dictionary) -> 
 	var result: Array = []
 	for td in data:
 		var tu := TacticalUnit.new()
+		tu.unit_id = td.get("unit_id", "")
 		tu.unit_name = td.get("unit_name", "")
 		tu.chassis_name = td.get("chassis_name", "")
 		tu.model_name = td.get("model_name", "")

@@ -570,34 +570,9 @@ func _generate_doctor() -> Personnel:
 
 
 func _base_personnel(role: Enums.PersonnelRole) -> Personnel:
-	var p = Personnel.new()
-	p.personnel_name = FIRST_NAMES[randi() % FIRST_NAMES.size()] + " " + LAST_NAMES[randi() % LAST_NAMES.size()]
-	p.role = role
-	p.body = _rand_atow()
-	p.dexterity = _rand_atow()
-	p.reflexes = _rand_atow()
-	p.strength = _rand_atow()
-	p.willpower = _rand_atow()
-	p.charisma = _rand_atow()
-	p.intelligence = _rand_atow()
-	p.edge = randi() % 3 + 1
-
-	var birth_year = 3025 - (randi() % 40 + 18)
-	var birth_month = randi() % 12 + 1
-	var birth_day = randi() % 28 + 1
-	p.date_of_birth = str(birth_year) + "-" + str(birth_month) + "-" + str(birth_day)
-
-	p.hair_color = ["Brown", "Black", "Blonde", "Red", "Grey", "White", "Auburn"][randi() % 7]
-	p.eye_color = ["Brown", "Blue", "Green", "Grey", "Hazel"][randi() % 5]
-	p.height_cm = randi() % 40 + 150
-	p.weight_kg = randi() % 40 + 55
-
+	var p = PersonnelManager.create_personnel(role)
 	p.is_founder = true
 	return p
-
-
-func _rand_atow() -> int:
-	return randi() % 7 + 2
 
 
 func _calculate_inventory(mechs: Array[TacticalUnit], faction_code: String, rat_data: Dictionary) -> Dictionary:

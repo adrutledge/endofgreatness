@@ -39,6 +39,41 @@ static func _load_type_data() -> Dictionary:
 	_type_loaded = true
 	return merged
 
+static func create_personnel(role: Enums.PersonnelRole, name: String = "") -> Personnel:
+	var p = Personnel.new()
+	if name.is_empty():
+		var td = _load_type_data()
+		var first_names: Array = td.get("first_names", ["Alex", "Jordan"])
+		var last_names: Array = td.get("last_names", ["Smith", "Jones"])
+		p.personnel_name = first_names[randi() % first_names.size()] + " " + last_names[randi() % last_names.size()]
+	else:
+		p.personnel_name = name
+	p.role = role
+	p.body = _rand_atow_static()
+	p.dexterity = _rand_atow_static()
+	p.reflexes = _rand_atow_static()
+	p.strength = _rand_atow_static()
+	p.willpower = _rand_atow_static()
+	p.charisma = _rand_atow_static()
+	p.intelligence = _rand_atow_static()
+	p.edge = randi() % 3 + 1
+
+	var birth_year = 3025 - (randi() % 40 + 18)
+	var birth_month = randi() % 12 + 1
+	var birth_day = randi() % 28 + 1
+	p.date_of_birth = str(birth_year) + "-" + str(birth_month) + "-" + str(birth_day)
+
+	p.hair_color = ["Brown", "Black", "Blonde", "Red", "Grey", "White", "Auburn"][randi() % 7]
+	p.eye_color = ["Brown", "Blue", "Green", "Grey", "Hazel"][randi() % 5]
+	p.height_cm = randi() % 40 + 150
+	p.weight_kg = randi() % 40 + 55
+
+	p.is_founder = false
+	return p
+
+static func _rand_atow_static() -> int:
+	return randi() % 7 + 2
+
 func _ready() -> void:
 	EventBus.day_started.connect(_on_day_started)
 

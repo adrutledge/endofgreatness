@@ -46,7 +46,10 @@ func _log(level: String, category: String, msg: String) -> void:
 	log_entries.append(entry)
 	if log_entries.size() > MAX_ENTRIES:
 		log_entries.pop_front()
-	printerr("[%s][%s] %s" % [level, category, msg])
+	if Engine.has_singleton("OpenCodeDebugger"):
+		Engine.get_singleton("OpenCodeDebugger").debug_log(level, category, msg)
+	else:
+		printerr("[%s][%s] %s" % [level, category, msg])
 
 
 static func _timestamp() -> String:

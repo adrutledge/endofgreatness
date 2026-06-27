@@ -1,6 +1,9 @@
 extends Control
 
 func _ready() -> void:
+	if "--opencode-headless" in OS.get_cmdline_user_args():
+		_start_headless_campaign()
+		return
 	if "--test-generator" in OS.get_cmdline_user_args():
 		_test_generator()
 		return
@@ -39,6 +42,26 @@ func _test_generator() -> void:
 		print("PASSED: " + str(count) + " tactical units in " + str(GameState.player.organizational_units.size()) + " org unit(s)")
 	print("=== End ===")
 	get_tree().quit(0)
+
+
+func _start_headless_campaign() -> void:
+	var save_path := ""
+	if Engine.has_singleton("OpenCodeDebugger"):
+		save_path = Engine.get_singleton("OpenCodeDebugger").load_save_path
+	if not save_path.is_empty():
+		var result = SaveManager.load_game(save_path)
+		if not result.get("success", false):
+			printerr("Headless: Failed to load save '%s': %s" % [save_path, result.get("reason", "unknown")])
+			get_tree().quit(1)
+			return
+	else:
+		var gen = StrategicUnitGenerator.new()
+		var result = gen.generate("davion", "Debug Campaign")
+		if not result.get("success", false):
+			printerr("Headless: Failed to generate campaign: %s" % result.get("error", "unknown"))
+			get_tree().quit(1)
+			return
+	get_tree().change_scene_to_file("res://src/ui/campaign/CampaignView.tscn")
 
 
 func _on_new_game() -> void:

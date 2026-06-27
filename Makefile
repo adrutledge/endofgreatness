@@ -43,13 +43,29 @@ build:
 run:
 	$(GODOT) --path . $(GODOT_FLAGS)
 
-## Launch with debug logging enabled (--opencode-debug flag)
+## Launch with human debug logging (--debug flag)
 rund:
-	$(GODOT) --path . $(GODOT_FLAGS) -- --opencode-debug
+	$(GODOT) --path . $(GODOT_FLAGS) -- --debug
 
 ## Launch with debug logging via environment variable
 rune:
 	OPENCODE_DEBUG=true $(GODOT) --path . $(GODOT_FLAGS)
+
+## Launch with OpenCode debug mode + pipe (for opencode consumption)
+runoc:
+	$(GODOT) --path . $(GODOT_FLAGS) -- --opencode-debug --opencode-pipe
+
+## Headless OpenCode debug (no window, auto campaign, file output)
+runoc-headless:
+	$(GODOT) --path . --headless -- --opencode-debug --opencode-headless
+
+## Headless OpenCode debug with pipe output
+runoc-headless-pipe:
+	$(GODOT) --path . --headless -- --opencode-debug --opencode-headless --opencode-pipe
+
+## Headless OpenCode debug loading a specific save
+runoc-load:
+	$(GODOT) --path . --headless -- --opencode-debug --opencode-headless --load-save=user://saves/autosave_000.json.zst
 
 $(MTF_STAMP): $(MTF_SRC) $(MTF_DEPS) $(MTF_TEST)
 	@r=$$($(GODOT) --headless --script $(MTF_TEST) 2>&1 | grep "Results"); \
@@ -134,6 +150,9 @@ $(TACTICAL_INTEGRATION_STAMP): $(TACTICAL_INTEGRATION_TEST)
 AI_EVALUATOR_TEST := tests/test_ai_evaluator.gd
 AI_EVALUATOR_STAMP := .tested_ai_evaluator
 
+OPENCODE_DEBUGGER_TEST := tests/test_opencode_debugger.gd
+OPENCODE_DEBUGGER_STAMP := .tested_opencode_debugger
+
 PARSE_CHECK_TEST := tests/test_parse_check.gd
 PARSE_CHECK_STAMP := .tested_parse
 
@@ -141,6 +160,11 @@ $(AI_EVALUATOR_STAMP): $(AI_EVALUATOR_TEST)
 	@r=$$($(GODOT) --headless --script $(AI_EVALUATOR_TEST) 2>&1 | grep "Results"); \
 	echo "[AI Evaluator] $$r"
 	@touch $(AI_EVALUATOR_STAMP)
+
+$(OPENCODE_DEBUGGER_STAMP): src/core/OpenCodeDebugger.gd $(OPENCODE_DEBUGGER_TEST)
+	@r=$$($(GODOT) --headless --script $(OPENCODE_DEBUGGER_TEST) 2>&1 | grep "Results"); \
+	echo "[OpenCode Debugger] $$r"
+	@touch $(OPENCODE_DEBUGGER_STAMP)
 
 ## Generate .godot script class cache so class_name types are available before autoloads compile.
 bootstrap:
@@ -173,7 +197,7 @@ lint:
 	fi
 
 # Fast unit tests — run during development
-UNIT_TESTS := $(MTF_STAMP) $(MARKET_STAMP) $(DATA_FORMAT_STAMP) $(SAVE_SYSTEM_STAMP) $(MOD_SYSTEM_STAMP) $(AI_EVALUATOR_STAMP)
+UNIT_TESTS := $(MTF_STAMP) $(MARKET_STAMP) $(DATA_FORMAT_STAMP) $(SAVE_SYSTEM_STAMP) $(MOD_SYSTEM_STAMP) $(AI_EVALUATOR_STAMP) $(OPENCODE_DEBUGGER_STAMP)
 
 # Slower integration/validation tests — run before merge
 INTEGRATION_TESTS := $(STRAT_GEN_STAMP) $(STARMAP_CACHE_STAMP) $(PLAN_MAP_GEN_STAMP) $(TACTICAL_INTEGRATION_STAMP)

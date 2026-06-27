@@ -38,6 +38,7 @@ InventoryManager="*res://src/systems/InventoryManager.gd"
 PanelManager="*res://src/ui/strategic/PanelManager.gd"
 SaveManager="*res://src/core/SaveManager.gd"
 ModManager="*res://src/core/ModManager.gd"
+OpenCodeDebugger="*res://src/core/OpenCodeDebugger.gd"
 
 [rendering]
 
