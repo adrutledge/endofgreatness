@@ -62,7 +62,7 @@ static func _load_regions() -> Array[Dictionary]:
 		return _region_cache
 	var merged: Dictionary = {"regions": []}
 	_merge_json_dir(REGIONS_DIR, merged)
-	_region_cache = merged.get("regions", [])
+	_region_cache = merged.get("regions", []) as Array[Dictionary]
 	return _region_cache
 
 

@@ -161,7 +161,7 @@ func generate_single_contract(issuer: Faction, target: Faction, date: Dictionary
 	var contract = Contract.new()
 	contract.issuer = issuer.faction_name
 	contract.target = target.faction_name
-	contract.planet = location if not location.is_empty() else _pick_planet(issuer, target)
+	contract.planet = _pick_planet(issuer, target)
 
 	var dist = -1.0
 	var loc_owner = ""

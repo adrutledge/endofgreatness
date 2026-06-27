@@ -287,9 +287,14 @@ func generate_random_personnel(planet_data: Dictionary) -> Personnel:
 	if 3025 - birth_year < 16:
 		p.role = Enums.PersonnelRole.CHILD
 
-	var fdata = GameState.factions.get(faction_code, {})
-	var hair_src: Array = fdata.get("hair_colors", td.get("hair_colors", ["Brown", "Black"]))
-	var eye_src: Array = fdata.get("eye_colors", td.get("eye_colors", ["Brown", "Blue"]))
+	var fdata = GameState.factions.get(faction_code)
+	var hair_src: Array = ["Brown", "Black"]
+	var eye_src: Array = ["Brown", "Blue"]
+	if fdata:
+		var hc = fdata.get("hair_colors")
+		if hc != null: hair_src = hc
+		var ec = fdata.get("eye_colors")
+		if ec != null: eye_src = ec
 	p.hair_color = hair_src[randi() % hair_src.size()]
 	p.eye_color = eye_src[randi() % eye_src.size()]
 	p.height_cm = randi() % 40 + 150
