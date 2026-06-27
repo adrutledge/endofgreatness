@@ -17,6 +17,8 @@ export/
 .DS_Store
 Thumbs.db
 
+debug_output.log
+
 # Build artifacts
 .tested_*
 3028-*.pdf
