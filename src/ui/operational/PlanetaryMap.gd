@@ -756,9 +756,6 @@ func _on_close() -> void:
 		dialog.dialog_text = tr("Primary objectives remain incomplete. The contract will not be fulfilled. Return anyway?")
 		dialog.min_size = Vector2i(400, 150)
 		dialog.ok_button_text = tr("Return")
-		var cancel = dialog.get_cancel_button()
-		if cancel:
-			cancel.text = tr("Stay")
 		dialog.confirmed.connect(func():
 			hide()
 			closed.emit()

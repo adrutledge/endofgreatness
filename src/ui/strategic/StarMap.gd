@@ -385,6 +385,8 @@ func _get_spectral_radius(spectral: String) -> float:
 # ---- Input ----
 
 func _unhandled_input(event: InputEvent) -> void:
+	if not visible:
+		return
 	if event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
 		if PanelManager.close_top_panel():
 			get_viewport().set_input_as_handled()
