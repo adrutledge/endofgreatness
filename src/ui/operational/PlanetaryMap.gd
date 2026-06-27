@@ -336,6 +336,20 @@ func _update_path_preview() -> void:
 	path_preview = hex_map.find_path(du.hex_pos.x, du.hex_pos.y, tx, ty, speed)
 
 
+func get_deployed_units_list() -> Array:
+	return deployed_units
+
+
+func get_selected_unit_index() -> int:
+	return selected_unit_idx
+
+
+func set_selected_unit_index(idx: int) -> void:
+	selected_unit_idx = idx
+	if hex_map:
+		_update_path_preview()
+
+
 func _save_map_state() -> void:
 	if contract and hex_map:
 		contract.planetary_map_data = _serialize_hex_map()

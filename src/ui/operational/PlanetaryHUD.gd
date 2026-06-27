@@ -43,6 +43,27 @@ func set_map_layer(map_node: Node) -> void:
 			contract_label.text = "%s — %s" % [c.activity_type, c.planet]
 	title_label.text = "Planetary Map"
 
+	_refresh_unit_selector()
+
+
+func _refresh_unit_selector() -> void:
+	if not _map or not _map.has_method("get_deployed_units_list"):
+		return
+	unit_selector.clear()
+	var units = _map.get_deployed_units_list()
+	for i in range(units.size()):
+		unit_selector.add_item(units[i].name)
+		unit_selector.set_item_metadata(i, i)
+	if unit_selector.item_count > 0:
+		unit_selector.select(0)
+		_on_unit_selected(0)
+	unit_selector.item_selected.connect(_on_unit_selected)
+
+
+func _on_unit_selected(idx: int) -> void:
+	if _map and _map.has_method("set_selected_unit_index"):
+		_map.set_selected_unit_index(idx)
+
 
 func _on_hex_selected(hex_dict: Dictionary) -> void:
 	var q = hex_dict.get("q", 0)
